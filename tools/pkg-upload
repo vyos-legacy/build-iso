@@ -1,0 +1,18 @@
+#!/bin/sh
+
+POOL_DIR=/var/www/vyatta/pool/${TARGET_DIST}/main
+
+for pkg in $@; do
+  echo uploading $pkg...
+  case "$pkg" in
+    kernel )
+      deb="kernel/${VYATTA_LINUX_PKG}*.deb"
+      ;;
+    * )
+      deb="${pkg}/${pkg}*.deb"
+      ;; 
+  esac
+  mkdir -p ${POOL_DIR}
+  cp ${deb} ${POOL_DIR}/
+done
+

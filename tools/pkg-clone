@@ -1,0 +1,21 @@
+#!/bin/sh
+
+for pkg in $@; do
+  echo cloning $pkg...
+  case "$pkg" in
+    kernel )
+      url=http://phuket.vyatta.com/linux-eureka.git
+      ;;
+    * )
+      url=http://phuket.vyatta.com/$pkg.git
+      ;; 
+  esac
+  mkdir -p $pkg
+  targetdir="$pkg/$pkg"
+  [ -d $targetdir ] && continue
+
+  git-clone -q $url $targetdir &
+done
+
+wait
+

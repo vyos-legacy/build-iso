@@ -1,0 +1,196 @@
+#!/bin/sh
+
+declare bootstrap_include="locales,less"
+declare bootstrap_exclude="dhcp3-common,dhcp3-client"
+declare -a exclude_packages=( \
+                            )
+declare -a include_packages=( \
+                              ${FETCH_PKGS} \
+                            )
+declare -a local_packages=( \
+                            ${BUILD_PKGS} \
+                          )
+declare pkglistdir=config/chroot_local-packageslists
+
+set_conf_var ()
+{
+  local conf=$1
+  local var=$2
+  local val=$3
+  sed -i "s/^$var=\".*\"/$var=\"$val\"/" config/$conf
+}
+
+# set '--linux-packages "none"' and:
+#   if building kernel, install kernel pkg during local-packages.
+#   if fetching kernel, install kernel pkg during local-packageslists.
+if [ ! -d config ]; then
+  echo I: configuring build
+  lh_config --fakeroot --bootloader grub --bootstrap debootstrap \
+    --bootstrap-flavour minimal -d ${TARGET_DIST} \
+    --mirror-bootstrap http://ftp.us.debian.org/debian/ \
+    --mirror-binary http://ftp.us.debian.org/debian/ \
+    --memtest disabled --apt apt \
+    --linux-packages "none" \
+    -k "${VYATTA_LINUX_FLAVOR}" \
+    -p none \
+    --initramfs live-initramfs \
+    --union-filesystem unionfs \
+    --chroot-filesystem squashfs \
+    --hostname vyatta \
+    --iso-application "Vyatta OFR" \
+    --iso-publisher "Vyatta Inc.; http://www.vyatta.com/;" \
+    --iso-volume "Vyatta OFR Live $(date +%Y%m%d-%H:%M)"
+
+  set_conf_var "bootstrap" "LH_BOOTSTRAP_INCLUDE" ${bootstrap_include}
+  set_conf_var "bootstrap" "LH_BOOTSTRAP_EXCLUDE" ${bootstrap_exclude}
+
+  # set up custom repo(s)
+  if ls deb_sources/${TARGET_DIST}-*bootstrap* >& /dev/null; then
+    cp deb_sources/${TARGET_DIST}-*bootstrap* config/chroot_sources/
+  fi
+ 
+  # set up custom pkg list(s)
+  if ls deb_lists/${TARGET_DIST}-* >& /dev/null; then
+    cp deb_lists/${TARGET_DIST}-* ${pkglistdir}/
+  fi
+fi
+
+# clear .stage
+# note: this causes all steps to be re-executed. however, the bootstrap stage
+# is cached, so the bootstrap step only restores the cached stage.
+rm -rf .stage
+
+# set up packages to be fetched
+echo "# vyatta packages" > ${pkglistdir}/vyatta-pkgs
+if (( ${#include_packages[@]} > 0 )); then
+  echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
+fi
+
+# set up locally-built packages
+rm -f config/chroot_local-packages/*
+if (( ${#local_packages[@]} > 0 )); then
+  for bpkg in ${local_packages[@]}; do
+    cp -p ../*/${bpkg}*.deb config/chroot_local-packages/
+  done
+fi
+
+echo I: buidling bootstrap
+if ! lh_bootstrap; then
+  echo E: bootstrap build failed
+  exit 1
+fi
+
+# do the steps in lh_chroot
+build_chroot ()
+{
+  echo I: configuring chroot
+  lh_chroot_cache restore || return 1
+  lh_chroot_proc install || return 1
+  lh_chroot_sysfs install || return 1
+  lh_chroot_debianchroot install || return 1
+  lh_chroot_dpkg install || return 1
+  lh_chroot_sysv-rc install || return 1
+  lh_chroot_hosts install || return 1
+  lh_chroot_resolv install || return 1
+  lh_chroot_hostname install || return 1
+  lh_chroot_apt install || return 1
+  lh_chroot_sources install || return 1
+  lh_chroot_linux-image install || return 1
+  
+  echo I: customizing live-initramfs
+  cat > chroot/etc/live.conf <<EOF
+export USERNAME=vyatta
+export USERFULLNAME=Vyatta_live
+export HOSTNAME=vyatta
+export BUILD_SYSTEM=Debian
+EOF
+  declare initramfsdir=chroot/usr/share/initramfs-tools
+  declare livedir=${initramfsdir}/scripts/live-bottom
+  declare livesavedir=${initramfsdir}/scripts/live-bottom-save
+  mkdir -p ${livesavedir}
+  for f in 10adduser 23networking 25configure_init ; do
+    [ -f $livedir/$f ] && mv $livedir/$f ${livesavedir}
+  done
+  sed -i 's/cat > \$FSTAB <<EOF/cat >>\$FSTAB <<EOF/' $livedir/12fstab
+  
+  echo I: customizing chroot
+  lh_chroot_preseed || return 1
+  lh_chroot_local-preseed || return 1
+  lh_chroot_tasks || return 1
+  lh_chroot_packageslists || return 1
+  lh_chroot_packages || return 1
+ 
+  # we do local packages first since they are "newer"
+  lh_chroot_local-packages || return 1
+  lh_chroot_local-packageslists || return 1
+
+  lh_chroot_localization || return 1
+  lh_chroot_local-includes || return 1
+  lh_chroot_sysvinit || return 1
+  lh_chroot_hooks || return 1
+  lh_chroot_local-hooks || return 1
+  lh_chroot_symlinks || return 1
+  lh_chroot_hacks || return 1
+  lh_chroot_interactive || return 1
+ 
+  echo I: deconfiguring chroot
+  lh_chroot_linux-image remove || return 1
+  lh_chroot_sources remove || return 1
+  lh_chroot_apt remove || return 1
+  lh_chroot_hostname remove || return 1
+  lh_chroot_resolv remove || return 1
+  lh_chroot_hosts remove || return 1
+  lh_chroot_sysv-rc remove || return 1
+  lh_chroot_dpkg remove || return 1
+  lh_chroot_debianchroot remove || return 1
+  lh_chroot_sysfs remove || return 1
+  lh_chroot_proc remove || return 1
+  lh_chroot_cache save || return 1
+}
+
+echo I: buidling chroot
+if ! build_chroot; then
+  echo E: chroot build failed && 
+  exit 1
+fi
+
+echo I: removing excluded packages
+if (( ${#exclude_packages[@]} > 0 )); then
+  chroot chroot apt-get -y --force-yes remove ${exclude_packages[@]}
+fi
+
+echo I: setting root password to vyatta
+sed -i 's/root::/root:$1$Tulceur3$8MsrChto8vS7Q6XkZGM0k1:/' chroot/etc/shadow
+echo I: setting default hostname to vyatta
+echo vyatta > chroot/etc/hostname
+echo I: resetting /etc/resolv.conf
+>chroot/etc/resolv.conf
+echo I: creating /etc/issue
+echo 'Welcome to Vyatta - \n \l' > chroot/etc/issue
+echo I: creating /etc/issue.net
+echo 'Welcome to Vyatta  ' > chroot/etc/issue.net
+echo I: creating /etc/fstab
+cat > chroot/etc/fstab <<EOF
+# <file system> <mount point> <type>  <options> <dump>  <pass>
+tmpfs /opt/vyatta/config tmpfs nosuid,nodev 0 0
+EOF
+
+if ! grep -q '/etc/bash_completion' chroot/root/.bashrc; then
+  # enable completion for root (enabled by default for other users)
+  cat <<'EOF' >> chroot/root/.bashrc
+
+# enable programmable completion features (needed for CLI auto-completion)
+if [ -f /etc/bash_completion ]; then
+  . /etc/bash_completion
+fi
+EOF
+fi
+
+echo I: building binary
+if ! lh_binary; then
+  echo E: binary build failed
+  exit 1
+fi
+
+echo I: Done
+
