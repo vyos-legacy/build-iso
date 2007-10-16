@@ -111,7 +111,9 @@ EOF
   for f in 10adduser 23networking 25configure_init ; do
     [ -f $livedir/$f ] && mv $livedir/$f ${livesavedir}
   done
-  sed -i 's/cat > \$FSTAB <<EOF/cat >>\$FSTAB <<EOF/' $livedir/12fstab
+
+  # patch live-initramfs scripts
+  ( cd chroot/ && patch -p1 < ../patches/live-0.patch )
   
   echo I: customizing chroot
   lh_chroot_preseed || return 1
