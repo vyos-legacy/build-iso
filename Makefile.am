@@ -101,5 +101,22 @@ $(op_hyphen_all) :
 @PKG_DOT_DEB@ @PKG_DOT_CLEAN@ @PKG_DOT_CONFIGURE@ @PKG_DOT_CLEANPKG@ @PKG_DOT_MKDIST@ @PKG_DOT_MKDIST_SIGN@ :
 	@PKG_OP_ARG=$@; $(pkg_dot_op)
 
-.PHONY : git-branch git-branch-v git-clean git-clean-n git-fetch git-lsmods git-merge git-pull
-# XXX TODO git targets
+.PHONY : git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull
+git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull :
+	@for g in ./.git */*/.git; do \
+		d=$${g/\/.git/}; \
+		if [ -d "$$d" ]; then \
+			echo ========= $${d/./\/} =============; \
+			( \
+				cd "$$d"; \
+			 	case "$@" in \
+					git-branch-av ) eval "git-branch -a -v";; \
+					git-clean-n ) eval "git-clean -n";; \
+					git-lsmods ) eval "git-ls-files -m";; \
+					* ) eval "$@";; \
+				esac; \
+			); \
+		fi; \
+	done
+	
+
