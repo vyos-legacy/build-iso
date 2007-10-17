@@ -79,6 +79,12 @@ AC_ARG_WITH(all,
    fi],
   [])
 
+AC_ARG_WITH(target-dist,
+	[AS_HELP_STRING([--with-target-dist=<dist>],
+	  [Target distribution (e.g., "lenny"), default to the host distribution])],
+	[],
+	[with_target_dist=$(lsb_release -c -s)])
+
 BUILD_PKGS=
 FETCH_PKGS=
 
@@ -92,6 +98,8 @@ do
 	  BUILD_PKGS+=" $pkg"
   fi
 done
+
+TARGET_DIST="$with_target_dist"
 
 for pkg in $BUILD_PKGS; do
   PKG_DOT_DEB+=" ${pkg}.deb"
@@ -125,6 +133,7 @@ AC_SUBST(FETCH_PKGS)
 AC_SUBST(BUILD_PKGS)
 AC_SUBST(STAMPFILE)
 AC_SUBST(PKG_STAMPS)
+AC_SUBST(TARGET_DIST)
 
 AC_SUBST(PKG_DOT_DEB)
 AC_SUBST(PKG_DOT_CLEAN)

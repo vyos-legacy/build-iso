@@ -1,7 +1,5 @@
 #!/bin/sh
 
-declare bootstrap_include="locales,less"
-declare bootstrap_exclude="dhcp3-common,dhcp3-client"
 declare -a exclude_packages=( \
                             )
 declare -a include_packages=( \
@@ -11,6 +9,12 @@ declare -a local_packages=( \
                             ${BUILD_PKGS} \
                           )
 declare pkglistdir=config/chroot_local-packageslists
+
+if [ -r lh_config/${TARGET_DIST}-config ]; then
+  . lh_config/${TARGET_DIST}-config
+fi
+
+. lh_config/default-config
 
 set_conf_var ()
 {
@@ -27,8 +31,9 @@ if [ ! -d config ]; then
   echo I: configuring build
   lh_config --fakeroot --bootloader grub --bootstrap debootstrap \
     --bootstrap-flavour minimal -d ${TARGET_DIST} \
-    --mirror-bootstrap http://ftp.us.debian.org/debian/ \
-    --mirror-binary http://ftp.us.debian.org/debian/ \
+    --sections "${dist_sections}" \
+    --mirror-bootstrap ${mirror_bootstrap} \
+    --mirror-binary ${mirror_binary} \
     --memtest disabled --apt apt \
     --linux-packages "none" \
     -k "${VYATTA_LINUX_FLAVOR}" \
@@ -50,8 +55,12 @@ if [ ! -d config ]; then
   fi
  
   # set up custom pkg list(s)
+  echo "# vyatta packages" > ${pkglistdir}/vyatta-pkgs
+  cat deb_lists/default-pkglist >> ${pkglistdir}/vyatta-pkgs
   if ls deb_lists/${TARGET_DIST}-* >& /dev/null; then
-    cp deb_lists/${TARGET_DIST}-* ${pkglistdir}/
+    for list in deb_lists/${TARGET_DIST}-*; do
+      cat $list >> ${pkglistdir}/vyatta-pkgs
+    done
   fi
 fi
 
@@ -61,7 +70,6 @@ fi
 rm -rf .stage
 
 # set up packages to be fetched
-echo "# vyatta packages" > ${pkglistdir}/vyatta-pkgs
 if (( ${#include_packages[@]} > 0 )); then
   echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
 fi
@@ -98,22 +106,9 @@ build_chroot ()
   lh_chroot_linux-image install || return 1
   
   echo I: customizing live-initramfs
-  cat > chroot/etc/live.conf <<EOF
-export USERNAME=vyatta
-export USERFULLNAME=Vyatta_live
-export HOSTNAME=vyatta
-export BUILD_SYSTEM=Debian
-EOF
-  declare initramfsdir=chroot/usr/share/initramfs-tools
-  declare livedir=${initramfsdir}/scripts/live-bottom
-  declare livesavedir=${initramfsdir}/scripts/live-bottom-save
-  mkdir -p ${livesavedir}
-  for f in 10adduser 23networking 25configure_init ; do
-    [ -f $livedir/$f ] && mv $livedir/$f ${livesavedir}
-  done
-
-  # patch live-initramfs scripts
-  ( cd chroot/ && patch -p1 < ../patches/live-0.patch )
+  if [ -x live_config/${TARGET_DIST}-config ]; then
+    ./live_config/${TARGET_DIST}-config
+  fi
   
   echo I: customizing chroot
   lh_chroot_preseed || return 1

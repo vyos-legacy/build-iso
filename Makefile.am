@@ -10,7 +10,7 @@ PKG_STAMPS	= @PKG_STAMPS@
 VYATTA_LINUX_VERSION = 2.6.20-2
 VYATTA_LINUX_FLAVOR = 486
 VYATTA_LINUX_PKG = linux-image-$(VYATTA_LINUX_VERSION)-$(VYATTA_LINUX_FLAVOR)
-TARGET_DIST = lenny
+TARGET_DIST = @TARGET_DIST@
 
 op_hyphen_all	 = configure-all
 op_hyphen_all	+= clean-all

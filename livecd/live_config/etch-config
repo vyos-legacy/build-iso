@@ -1,0 +1,19 @@
+#!/bin/bash
+
+cat > chroot/etc/live.conf <<EOF
+export USERNAME=vyatta
+export USERFULLNAME=Vyatta_live
+export HOSTNAME=vyatta
+export BUILD_SYSTEM=Debian
+EOF
+
+declare initramfsdir=chroot/usr/share/initramfs-tools
+declare livedir=${initramfsdir}/scripts/live-bottom
+declare livesavedir=${initramfsdir}/scripts/live-bottom-save
+mkdir -p ${livesavedir}
+for f in 10adduser 23networking 25configure_init ; do
+  [ -f $livedir/$f ] && mv $livedir/$f ${livesavedir}
+done
+
+sed -i 's/cat > \$FSTAB <<EOF/cat >>\$FSTAB <<EOF/' $livedir/12fstab
+
