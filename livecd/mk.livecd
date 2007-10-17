@@ -183,6 +183,16 @@ fi
 EOF
 fi
 
+echo I: restoring ldd/ldconfig
+if [ -f chroot/usr/bin/ldd.REAL ]; then
+  rm -f chroot/usr/bin/ldd
+  mv chroot/usr/bin/ldd.REAL chroot/usr/bin/ldd 
+fi
+if [ -f chroot/sbin/ldconfig.REAL ]; then
+  rm -f chroot/sbin/ldconfig
+  mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
+fi
+
 echo I: building binary
 if ! lh_binary; then
   echo E: binary build failed
