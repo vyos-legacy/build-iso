@@ -1,0 +1,5 @@
+bootstrap_include="locales,less,gnupg"
+bootstrap_exclude="dhcp3-common,dhcp3-client"
+mirror_bootstrap="http://us.archive.ubuntu.com/ubuntu/"
+mirror_binary="http://us.archive.ubuntu.com/ubuntu/"
+dist_sections="main restricted universe multiverse"
