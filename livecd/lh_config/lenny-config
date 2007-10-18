@@ -1,5 +1,5 @@
 bootstrap_include="locales,less"
 bootstrap_exclude="dhcp3-common,dhcp3-client"
-mirror_bootstrap="http://ftp.us.debian.org/debian/"
-mirror_binary="http://ftp.us.debian.org/debian/"
+mirror_bootstrap="http://sydney.vyatta.com/debian/"
+mirror_binary="http://sydney.vyatta.com/debian/"
 dist_sections="main"
