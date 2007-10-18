@@ -1,2 +1,8 @@
 ssh
 parted
+libnetaddr-ip-perl
+ethtool
+tshark
+snmp
+snmpd
+vlan
