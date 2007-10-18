@@ -23,4 +23,5 @@
 /vyatta-op
 /vyatta-cfg-quagga
 /vyatta-op-quagga
+/vyatta-cfg-system
 /vyatta-config-migrate
