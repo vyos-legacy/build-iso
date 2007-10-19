@@ -1,4 +1,4 @@
-bootstrap_include="locales,less,gnupg"
+bootstrap_include="locales,less,mawk,gnupg"
 bootstrap_exclude="dhcp3-common,dhcp3-client"
 mirror_bootstrap="http://us.archive.ubuntu.com/ubuntu/"
 mirror_binary="http://us.archive.ubuntu.com/ubuntu/"
