@@ -102,8 +102,8 @@ $(op_hyphen_all) :
 @PKG_DOT_DEB@ @PKG_DOT_CLEAN@ @PKG_DOT_CONFIGURE@ @PKG_DOT_CLEANPKG@ @PKG_DOT_MKDIST@ @PKG_DOT_MKDIST_SIGN@ :
 	@PKG_OP_ARG=$@; $(pkg_dot_op)
 
-.PHONY : git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull
-git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull :
+.PHONY : git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status
+git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status :
 	@for g in ./.git */*/.git; do \
 		d=$${g/\/.git/}; \
 		if [ -d "$$d" ]; then \
@@ -118,6 +118,6 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 				esac; \
 			); \
 		fi; \
-	done
+	done || true
 	
 
