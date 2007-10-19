@@ -64,15 +64,20 @@ define mk_iso
 	export VYATTA_LINUX_VERSION="$(VYATTA_LINUX_VERSION)" && \
 	export VYATTA_LINUX_FLAVOR="$(VYATTA_LINUX_FLAVOR)" && \
 	export TARGET_DIST="$(TARGET_DIST)" && \
-	cd livecd && fakeroot fakechroot ./mk.livecd
+	cd livecd && touch .permissions && \
+	fakeroot -i .permissions -s .permissions fakechroot ./mk.livecd
 endef
 
 livecd/binary.iso : $(PKG_STAMPS)
 	@$(mk_iso)
 
+.PHONY : iso.fast
+iso.fast : $(PKG_STAMPS)
+	@export ISO_FAST=yes; $(mk_iso)
+
 .PHONY : iso.clean
 iso.clean :
-	@rm -rf livecd/{.stage,binary,binary.iso,chroot,config}
+	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config}
 
 .PHONY : iso.cleanall
 iso.cleanall : iso.clean

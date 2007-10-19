@@ -64,11 +64,6 @@ if [ ! -d config ]; then
   fi
 fi
 
-# clear .stage
-# note: this causes all steps to be re-executed. however, the bootstrap stage
-# is cached, so the bootstrap step only restores the cached stage.
-rm -rf .stage
-
 # set up packages to be fetched
 if (( ${#include_packages[@]} > 0 )); then
   echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
@@ -81,6 +76,36 @@ if (( ${#local_packages[@]} > 0 )); then
     cp -p ../*/${bpkg}*.deb config/chroot_local-packages/
   done
 fi
+
+if [ "$ISO_FAST" == "yes" ]; then
+  # do a "fast" build. just install the local packages and then do lh_binary.
+  # there may be problems if, for example, dependencies have changed, etc.
+  rm -f .stage/chroot_local-packages .stage/binary_*
+  
+  # when installing local packages, set vyatta archive priority to -1
+  # so that local packages are always installed.
+  cat >chroot/etc/apt/preferences <<'EOF'
+Package: *
+Pin: release l=Vyatta
+Pin-Priority: -1
+EOF
+  echo I: installing local packages
+  lh_chroot_local-packages || return 1
+  >chroot/etc/apt/preferences
+
+  echo I: building binary
+  if ! lh_binary; then
+    echo E: binary build failed
+    exit 1
+  fi
+
+  exit 0
+fi
+
+# clear .stage
+# note: this causes all steps to be re-executed. however, the bootstrap stage
+# is cached, so the bootstrap step only restores the cached stage.
+rm -rf .stage
 
 echo I: buidling bootstrap
 if ! lh_bootstrap; then

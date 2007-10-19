@@ -12,6 +12,7 @@
 /libtool
 
 /livecd/.lock
+/livecd/.permissions
 /livecd/.stage
 /livecd/cache
 /livecd/chroot
