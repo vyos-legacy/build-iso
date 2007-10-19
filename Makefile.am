@@ -33,7 +33,8 @@ define pkg_dot_op
 			debuild -i -uc -us -b -nc && \
 			touch ../$(STAMPFILE);; \
 		clean) \
-			debuild clean;; \
+			debuild clean && \
+			rm -f ../*.deb ../$(STAMPFILE);; \
 		cleanpkg) \
 			rm -f ../*.deb ../$(STAMPFILE);; \
 		configure) \
