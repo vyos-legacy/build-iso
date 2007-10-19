@@ -60,6 +60,18 @@ AC_ARG_WITH(vyatta-op-quagga,
 	[],
 	[with_vyatta_op_quagga=fetch])
 
+AC_ARG_WITH(vyatta-cfg-system,
+	[AS_HELP_STRING([--with-vyatta-cfg-system=fetch|yes|no (default fetch)],
+	  [Include vyatta-cfg-system (fecth: download package)])],
+	[],
+	[with_vyatta_cfg_system=fetch])
+
+AC_ARG_WITH(vyatta-config-migrate,
+	[AS_HELP_STRING([--with-vyatta-config-migrate=fetch|yes|no (default fetch)],
+	  [Include vyatta-config-migrate (fecth: download package)])],
+	[],
+	[with_vyatta_config_migrate=fetch])
+
 # kernel is always included
 AC_ARG_WITH(kernel,
 	[AS_HELP_STRING([--with-kernel=fetch|yes (default fetch)],
@@ -76,6 +88,8 @@ AC_ARG_WITH(all,
      with_vyatta_op=yes;
      with_vyatta_cfg_quagga=yes;
      with_vyatta_op_quagga=yes;
+     with_vyatta_cfg_system=yes;
+     with_vyatta_config_migrate=yes;
    fi],
   [])
 
@@ -88,7 +102,8 @@ AC_ARG_WITH(target-dist,
 BUILD_PKGS=
 FETCH_PKGS=
 
-for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga
+for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
+           vyatta-config-migrate vyatta-cfg-system
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
