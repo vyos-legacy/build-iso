@@ -62,6 +62,9 @@ if [ ! -d config ]; then
       cat $list >> ${pkglistdir}/vyatta-pkgs
     done
   fi
+
+  # set up binary hook(s)
+  cp hooks_binary/default-hooks config/binary_local-hooks/
 fi
 
 # set up packages to be fetched
