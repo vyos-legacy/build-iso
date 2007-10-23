@@ -5,6 +5,7 @@ export USERNAME=vyatta
 export USERFULLNAME=Vyatta_live
 export HOSTNAME=vyatta
 export BUILD_SYSTEM=Debian
+export QUICKREBOOT=yes
 EOF
 
 declare initramfsdir=chroot/usr/share/initramfs-tools

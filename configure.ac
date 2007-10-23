@@ -79,11 +79,11 @@ AC_ARG_WITH(kernel,
 	[with_kernel=yes],
 	[with_kernel=fetch])
 
+# with all vyatta packages (except kernel)
 AC_ARG_WITH(all,
   [AS_HELP_STRING([--with-all],
-    [build all vyatta packages locally])],
+    [build all vyatta packages locally (except kernel)])],
   [if test "$with_all" == "yes"; then
-     with_kernel=yes;
      with_vyatta_cfg=yes;
      with_vyatta_op=yes;
      with_vyatta_cfg_quagga=yes;
