@@ -1,4 +1,24 @@
-#!/bin/sh
+#!/bin/bash
+
+declare -x LH_APT
+declare -x LH_BOOTLOADER
+declare -x LH_BOOTSTRAP
+declare -x LH_BOOTSTRAP_FLAVOUR
+declare -x LH_CHROOT_FILESYSTEM
+declare -x LH_DISTRIBUTION
+declare -x LH_HOSTNAME
+declare -x LH_INITRAMFS
+declare -x LH_ISO_APPLICATION
+declare -x LH_ISO_PUBLISHER
+declare -x LH_ISO_VOLUME
+declare -x LH_LINUX_PACKAGES
+declare -x LH_LINUX_FLAVOURS
+declare -x LH_MEMTEST
+declare -x LH_MIRROR_BINARY
+declare -x LH_MIRROR_BOOTSTRAP
+declare -x LH_PACKAGES_LISTS
+declare -x LH_SECTIONS
+declare -x LH_UNION_FILESYSTEM
 
 declare -a exclude_packages=( \
                             )
@@ -16,6 +36,63 @@ fi
 
 . lh_config/default-config
 
+# process command line variable overrides
+for arg ; do
+    case "$arg" in
+	--*=* )
+	    eval "${arg#--}"
+	    ;;
+	*=* )
+	    eval "$arg"
+	    ;;
+    esac
+done
+
+# for Xen DomU target, donot use either fetched or built Vyatta kernel pkg
+# instead, use the xen kernel/module pkgs from the target distribution
+if [ -n "$XEN" ] ; then
+    for (( i=0; i<${#include_packages[@]}; i++ )) ; do
+	[[ "${include_packages[i]}" == linux-image-* ]] && \
+	    unset include_packages[i]
+    done
+    for (( i=0; i<${#local_packages[@]}; i++ )) ; do
+	[[ "${local_packages[i]}" == linux-image-* ]] && \
+	    unset local_packages[i]
+    done
+    LH_LINUX_PACKAGES=linux-image
+    LH_LINUX_FLAVOURS=xen
+fi
+
+: ${LH_APT:=apt}
+: ${LH_BOOTLOADER:=grub}
+: ${LH_BOOTSTRAP:=debootstrap}
+: ${LH_BOOTSTRAP_FLAVOUR:=minimal}
+: ${LH_CHROOT_FILESYSTEM:=squashfs}
+[[ -z "$LH_DISTRIBUTION" && -n "$TARGET_DIST" ]] && \
+    LH_DISTRIBUTION=$TARGET_DIST
+: ${LH_HOSTNAME:=vyatta}
+: ${LH_INITRAMFS:=live-initramfs}
+: ${LH_ISO_APPLICATION:="Vyatta OFR"}
+: ${LH_ISO_PUBLISHER:="Vyatta Inc.; http://www.vyatta.com/;"}
+: ${LH_ISO_VOLUME:="Vyatta OFR Live $(date +%Y%m%d-%H:%M)"}
+: ${LH_LINUX_PACKAGES:=none}
+: ${LH_LINUX_FLAVOURS:=${VYATTA_LINUX_FLAVOR}}
+: ${LH_MEMTEST:=disabled}
+[[ -z "$LH_MIRROR_BINARY" && -n "$mirror_binary" ]] && \
+    LH_MIRROR_BINARY=$mirror_binary
+[[ -z "$LH_MIRROR_BOOTSTRAP" && -n "$mirror_bootstrap" ]] && \
+    LH_MIRROR_BOOTSTRAP=$mirror_bootstrap
+: ${LH_PACKAGES_LISTS:=none}
+[[ -z "$LH_SECTIONS" && -n "$dist_sections" ]] && \
+    LH_SECTIONS=$dist_sections
+: ${LH_UNION_FILESYSTEM:=unionfs}
+
+if [[ `id -u` -ne 0 && -z "$LH_ROOT_COMMAND" ]] ; then
+    LH_OPTIONAL_FAKEROOT=--fakeroot
+else
+    LH_OPTIONAL_FAKEROOT=
+fi
+
 set_conf_var ()
 {
   local conf=$1
@@ -24,27 +101,9 @@ set_conf_var ()
   sed -i "s/^$var=\".*\"/$var=\"$val\"/" config/$conf
 }
 
-# set '--linux-packages "none"' and:
-#   if building kernel, install kernel pkg during local-packages.
-#   if fetching kernel, install kernel pkg during local-packageslists.
 if [ ! -d config ]; then
   echo I: configuring build
-  lh_config --fakeroot --bootloader grub --bootstrap debootstrap \
-    --bootstrap-flavour minimal -d ${TARGET_DIST} \
-    --sections "${dist_sections}" \
-    --mirror-bootstrap ${mirror_bootstrap} \
-    --mirror-binary ${mirror_binary} \
-    --memtest disabled --apt apt \
-    --linux-packages "none" \
-    -k "${VYATTA_LINUX_FLAVOR}" \
-    -p none \
-    --initramfs live-initramfs \
-    --union-filesystem unionfs \
-    --chroot-filesystem squashfs \
-    --hostname vyatta \
-    --iso-application "Vyatta OFR" \
-    --iso-publisher "Vyatta Inc.; http://www.vyatta.com/;" \
-    --iso-volume "Vyatta OFR Live $(date +%Y%m%d-%H:%M)"
+  lh_config ${LH_OPTIONAL_FAKEROOT}
 
   set_conf_var "bootstrap" "LH_BOOTSTRAP_INCLUDE" ${bootstrap_include}
   set_conf_var "bootstrap" "LH_BOOTSTRAP_EXCLUDE" ${bootstrap_exclude}
@@ -86,6 +145,16 @@ echo I: buidling bootstrap
 if ! lh_bootstrap; then
   echo E: bootstrap build failed
   exit 1
+fi
+
+if [ -d cache/lists ] ; then
+    echo I: Restore cached package lists
+    cp -a cache/lists chroot/var/lib/apt/
+fi
+
+if [ -n "$XEN" ] ; then
+    echo I: Disabling TLS
+    mv chroot/lib/tls chroot/lib/tls.disabled
 fi
 
 # do the steps in lh_chroot
@@ -147,7 +216,7 @@ build_chroot ()
 
 echo I: buidling chroot
 if ! build_chroot; then
-  echo E: chroot build failed && 
+  echo E: chroot build failed
   exit 1
 fi
 
@@ -192,6 +261,52 @@ if [ -f chroot/sbin/ldconfig.REAL ]; then
   rm -f chroot/sbin/ldconfig
   mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
 fi
+
+if [ -n "$XEN" ] ; then
+    echo I: complete Xen DomU setup...
+    if ! grep -q xvc0 chroot/etc/securetty ; then
+	echo I: add xvc0 to etc/securetty
+	cat <<-EOF >> chroot/etc/securetty
+
+	# XEN virtual console
+	xvc0
+	EOF
+    fi
+    if [ ! -f chroot/etc/event.d/xvc0 ] ; then
+	echo I: add xvc0 to etc/event.d
+	cat <<-EOF > chroot/etc/event.d/xvc0
+	# xvc0 - getty
+	#
+	# This service maintains a getty on xvc0 from the point the system is
+	# started until it is shut down again.
+
+	start on runlevel 2
+	start on runlevel 3
+	start on runlevel 4
+	start on runlevel 5
+
+	stop on runlevel 0
+	stop on runlevel 1
+	stop on runlevel 6
+
+	respawn
+	exec /sbin/getty 38400 xvc0
+	EOF
+    fi
+    echo I: fstab...
+    cat <<-EOF > chroot/etc/fstab
+	#<file system>	<mount point>	<type>	<options>		<dump>	<pass>
+	proc		/proc		proc	rw,nodev,nosuid,noexec	0	0
+	tmpfs	/opt/vyatta/config	tmpfs	nosuid,nodev		0	0
+	EOF
+    cat chroot/etc/fstab
+    echo I: remove init hwclock
+    rm chroot/etc/rc[S0-6].d/[SK][0-9]?hwclock*
+
+fi
+
+echo I: Cache Package files
+cp -a chroot/var/lib/apt/lists cache/
 
 echo I: building binary
 if ! lh_binary; then

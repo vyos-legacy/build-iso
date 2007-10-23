@@ -1,4 +1,8 @@
-bootstrap_include="locales,less,mawk,gnupg"
+if [ -n "$XEN" ] ; then
+    bootstrap_include="libc6-xen,less,gnupg"
+else
+    bootstrap_include="less,gnupg"
+fi
 bootstrap_exclude="dhcp3-common,dhcp3-client"
 mirror_bootstrap="http://us.archive.ubuntu.com/ubuntu/"
 mirror_binary="http://us.archive.ubuntu.com/ubuntu/"

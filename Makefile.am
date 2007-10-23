@@ -56,14 +56,19 @@ define pkg_dot_op
 endef
 
 define mk_iso
-	FETCH_PKGS="$(FETCH_PKGS)" && \
-	export FETCH_PKGS="$${FETCH_PKGS//kernel/$(VYATTA_LINUX_PKG)}" && \
-	BUILD_PKGS="$(BUILD_PKGS)" && \
-	export BUILD_PKGS="$${BUILD_PKGS//kernel/$(VYATTA_LINUX_PKG)}" && \
-	export VYATTA_LINUX_VERSION="$(VYATTA_LINUX_VERSION)" && \
-	export VYATTA_LINUX_FLAVOR="$(VYATTA_LINUX_FLAVOR)" && \
-	export TARGET_DIST="$(TARGET_DIST)" && \
-	cd livecd && fakeroot fakechroot ./mk.livecd
+	FETCH_PKGS="$(FETCH_PKGS)" ; \
+	BUILD_PKGS="$(BUILD_PKGS)" ; \
+	export	FETCH_PKGS="$${FETCH_PKGS//kernel/$(VYATTA_LINUX_PKG)}" \
+		BUILD_PKGS="$${BUILD_PKGS//kernel/$(VYATTA_LINUX_PKG)}" \
+		VYATTA_LINUX_VERSION="$(VYATTA_LINUX_VERSION)" \
+		VYATTA_LINUX_FLAVOR="$(VYATTA_LINUX_FLAVOR)" \
+		TARGET_DIST="$(TARGET_DIST)" ; \
+	cd livecd ; \
+	if [ `id -u` -eq 0 ] ; then \
+		./mk.livecd XEN=$(XEN) ; \
+	else \
+		fakeroot fakechroot ./mk.livecd XEN=$(XEN) ; \
+	fi
 endef
 
 livecd/binary.iso : $(PKG_STAMPS)
