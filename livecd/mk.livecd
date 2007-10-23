@@ -87,7 +87,8 @@ fi
     LH_SECTIONS=$dist_sections
 : ${LH_UNION_FILESYSTEM:=unionfs}
 
-if [[ `id -u` -ne 0 && -z "$LH_ROOT_COMMAND" ]] ; then
+if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
+    # we are in fakeroot
     LH_OPTIONAL_FAKEROOT=--fakeroot
 else
     LH_OPTIONAL_FAKEROOT=
