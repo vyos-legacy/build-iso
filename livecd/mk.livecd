@@ -201,6 +201,12 @@ build_chroot ()
   lh_chroot_hostname install || return 1
   lh_chroot_apt install || return 1
   lh_chroot_sources install || return 1
+
+  # disable update-initramfs so that it isnot rerun in each pkg postinst
+  # instead, run it once at the end
+  mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.real
+  ln -s ../../bin/true chroot/usr/sbin/update-initramfs
+
   lh_chroot_linux-image install || return 1
   
   echo I: customizing live-initramfs
@@ -208,6 +214,11 @@ build_chroot ()
     ./live_config/${TARGET_DIST}-config
   fi
   
+  if [ -n "$XEN" ] ; then
+      echo I: Remove initramfs console, thermal, and splash hooks
+      rm -f chroot/usr/share/initramfs-tools/hooks/{console_setup,console_tools,thermal,usplash}
+  fi
+
   echo I: customizing chroot
   lh_chroot_preseed || return 1
   lh_chroot_local-preseed || return 1
@@ -256,6 +267,11 @@ EOF
   lh_chroot_sysfs remove || return 1
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
+
+  rm -f chroot/usr/sbin/update-initramfs
+  mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
+  echo I: Update initramfs
+  chroot chroot update-initramfs -k all -c
 }
 
 echo I: buidling chroot
@@ -281,8 +297,8 @@ echo I: creating /etc/issue.net
 echo 'Welcome to Vyatta  ' > chroot/etc/issue.net
 echo I: creating /etc/fstab
 cat > chroot/etc/fstab <<EOF
-# <file system> <mount point> <type>  <options> <dump>  <pass>
-tmpfs /opt/vyatta/config tmpfs nosuid,nodev 0 0
+# <file system>	<mount point>		<type>  <options>	<dump>  <pass>
+tmpfs		/opt/vyatta/config	tmpfs	nosuid,nodev	0	0
 EOF
 
 if ! grep -q '/etc/bash_completion' chroot/root/.bashrc; then
@@ -307,46 +323,23 @@ if [ -f chroot/sbin/ldconfig.REAL ]; then
 fi
 
 if [ -n "$XEN" ] ; then
-    echo I: complete Xen DomU setup...
-    if ! grep -q xvc0 chroot/etc/securetty ; then
-	echo I: add xvc0 to etc/securetty
-	cat <<-EOF >> chroot/etc/securetty
+    echo I: Complete Xen DomU setup...
+    echo I: Remove hwclock and non-serial console init
+    rm -f chroot/etc/rcS.d/S*{hwclock*,keyboard-setup,console-setup,console-screen.sh}
+fi
 
-	# XEN virtual console
-	xvc0
+if [ ! -r chroot/etc/default/locale ] ; then
+    echo I: Set default locale
+    cat <<-EOF >chroot/etc/default/locale
+	LANG=en_US.UTF-8
+	LC_ALL=C
 	EOF
-    fi
-    if [ ! -f chroot/etc/event.d/xvc0 ] ; then
-	echo I: add xvc0 to etc/event.d
-	cat <<-EOF > chroot/etc/event.d/xvc0
-	# xvc0 - getty
-	#
-	# This service maintains a getty on xvc0 from the point the system is
-	# started until it is shut down again.
+fi
 
-	start on runlevel 2
-	start on runlevel 3
-	start on runlevel 4
-	start on runlevel 5
-
-	stop on runlevel 0
-	stop on runlevel 1
-	stop on runlevel 6
-
-	respawn
-	exec /sbin/getty 38400 xvc0
-	EOF
-    fi
-    echo I: fstab...
-    cat <<-EOF > chroot/etc/fstab
-	#<file system>	<mount point>	<type>	<options>		<dump>	<pass>
-	proc		/proc		proc	rw,nodev,nosuid,noexec	0	0
-	tmpfs	/opt/vyatta/config	tmpfs	nosuid,nodev		0	0
-	EOF
-    cat chroot/etc/fstab
-    echo I: remove init hwclock
-    rm chroot/etc/rc[S0-6].d/[SK][0-9]?hwclock*
-
+if [ -r chroot/etc/event.d/tty1 ] ; then
+    echo I: Delay getty until rcX completes
+    sed -i 's/start on runlevel /start on stopped rc/' \
+	chroot/etc/event.d/tty[1-6]
 fi
 
 echo I: Cache Package files
