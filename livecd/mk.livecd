@@ -217,6 +217,7 @@ build_chroot ()
   if [ -n "$XEN" ] ; then
       echo I: Remove initramfs console, thermal, and splash hooks
       rm -f chroot/usr/share/initramfs-tools/hooks/{console_setup,console_tools,thermal,usplash}
+      rm -f chroot/usr/share/initramfs-tools/scripts/init-top/{framebuffer,console_setup}
   fi
 
   echo I: customizing chroot
@@ -272,7 +273,7 @@ EOF
   mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
   echo I: Update initramfs
   rm -f chroot/boot/initrd.img*
-  chroot chroot update-initramfs -k all -c
+  chroot chroot update-initramfs -t -u
 }
 
 echo I: buidling chroot
