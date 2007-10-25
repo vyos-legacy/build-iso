@@ -12,7 +12,7 @@ declare initramfsdir=chroot/usr/share/initramfs-tools
 declare livedir=${initramfsdir}/scripts/live-bottom
 declare livesavedir=${initramfsdir}/scripts/live-bottom-save
 mkdir -p ${livesavedir}
-for f in 10adduser 23networking 25configure_init ; do
+for f in 10adduser 18hostname 23networking 25configure_init ; do
   [ -f $livedir/$f ] && mv $livedir/$f ${livesavedir}
 done
 
