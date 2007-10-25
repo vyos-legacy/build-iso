@@ -271,6 +271,7 @@ EOF
   rm -f chroot/usr/sbin/update-initramfs
   mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
   echo I: Update initramfs
+  rm -f chroot/boot/initrd.img*
   chroot chroot update-initramfs -k all -c
 }
 
