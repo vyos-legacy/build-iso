@@ -327,7 +327,7 @@ fi
 if [ -n "$XEN" ] ; then
     echo I: Complete Xen DomU setup...
     echo I: Remove hwclock and non-serial console init
-    rm -f chroot/etc/rcS.d/S*{hwclock*,keyboard-setup,console-setup,console-screen.sh}
+    rm -f chroot/etc/rc?.d/[SK]*{hwclock*,keyboard-setup,console-setup,console-screen.sh}
 fi
 
 if [ ! -r chroot/etc/default/locale ] ; then
