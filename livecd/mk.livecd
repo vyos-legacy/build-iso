@@ -153,12 +153,12 @@ if [ "$ISO_FAST" == "yes" ]; then
   # there may be problems if, for example, dependencies have changed, etc.
   rm -f .stage/chroot_local-packages .stage/binary_*
   
-  # when installing local packages, set vyatta archive priority to -1
-  # so that local packages are always installed.
+  # set vyatta archive priority to 50 so that remote packages are only
+  # installed if not already installed locally.
   cat >chroot/etc/apt/preferences <<'EOF'
 Package: *
 Pin: release l=Vyatta
-Pin-Priority: -1
+Pin-Priority: 50
 EOF
   echo I: installing local packages
   lh_chroot_local-packages || return 1
@@ -233,21 +233,14 @@ build_chroot ()
   lh_chroot_packages || return 1
  
   # we do local packages first since they are "newer".
-  # when installing local packages, set vyatta archive priority to -1
-  # so that local packages are always installed.
-  cat >chroot/etc/apt/preferences <<'EOF'
-Package: *
-Pin: release l=Vyatta
-Pin-Priority: -1
-EOF
-  lh_chroot_local-packages || return 1
-  # now set vyatta archive priority to 50 so that packages there will be
-  # installed if not installed locally
+  # set vyatta archive priority to 50 so that remote packages are only
+  # installed if not already installed locally.
   cat >chroot/etc/apt/preferences <<'EOF'
 Package: *
 Pin: release l=Vyatta
 Pin-Priority: 50
 EOF
+  lh_chroot_local-packages || return 1
   lh_chroot_local-packageslists || return 1
   >chroot/etc/apt/preferences
 
