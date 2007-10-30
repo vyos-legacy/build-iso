@@ -1,0 +1,5 @@
+grep -q '\(^[^#]*\)\(\.\|source\) /etc/bash_completion' root/.bashrc || \
+    cat <<-EOF >> root/.bashrc
+
+	source /etc/bash_completion
+	EOF

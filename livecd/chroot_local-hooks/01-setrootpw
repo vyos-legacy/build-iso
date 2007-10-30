@@ -1,0 +1,2 @@
+echo I: Setting root password to \"vyatta\"
+echo root:vyatta | chpasswd

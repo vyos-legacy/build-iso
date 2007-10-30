@@ -1,6 +1,7 @@
 #!/bin/bash
 
 declare -x LH_APT
+declare -x LH_BOOTAPPEND_LIVE
 declare -x LH_BOOTLOADER
 declare -x LH_BOOTSTRAP
 declare -x LH_BOOTSTRAP_FLAVOUR
@@ -61,9 +62,11 @@ if [ -n "$XEN" ] ; then
     done
     LH_LINUX_PACKAGES=linux-image
     LH_LINUX_FLAVOURS=xen
+    LH_BOOTAPPEND_LIVE=noautologin
 fi
 
 : ${LH_APT:=apt}
+: ${LH_BOOTAPPEND_LIVE:=noautologin nonetworking}
 : ${LH_BOOTLOADER:=grub}
 : ${LH_BOOTSTRAP:=debootstrap}
 : ${LH_BOOTSTRAP_FLAVOUR:=minimal}
@@ -125,11 +128,16 @@ if [ ! -d config ]; then
 
   # set up binary hook(s)
   cp hooks_binary/default-hooks config/binary_local-hooks/
-fi
 
-# set up packages to be fetched
-if (( ${#include_packages[@]} > 0 )); then
-  echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
+  # set up packages to be fetched
+  if (( ${#include_packages[@]} > 0 )); then
+    echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
+  fi
+
+  # and add packages to be removed
+  for x in ${exclude_packages[@]} ; do
+    echo $x- >>${pkglistdir}/vyatta-excluded-pkgs
+  done
 fi
 
 # set up locally-built packages
@@ -186,6 +194,9 @@ if [ -n "$XEN" ] ; then
     mv chroot/lib/tls chroot/lib/tls.disabled
 fi
 
+cp chroot_local-hooks/*[^~] config/chroot_local-hooks/
+[ -n "$XEN" ] || rm -f config/chroot_local-hooks/*xen*
+
 # do the steps in lh_chroot
 build_chroot ()
 {
@@ -214,12 +225,6 @@ build_chroot ()
     ./live_config/${TARGET_DIST}-config
   fi
   
-  if [ -n "$XEN" ] ; then
-      echo I: Remove initramfs console, thermal, and splash hooks
-      rm -f chroot/usr/share/initramfs-tools/hooks/{console_setup,console_tools,thermal,usplash}
-      rm -f chroot/usr/share/initramfs-tools/scripts/init-top/{framebuffer,console_setup}
-  fi
-
   echo I: customizing chroot
   lh_chroot_preseed || return 1
   lh_chroot_local-preseed || return 1
@@ -269,6 +274,11 @@ EOF
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
 
+  echo I: Adding live-bottom/*[^~]
+  cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
+  echo I: Adding local-bottom/*[^~]
+  cp local-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/local-bottom/
+
   rm -f chroot/usr/sbin/update-initramfs
   mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
   echo I: Update initramfs
@@ -282,38 +292,6 @@ if ! build_chroot; then
   exit 1
 fi
 
-echo I: removing excluded packages
-if (( ${#exclude_packages[@]} > 0 )); then
-  chroot chroot apt-get -y --force-yes remove ${exclude_packages[@]}
-fi
-
-echo I: setting root password to vyatta
-sed -i 's/root::/root:$1$Tulceur3$8MsrChto8vS7Q6XkZGM0k1:/' chroot/etc/shadow
-echo I: setting default hostname to vyatta
-echo vyatta > chroot/etc/hostname
-echo I: resetting /etc/resolv.conf
->chroot/etc/resolv.conf
-echo I: creating /etc/issue
-echo 'Welcome to Vyatta - \n \l' > chroot/etc/issue
-echo I: creating /etc/issue.net
-echo 'Welcome to Vyatta  ' > chroot/etc/issue.net
-echo I: creating /etc/fstab
-cat > chroot/etc/fstab <<EOF
-# <file system>	<mount point>		<type>  <options>	<dump>  <pass>
-tmpfs		/opt/vyatta/config	tmpfs	nosuid,nodev	0	0
-EOF
-
-if ! grep -q '/etc/bash_completion' chroot/root/.bashrc; then
-  # enable completion for root (enabled by default for other users)
-  cat <<'EOF' >> chroot/root/.bashrc
-
-# enable programmable completion features (needed for CLI auto-completion)
-if [ -f /etc/bash_completion ]; then
-  . /etc/bash_completion
-fi
-EOF
-fi
-
 echo I: restoring ldd/ldconfig
 if [ -f chroot/usr/bin/ldd.REAL ]; then
   rm -f chroot/usr/bin/ldd
@@ -322,26 +300,6 @@ fi
 if [ -f chroot/sbin/ldconfig.REAL ]; then
   rm -f chroot/sbin/ldconfig
   mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
-fi
-
-if [ -n "$XEN" ] ; then
-    echo I: Complete Xen DomU setup...
-    echo I: Remove hwclock and non-serial console init
-    rm -f chroot/etc/rc?.d/[SK]*{hwclock*,keyboard-setup,console-setup,console-screen.sh}
-fi
-
-if [ ! -r chroot/etc/default/locale ] ; then
-    echo I: Set default locale
-    cat <<-EOF >chroot/etc/default/locale
-	LANG=en_US.UTF-8
-	LC_ALL=C
-	EOF
-fi
-
-if [ -r chroot/etc/event.d/tty1 ] ; then
-    echo I: Delay getty until rcX completes
-    sed -i 's/start on runlevel /start on stopped rc/' \
-	chroot/etc/event.d/tty[1-6]
 fi
 
 echo I: Cache Package files

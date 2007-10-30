@@ -1,20 +1,13 @@
 #!/bin/bash
 
 cat > chroot/etc/live.conf <<EOF
-export USERNAME=vyatta
-export USERFULLNAME=Vyatta_live
-export HOSTNAME=vyatta
-export BUILD_SYSTEM=Debian
-export QUICKREBOOT=yes
+USERNAME=vyatta
+USERFULLNAME=Vyatta_live
+HOSTNAME=vyatta
+BUILD_SYSTEM=Debian
+QUICKREBOOT=yes
+export USERNAME USERFULLNAME HOSTNAME BUILD_SYSTEM QUICKREBOOT
 EOF
-
-declare initramfsdir=chroot/usr/share/initramfs-tools
-declare livedir=${initramfsdir}/scripts/live-bottom
-declare livesavedir=${initramfsdir}/scripts/live-bottom-save
-mkdir -p ${livesavedir}
-for f in 10adduser 18hostname 23networking 25configure_init ; do
-  [ -f $livedir/$f ] && mv $livedir/$f ${livesavedir}
-done
 
 # patch live-initramfs scripts
 ( cd chroot/ && patch -p1 < ../patches/lenny-live-0.patch )
