@@ -1,2 +1,4 @@
+#!/bin/bash
+
 echo I: Autoremove unneeded packages...
 apt-get --yes autoremove
