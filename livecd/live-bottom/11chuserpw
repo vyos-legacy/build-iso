@@ -1,2 +1,0 @@
-. /root/etc/live.conf
-echo $USERNAME:vyatta | chroot /root chpasswd                                                                                                                  

@@ -66,7 +66,7 @@ if [ -n "$XEN" ] ; then
 fi
 
 : ${LH_APT:=apt}
-: ${LH_BOOTAPPEND_LIVE:=noautologin nonetworking}
+: ${LH_BOOTAPPEND_LIVE:=noautologin nonetworking nouser}
 : ${LH_BOOTLOADER:=grub}
 : ${LH_BOOTSTRAP:=debootstrap}
 : ${LH_BOOTSTRAP_FLAVOUR:=minimal}
@@ -136,7 +136,7 @@ if [ ! -d config ]; then
 
   # and add packages to be removed
   for x in ${exclude_packages[@]} ; do
-    echo $x- >>${pkglistdir}/vyatta-excluded-pkgs
+    echo $x- >>${pkglistdir}/vyatta-pkgs
   done
 fi
 
@@ -269,8 +269,6 @@ EOF
 
   echo I: Adding live-bottom/*[^~]
   cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
-  echo I: Adding local-bottom/*[^~]
-  cp local-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/local-bottom/
 
   rm -f chroot/usr/sbin/update-initramfs
   mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs

@@ -1,12 +1,10 @@
 #!/bin/bash
 
 cat > chroot/etc/live.conf <<EOF
-USERNAME=vyatta
-USERFULLNAME=Vyatta_live
 HOSTNAME=vyatta
 BUILD_SYSTEM=Ubuntu
 QUICKREBOOT=yes
-export USERNAME USERFULLNAME HOSTNAME BUILD_SYSTEM QUICKREBOOT
+export HOSTNAME BUILD_SYSTEM QUICKREBOOT
 EOF
 
 # patch live-initramfs scripts

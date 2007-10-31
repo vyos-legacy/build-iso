@@ -3,3 +3,11 @@
 : ${mirror_bootstrap:=http://ftp.us.debian.org/debian/}
 : ${mirror_binary:=http://ftp.us.debian.org/debian/}
 : ${dist_sections:=main}
+[ ${#exclude_packages[@]} -eq 0 ] && \
+    exclude_packages=(
+	exim4-daemon-light
+	exim4-config
+	exim4-base
+	exim4
+	mailx
+	mail-transport-agent )
