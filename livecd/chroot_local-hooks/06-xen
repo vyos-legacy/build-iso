@@ -1,18 +1,16 @@
 #!/bin/bash
 
+shopt -s nullglob
+
 echo I: Remove initramfs console, thermal, and splash hooks
-rm -f usr/share/initramfs-tools/hooks/console_setup 
-rm -f usr/share/initramfs-tools/hooks/console_tools 
-rm -f usr/share/initramfs-tools/hooks/thermal 
-rm -f usr/share/initramfs-tools/hooks/usplash
-rm -f usr/share/initramfs-tools/scripts/init-top/framebuffer 
-rm -f usr/share/initramfs-tools/scripts/init-top/console_setup 
+rm -f usr/share/initramfs-tools/hooks/{console_*,thermal,usplash}
+rm -f usr/share/initramfs-tools/scripts/init-top/{framebuffer,console_setup}
 
 echo I: Remove hwclock and non-serial console init
-rm -f etc/rc?.d/[SK]*hwclock*
-rm -f etc/rc?.d/[SK]*keyboard-setup
-rm -f etc/rc?.d/[SK]*console-setup
-rm -f etc/rc?.d/[SK]*console-screen.sh
+rm -f etc/rc?.d/[SK]*{hwclock*,keyboard-setup,console-*}
+
+echo I: Remove hwclock udev rule
+rm -f etc/udev/rules.d/85-hwclock.rules
 
 # echo I: Enable Verbose init
 # sed -i 's/^\(VERBOSE\)=no/\1=yes/' etc/default/rcS
