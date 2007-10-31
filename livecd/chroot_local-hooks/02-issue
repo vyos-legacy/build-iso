@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo I: Rewriting /etc/issue and /etc/issue.net
 cat <<EOF > etc/issue
 Welcome to Vyatta - \n \l

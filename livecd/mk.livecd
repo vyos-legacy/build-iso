@@ -129,6 +129,9 @@ if [ ! -d config ]; then
   # set up binary hook(s)
   cp hooks_binary/default-hooks config/binary_local-hooks/
 
+  # set up grub template
+  cp templates/grub/menu.lst config/binary_grub/
+
   # set up packages to be fetched
   if (( ${#include_packages[@]} > 0 )); then
     echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
