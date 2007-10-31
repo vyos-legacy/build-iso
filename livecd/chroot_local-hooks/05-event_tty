@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -r etc/event.d/tty1 ] ; then
     echo I: Delay getty until rcX completes
     sed -i 's/start on runlevel /start on stopped rc/' \

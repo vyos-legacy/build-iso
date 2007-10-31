@@ -1,15 +1,2 @@
 #!/bin/bash
 
-LVER=${VYATTA_LINUX_VERSION}-${VYATTA_LINUX_FLAVOR}
-
-cat >binary/boot/grub/menu.lst <<EOF
-default 0
-timeout 3
-color cyan/blue white/blue
-splashimage /boot/grub/splash.xpm.gz
-
-title Vyatta OFR Live
-  kernel /live/vmlinuz-${LVER} boot=live hostname=vyatta
-  initrd /live/initrd.img-${LVER}
-EOF
-
