@@ -7,3 +7,5 @@ snmp
 snmpd
 vlan
 grub
+tcpdump
+ntpdate
