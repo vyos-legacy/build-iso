@@ -300,7 +300,10 @@ echo I: Cache Package files
 cp -a chroot/var/lib/apt/lists cache/
 
 declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
-echo var/lib/apt/lists	 > chroot/tmp/mksquashfs.exclude
+>chroot/tmp/mksquashfs.exclude
+for b in chroot/var/lib/apt/lists/*_dists_* ; do
+    echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
+done
 for b in chroot/boot/{vmlinuz-*,initrd.img-*} ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
