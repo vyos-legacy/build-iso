@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 declare -x LH_APT
 declare -x LH_BOOTAPPEND_LIVE
 declare -x LH_BOOTLOADER
