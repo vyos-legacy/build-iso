@@ -1,1 +1,0 @@
-mount -o nosuid,nodev -t tmpfs none /root/opt/vyatta/config
