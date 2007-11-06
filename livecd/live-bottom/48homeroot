@@ -1,0 +1,7 @@
+if grep -q home-rw /proc/cmdline &>/dev/null ; then
+   [ -d root/home/root ] || mkdir -p root/home/root
+   for f in .profile .bashrc ; do
+       [ -r root/$f ] || cp root/etc/skel/$f root/home/root
+   done
+   chroot /root mount -o bind /home/root /root
+fi
