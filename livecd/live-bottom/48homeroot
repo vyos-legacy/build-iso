@@ -1,7 +1,9 @@
-if grep -q home-rw /proc/cmdline &>/dev/null ; then
+# if home is persistent, remap ~root (i.e. /root) to /home/root
+if egrep -q '/home.*rw' /proc/mounts ; then
    [ -d root/home/root ] || mkdir -p root/home/root
-   for f in .profile .bashrc ; do
-       [ -r root/$f ] || cp root/etc/skel/$f root/home/root
+   for f in .profile .bash_profile .bashrc ; do
+       [ -r root/root/$f ] && [ ! -r root/home/root/$f ] && \
+	   cp root/root/$f root/home/root
    done
    chroot /root mount -o bind /home/root /root
 fi
