@@ -41,7 +41,7 @@ for pkg in $@; do
   targetdir="$pkg/$pkg"
   [ -d $targetdir ] && continue
 
-  git-clone -q "$VYATTA_URL/$repo" $targetdir
+  git-clone -q "$VYATTA_URL/$repo".git $targetdir
 
   (
 	cd $targetdir
