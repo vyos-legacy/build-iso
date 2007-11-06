@@ -8,5 +8,7 @@ export HOSTNAME BUILD_SYSTEM QUICKREBOOT
 EOF
 
 # patch live-initramfs scripts
-( cd chroot/ && patch -p1 < ../patches/lenny-live-0.patch )
+( cd chroot/ && \
+    patch -p1 < ../patches/lenny-live-0.patch && \
+    patch -p1 < ../patches/gutsy-umountfs-0.patch )
 

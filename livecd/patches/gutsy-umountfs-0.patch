@@ -1,0 +1,27 @@
+*** chroot.0/etc/init.d/umountfs	2007-11-05 15:36:42.000000000 -0800
+--- chroot/etc/init.d/umountfs	2007-11-05 15:00:55.000000000 -0800
+***************
+*** 71,81 ****
+  			;;
+  		esac
+  		case "$FSTYPE" in 
+! 		  proc|procfs|linprocfs|devfs|sysfs|usbfs|usbdevfs|devpts)
+  			continue
+  			;;
+  		  tmpfs)
+! 			if [ -d "$MTPT" ]; then
+  				TMPFS_MTPTS="$TMPFS_MTPTS $MTPT"
+  			fi
+  			;;
+--- 71,81 ----
+  			;;
+  		esac
+  		case "$FSTYPE" in 
+! 		  proc|procfs|linprocfs|devfs|sysfs|usbfs|usbdevfs|devpts|squashfs|iso9660)
+  			continue
+  			;;
+  		  tmpfs)
+! 			if [ -d "$MTPT" ] && [ "$DEV" != "unionfs" ]; then
+  				TMPFS_MTPTS="$TMPFS_MTPTS $MTPT"
+  			fi
+  			;;
