@@ -2,12 +2,16 @@
 
 shopt -s nullglob
 
-echo I: Remove initramfs console, thermal, and splash hooks
-rm -f usr/share/initramfs-tools/hooks/{console_*,thermal,usplash}
-rm -f usr/share/initramfs-tools/scripts/init-top/{framebuffer,console_setup}
+echo I: Disable video console
+cat <<EOF > etc/default/console-setup
+ACTIVE_CONSOLES=''
+EOF
 
-echo I: Remove hwclock and non-serial console init
-rm -f etc/rc?.d/[SK]*{hwclock*,keyboard-setup,console-*}
+echo I: Remove initramfs thermal hook
+rm -f usr/share/initramfs-tools/hooks/thermal
+
+echo I: Remove hwclock
+rm -f etc/rc?.d/[SK]*hwclock*
 
 echo I: Remove hwclock udev rule
 rm -f etc/udev/rules.d/85-hwclock.rules
