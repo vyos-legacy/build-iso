@@ -1,21 +1,59 @@
-#!/bin/sh
+#!/bin/sh -x
+# Module: pkg-clone
+# 
+# **** License ****
+# Version: VPL 1.0
+# 
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+# 
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+# 
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+# 
+# Author: Tom Grennan
+# Date: 2007
+# Description:
+# 
+# **** End License ****
+# 
+# 
+
+[ "$VYATTA_URL" ] || VYATTA_URL=http://phuket.vyatta.com
+
+ofr_head=`git-branch|grep '^\*'|sed 's/..//'`
 
 for pkg in $@; do
   echo cloning $pkg...
-  case "$pkg" in
-    kernel )
-      url=http://phuket.vyatta.com/linux-eureka.git
-      ;;
-    * )
-      url=http://phuket.vyatta.com/$pkg.git
-      ;; 
-  esac
+  repo="$pkg"
+
+  # special case for kernel repo
+  [ "$repo" = kernel ] && repo=linux-eureka
+
   mkdir -p $pkg
   targetdir="$pkg/$pkg"
   [ -d $targetdir ] && continue
 
-  git-clone -q $url $targetdir &
+  git-clone -q "$VYATTA_URL/$repo".git $targetdir
+
+  (
+	cd $targetdir
+	    if [ "$ofr_head" != "master" -a -f ".git/refs/remotes/origin/$ofr_head" ]
+	    then
+		git-checkout -b "$ofr_head" "remotes/origin/$ofr_head"
+		git-config "branch.$ofr_head.remote" origin
+		git-config "branch.$ofr_head.merge" "refs/heads/$ofr_head"
+	    else
+		git-checkout master
+	    fi &&
+            echo $targetdir branches: &&
+            (git-branch -a 2>/dev/null || true)
+  )
 done
-
-wait
-
