@@ -125,6 +125,10 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 					git-branch-av ) eval "git-branch -a -v";; \
 					git-clean-n ) eval "git-clean -n";; \
 					git-lsmods ) eval "git-ls-files -m";; \
+					git-fetch )	git-fetch -q 2>/dev/null; \
+							branch=`git-branch|grep '^\* '|sed 's/..//'`; \
+							git-branch -a -v|grep "$$branch[ 	]"; \
+							;; \
 					* ) eval "$@";; \
 				esac; \
 			); \
