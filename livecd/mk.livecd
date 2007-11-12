@@ -220,8 +220,10 @@ build_chroot ()
 
   # disable update-initramfs so that it isnot rerun in each pkg postinst
   # instead, run it once at the end
-  mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.real
-  ln -s ../../bin/true chroot/usr/sbin/update-initramfs
+  if [ -x chroot/usr/sbin/update-initramfs ] ; then
+    mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.real
+    ln -s ../../bin/true chroot/usr/sbin/update-initramfs
+  fi
 
   lh_chroot_linux-image install || return 1
   
@@ -275,11 +277,13 @@ EOF
   echo I: Adding live-bottom/*[^~]
   cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
 
-  rm -f chroot/usr/sbin/update-initramfs
-  mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
-  echo I: Update initramfs
-  rm -f chroot/boot/initrd.img*
-  chroot chroot update-initramfs -t -u
+  if [ -x chroot/usr/sbin/update-initramfs.real ] ; then
+    rm -f chroot/usr/sbin/update-initramfs
+    mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
+    echo I: Update initramfs
+    rm -f chroot/boot/initrd.img*
+    chroot chroot update-initramfs -t -u
+  fi
 }
 
 echo I: buidling chroot
