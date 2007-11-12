@@ -2,6 +2,8 @@ default 0
 timeout 3
 color cyan/blue white/blue
 splashimage /boot/grub/splash.xpm.gz
+serial --unit=0 --speed=9600 --word=8 --parity=no --stop=1
+terminal --timeout=10 --dumb serial console
 
 LINUX_LIVE
 

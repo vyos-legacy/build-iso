@@ -4,4 +4,31 @@ if [ -r etc/event.d/tty1 ] ; then
     echo I: Delay getty until rcX completes
     sed -i 's/start on runlevel /start on stopped rc/' \
 	etc/event.d/tty[1-6]
+    if [ ! -r etc/event.d/ttyS0 ] ; then
+	echo I: Enable serial console login
+	cat <<-EOF > etc/event.d/ttyS0
+	# ttyS0 - getty
+	#
+	# This service maintains a getty on ttyS0 from the point the system is
+	# started until it is shut down again.
+
+	start on stopped rc2
+	start on stopped rc3
+	start on stopped rc4
+	start on stopped rc5
+
+	stop on runlevel 0
+	stop on runlevel 1
+	stop on runlevel 6
+
+	respawn
+	exec /sbin/getty 9600 tty1
+
+	EOF
+    fi
+fi
+
+if [ -r etc/inittab ] && grep -q '^#T0:.*getty.*ttyS0' etc/inittab ; then
+    echo I: Enable serial console login
+    sed -i '/^#T0:/s/^#//' etc/inittab
 fi

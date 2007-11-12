@@ -64,11 +64,11 @@ if [ -n "$XEN" ] ; then
     done
     LH_LINUX_PACKAGES=linux-image
     LH_LINUX_FLAVOURS=xen
-    LH_BOOTAPPEND_LIVE=noautologin
+    LH_BOOTAPPEND_LIVE='console=tty0 console=ttyS0,9600n8 persistent noautologin'
 fi
 
 : ${LH_APT:=apt}
-: ${LH_BOOTAPPEND_LIVE:=noautologin nonetworking nouser}
+: ${LH_BOOTAPPEND_LIVE:=console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser}
 : ${LH_BOOTLOADER:=grub}
 : ${LH_BOOTSTRAP:=debootstrap}
 : ${LH_BOOTSTRAP_FLAVOUR:=minimal}
