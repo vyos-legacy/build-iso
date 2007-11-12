@@ -9,6 +9,7 @@ EOF
 
 # patch live-initramfs scripts
 ( cd chroot/ && \
-    patch -p1 < ../patches/lenny-live-0.patch && \
-    patch -p1 < ../patches/gutsy-umountfs-0.patch )
+    for patch in ../patches/gutsy-*.patch ; do \
+	patch -p1 < $patch ; \
+    done )
 
