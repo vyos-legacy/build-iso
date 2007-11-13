@@ -94,7 +94,7 @@ fi
 
 if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
     # we are in fakeroot
-    LH_OPTIONAL_FAKEROOT=--fakeroot
+    LH_OPTIONAL_FAKEROOT="--use-fakeroot enabled"
 else
     LH_OPTIONAL_FAKEROOT=
 fi
