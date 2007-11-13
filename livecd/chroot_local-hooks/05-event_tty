@@ -22,7 +22,7 @@ if [ -r etc/event.d/tty1 ] ; then
 	stop on runlevel 6
 
 	respawn
-	exec /sbin/getty 115200,57600,38400,19200,9600 ttS0
+	exec /sbin/getty 115200,57600,38400,19200,9600 ttyS0 vt100
 
 	EOF
     fi
