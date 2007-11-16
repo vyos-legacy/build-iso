@@ -18,6 +18,7 @@
 /livecd/chroot
 /livecd/config
 /livecd/binary*
+/livecd/iso-label
 
 /kernel
 /vyatta-cfg
@@ -26,3 +27,4 @@
 /vyatta-op-quagga
 /vyatta-cfg-system
 /vyatta-config-migrate
+/vyatta-bash

@@ -64,11 +64,11 @@ if [ -n "$XEN" ] ; then
     done
     LH_LINUX_PACKAGES=linux-image
     LH_LINUX_FLAVOURS=xen
-    LH_BOOTAPPEND_LIVE=noautologin
+    LH_BOOTAPPEND_LIVE='console=tty0 console=ttyS0,115200n8 persistent noautologin'
 fi
 
 : ${LH_APT:=apt}
-: ${LH_BOOTAPPEND_LIVE:=noautologin nonetworking nouser}
+: ${LH_BOOTAPPEND_LIVE:=console=tty0 console=ttyS0,115200n8 persistent noautologin nonetworking nouser}
 : ${LH_BOOTLOADER:=grub}
 : ${LH_BOOTSTRAP:=debootstrap}
 : ${LH_BOOTSTRAP_FLAVOUR:=minimal}
@@ -92,9 +92,17 @@ fi
     LH_SECTIONS=$dist_sections
 : ${LH_UNION_FILESYSTEM:=unionfs}
 
+: ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
+: ${HUMANTIME:=$(date -u)}
+: ${BUILDID:=$(tools/buildid)}
+: ${CDLABEL:=$TIMESTAMP$BUILDID}
+: ${LIVECD:=livecd/livecd_$CDLABEL.iso}
+: ${BUILDFILE:=/opt/vyatta/etc/build.txt}
+: ${STAGEBUILDFILE=chroot/$BUILDFILE}
+
 if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
     # we are in fakeroot
-    LH_OPTIONAL_FAKEROOT=--fakeroot
+    LH_OPTIONAL_FAKEROOT="--use-fakeroot enabled"
 else
     LH_OPTIONAL_FAKEROOT=
 fi
@@ -145,6 +153,20 @@ if [ ! -d config ]; then
   done
 fi
 
+# create the buildid file
+mk_buildid ()
+{
+  mkdir -p `dirname $STAGEBUILDFILE`
+  rm -f $STAGEBUILDFILE
+  : ${BUILTBY=$GIT_COMMITTER_EMAIL}
+  test $BUILTBY || BUILTBY=$GIT_AUTHOR_EMAIL
+  test $BUILTBY || BUILTBY=$USER@$ORGANIZATION
+  echo "Built by:    $BUILTBY"	>> $STAGEBUILDFILE
+  echo "Built on:    $HUMANTIME"   >> $STAGEBUILDFILE
+  echo "Build ID:    $CDLABEL"     >> $STAGEBUILDFILE
+  echo "$CDLABEL">iso-label
+}
+
 # set up locally-built packages
 rm -f config/chroot_local-packages/*
 if (( ${#local_packages[@]} > 0 )); then
@@ -168,6 +190,8 @@ EOF
   echo I: installing local packages
   lh_chroot_local-packages || return 1
   >chroot/etc/apt/preferences
+
+  mk_buildid
 
   echo I: building binary
   if ! lh_binary; then
@@ -220,8 +244,10 @@ build_chroot ()
 
   # disable update-initramfs so that it isnot rerun in each pkg postinst
   # instead, run it once at the end
-  mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.real
-  ln -s ../../bin/true chroot/usr/sbin/update-initramfs
+  if [ -x chroot/usr/sbin/update-initramfs ] ; then
+    mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.real
+    ln -s ../../bin/true chroot/usr/sbin/update-initramfs
+  fi
 
   lh_chroot_linux-image install || return 1
   
@@ -275,11 +301,18 @@ EOF
   echo I: Adding live-bottom/*[^~]
   cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
 
-  rm -f chroot/usr/sbin/update-initramfs
-  mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
-  echo I: Update initramfs
-  rm -f chroot/boot/initrd.img*
-  chroot chroot update-initramfs -t -u
+  if [ -x chroot/usr/sbin/update-initramfs.real ] ; then
+    rm -f chroot/usr/sbin/update-initramfs
+    mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
+    echo I: Update initramfs
+    rm -f chroot/boot/initrd.img*
+    chroot chroot update-initramfs -t -u
+  fi
+  echo I: generating package list
+  cp tools/save-package-report chroot/opt/vyatta/bin
+  chroot chroot /bin/sh /opt/vyatta/bin/save-package-report
+  rm chroot/opt/vyatta/bin/save-package-report
+  mk_buildid
 }
 
 echo I: buidling chroot

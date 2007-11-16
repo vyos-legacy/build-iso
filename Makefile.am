@@ -85,8 +85,17 @@ iso.fast : $(PKG_STAMPS)
 iso.clean :
 	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock}
 
+.PHONY : iso.cleanstage
+iso.cleanstage : iso.clean
+	@rm -rf livecd/cache/stage*
+
+.PHONY : iso.cleanmsgq
+iso.cleanmsgq :
+	@ipcs -q | awk '{print $$2}' | egrep [0-9] \
+	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
+
 .PHONY : iso.cleanall
-iso.cleanall : iso.clean
+iso.cleanall : iso.cleanstage iso.cleanmsgq
 	@rm -rf livecd/cache
 
 $(PKG_STAMPS) :

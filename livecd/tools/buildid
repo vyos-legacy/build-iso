@@ -1,0 +1,25 @@
+#!/bin/sh
+
+while [ ! -d .git ]
+do
+	if [ "$PWD" = / ]
+	then
+		echo Not a git tree
+		exit 1
+	fi
+	cd ..
+done
+
+for i in .git */*/.git
+do
+  (
+	cd $i
+	if (cd ..;git-status|grep '^nothing to commit')>/dev/null
+	then
+		echo -n -
+	else
+		echo -n +
+	fi
+	git --bare log -1 --pretty=format:%h | tr -d '\n'
+  )
+done

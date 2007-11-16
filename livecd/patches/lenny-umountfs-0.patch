@@ -1,0 +1,29 @@
+*** chroot.0/etc/init.d/umountfs	2007-11-12 11:53:48.000000000 -0800
+--- chroot/etc/init.d/umountfs	2007-11-12 12:17:59.000000000 -0800
+***************
+*** 81,91 ****
+  			;;
+  		esac
+  		case "$FSTYPE" in 
+! 		  proc|procfs|linprocfs|devfs|sysfs|usbfs|usbdevfs|devpts)
+  			continue
+  			;;
+  		  tmpfs)
+! 			TMPFS_MTPTS="$TMPFS_MTPTS $MTPT"
+  			;;
+  		  *)
+  			REG_MTPTS="$REG_MTPTS $MTPT"
+--- 81,93 ----
+  			;;
+  		esac
+  		case "$FSTYPE" in 
+! 		  proc|procfs|linprocfs|devfs|sysfs|usbfs|usbdevfs|devpts|squashfs|iso9660)
+  			continue
+  			;;
+  		  tmpfs)
+! 			if [ "$MTPT" != "/live/cow" ] ; then
+! 				TMPFS_MTPTS="$TMPFS_MTPTS $MTPT"
+! 			fi
+  			;;
+  		  *)
+  			REG_MTPTS="$REG_MTPTS $MTPT"
