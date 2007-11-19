@@ -36,6 +36,12 @@ AC_CHECK_LIB(crypt, crypt, [ LIBS="$LIBS -lcrypt" ])
 #	[],
 #	[with_quagga=fetch])
 
+AC_ARG_WITH(ppp,
+	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
+	  [Include ppp (fetch: download package)])],
+	[],
+	[with_vyatta_op=fetch])
+
 AC_ARG_WITH(vyatta-cfg,
 	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
 	  [Include vyatta-cfg (fecth: download package)])],
@@ -103,7 +109,7 @@ BUILD_PKGS=
 FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
-           vyatta-config-migrate vyatta-cfg-system
+           vyatta-config-migrate vyatta-cfg-system ppp
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
