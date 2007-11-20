@@ -5,6 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 declare -x LH_APT
 declare -x LH_BOOTAPPEND_LIVE
 declare -x LH_BOOTLOADER
+declare -x LH_SYSLINUX_TIMEOUT
 declare -x LH_BOOTSTRAP
 declare -x LH_BOOTSTRAP_FLAVOUR
 declare -x LH_CHROOT_FILESYSTEM
@@ -64,12 +65,13 @@ if [ -n "$XEN" ] ; then
     done
     LH_LINUX_PACKAGES=linux-image
     LH_LINUX_FLAVOURS=xen
-    LH_BOOTAPPEND_LIVE='console=tty0 console=ttyS0,115200n8 persistent noautologin'
+    LH_BOOTAPPEND_LIVE='console=tty0 console=ttyS0,9600n8 persistent noautologin'
 fi
 
 : ${LH_APT:=apt}
-: ${LH_BOOTAPPEND_LIVE:=console=tty0 console=ttyS0,115200n8 persistent noautologin nonetworking nouser}
-: ${LH_BOOTLOADER:=grub}
+: ${LH_BOOTAPPEND_LIVE:=console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser}
+: ${LH_BOOTLOADER:=syslinux}
+: ${LH_SYSLINUX_TIMEOUT:=5}
 : ${LH_BOOTSTRAP:=debootstrap}
 : ${LH_BOOTSTRAP_FLAVOUR:=minimal}
 : ${LH_CHROOT_FILESYSTEM:=squashfs}
@@ -310,7 +312,7 @@ declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
-for b in chroot/boot/{vmlinuz-*,initrd.img-*} ; do
+for b in chroot/boot/{initrd.img-*} ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
 
