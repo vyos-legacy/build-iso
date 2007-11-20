@@ -85,8 +85,17 @@ iso.fast : $(PKG_STAMPS)
 iso.clean :
 	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock}
 
+.PHONY : iso.cleanstage
+iso.cleanstage : iso.clean
+	@rm -rf livecd/cache/stage*
+
+.PHONY : iso.cleanmsgq
+iso.cleanmsgq :
+	@ipcs -q | awk '{print $$2}' | egrep [0-9] \
+	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
+
 .PHONY : iso.cleanall
-iso.cleanall : iso.clean
+iso.cleanall : iso.cleanstage iso.cleanmsgq
 	@rm -rf livecd/cache
 
 $(PKG_STAMPS) :
@@ -97,9 +106,9 @@ deb-all : $(PKG_STAMPS)
 
 .PHONY : upload-all
 upload-all : $(PKG_STAMPS)
-	@export VYATTA_LINUX_PKG="$(VYATTA_LINUX_PKG)" && \
-	export TARGET_DIST="$(TARGET_DIST)" && \
-	./tools/pkg-upload $(BUILD_PKGS)
+	@export VYATTA_LINUX_PKG="$(VYATTA_LINUX_PKG)" ;\
+	BRANCH=`git-branch|sed 's/..//'` ; \
+	./tools/pkg-upload $(BRANCH) $(BUILD_PKGS)
 
 .PHONY : $(op_hyphen_all)
 $(op_hyphen_all) :
