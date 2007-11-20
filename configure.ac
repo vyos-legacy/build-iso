@@ -27,69 +27,162 @@ AC_CHECK_LIB(crypt, crypt, [ LIBS="$LIBS -lcrypt" ])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
-# Process with-PACKAGE arguments
+# process argument variables
+test "X$LH_APT" = "X" && LH_APT=apt
+AC_ARG_VAR(LH_APT, [default: apt])
+
+test "X$LH_BOOTAPPEND_LIVE" = "X" && LH_BOOTAPPEND_LIVE="noautologin nonetworking nouser"
+AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: noautologin nonetworking nouser])
+
+test "X$LH_BOOTLOADER" = "X" && LH_BOOTLOADER=grub
+AC_ARG_VAR(LH_BOOTLOADER, [default: grub])
+
+test "X$LH_BOOTSTRAP" = "X" && LH_BOOTSTRAP=debootstrap
+AC_ARG_VAR(LH_BOOTSTRAP, [default: debootstrap])
+
+test "X$LH_BOOTSTRAP_FLAVOUR" = "X" && LH_BOOTSTRAP_FLAVOUR="minimal"
+AC_ARG_VAR(LH_BOOTSTRAP_FLAVOUR, [default: minimal])
+
+test "X$LH_CHROOT_FILESYSTEM" = "X" && LH_CHROOT_FILESYSTEM=squashfs
+AC_ARG_VAR(LH_CHROOT_FILESYSTEM, [default: squashfs])
+
+test "X$LH_HOSTNAME" = "X" && LH_HOSTNAME=vyatta
+AC_ARG_VAR(LH_HOSTNAME, [default: vyatta])
+
+test "X$LH_INITRAMFS" = "X" && LH_INITRAMFS=live-initramfs
+AC_ARG_VAR(LH_INITRAMFS, [default: live-initramfs])
+
+test "X$LH_ISO_APPLICATION" = "X" && LH_ISO_APPLICATION="Vyatta OFR"
+AC_ARG_VAR(LH_ISO_APPLICATION, [default: Vyatta OFR])
+
+test "X$LH_ISO_PUBLISHER" = "X" && LH_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
+AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
+
+test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR Live $(date +%Y%m%d-%H:%M)'
+AC_ARG_VAR(LH_ISO_VOLUME, [default: build date])
+
+test "X$LH_MEMTEST" = "X" && LH_MEMTEST=disabled
+AC_ARG_VAR(LH_MEMTEST, [default: disabled])
+
+test "X$LH_PACKAGES_LISTS" = "X" && LH_PACKAGES_LISTS=none
+AC_ARG_VAR(LH_PACKAGES_LISTS, [default: none])
+
+# process --with[out] arguments
+AC_ARG_WITH(target-dist,
+	[AS_HELP_STRING([--with-target-dist=<dist>],
+	  [Target distribution (e.g., "lenny"), default to the host distribution])],
+	[],
+	[with_target_dist=$(lsb_release -c -s)])
+
+LH_DISTRIBUTION="$with_target_dist"
 
 # quagga 0.99.9 is available on lenny
-#AC_ARG_WITH(quagga,
-#	[AS_HELP_STRING([--with-quagga=fetch|yes|no (default fetch)],
-#	  [Include quagga (fecth: download package)])],
-#	[],
-#	[with_quagga=fetch])
+# AC_ARG_WITH(quagga,
+# [AS_HELP_STRING([--with-quagga],
+#   [ fetch (default) or build named package])]
+# [AS_HELP_STRING([--without-quagga],
+#   [exclude named package])],
+# [],
+# [with_quagga=fetch])
 
-AC_ARG_WITH(vyatta-cfg,
-	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
-	  [Include vyatta-cfg (fecth: download package)])],
-	[],
-	[with_vyatta_cfg=fetch])
+AC_ARG_WITH(aufs,
+[AS_HELP_STRING([--with-aufs],
+  [use aufs instead of unionfs])])
+
+if test "X$with_aufs" = Xyes ; then
+	LH_UNION_FILESYSTEM=aufs
+else
+	LH_UNION_FILESYSTEM=unionfs
+fi
 
 AC_ARG_WITH(vyatta-op,
-	[AS_HELP_STRING([--with-vyatta-op=fetch|yes|no (default fetch)],
-	  [Include vyatta-op (fecth: download package)])],
-	[],
-	[with_vyatta_op=fetch])
-
-AC_ARG_WITH(vyatta-cfg-quagga,
-	[AS_HELP_STRING([--with-vyatta-cfg-quagga=fetch|yes|no (default fetch)],
-	  [Include vyatta-cfg-quagga (fecth: download package)])],
-	[],
-	[with_vyatta_cfg_quagga=fetch])
+[AS_HELP_STRING([--with-vyatta-op],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-op],
+  [exclude named package])],
+[],
+[with_vyatta_op=fetch])
 
 AC_ARG_WITH(vyatta-op-quagga,
-	[AS_HELP_STRING([--with-vyatta-op-quagga=fetch|yes|no (default fetch)],
-	  [Include vyatta-op-quagga (fecth: download package)])],
-	[],
-	[with_vyatta_op_quagga=fetch])
+[AS_HELP_STRING([--with-vyatta-op-quagga],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-op-quagga],
+  [exclude named package])],
+[],
+[with_vyatta_op_quagga=fetch])
+
+AC_ARG_WITH(any-vyatta-cfg,
+[AS_HELP_STRING([--without-any-vyatta-cfg],
+  [exclude all vyatta config packages])])
+
+if test X$with_any_vyatta_cfg = Xno ; then
+    default_vyatta_cfg=no
+else
+    default_vyatta_cfg=fetch ;
+fi
+
+AC_ARG_WITH(vyatta-cfg,
+[AS_HELP_STRING([--with-vyatta-cfg],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-cfg],
+  [exclude named package])],
+[],
+[with_vyatta_cfg=$default_vyatta_cfg])
+
+AC_ARG_WITH(vyatta-cfg-quagga,
+[AS_HELP_STRING([--with-vyatta-cfg-quagga],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-cfg-quagga],
+  [exclude named package])],
+[],
+[with_vyatta_cfg_quagga=$default_vyatta_cfg])
 
 AC_ARG_WITH(vyatta-cfg-system,
-	[AS_HELP_STRING([--with-vyatta-cfg-system=fetch|yes|no (default fetch)],
-	  [Include vyatta-cfg-system (fecth: download package)])],
-	[],
-	[with_vyatta_cfg_system=fetch])
+[AS_HELP_STRING([--with-vyatta-cfg-system],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-cfg-system],
+  [exclude named package])],
+[],
+[with_vyatta_cfg_system=$default_vyatta_cfg])
 
 AC_ARG_WITH(vyatta-config-migrate,
-	[AS_HELP_STRING([--with-vyatta-config-migrate=fetch|yes|no (default fetch)],
-	  [Include vyatta-config-migrate (fecth: download package)])],
-	[],
-	[with_vyatta_config_migrate=fetch])
+[AS_HELP_STRING([--with-vyatta-config-migrate],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-config-migrate],
+  [exclude named package])],
+[],
+[with_vyatta_config_migrate=$default_vyatta_cfg])
 
 AC_ARG_WITH(vyatta-bash,
-	[AS_HELP_STRING([--with-vyatta-bash=fetch|yes|no (default fetch)],
-	  [Include vyatta-bash (fecth: download package)])],
-	[],
-	[with_vyatta_bash=fetch])
+[AS_HELP_STRING([--with-vyatta-bash],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-bash],
+  [exclude named package])],
+[],
+[with_vyatta_bash=fetch])
 
-# kernel is always included
 AC_ARG_WITH(kernel,
-	[AS_HELP_STRING([--with-kernel=fetch|yes (default fetch)],
-	  [Include kernel (fecth: download package)])],
-	[with_kernel=yes],
-	[with_kernel=fetch])
+[AS_HELP_STRING([--with-kernel],
+  [ fetch (default) or vyatta kernel])]
+[AS_HELP_STRING([--without-kernel],
+  [fetch appropriate distro kernel])],
+[],
+[with_kernel=fetch])
+
+AC_ARG_WITH(xen,
+[AS_HELP_STRING([--with-xen], [Xen DomU target])])
+
+if test X$with_xen = Xyes ; then
+   use_xen=true
+else
+   use_xen=false
+fi
 
 # with all vyatta packages (except kernel)
 AC_ARG_WITH(all,
-  [AS_HELP_STRING([--with-all],
-    [build all vyatta packages locally (except kernel)])],
-  [if test "$with_all" == "yes"; then
+[AS_HELP_STRING([--with-all],
+  [build all vyatta packages locally (except kernel)])],
+[ if test X$with_all = Xyes ; then
      with_vyatta_cfg=yes;
      with_vyatta_op=yes;
      with_vyatta_cfg_quagga=yes;
@@ -97,16 +190,15 @@ AC_ARG_WITH(all,
      with_vyatta_cfg_system=yes;
      with_vyatta_config_migrate=yes;
      with_vyatta_bash=yes;
-   fi],
-  [])
+  fi ],
+[])
 
-AC_ARG_WITH(target-dist,
-	[AS_HELP_STRING([--with-target-dist=<dist>],
-	  [Target distribution (e.g., "lenny"), default to the host distribution])],
-	[],
-	[with_target_dist=$(lsb_release -c -s)])
-
+# FIXME! fetch version from source
+VYATTA_LINUX_PKG=linux-image-2.6.31-1-486-vyatta
+LH_LINUX_FLAVOURS="486-vyatta"
+LH_LINUX_PACKAGES=none
 BUILD_PKGS=
+EXCLUDE_PKGS=
 FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
@@ -114,14 +206,77 @@ for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
-  if test "$with_pkg" == fetch; then
+  if test $with_pkg = fetch; then
     FETCH_PKGS+=" $pkg"
-  elif test "$with_pkg" != no; then
-	  BUILD_PKGS+=" $pkg"
+  elif test $with_pkg != no; then
+    BUILD_PKGS+=" $pkg"
   fi
 done
 
-TARGET_DIST="$with_target_dist"
+case "$LH_DISTRIBUTION" in
+gutsy | hardy )
+	LH_BOOTSTRAP_INCLUDE="less,gnupg"
+	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
+	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
+	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
+	LH_SECTIONS="main restricted universe multiverse"
+	EXCLUDE_PKGS+=" exim4-daemon-light"
+	EXCLUDE_PKGS+=" exim4-config"
+	EXCLUDE_PKGS+=" exim4-base"
+	EXCLUDE_PKGS+=" exim4"
+	EXCLUDE_PKGS+=" mailx"
+	EXCLUDE_PKGS+=" mail-transport-agent"
+	EXCLUDE_PKGS+=" dash"
+	EXCLUDE_PKGS+=" ubuntu-minimal"
+	if eval "$use_xen" ; then
+	    VYATTA_LINUX_PKG=""
+	    LH_LINUX_PACKAGES=linux-image
+	    LH_LINUX_FLAVOURS="xen"
+	    LH_BOOTSTRAP_INCLUDE+=",libc6-xen"
+	    EXCLUDE_PKGS+=" a-base"
+	    EXCLUDE_PKGS+=" a-utils"
+	    EXCLUDE_PKGS+=" sole-setup"
+	    EXCLUDE_PKGS+=" sole-terminus"
+	    EXCLUDE_PKGS+=" sole-tools"
+	    EXCLUDE_PKGS+=" utils"
+	    EXCLUDE_PKGS+=" ciautils"
+	    EXCLUDE_PKGS+=" eless-tools"
+	    EXCLUDE_PKGS+=" supplicant"
+	elif test X$with_kernel = Xno ; then
+	    VYATTA_LINUX_PKG=""
+	    LH_LINUX_PACKAGES=linux-image
+	    LH_LINUX_FLAVOURS="386 generic server"
+	fi
+	;;
+* )
+	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1"
+	if test X$with_kernel = Xno ; then
+	    VYATTA_LINUX_PKG=""
+	    LH_LINUX_PACKAGES=linux-image
+	    LH_LINUX_FLAVOURS=
+	    # 486 686 686-bigmem amd64
+	    for f in 686 ; do
+		LH_LINUX_FLAVOURS+=" $f"
+		test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
+		    FETCH_PKGS+=" squashfs-modules-2.6-$f"
+		test X$LH_UNION_FILESYSTEM = Xaufs && \
+		    FETCH_PKGS+=" aufs-modules-2.6-$f"
+	    done
+	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
+		FETCH_PKGS+=" squashfs-tools"
+	fi
+	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
+	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
+	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
+	LH_SECTIONS=main
+	EXCLUDE_PKGS+=" exim4-daemon-light"
+	EXCLUDE_PKGS+=" exim4-config"
+	EXCLUDE_PKGS+=" exim4-base"
+	EXCLUDE_PKGS+=" exim4"
+	EXCLUDE_PKGS+=" mailx"
+	EXCLUDE_PKGS+=" mail-transport-agent"
+	;;
+esac
 
 for pkg in $BUILD_PKGS; do
   PKG_DOT_DEB+=" ${pkg}.deb"
@@ -141,7 +296,7 @@ done
 AC_CONFIG_COMMANDS([configure_clone_packages], [tools/pkg-clone $build_pkgs],
                    [build_pkgs="$BUILD_PKGS"])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile livecd/mk.livecd.conf])
 
 AC_SUBST(ARCH)
 AC_SUBST(CONFIG_BUILD)
@@ -152,10 +307,33 @@ AC_SUBST(MACHINE_PREFIX)
 AC_SUBST(NOSTRIP)
 
 AC_SUBST(FETCH_PKGS)
+AC_SUBST(EXCLUDE_PKGS)
 AC_SUBST(BUILD_PKGS)
 AC_SUBST(STAMPFILE)
 AC_SUBST(PKG_STAMPS)
-AC_SUBST(TARGET_DIST)
+
+AC_SUBST(LH_APT)
+AC_SUBST(LH_BOOTAPPEND_LIVE)
+AC_SUBST(LH_BOOTLOADER)
+AC_SUBST(LH_BOOTSTRAP)
+AC_SUBST(LH_BOOTSTRAP_EXCLUDE)
+AC_SUBST(LH_BOOTSTRAP_FLAVOUR)
+AC_SUBST(LH_BOOTSTRAP_INCLUDE)
+AC_SUBST(LH_CHROOT_FILESYSTEM)
+AC_SUBST(LH_DISTRIBUTION)
+AC_SUBST(LH_HOSTNAME)
+AC_SUBST(LH_INITRAMFS)
+AC_SUBST(LH_ISO_APPLICATION)
+AC_SUBST(LH_ISO_PUBLISHER)
+AC_SUBST(LH_ISO_VOLUME)
+AC_SUBST(LH_LINUX_PACKAGES)
+AC_SUBST(LH_LINUX_FLAVOURS)
+AC_SUBST(LH_MEMTEST)
+AC_SUBST(LH_MIRROR_BINARY)
+AC_SUBST(LH_MIRROR_BOOTSTRAP)
+AC_SUBST(LH_PACKAGES_LISTS)
+AC_SUBST(LH_SECTIONS)
+AC_SUBST(LH_UNION_FILESYSTEM)
 
 AC_SUBST(PKG_DOT_DEB)
 AC_SUBST(PKG_DOT_CLEAN)
@@ -163,6 +341,10 @@ AC_SUBST(PKG_DOT_CONFIGURE)
 AC_SUBST(PKG_DOT_CLEANPKG)
 AC_SUBST(PKG_DOT_MKDIST)
 AC_SUBST(PKG_DOT_MKDIST_SIGN)
+
+AC_SUBST(use_xen)
+
+AC_SUBST(VYATTA_LINUX_PKG)
 
 AC_OUTPUT
 
