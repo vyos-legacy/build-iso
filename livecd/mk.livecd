@@ -312,7 +312,7 @@ declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
-for b in chroot/boot/{initrd.img-*} ; do
+for b in chroot/boot/initrd.img-* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
 
