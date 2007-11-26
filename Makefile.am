@@ -98,8 +98,7 @@ deb-all : $(PKG_STAMPS)
 .PHONY : upload-all
 upload-all : $(PKG_STAMPS)
 	@export VYATTA_LINUX_PKG="$(VYATTA_LINUX_PKG)" ;\
-	BRANCH=`git-branch|sed 's/..//'` ; \
-	./tools/pkg-upload $(BRANCH) $(BUILD_PKGS)
+	./tools/pkg-upload `git-branch|grep '^\*'|sed 's/..//'` $(BUILD_PKGS)
 
 .PHONY : $(op_hyphen_all)
 $(op_hyphen_all) :
