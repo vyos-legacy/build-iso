@@ -92,6 +92,14 @@ fi
     LH_SECTIONS=$dist_sections
 : ${LH_UNION_FILESYSTEM:=unionfs}
 
+: ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
+: ${HUMANTIME:=$(date -u)}
+: ${BUILDID:=$(tools/buildid)}
+: ${CDLABEL:=$TIMESTAMP$BUILDID}
+: ${LIVECD:=livecd/livecd_$CDLABEL.iso}
+: ${BUILDFILE:=/opt/vyatta/etc/build.txt}
+: ${STAGEBUILDFILE=chroot/$BUILDFILE}
+
 if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
     # we are in fakeroot
     LH_OPTIONAL_FAKEROOT="--use-fakeroot enabled"
@@ -145,6 +153,20 @@ if [ ! -d config ]; then
   done
 fi
 
+# create the buildid file
+mk_buildid ()
+{
+  mkdir -p `dirname $STAGEBUILDFILE`
+  rm -f $STAGEBUILDFILE
+  : ${BUILTBY=$GIT_COMMITTER_EMAIL}
+  test $BUILTBY || BUILTBY=$GIT_AUTHOR_EMAIL
+  test $BUILTBY || BUILTBY=$USER@$ORGANIZATION
+  echo "Built by:    $BUILTBY"	>> $STAGEBUILDFILE
+  echo "Built on:    $HUMANTIME"   >> $STAGEBUILDFILE
+  echo "Build ID:    $CDLABEL"     >> $STAGEBUILDFILE
+  echo "$CDLABEL">iso-label
+}
+
 # set up locally-built packages
 rm -f config/chroot_local-packages/*
 if (( ${#local_packages[@]} > 0 )); then
@@ -168,6 +190,8 @@ EOF
   echo I: installing local packages
   lh_chroot_local-packages || return 1
   >chroot/etc/apt/preferences
+
+  mk_buildid
 
   echo I: building binary
   if ! lh_binary; then
@@ -284,6 +308,11 @@ EOF
     rm -f chroot/boot/initrd.img*
     chroot chroot update-initramfs -t -u
   fi
+  echo I: generating package list
+  cp tools/save-package-report chroot/opt/vyatta/bin
+  chroot chroot /bin/sh /opt/vyatta/bin/save-package-report
+  rm chroot/opt/vyatta/bin/save-package-report
+  mk_buildid
 }
 
 echo I: buidling chroot
