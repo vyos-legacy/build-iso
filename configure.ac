@@ -220,32 +220,32 @@ gutsy | hardy )
 	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
 	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
 	LH_SECTIONS="main restricted universe multiverse"
-	EXCLUDE_PKGS+=" exim4-daemon-light"
-	EXCLUDE_PKGS+=" exim4-config"
-	EXCLUDE_PKGS+=" exim4-base"
-	EXCLUDE_PKGS+=" exim4"
 	EXCLUDE_PKGS+=" mailx"
-	EXCLUDE_PKGS+=" mail-transport-agent"
 	EXCLUDE_PKGS+=" dash"
-	EXCLUDE_PKGS+=" ubuntu-minimal"
+# FIXME! can no longer exlude exim like this...
+#	EXCLUDE_PKGS+=" exim4-daemon-light"
+#	EXCLUDE_PKGS+=" exim4-config"
+#	EXCLUDE_PKGS+=" exim4-base"
+#	EXCLUDE_PKGS+=" exim4"
+#	EXCLUDE_PKGS+=" ubuntu-minimal"
 	if eval "$use_xen" ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
 	    LH_LINUX_FLAVOURS="xen"
 	    LH_BOOTSTRAP_INCLUDE+=",libc6-xen"
-	    EXCLUDE_PKGS+=" a-base"
-	    EXCLUDE_PKGS+=" a-utils"
-	    EXCLUDE_PKGS+=" sole-setup"
-	    EXCLUDE_PKGS+=" sole-terminus"
-	    EXCLUDE_PKGS+=" sole-tools"
-	    EXCLUDE_PKGS+=" utils"
-	    EXCLUDE_PKGS+=" ciautils"
-	    EXCLUDE_PKGS+=" eless-tools"
-	    EXCLUDE_PKGS+=" supplicant"
+	    EXCLUDE_PKGS+=" alsa-base"
+	    EXCLUDE_PKGS+=" alsa-utils"
+	    EXCLUDE_PKGS+=" console-setup"
+	    EXCLUDE_PKGS+=" console-terminus"
+	    EXCLUDE_PKGS+=" console-tools"
+	    EXCLUDE_PKGS+=" pciutils"
+	    EXCLUDE_PKGS+=" pcmciautils"
+	    EXCLUDE_PKGS+=" wireless-tools"
+	    EXCLUDE_PKGS+=" wpasupplicant"
 	elif test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
-	    LH_LINUX_FLAVOURS="386 generic server"
+	    LH_LINUX_FLAVOURS="server"
 	fi
 	;;
 * )
