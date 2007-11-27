@@ -217,8 +217,14 @@ case "$LH_DISTRIBUTION" in
 gutsy | hardy )
 	LH_BOOTSTRAP_INCLUDE="less,gnupg"
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
-	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
 	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
+	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu/"
+	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.ubuntu.com/ubuntu/"
+	# FIXME! /usr/bin/lh_chroot_sources currently uses
+	# LH_DISTRIBUTION/updates but the ubuntu archive is
+	# LH_DISTRIBUTION-updates
+	LH_SECURITY=disabled
 	LH_SECTIONS="main restricted universe multiverse"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" dash"
@@ -266,8 +272,11 @@ gutsy | hardy )
 		FETCH_PKGS+=" squashfs-tools"
 	fi
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
-	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
 	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
+	LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
+	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org/"
+	LH_SECURITY=enabled
 	LH_SECTIONS=main
 	EXCLUDE_PKGS+=" exim4-daemon-light"
 	EXCLUDE_PKGS+=" exim4-config"
@@ -330,7 +339,9 @@ AC_SUBST(LH_LINUX_PACKAGES)
 AC_SUBST(LH_LINUX_FLAVOURS)
 AC_SUBST(LH_MEMTEST)
 AC_SUBST(LH_MIRROR_BINARY)
+AC_SUBST(LH_MIRROR_BINARY_SECURITY)
 AC_SUBST(LH_MIRROR_BOOTSTRAP)
+AC_SUBST(LH_MIRROR_BOOTSTRAP_SECURITY)
 AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_UNION_FILESYSTEM)
