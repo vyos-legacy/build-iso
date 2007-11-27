@@ -34,6 +34,17 @@ AC_ARG_VAR(LH_APT, [default: apt])
 test "X$LH_BOOTAPPEND_LIVE" = "X" && LH_BOOTAPPEND_LIVE="noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: noautologin nonetworking nouser])
 
+AC_ARG_WITH(ppp,
+	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
+	  [Include ppp (fetch: download package)])],
+	[],
+	[with_vyatta_op=fetch])
+
+AC_ARG_WITH(vyatta-cfg,
+	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
+	  [Include vyatta-cfg (fecth: download package)])],
+	[],
+	[with_vyatta_cfg=fetch])
 test "X$LH_BOOTLOADER" = "X" && LH_BOOTLOADER=grub
 AC_ARG_VAR(LH_BOOTLOADER, [default: grub])
 
@@ -202,13 +213,13 @@ EXCLUDE_PKGS=
 FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
-           vyatta-config-migrate vyatta-cfg-system vyatta-bash
+           vyatta-config-migrate vyatta-cfg-system vyatta-bash ppp
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
-  if test $with_pkg = fetch; then
+  if test "$with_pkg" = fetch; then
     FETCH_PKGS+=" $pkg"
-  elif test $with_pkg != no; then
+  elif test "$with_pkg" != no; then
     BUILD_PKGS+=" $pkg"
   fi
 done
