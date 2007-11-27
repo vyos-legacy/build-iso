@@ -37,10 +37,8 @@ AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: noautologin nonetworking nouser])
 test "X$LH_BOOTLOADER" = "X" && LH_BOOTLOADER=grub
 AC_ARG_VAR(LH_BOOTLOADER, [default: grub])
 
-test -x /usr/bin/cdebootstrap && DEFAULT_DEBOOTSTRAP=cdebootstrap || \
-    DEFAULT_DEBOOTSTRAP=debootstrap
-test "X$LH_BOOTSTRAP" = "X" && LH_BOOTSTRAP=$DEFAULT_DEBOOTSTRAP
-AC_ARG_VAR(LH_BOOTSTRAP, [default: cdebootstrap if present; otherwise, debootstrap])
+test "X$LH_BOOTSTRAP" = "X" && LH_BOOTSTRAP=debootstrap
+AC_ARG_VAR(LH_BOOTSTRAP, [default: debootstrap])
 
 test "X$LH_BOOTSTRAP_FLAVOUR" = "X" && LH_BOOTSTRAP_FLAVOUR="minimal"
 AC_ARG_VAR(LH_BOOTSTRAP_FLAVOUR, [default: minimal])
