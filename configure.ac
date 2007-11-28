@@ -34,12 +34,6 @@ AC_ARG_VAR(LH_APT, [default: apt])
 test "X$LH_BOOTAPPEND_LIVE" = "X" && LH_BOOTAPPEND_LIVE="noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: noautologin nonetworking nouser])
 
-AC_ARG_WITH(ppp,
-	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
-	  [Include ppp (fetch: download package)])],
-	[],
-	[with_vyatta_op=fetch])
-
 AC_ARG_WITH(vyatta-cfg,
 	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
 	  [Include vyatta-cfg (fecth: download package)])],
@@ -213,7 +207,7 @@ EXCLUDE_PKGS=
 FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
-           vyatta-config-migrate vyatta-cfg-system vyatta-bash ppp
+           vyatta-config-migrate vyatta-cfg-system vyatta-bash
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
