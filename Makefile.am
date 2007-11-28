@@ -3,14 +3,12 @@
 
 export MAKEFLAGS
 
-FETCH_PKGS = @FETCH_PKGS@
-BUILD_PKGS = @BUILD_PKGS@
-STAMPFILE	= @STAMPFILE@
-PKG_STAMPS	= @PKG_STAMPS@
-VYATTA_LINUX_VERSION = 2.6.23-1
-VYATTA_LINUX_FLAVOR = 486-vyatta
-VYATTA_LINUX_PKG = linux-image-$(VYATTA_LINUX_VERSION)-$(VYATTA_LINUX_FLAVOR)
-TARGET_DIST = @TARGET_DIST@
+BUILD_PKGS	 = @BUILD_PKGS@
+EXCLUDE_PKGS	 = @EXCLUDE_PKGS@
+FETCH_PKGS	 = @FETCH_PKGS@
+STAMPFILE	 = @STAMPFILE@
+PKG_STAMPS	 = @PKG_STAMPS@
+VYATTA_LINUX_PKG = @VYATTA_LINUX_PKG@
 
 op_hyphen_all	 = configure-all
 op_hyphen_all	+= clean-all
@@ -57,20 +55,13 @@ define pkg_dot_op
 endef
 
 define mk_iso
-	FETCH_PKGS="$(FETCH_PKGS)" ; \
-	BUILD_PKGS="$(BUILD_PKGS)" ; \
-	export	FETCH_PKGS="$${FETCH_PKGS//kernel/$(VYATTA_LINUX_PKG)}" \
-		BUILD_PKGS="$${BUILD_PKGS//kernel/$(VYATTA_LINUX_PKG)}" \
-		VYATTA_LINUX_VERSION="$(VYATTA_LINUX_VERSION)" \
-		VYATTA_LINUX_FLAVOR="$(VYATTA_LINUX_FLAVOR)" \
-		TARGET_DIST="$(TARGET_DIST)" ; \
 	cd livecd ; \
 	if [ `id -u` -eq 0 ] ; then \
-		./mk.livecd XEN=$(XEN) ; \
+		./mk.livecd ; \
 	else \
 		touch .permissions ; \
 		fakeroot -i .permissions -s .permissions fakechroot \
-			./mk.livecd XEN=$(XEN) ; \
+			./mk.livecd ; \
 	fi
 endef
 

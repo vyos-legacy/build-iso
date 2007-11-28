@@ -2,97 +2,30 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-declare -x LH_APT
-declare -x LH_BOOTAPPEND_LIVE
-declare -x LH_BOOTLOADER
-declare -x LH_SYSLINUX_TIMEOUT
-declare -x LH_BOOTSTRAP
-declare -x LH_BOOTSTRAP_FLAVOUR
-declare -x LH_CHROOT_FILESYSTEM
-declare -x LH_DISTRIBUTION
-declare -x LH_HOSTNAME
-declare -x LH_INITRAMFS
-declare -x LH_ISO_APPLICATION
-declare -x LH_ISO_PUBLISHER
-declare -x LH_ISO_VOLUME
-declare -x LH_LINUX_PACKAGES
-declare -x LH_LINUX_FLAVOURS
-declare -x LH_MEMTEST
-declare -x LH_MIRROR_BINARY
-declare -x LH_MIRROR_BOOTSTRAP
-declare -x LH_PACKAGES_LISTS
-declare -x LH_SECTIONS
-declare -x LH_UNION_FILESYSTEM
-
-declare -a exclude_packages=( \
-                            )
-declare -a include_packages=( \
-                              ${FETCH_PKGS} \
-                            )
-declare -a local_packages=( \
-                            ${BUILD_PKGS} \
-                          )
-declare pkglistdir=config/chroot_local-packageslists
-
-if [ -r lh_config/${TARGET_DIST}-config ]; then
-  . lh_config/${TARGET_DIST}-config
+if [ -r ./mk.livecd.conf ] ; then
+    source ./mk.livecd.conf
+else
+    echo E: Missing mk.livecd.conf
+    exit 1
 fi
-
-. lh_config/default-config
 
 # process command line variable overrides
 for arg ; do
     case "$arg" in
 	--*=* )
-	    eval "${arg#--}"
+	    arg=${arg#--}
+	    eval ${arg%=*}=\"${arg#*=}\"
 	    ;;
 	*=* )
-	    eval "$arg"
+	    eval ${arg%=*}=\"${arg#*=}\"
 	    ;;
     esac
 done
 
-# for Xen DomU target, donot use either fetched or built Vyatta kernel pkg
-# instead, use the xen kernel/module pkgs from the target distribution
-if [ -n "$XEN" ] ; then
-    for (( i=0; i<${#include_packages[@]}; i++ )) ; do
-	[[ "${include_packages[i]}" == linux-image-* ]] && \
-	    unset include_packages[i]
-    done
-    for (( i=0; i<${#local_packages[@]}; i++ )) ; do
-	[[ "${local_packages[i]}" == linux-image-* ]] && \
-	    unset local_packages[i]
-    done
-    LH_LINUX_PACKAGES=linux-image
-    LH_LINUX_FLAVOURS=xen
-    LH_BOOTAPPEND_LIVE='console=tty0 console=ttyS0,9600n8 persistent noautologin'
-fi
-
-: ${LH_APT:=apt}
-: ${LH_BOOTAPPEND_LIVE:=console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser}
-: ${LH_BOOTLOADER:=syslinux}
-: ${LH_SYSLINUX_TIMEOUT:=5}
-: ${LH_BOOTSTRAP:=debootstrap}
-: ${LH_BOOTSTRAP_FLAVOUR:=minimal}
-: ${LH_CHROOT_FILESYSTEM:=squashfs}
-[[ -z "$LH_DISTRIBUTION" && -n "$TARGET_DIST" ]] && \
-    LH_DISTRIBUTION=$TARGET_DIST
-: ${LH_HOSTNAME:=vyatta}
-: ${LH_INITRAMFS:=live-initramfs}
-: ${LH_ISO_APPLICATION:="Vyatta OFR"}
-: ${LH_ISO_PUBLISHER:="Vyatta Inc.; http://www.vyatta.com/;"}
-: ${LH_ISO_VOLUME:="Vyatta OFR Live $(date +%Y%m%d-%H:%M)"}
-: ${LH_LINUX_PACKAGES:=none}
-: ${LH_LINUX_FLAVOURS:=${VYATTA_LINUX_FLAVOR}}
-: ${LH_MEMTEST:=disabled}
-[[ -z "$LH_MIRROR_BINARY" && -n "$mirror_binary" ]] && \
-    LH_MIRROR_BINARY=$mirror_binary
-[[ -z "$LH_MIRROR_BOOTSTRAP" && -n "$mirror_bootstrap" ]] && \
-    LH_MIRROR_BOOTSTRAP=$mirror_bootstrap
-: ${LH_PACKAGES_LISTS:=none}
-[[ -z "$LH_SECTIONS" && -n "$dist_sections" ]] && \
-    LH_SECTIONS=$dist_sections
-: ${LH_UNION_FILESYSTEM:=unionfs}
+declare pkglistdir=config/chroot_local-packageslists
+declare -a exclude_packages=( ${EXCLUDE_PKGS[@]} )
+declare -a include_packages=( ${FETCH_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
+declare -a local_packages=( ${BUILD_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
@@ -101,6 +34,24 @@ fi
 : ${LIVECD:=livecd/livecd_$CDLABEL.iso}
 : ${BUILDFILE:=/opt/vyatta/etc/build.txt}
 : ${STAGEBUILDFILE=chroot/$BUILDFILE}
+: ${ORGANIZATION:=vyatta.com}
+
+if [ -z "$BUILTBY" ] ; then
+    if [ -n "$GIT_COMMITTER_EMAIL" ] ; then
+	BUILTBY=$GIT_COMMITTER_EMAIL
+    elif [ -n "$GIT_AUTHOR_EMAIL" ] ; then
+	BUILTBY=$GIT_AUTHOR_EMAIL
+    else
+	user_email=`git config user.email`
+	if [ -n "$user_email" ] ; then
+	    BUILTBY=$user_email
+	elif test -n "$SUDO_USER" ; then
+	    BUILTBY=$SUDO_USER@$ORGANIZATION
+	else
+	    BUILTBY=$USER@$ORGANIZATION
+	fi
+    fi
+fi
 
 if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
     # we are in fakeroot
@@ -121,19 +72,16 @@ if [ ! -d config ]; then
   echo I: configuring build
   lh_config ${LH_OPTIONAL_FAKEROOT}
 
-  set_conf_var "bootstrap" "LH_BOOTSTRAP_INCLUDE" ${bootstrap_include}
-  set_conf_var "bootstrap" "LH_BOOTSTRAP_EXCLUDE" ${bootstrap_exclude}
-
   # set up custom repo(s)
-  if ls deb_sources/${TARGET_DIST}-*bootstrap* >& /dev/null; then
-    cp deb_sources/${TARGET_DIST}-*bootstrap* config/chroot_sources/
+  if ls deb_sources/${LH_DISTRIBUTION}-*bootstrap* >& /dev/null; then
+    cp deb_sources/${LH_DISTRIBUTION}-*bootstrap* config/chroot_sources/
   fi
  
   # set up custom pkg list(s)
   echo "# vyatta packages" > ${pkglistdir}/vyatta-pkgs
   cat deb_lists/default-pkglist >> ${pkglistdir}/vyatta-pkgs
-  if ls deb_lists/${TARGET_DIST}-* >& /dev/null; then
-    for list in deb_lists/${TARGET_DIST}-*; do
+  if ls deb_lists/${LH_DISTRIBUTION}-* >& /dev/null; then
+    for list in deb_lists/${LH_DISTRIBUTION}-*; do
       cat $list >> ${pkglistdir}/vyatta-pkgs
     done
   fi
@@ -158,15 +106,19 @@ fi
 # create the buildid file
 mk_buildid ()
 {
-  mkdir -p `dirname $STAGEBUILDFILE`
-  rm -f $STAGEBUILDFILE
-  : ${BUILTBY=$GIT_COMMITTER_EMAIL}
-  test $BUILTBY || BUILTBY=$GIT_AUTHOR_EMAIL
-  test $BUILTBY || BUILTBY=$USER@$ORGANIZATION
-  echo "Built by:    $BUILTBY"	>> $STAGEBUILDFILE
-  echo "Built on:    $HUMANTIME"   >> $STAGEBUILDFILE
-  echo "Build ID:    $CDLABEL"     >> $STAGEBUILDFILE
-  echo "$CDLABEL">iso-label
+    echo I: generating package list
+    [ -d chroot/opt/vyatta/bin ] || mkdir -p -m 0755 chroot/opt/vyatta/bin
+    [ -d chroot/opt/vyatta/etc ] || mkdir -p -m 0755 chroot/opt/vyatta/etc
+    cp tools/save-package-report chroot/opt/vyatta/bin
+    chroot chroot /bin/sh /opt/vyatta/bin/save-package-report
+    rm chroot/opt/vyatta/bin/save-package-report
+    rm -f $STAGEBUILDFILE
+    cat <<-EOF >$STAGEBUILDFILE
+	Built by:    $BUILTBY
+	Built on:    $HUMANTIME
+	Build ID:    $CDLABEL
+	EOF
+    echo "$CDLABEL">iso-label
 }
 
 # set up locally-built packages
@@ -220,13 +172,18 @@ if [ -d cache/lists ] ; then
     cp -a cache/lists chroot/var/lib/apt/
 fi
 
-if [ -n "$XEN" ] ; then
+cp chroot_local-hooks/*[^~] config/chroot_local-hooks/
+
+if eval "$use_xen" ; then
     echo I: Disabling TLS
     mv chroot/lib/tls chroot/lib/tls.disabled
+else
+    rm -f config/chroot_local-hooks/*xen*
 fi
 
-cp chroot_local-hooks/*[^~] config/chroot_local-hooks/
-[ -n "$XEN" ] || rm -f config/chroot_local-hooks/*xen*
+echo I: Adding live-bottom/*[^~]
+mkdir -p -m 0755 chroot/usr/share/initramfs-tools/scripts/live-bottom/
+cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
 
 # do the steps in lh_chroot
 build_chroot ()
@@ -244,19 +201,16 @@ build_chroot ()
   lh_chroot_apt install || return 1
   lh_chroot_sources install || return 1
 
-  # disable update-initramfs so that it isnot rerun in each pkg postinst
-  # instead, run it once at the end
-  if [ -x chroot/usr/sbin/update-initramfs ] ; then
-    mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.real
-    ln -s ../../bin/true chroot/usr/sbin/update-initramfs
-  fi
-
   lh_chroot_linux-image install || return 1
   
+  test -r live.conf/${LH_DISTRIBUTION} && \
+      cp live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
+
   echo I: customizing live-initramfs
-  if [ -x live_config/${TARGET_DIST}-config ]; then
-    ./live_config/${TARGET_DIST}-config
-  fi
+  ( shopt -s nullglob; cd chroot/ && \
+    for patch in ../patches/${LH_DISTRIBUTION}-*.patch ; do \
+        patch -p1 < $patch ; \
+    done )
   
   echo I: customizing chroot
   lh_chroot_preseed || return 1
@@ -300,28 +254,19 @@ EOF
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
 
-  echo I: Adding live-bottom/*[^~]
-  cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
-
-  if [ -x chroot/usr/sbin/update-initramfs.real ] ; then
-    rm -f chroot/usr/sbin/update-initramfs
-    mv chroot/usr/sbin/update-initramfs.real chroot/usr/sbin/update-initramfs
-    echo I: Update initramfs
-    rm -f chroot/boot/initrd.img*
-    chroot chroot update-initramfs -t -u
-  fi
-  echo I: generating package list
-  cp tools/save-package-report chroot/opt/vyatta/bin
-  chroot chroot /bin/sh /opt/vyatta/bin/save-package-report
-  rm chroot/opt/vyatta/bin/save-package-report
-  mk_buildid
+# FIXME! we no longer appear to need this update
+#	so, comment out for now
+#  echo I: Update initramfs
+#  chroot chroot update-initramfs -t -u -k all
 }
 
-echo I: buidling chroot
+echo I: building chroot
 if ! build_chroot; then
   echo E: chroot build failed
   exit 1
 fi
+
+mk_buildid
 
 echo I: restoring ldd/ldconfig
 if [ -f chroot/usr/bin/ldd.REAL ]; then

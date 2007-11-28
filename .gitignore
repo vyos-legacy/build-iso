@@ -19,6 +19,7 @@
 /livecd/config
 /livecd/binary*
 /livecd/iso-label
+/livecd/mk.livecd.conf
 
 /kernel
 /vyatta-cfg

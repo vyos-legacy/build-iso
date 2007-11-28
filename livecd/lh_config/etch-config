@@ -1,5 +1,0 @@
-bootstrap_include="locales,less,initramfs-tools"
-bootstrap_exclude="dhcp3-common,dhcp3-client"
-mirror_bootstrap="http://ftp.us.debian.org/debian/"
-mirror_binary="http://ftp.us.debian.org/debian/"
-dist_sections="main"
