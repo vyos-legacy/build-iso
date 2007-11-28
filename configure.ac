@@ -31,19 +31,14 @@ AC_CHECK_LIB(crypt, crypt, [ LIBS="$LIBS -lcrypt" ])
 test "X$LH_APT" = "X" && LH_APT=apt
 AC_ARG_VAR(LH_APT, [default: apt])
 
-test ! "$LH_BOOTAPPEND_LIVE" && LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
+test "$LH_BOOTAPPEND_LIVE" = "" && LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser])
-
-	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
-	  [Include ppp (fetch: download package)])],
-	[],
-	[with_vyatta_op=fetch])
 
 AC_ARG_WITH(ppp,
 	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
 	  [Include ppp (fetch: download package)])],
 	[],
-	[with_vyatta_op=fetch])
+	[with_vyatta_ppp=fetch])
 
 AC_ARG_WITH(vyatta-cfg,
 	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
