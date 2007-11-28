@@ -121,6 +121,17 @@ mk_buildid ()
     echo "$CDLABEL">iso-label
 }
 
+set_up_apt_pref ()
+{
+  # set vyatta archive priority to 50 so that remote packages are only
+  # installed if not already installed locally.
+  cat >chroot/etc/apt/preferences <<'EOF'
+Package: *
+Pin: release l=Vyatta
+Pin-Priority: 50
+EOF
+}
+
 # set up locally-built packages
 rm -f config/chroot_local-packages/*
 if (( ${#local_packages[@]} > 0 )); then
@@ -134,16 +145,9 @@ if [ "$ISO_FAST" == "yes" ]; then
   # there may be problems if, for example, dependencies have changed, etc.
   rm -f .stage/chroot_local-packages .stage/binary_*
   
-  # set vyatta archive priority to 50 so that remote packages are only
-  # installed if not already installed locally.
-  cat >chroot/etc/apt/preferences <<'EOF'
-Package: *
-Pin: release l=Vyatta
-Pin-Priority: 50
-EOF
+  set_up_apt_pref
   echo I: installing local packages
   lh_chroot_local-packages || return 1
-  >chroot/etc/apt/preferences
 
   mk_buildid
 
@@ -220,16 +224,9 @@ build_chroot ()
   lh_chroot_packages || return 1
  
   # we do local packages first since they are "newer".
-  # set vyatta archive priority to 50 so that remote packages are only
-  # installed if not already installed locally.
-  cat >chroot/etc/apt/preferences <<'EOF'
-Package: *
-Pin: release l=Vyatta
-Pin-Priority: 50
-EOF
+  set_up_apt_pref
   lh_chroot_local-packages || return 1
   lh_chroot_local-packageslists || return 1
-  >chroot/etc/apt/preferences
 
   lh_chroot_localization || return 1
   lh_chroot_local-includes || return 1
@@ -289,6 +286,10 @@ done
 for b in chroot/boot/initrd.img-* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
+
+set_up_apt_pref
+# need to exclude the "Pin"
+echo etc/apt/preferences	>> chroot/tmp/mksquashfs.exclude
 
 echo I: building binary
 if ! lh_binary; then
