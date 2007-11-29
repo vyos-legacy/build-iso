@@ -34,11 +34,6 @@ AC_ARG_VAR(LH_APT, [default: apt])
 test "X$LH_BOOTAPPEND_LIVE" = "X" && LH_BOOTAPPEND_LIVE="noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: noautologin nonetworking nouser])
 
-AC_ARG_WITH(vyatta-cfg,
-	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
-	  [Include vyatta-cfg (fecth: download package)])],
-	[],
-	[with_vyatta_cfg=fetch])
 test "X$LH_BOOTLOADER" = "X" && LH_BOOTLOADER=grub
 AC_ARG_VAR(LH_BOOTLOADER, [default: grub])
 
