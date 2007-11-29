@@ -31,8 +31,9 @@ AC_CHECK_LIB(crypt, crypt, [ LIBS="$LIBS -lcrypt" ])
 test "X$LH_APT" = "X" && LH_APT=apt
 AC_ARG_VAR(LH_APT, [default: apt])
 
-test "X$LH_BOOTAPPEND_LIVE" = "X" && LH_BOOTAPPEND_LIVE="noautologin nonetworking nouser"
-AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: noautologin nonetworking nouser])
+test "X$LH_BOOTAPPEND_LIVE" = "X" && \
+     LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600 noautologin nonetworking nouser"
+AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: console=tty0 console=ttyS0,9600 noautologin nonetworking nouser])
 
 test "X$LH_BOOTLOADER" = "X" && LH_BOOTLOADER=grub
 AC_ARG_VAR(LH_BOOTLOADER, [default: grub])
