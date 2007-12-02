@@ -31,7 +31,8 @@ AC_CHECK_LIB(crypt, crypt, [ LIBS="$LIBS -lcrypt" ])
 test "X$LH_APT" = "X" && LH_APT=apt
 AC_ARG_VAR(LH_APT, [default: apt])
 
-test "$LH_BOOTAPPEND_LIVE" = "" && LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
+test ! "$LH_BOOTAPPEND_LIVE" && \
+      LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser])
 
 AC_ARG_WITH(ppp,
@@ -40,11 +41,6 @@ AC_ARG_WITH(ppp,
 	[],
 	[with_vyatta_ppp=fetch])
 
-AC_ARG_WITH(vyatta-cfg,
-	[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
-	  [Include vyatta-cfg (fecth: download package)])],
-	[],
-	[with_vyatta_cfg=fetch])
 test ! "$LH_BOOTLOADER" && LH_BOOTLOADER=syslinux
 AC_ARG_VAR(LH_BOOTLOADER, [default: syslinux])
 
@@ -133,8 +129,8 @@ else
 fi
 
 AC_ARG_WITH(vyatta-cfg,
-[AS_HELP_STRING([--with-vyatta-cfg],
-  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
+  [Include vyatta-cfg (fetch: download package)])],
 [AS_HELP_STRING([--without-vyatta-cfg],
   [exclude named package])],
 [],
@@ -213,7 +209,7 @@ EXCLUDE_PKGS=
 FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
-           vyatta-config-migrate vyatta-cfg-system vyatta-bash ppp
+           vyatta-config-migrate vyatta-cfg-system vyatta-bash
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg

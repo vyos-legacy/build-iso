@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# FIXME!  work around interface re-re-renaming
+
+rm -f etc/udev/rules.d/*persistent-net*rules
+
