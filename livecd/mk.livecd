@@ -236,7 +236,10 @@ build_chroot ()
   lh_chroot_symlinks || return 1
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
- 
+
+  # remove resolv.conf.orig so it doesn't get restored
+  rm -f chroot/etc/resolv.conf.orig
+
   echo I: deconfiguring chroot
   lh_chroot_linux-image remove || return 1
   lh_chroot_sources remove || return 1
@@ -265,6 +268,9 @@ fi
 
 mk_buildid
 
+# remove backup files for ISO
+rm -f chroot/etc/*.vyatta-save chroot/etc/*/*.vyatta-save
+
 echo I: restoring ldd/ldconfig
 if [ -f chroot/usr/bin/ldd.REAL ]; then
   rm -f chroot/usr/bin/ldd
@@ -288,8 +294,9 @@ for b in chroot/boot/{vmlinuz-*,initrd.img-*} ; do
 done
 
 set_up_apt_pref
-# need to exclude the "Pin"
+# exclude more files
 echo etc/apt/preferences	>> chroot/tmp/mksquashfs.exclude
+echo etc/resolv.conf >> chroot/tmp/mksquashfs.exclude
 
 echo I: building binary
 if ! lh_binary; then
