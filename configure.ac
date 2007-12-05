@@ -271,7 +271,6 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
-	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
 	LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
 	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
