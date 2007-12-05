@@ -86,7 +86,7 @@ iso.cleanmsgq :
 	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
 
 .PHONY : iso.cleanall
-iso.cleanall : iso.cleanstage iso.cleanmsgq
+iso.cleanall : iso.cleanstage iso.cleanmsgq iso.clean
 	@rm -rf livecd/cache
 
 $(PKG_STAMPS) :
