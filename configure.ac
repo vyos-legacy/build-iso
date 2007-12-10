@@ -223,7 +223,6 @@ done
 case "$LH_DISTRIBUTION" in
 gutsy | hardy )
 	LH_BOOTSTRAP_INCLUDE="less,gnupg"
-	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
 	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu/"
 	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
@@ -278,7 +277,6 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
-	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
 	LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
 	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
