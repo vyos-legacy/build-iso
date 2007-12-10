@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -291,6 +291,66 @@ set_up_apt_pref
 # need to exclude the "Pin"
 echo etc/apt/preferences	>> chroot/tmp/mksquashfs.exclude
 
+remove_dir()
+{
+	[ ! -d $1 ] && return 0
+
+	mv $1 $1-$$
+	(
+		chmod u+w -R $1-$$
+		rm -rf $1-$$
+	)&
+}
+
+[ -f deb-install.tar ] || wget http://sydney.vyatta.com/vyatta/d-i/deb-install.tar
+
+remove_dir deb-install
+
+tar xf deb-install.tar
+
+cp -a ./cache/packages* deb-install/pool/main/
+rm -f deb-install/pool/main/lock
+
+(
+	mkdir -p deb-install/pool/main/v/vyatta/.
+	cp ../*/*.deb deb-install/pool/main/v/vyatta/.
+	cd deb-install/pool/main/v/vyatta
+	rm *source*.deb
+	mkdir sav$$
+	mv linux-* sav$$/.
+	mv sav$$/linux-image* .
+	rm -rf sav$$
+)
+
+chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
+
+#cat >>deb-install/.Released <<'EOF'
+#debconf-english
+#bootable-system
+#created-fstab
+#mounted-partitions
+#libdebconfclient0
+#rootskel
+#EOF
+
+cd deb-install
+
+remove_dir pool1
+
+create-version-package -v 1 -d . -r lenny -x -o /dev/null
+for i in `cat .Released`; do latestdeb $i; done>/tmp/$$list
+
+rsync -arv --exclude="*.deb" pool pool.udeb
+find pool -name '*.udeb' -exec rm -f {} \;
+deb-archive -r lenny -n main -d .
+(
+	cd pool.udeb/pool
+	cp -a * ../../pool/.
+)
+rm -rf pool.udeb
+
+mkisofs -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
+
 echo I: building binary
 if ! lh_binary; then
   echo E: binary build failed
@@ -298,4 +358,3 @@ if ! lh_binary; then
 fi
 
 echo I: Done
-
