@@ -315,6 +315,13 @@ remove_dir deb-install
 
 tar xf deb-install.tar
 
+(
+	cd d-i
+	cp -a * ../deb-install
+	cd ../deb-install
+	md5sum full-upgrade preseed.cfg >>md5sum.txt
+)
+
 cp -a ./cache/packages* deb-install/pool/main/
 rm -f deb-install/pool/main/lock
 

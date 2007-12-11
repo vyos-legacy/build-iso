@@ -1,0 +1,19 @@
+#!/bin/sh -x
+
+(
+  cd /usr/sbin
+  mv invoke-rc.d invoke-rc.d.sav
+  ln -s /bin/true invoke-rc.d
+)
+
+apt-get update
+ls -l /usr/bin/apt*
+
+LIST=`/usr/bin/apt-cache dumpavail|grep -i '^package.*vyatta'|sed -e 's/[Pp]ackage:[ 	]*//'`
+LIST=$LIST" "`cat /dpkg-l`
+
+# should do the download first...
+yes ''|apt-get -y --force-yes install $LIST
+
+cd /usr/sbin
+mv invoke-rc.d.sav invoke.rc.d
