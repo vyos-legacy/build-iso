@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -340,23 +340,23 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 #rootskel
 #EOF
 
-cd deb-install
-
-remove_dir pool1
-
-create-version-package -v 1 -d . -r lenny -x -o /dev/null
-for i in `cat .Released`; do latestdeb $i; done>/tmp/$$list
-
-rsync -arv --exclude="*.deb" pool pool.udeb
-find pool -name '*.udeb' -exec rm -f {} \;
-deb-archive -r lenny -n main -d .
 (
-	cd pool.udeb/pool
-	cp -a * ../../pool/.
-)
-rm -rf pool.udeb
+	cd deb-install
 
-mkisofs -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
+	create-version-package -v 1 -d . -r lenny -x -o /dev/null
+	for i in `cat .Released`; do latestdeb $i; done>/tmp/$$list
+
+	rsync -ar --exclude="*.deb" pool pool.udeb
+	find pool -name '*.udeb' -exec rm -f {} \;
+	deb-archive -r lenny -n main -d .
+	(
+		cd pool.udeb/pool
+		cp -a * ../../pool/.
+	)
+	rm -rf ../../pool.udeb
+	mkisofs -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
+)
+
 
 echo I: building binary
 if ! lh_binary; then
