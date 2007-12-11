@@ -152,6 +152,14 @@ AC_ARG_WITH(vyatta-cfg-system,
 [],
 [with_vyatta_cfg_system=$default_vyatta_cfg])
 
+AC_ARG_WITH(vyatta-cfg-firewall,
+[AS_HELP_STRING([--with-vyatta-cfg-firewall],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-cfg-firewall],
+  [exclude named package])],
+[],
+[with_vyatta_cfg_firewall=$default_vyatta_cfg])
+
 AC_ARG_WITH(vyatta-config-migrate,
 [AS_HELP_STRING([--with-vyatta-config-migrate],
   [ fetch (default) or build named package])]
@@ -195,6 +203,7 @@ AC_ARG_WITH(all,
      with_vyatta_cfg_quagga=yes;
      with_vyatta_op_quagga=yes;
      with_vyatta_cfg_system=yes;
+     with_vyatta_cfg_firewall=yes;
      with_vyatta_config_migrate=yes;
      with_vyatta_bash=yes;
   fi ],
@@ -209,7 +218,8 @@ EXCLUDE_PKGS=
 FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
-           vyatta-config-migrate vyatta-cfg-system vyatta-bash
+           vyatta-config-migrate vyatta-cfg-system vyatta-cfg-firewall \
+	   vyatta-bash
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
