@@ -21,6 +21,8 @@
 /livecd/iso-label
 /livecd/mk.livecd.conf
 
+*.iso
+
 /kernel
 /vyatta-cfg
 /vyatta-op
