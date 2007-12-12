@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -360,7 +360,7 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 		cd pool.udeb/pool
 		cp -a * ../../pool/.
 	)
-	rm -rf ../../pool.udeb
+	rm -rf pool.udeb
 	mkisofs -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
 )
 
