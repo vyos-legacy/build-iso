@@ -240,7 +240,7 @@ gutsy | hardy )
 	# FIXME! /usr/bin/lh_chroot_sources currently uses
 	# LH_DISTRIBUTION/updates but the ubuntu archive is
 	# LH_DISTRIBUTION-updates
-	LH_SECURITY=disabled
+	LH_SECURITY="disabled"
 	LH_SECTIONS="main restricted universe multiverse"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" dash"
@@ -288,11 +288,11 @@ gutsy | hardy )
 		FETCH_PKGS+=" squashfs-tools"
 	fi
 	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
+	LH_MIRROR_BINARY_SECURITY="http://sydney.vyatta.com/debian-security/"
 	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org/"
-	LH_SECURITY=enabled
-	LH_SECTIONS=main
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://sydney.vyatta.com/debian-security/"
+	LH_SECURITY="enabled"
+	LH_SECTIONS="main"
 	EXCLUDE_PKGS+=" exim4-daemon-light"
 	EXCLUDE_PKGS+=" exim4-config"
 	EXCLUDE_PKGS+=" exim4-base"
@@ -357,6 +357,7 @@ AC_SUBST(LH_MIRROR_BINARY)
 AC_SUBST(LH_MIRROR_BINARY_SECURITY)
 AC_SUBST(LH_MIRROR_BOOTSTRAP)
 AC_SUBST(LH_MIRROR_BOOTSTRAP_SECURITY)
+AC_SUBST(LH_SECURITY)
 AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_UNION_FILESYSTEM)
