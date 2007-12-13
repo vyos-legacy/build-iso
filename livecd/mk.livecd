@@ -355,6 +355,7 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 
 	rsync -ar --exclude="*.deb" pool pool.udeb
 	find pool -name '*.udeb' -exec rm -f {} \;
+	rm -rf pool/main/l/linux-2.6
 	deb-archive -r lenny -n main -d .
 	(
 		cd pool.udeb/pool
