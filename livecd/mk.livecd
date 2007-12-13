@@ -309,7 +309,7 @@ remove_dir()
 	)&
 }
 
-[ -f deb-install.tar ] || wget http://sydney.vyatta.com/vyatta/d-i/deb-install.tar
+[ -f deb-install.tar ] || wget -nv http://sydney.vyatta.com/vyatta/d-i/deb-install.tar
 
 remove_dir deb-install
 
@@ -355,14 +355,24 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 
 	rsync -ar --exclude="*.deb" pool pool.udeb
 	find pool -name '*.udeb' -exec rm -f {} \;
-	rm -rf pool/main/l/linux-2.6
+	rm -rf pool/main/l/linux*2.6
+
+	(
+		cd pool
+		archive-report -f>/tmp/report$$
+		rm_files=`find -name '*.deb'|sort|comm -3 - /tmp/report$$`
+		rm -f $rm_files /tmp/report$$
+	)
+	
 	deb-archive -r lenny -n main -d .
 	(
 		cd pool.udeb/pool
 		cp -a * ../../pool/.
 	)
 	rm -rf pool.udeb
-	mkisofs -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
+	touch `$(BUILDID)`
+	cp ../iso
+	genisoimage -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
 )
 
 
