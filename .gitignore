@@ -31,4 +31,5 @@
 /vyatta-cfg-system
 /vyatta-config-migrate
 /vyatta-bash
+/vyatta-cfg-firewall
 /ppp
