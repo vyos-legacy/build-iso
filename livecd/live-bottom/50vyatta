@@ -1,9 +1,68 @@
-# if home is persistent, remap ~root (i.e. /root) to /home/root
-if egrep -q '/home.*rw' /proc/mounts ; then
-   [ -d root/home/root ] || mkdir -p root/home/root
-   for f in .profile .bash_profile .bashrc ; do
-       [ -r root/root/$f ] && [ ! -r root/home/root/$f ] && \
-	   cp root/root/$f root/home/root
-   done
-   chroot /root mount -o bind /home/root /root
+#!/bin/sh
+
+#set -e
+
+# initramfs-tools header
+
+PREREQ=""
+
+prereqs()
+{
+    echo "${PREREQ}"
+}
+
+case "${1}" in
+    prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+# live-initramfs header
+
+. /scripts/live-functions
+
+# live-initramfs script
+
+# try floppy
+# if we donot discover an fd device, try loading the floppy module
+grep -q fd /proc/devices || modprobe -q floppy 2>/dev/null
+grep -q ext2 /proc/filesystems || modprobe -q ext2 2>/dev/null
+grep -q vfat /proc/filesystems || modprobe -q vfat 2>/dev/null
+if grep -q fd /proc/devices
+then
+    mkdir -p /root/media/floppy
+    mount -t ext2 /dev/fd0 /root/media/floppy -o sync 2>/dev/null
+    test $? -eq 32 && mount -t vfat /dev/fd0 /root/media/floppy 2>/dev/null
 fi
+
+# bind the vyatta config directory with the following precedence
+#	1) backing store if present
+#	2) floppy if present
+#	3) create live/"cow" which may or maynot be on a non-volatile device
+#	   but is certainly read-write
+
+if [ -d /root/opt/vyatta/etc/config ]
+then
+    if [ -d /root/live/cow/config ]
+    then
+	log_begin_msg "Using /live/cow/config..."
+	mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
+	log_end_msg
+    elif [ -d /root/media/floppy/config ]
+    then
+	log_begin_msg "Using /media/floppy/config..."
+	mount -o bind /root/media/floppy/config /root/opt/vyatta/etc/config
+	log_end_msg
+    else
+	log_begin_msg "Creating /live/cow/config..."
+	cp -a /root/opt/vyatta/etc/config /root/live/cow
+	mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
+	log_end_msg
+    fi
+fi
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:
