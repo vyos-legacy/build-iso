@@ -96,6 +96,15 @@ else
 	LH_UNION_FILESYSTEM=unionfs
 fi
 
+AC_ARG_WITH(exposed-root,
+[AS_HELP_STRING([--with-exposed-root], [enable livecd exposed root feature])])
+
+if test X$with_exposed_root = Xyes ; then
+   LH_EXPOSED_ROOT=enabled
+else
+   LH_EXPOSED_ROOT=disabled
+fi
+
 AC_ARG_WITH(vyatta-op,
 [AS_HELP_STRING([--with-vyatta-op],
   [ fetch (default) or build named package])]
@@ -329,6 +338,7 @@ AC_SUBST(LH_BOOTSTRAP_FLAVOUR)
 AC_SUBST(LH_BOOTSTRAP_INCLUDE)
 AC_SUBST(LH_CHROOT_FILESYSTEM)
 AC_SUBST(LH_DISTRIBUTION)
+AC_SUBST(LH_EXPOSED_ROOT)
 AC_SUBST(LH_HOSTNAME)
 AC_SUBST(LH_INITRAMFS)
 AC_SUBST(LH_ISO_APPLICATION)
