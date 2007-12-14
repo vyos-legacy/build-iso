@@ -21,7 +21,7 @@
   			continue
   			;;
   		  tmpfs)
-! 			if [ "$MTPT" != "/live/cow" ] ; then
+! 			if [ "$MTPT" != "/media" ] &&  [ "$MTPT" != "/live" ] &&  [ "$MTPT" != "/live/cow" ] ; then
 ! 				TMPFS_MTPTS="$TMPFS_MTPTS $MTPT"
 ! 			fi
   			;;
