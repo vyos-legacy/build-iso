@@ -32,4 +32,5 @@
 /vyatta-config-migrate
 /vyatta-bash
 /vyatta-cfg-firewall
+/vyatta-cluster
 /ppp

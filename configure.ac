@@ -176,6 +176,14 @@ AC_ARG_WITH(vyatta-bash,
 [],
 [with_vyatta_bash=fetch])
 
+AC_ARG_WITH(vyatta-cluster,
+[AS_HELP_STRING([--with-vyatta-cluster],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-cluster],
+  [exclude named package])],
+[],
+[with_vyatta_cluster=fetch])
+
 AC_ARG_WITH(kernel,
 [AS_HELP_STRING([--with-kernel],
   [ fetch (default) or vyatta kernel])]
@@ -206,6 +214,7 @@ AC_ARG_WITH(all,
      with_vyatta_cfg_firewall=yes;
      with_vyatta_config_migrate=yes;
      with_vyatta_bash=yes;
+     with_vyatta_cluster=yes;
   fi ],
 [])
 
@@ -219,7 +228,7 @@ FETCH_PKGS=
 
 for pkg in kernel vyatta-op vyatta-cfg vyatta-op-quagga vyatta-cfg-quagga \
            vyatta-config-migrate vyatta-cfg-system vyatta-cfg-firewall \
-	   vyatta-bash
+	   vyatta-bash vyatta-cluster
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
