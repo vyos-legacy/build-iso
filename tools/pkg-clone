@@ -35,7 +35,7 @@ for pkg in $@; do
   repo="$pkg"
 
   # special case for kernel repo
-  [ "$repo" = kernel ] && repo=linux-eureka
+  [ "$repo" = kernel ] && repo=linux-vyatta
 
   mkdir -p $pkg
   targetdir="$pkg/$pkg"
