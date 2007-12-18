@@ -171,6 +171,19 @@ if ! lh_bootstrap; then
   exit 1
 fi
 
+if ! test -f chroot/etc/network/interfaces || \
+   ! grep -q '^auto lo' chroot/etc/network/interfaces ; then
+    echo I: Configure network loopback interface
+    cat >> chroot/etc/network/interfaces <<-EOF
+	# interfaces(5) file used by ifup(8) and ifdown(8)
+
+	# The loopback network interface
+	auto lo
+	iface lo inet loopback
+
+	EOF
+fi
+
 if [ -d cache/lists ] ; then
     echo I: Restore cached package lists
     cp -a cache/lists chroot/var/lib/apt/
@@ -296,7 +309,9 @@ done
 set_up_apt_pref
 # exclude more files
 echo etc/apt/preferences	>> chroot/tmp/mksquashfs.exclude
-echo etc/resolv.conf >> chroot/tmp/mksquashfs.exclude
+echo etc/resolv.conf	 	>> chroot/tmp/mksquashfs.exclude
+echo var/log/bootstrap.log	>> chroot/tmp/mksquashfs.exclude
+echo var/log/dpkg.log		>> chroot/tmp/mksquashfs.exclude
 
 remove_dir()
 {
@@ -383,3 +398,8 @@ if ! lh_binary; then
 fi
 
 echo I: Done
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:
