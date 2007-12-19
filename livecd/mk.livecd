@@ -385,8 +385,7 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 		cp -a * ../../pool/.
 	)
 	rm -rf pool.udeb
-	touch `$(BUILDID)`
-	cp ../iso
+	touch vyatta$BUILDID
 	genisoimage -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
 )
 
