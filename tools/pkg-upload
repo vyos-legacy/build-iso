@@ -8,7 +8,7 @@ for pkg in $@; do
   echo uploading $pkg...
   case "$pkg" in
     kernel )
-      deb="kernel/${VYATTA_LINUX_PKG}*.deb"
+      deb="kernel/linux-*.deb"
       ;;
     * )
       deb="${pkg}/${pkg}*.deb"
