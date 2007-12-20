@@ -1,18 +1,26 @@
 0fGETTING HELP07                                                                  09F907
 
-If you can't install Debian, don't despair! The Debian team is ready to
-help you! We are especially interested in hearing about installation
-problems, because in general they don't happen to only 0fone07 person.
-We've either already heard about your particular problem and can dispense a
-quick fix, or we would like to hear about it and work through it with you,
-and the next user who comes up with the same problem will profit from your
-experience!
+If you have trouble installing Vyatta, don't despair! You have a couple of options
 
-See the Installation Manual or the FAQ for more information; both
-documents are available at the Debian web site, 0fhttp://www.debian.org/07
+   1. If you are a Vyatta subscriptions customer, you can contact the Vyatta
+      Technical Assistance Center (VTAC)
+   2. If you are using the Vyatta Community Edition (VC), you can get help from
+      the Vyatta community at http://www.vyatta.com .  For best results when
+      posting your issue, try to be as specific as you can about what version of
+      Vyatta and the exact hardware, including any optional hardware, you are
+      trying to use.  Include a specific description of the failure condition or
+      error message.
 
+We are especially interested in hearing about installation
+problems.  Generally, installation problems happen to multiple people and you
+can help us solve a problem for others who may follow you.
 
+Vyatta is committed to supporting an ever-increasing set of hardware, and while
+we can't commit to supporting everything, we want to understand which hardware
+is the source of problems.
 
+See the Vyatta Quick Start Guide for more information available at the Vyatta
+web site, 0fhttp://www.vyatta.com/07
 
 
 
