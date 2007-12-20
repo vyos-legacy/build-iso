@@ -1,16 +1,21 @@
-0fPREREQUISITES FOR INSTALLING DEBIAN07                                           09F207
+0fPREREQUISITES FOR INSTALLING VYATTA07                                           09F207
 
-You must have at least 32 megabytes of RAM to use this Debian installer.
+You must have at least 32 megabytes of RAM to use this installer.  Vyatta
+recommends at least 512 megabytes of RAM for basic system usage.  You will need
+more RAM if you plan on working with large routing tables or advanced
+functionality.
 
 You should have space on your hard disk to create a new disk partition
-of at least 256 megabytes to install the base system. You'll need more
-disk space to install additional packages, depending on what you wish
-to do with your new Debian system.
+of at least 512 megabytes to install the base system. You'll need more
+disk space to install additional packages, and to provide expansion for future
+upgrades.
 
-See the Installation Manual or the FAQ for more information; both
-documents are available at the Debian web site, 0fhttp://www.debian.org/07
+See the Vyatta Quick Start Guide, Command Reference, and Configuration for more
+information. All of these documents are available at the Vyatta web site,
+0fhttp://www.vyatta.com/07
+http://www.vyatta.com/ .
 
-Thank you for choosing Debian!
+Welcome to the Vyatta community!
 
 
 
