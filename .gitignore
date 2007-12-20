@@ -35,4 +35,5 @@
 /vyatta-cluster
 /vyatta-op-firewall
 /vyatta-nat
+/vyatta-cfg-vpn
 /ppp
