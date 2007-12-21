@@ -378,6 +378,9 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 		rm_files=`find -name '*.deb'|sort|comm -3 - /tmp/report$$`
 		rm -f $rm_files /tmp/report$$
 	)
+
+	wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
+	rm /dists/lenny/Release.gpg
 	
 	deb-archive -r lenny -n main -d .
 	(
