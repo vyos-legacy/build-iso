@@ -74,7 +74,7 @@ iso.fast : $(PKG_STAMPS)
 
 .PHONY : iso.clean
 iso.clean :
-	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock}
+	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock,deb-install,deb-install.iso}
 
 .PHONY : iso.cleanstage
 iso.cleanstage : iso.clean
