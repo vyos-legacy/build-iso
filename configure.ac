@@ -41,6 +41,12 @@ AC_ARG_WITH(ppp,
 	[],
 	[with_vyatta_ppp=fetch])
 
+AC_ARG_WITH(wanpipe,
+	[AS_HELP_STRING([--with-wanpipe=fetch|yes|no (default fetch)],
+	  [Include wanpipe (fetch: download package)])],
+	[],
+	[with_vyatta_wanpipe=fetch])
+
 test ! "$LH_BOOTLOADER" && LH_BOOTLOADER=syslinux
 AC_ARG_VAR(LH_BOOTLOADER, [default: syslinux])
 
@@ -265,7 +271,7 @@ FETCH_PKGS=
 for pkg in kernel vyatta-op vyatta-op-firewall vyatta-cfg vyatta-op-quagga \
            vyatta-cfg-quagga vyatta-config-migrate vyatta-cfg-system \
 	   vyatta-cfg-firewall vyatta-bash vyatta-cluster vyatta-nat \ 
-           vyatta-cfg-vpn
+           vyatta-cfg-vpn ppp wanpipe
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
