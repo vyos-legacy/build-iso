@@ -1,0 +1,79 @@
+#!/bin/sh
+#
+# This scripts starts from a virgin debian install;
+# it adds all packages needed to build a OFR .iso;
+# it then "git-clone"s the remote repositories
+# and actually builds the .iso .
+# It requires root priveleges
+#
+# For further information, see the vyatta community wiki:
+# http://www.vyatta.com/twiki/bin/view/Community/WebHome
+#
+# **** License ****
+# Version: VPL 1.0
+# 
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+# 
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+# 
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+# 
+# Author: Rick Balocca
+# Date: 2007
+# Description:
+# 
+# **** End License ****
+
+get_dpkg_version()
+{
+	if [ "$1" ]
+	then
+		dpkg-deb --field "$1" version
+	else
+		echo 0
+	fi
+}
+
+newer_package()
+{
+	local new_no
+	local old_no
+
+	new_no=0
+	old_no=0
+	[ "$1" ] && new_no=`get_dpkg_version "$1"`
+	[ "$2" ] && old_no=`get_dpkg_version "$2"`
+
+	if dpkg --compare-versions "$new_no" ">" "$old_no"
+	then
+		echo "$1"
+	else
+		echo "$2"
+	fi
+}
+
+accumulate_newest()
+{
+	local newest
+
+	newest=
+	for i in $*
+	do
+		newest=`newer_package "$newest" "$i"`
+	done
+	echo $newest
+}
+
+archive_prefix=`echo "$1" | sed 's/_.*//'`
+archive=`basename "$archive_prefix"`
+dir=`dirname "$1"`
+list=`find "$dir" -type f -name "$archive"_"*.deb"`
+accumulate_newest $list
