@@ -36,5 +36,6 @@
 /vyatta-op-firewall
 /vyatta-nat
 /vyatta-cfg-vpn
+/vyatta-cfg-dhcp-server
 /ppp
 /wanpipe
