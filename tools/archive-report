@@ -1,8 +1,10 @@
 #!/bin/sh
 #
-# This script reports the debian packages in the pool
-# For packages with more than one version, it only lists
-# the file with the highest version number
+# This scripts starts from a virgin debian install;
+# it adds all packages needed to build a OFR .iso;
+# it then "git-clone"s the remote repositories
+# and actually builds the .iso .
+# It requires root priveleges
 #
 # For further information, see the vyatta community wiki:
 # http://www.vyatta.com/twiki/bin/view/Community/WebHome
@@ -30,48 +32,23 @@
 # 
 # **** End License ****
 
-get_dpkg_version()
-{
-	if [ "$1" ]
+case "$1" in
+ -f )
+	full_path=yes
+	shift
+	;;
+esac
+
+list=`find $* -type f -name '*.deb' -exec basename {} \;|sed 's/_.*$//'|sort -u`
+for i in $list
+do
+	nm=`latestdeb $i`
+	if [ "$full_path" ]
 	then
-		dpkg-deb --field "$1" version
+		echo $nm
 	else
-		echo 0
+		prefix=`basename "$nm" | sed -e 's/_.*$//'`
+		echo -n "$prefix"" "
+		dpkg -f "$nm" version | sed 's/[0-9]://'
 	fi
-}
-
-newer_package()
-{
-	local new_no
-	local old_no
-
-	new_no=0
-	old_no=0
-	[ "$1" ] && new_no=`get_dpkg_version "$1"`
-	[ "$2" ] && old_no=`get_dpkg_version "$2"`
-
-	if dpkg --compare-versions "$new_no" ">" "$old_no"
-	then
-		echo "$1"
-	else
-		echo "$2"
-	fi
-}
-
-accumulate_newest()
-{
-	local newest
-
-	newest=
-	for i in $*
-	do
-		newest=`newer_package "$newest" "$i"`
-	done
-	echo $newest
-}
-
-archive_prefix=`echo "$1" | sed 's/_.*//'`
-archive=`basename "$archive_prefix"`
-dir=`dirname "$1"`
-list=`find "$dir" -type f -name "$archive"_"*.deb"`
-accumulate_newest $list
+done | sort -u 

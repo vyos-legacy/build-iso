@@ -1,0 +1,131 @@
+#!/bin/sh
+
+# tool for managing the DEB repositories on archive
+
+help() {
+  echo "USAGE: sudo -u autobuild -H deb-archive [OPTIONS]"
+  echo "deb-archive will process the package files in the given repo"
+  echo "and create the signed repository package summary files"
+  echo
+  echo -e "\t-r\tSpecify the repository [for instance, main]"
+  echo -e "\t-d\tSpecify root dir for the repository (default /var/www/vyatta)"
+  exit
+}
+
+REPO_ROOT="/var/www/vyatta"
+
+while getopts hr:d:n: opt
+do
+  case $opt in
+  r)    REPO="$OPTARG"
+        ;;
+  d)	[ -d "$OPTARG" ] || help
+  	REPO_ROOT=`cd "$OPTARG";pwd`
+	;;
+  h)    help
+        ;;
+  n)	NEWFORMAT="$OPTARG"
+	;;
+  esac
+done
+
+if [ -z "$REPO" ]; then
+  help
+  exit 1
+fi
+
+if [ "$NEWFORMAT" ]
+then
+  REPOSITORIES="$NEWFORMAT"
+else
+  REPOSITORIES=`cd "$REPO_ROOT/pool/$REPO";find * -maxdepth 0 -type d`
+fi
+
+if [ ! "$REPOSITORIES" ]
+then
+  echo -e "Error: Invalid repository specified."
+  exit 1
+fi
+
+case X`id -n -u` in
+ Xautobuild | Xroot )
+	;;
+ * )
+	help
+	;;
+esac
+
+echo "Setting up apt repositories"
+
+for version in $REPO
+  do
+  for repository in $REPOSITORIES
+  do
+    cd $REPO_ROOT
+
+    echo -e "\tChecking $version/$repository"
+    mkdir -p dists/$version/$repository/binary-i386
+
+    # Create the Packages file
+    if [ "$NEWFORMAT" ]
+    then
+      apt-ftparchive packages pool/$repository
+    else
+      apt-ftparchive packages pool/$version/$repository
+    fi >dists/$version/$repository/binary-i386/Packages
+
+    # Create gzip copy of Packages
+    gzip --stdout dists/$version/$repository/binary-i386/Packages \
+	> dists/$version/$repository/binary-i386/Packages.gz
+
+    # Create a local /tmp/$$-Release file
+    cat <<EOF >/tmp/$$-Release
+Archive: Vyatta
+Component: $repository
+Origin: Vyatta
+Label: Vyatta
+Codename: $version
+Architecture: i386
+EOF
+
+    #echo "Version: $version" >> $LOCALRELEASE
+
+  done
+
+  # Create the Top Level /tmp/$$-Release file for each version tree
+  cd dists/$version
+  echo "Origin: Vyatta" > /tmp/$$-Release
+  echo "Label: Vyatta"  >> /tmp/$$-Release
+  echo "Suite: $version" >> /tmp/$$-Release
+  echo "Codename: $version" >> /tmp/$$-Release
+
+  echo -n "Components:" >> /tmp/$$-Release
+  for repository in $REPOSITORIES
+    do
+    echo -n " $repository" >> /tmp/$$-Release
+  done
+  echo "" >> /tmp/$$-Release
+  
+  echo "Description: Vyatta OFR $version" >> /tmp/$$-Release
+
+  apt-ftparchive release . >> /tmp/$$-Release
+
+  ## gpg sign the release file
+  ## Ensure single writer via a lock dir
+  while ! mkdir lock 2>/dev/null
+  do
+     sleep 1
+  done
+
+  mv /tmp/$$-Release Release
+  rm -f Release.gpg
+  #gpg --use-agent --output Release.gpg --detach-sig Release
+  gpg --output Release.gpg --detach-sig Release
+  rmdir lock
+  cd $HOME
+
+done 
+
+## clean up permissions just in case
+#chgrp -R support /var/www/vyatta
+exit 0
