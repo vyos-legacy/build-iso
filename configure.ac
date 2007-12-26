@@ -221,7 +221,7 @@ AC_ARG_WITH(vyatta-cfg-dhcp-server,
 [AS_HELP_STRING([--without-vyatta-cfg-dhcp-server],
   [exclude named package])],
 [],
-[with_vyatta_cfg_dhcp-server=$default_vyatta_cfg])
+[with_vyatta_cfg_dhcp_server=$default_vyatta_cfg])
 
 AC_ARG_WITH(vyatta-cfg-vpn,
 [AS_HELP_STRING([--with-vyatta-cfg-vpn],
