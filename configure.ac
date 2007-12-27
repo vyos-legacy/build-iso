@@ -264,7 +264,7 @@ AC_ARG_WITH(all,
      with_vyatta_bash=yes;
      with_vyatta_cluster=yes;
      with_vyatta_nat=yes;
-     with_vyatta_cfg_dhcp-server=yes;
+     with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_cfg_vpn=yes;
   fi ],
 [])
