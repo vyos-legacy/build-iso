@@ -326,7 +326,7 @@ remove_dir()
 	)&
 }
 
-[ -f deb-install.tar ] || wget -nv http://sydney.vyatta.com/vyatta/d-i/deb-install.tar
+[ -f deb-install.tar ] || wget -nv http://archive.vyatta.com/vyatta/build-root/deb-install.tar
 
 remove_dir deb-install
 
@@ -388,7 +388,7 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 		cd pool.udeb/pool
 		cp -a * ../../pool/.
 	)
-	rm /dists/lenny/Release.gpg
+	rm dists/lenny/Release.gpg
 	rm -rf pool.udeb
 	touch vyatta$BUILDID
 	genisoimage -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .

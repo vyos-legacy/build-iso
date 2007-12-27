@@ -1,0 +1,52 @@
+#!/bin/sh
+
+targetdir="$1"
+shift
+
+# Set defaults
+[ "$targetdir" ] || targetdir=ofr
+[ "$VYATTA_URL" ] || export VYATTA_URL=http://git.vyatta.com
+repo=build-iso
+bname=master
+
+case "$targetdir" in
+ ofr )
+	repo=ofr
+	;;
+ alameda | bakersfield | camarillo | dublin | fairfield )
+	repo=ofr
+	bname="$targetdir"
+	;;
+ eureka | build-eureka | build-iso )
+	;;
+ * )	# post dublin
+	bname="$targetdir"
+	;;
+esac
+
+# Check for differently named targetdir
+if [ "$1" = -targetdir -a "$2" ]
+then
+	shift
+	targetdir="$1"
+	shift
+fi
+
+if [ -d "$targetdir" ]
+then
+	echo Sorry, target directory "$targetdir" already exists
+	exit 1
+fi
+
+git-clone -q "$VYATTA_URL/$repo".git "$targetdir"
+
+cd "$targetdir"
+
+if [ "$bname" != master ]
+then
+	git-checkout -b "$bname" "remotes/origin/$bname"
+	git-config "branch.$bname.remote" origin
+	git-config "branch.$bname.merge" "refs/heads/$bname"
+fi
+
+autoreconf -i && ./configure $*>/dev/null
