@@ -280,7 +280,7 @@ FETCH_PKGS=
 for pkg in kernel vyatta-op vyatta-op-firewall vyatta-cfg vyatta-op-quagga \
            vyatta-cfg-quagga vyatta-config-migrate vyatta-cfg-system \
 	   vyatta-cfg-firewall vyatta-bash vyatta-cluster vyatta-nat \ 
-           vyatta-cfg-dhcp-server vyatta-cfg-vpn ppp
+           vyatta-cfg-dhcp-server vyatta-cfg-vpn
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
