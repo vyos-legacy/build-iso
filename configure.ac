@@ -160,8 +160,8 @@ else
 fi
 
 AC_ARG_WITH(vyatta-cfg,
-[AS_HELP_STRING([--with-vyatta-cfg=fetch|yes|no (default fetch)],
-  [Include vyatta-cfg (fetch: download package)])],
+[AS_HELP_STRING([--with-vyatta-cfg],
+  [ fetch (default) or build named package])]
 [AS_HELP_STRING([--without-vyatta-cfg],
   [exclude named package])],
 [],
