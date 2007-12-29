@@ -126,7 +126,12 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 					git-lsmods ) eval "git-ls-files -m";; \
 					git-fetch )	git-fetch -q 2>/dev/null; \
 							branch=`git-branch|grep '^\* '|sed 's/..//'`; \
-							git-branch -a -v|grep "$$branch[ 	]"; \
+							changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
+							if [ "$$changed" ]; then \
+								echo Some local changes not pushed.; \
+							else \
+								echo ; \
+							fi; \
 							;; \
 					git-diff-cached )	eval "git-diff --cached";; \
 					* ) eval "$@";; \
