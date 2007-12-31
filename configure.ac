@@ -239,6 +239,14 @@ AC_ARG_WITH(vyatta-cfg-vpn,
 [],
 [with_vyatta_cfg_vpn=$default_vyatta_cfg])
 
+AC_ARG_WITH(vyatta-ravpn,
+[AS_HELP_STRING([--with-vyatta-ravpn],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-ravpn],
+  [exclude named package])],
+[],
+[with_vyatta_ravpn=fetch])
+
 AC_ARG_WITH(kernel,
 [AS_HELP_STRING([--with-kernel],
   [ fetch (default) or vyatta kernel])]
@@ -275,6 +283,7 @@ AC_ARG_WITH(all,
      with_vyatta_nat=yes;
      with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_cfg_vpn=yes;
+     with_vyatta_ravpn=yes;
   fi ],
 [])
 
@@ -289,7 +298,7 @@ FETCH_PKGS=
 for pkg in kernel vyatta-op vyatta-op-dhcp-server vyatta-op-firewall vyatta-cfg vyatta-op-quagga \
            vyatta-cfg-quagga vyatta-config-migrate vyatta-cfg-system \
 	   vyatta-cfg-firewall vyatta-bash vyatta-cluster vyatta-nat \ 
-           vyatta-cfg-dhcp-server vyatta-cfg-vpn wanpipe
+           vyatta-cfg-dhcp-server vyatta-cfg-vpn wanpipe vyatta-ravpn
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg

@@ -37,5 +37,6 @@
 /vyatta-nat
 /vyatta-cfg-vpn
 /vyatta-cfg-dhcp-server
+/vyatta-ravpn
 /ppp
 /wanpipe
