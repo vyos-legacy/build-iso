@@ -74,7 +74,7 @@ iso.fast : $(PKG_STAMPS)
 
 .PHONY : iso.clean
 iso.clean :
-	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock,deb-install,deb-install.iso}
+	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock,deb-install.iso}
 
 .PHONY : iso.cleanstage
 iso.cleanstage : iso.clean
@@ -87,7 +87,7 @@ iso.cleanmsgq :
 
 .PHONY : iso.cleanall
 iso.cleanall : iso.cleanstage iso.cleanmsgq iso.clean
-	@rm -rf livecd/cache
+	@rm -rf livecd/{cache,deb-install,deb-install.tar}
 
 $(PKG_STAMPS) :
 	@PKG_OP_ARG=$(@D).deb; $(pkg_dot_op)
