@@ -328,9 +328,13 @@ remove_dir()
 
 [ -f deb-install.tar ] || wget -nv http://archive.vyatta.com/build-root/deb-install.tar
 
-remove_dir deb-install
+if [ -d deb-install ]
+then
+	tar xf deb-install.tar deb-install/md5sum.txt
+else
+	tar xf deb-install.tar
+fi
 
-tar xf deb-install.tar
 
 (
 	cd d-i
