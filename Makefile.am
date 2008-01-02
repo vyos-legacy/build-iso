@@ -128,7 +128,7 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 							branch=`git-branch|grep '^\* '|sed 's/..//'`; \
 							changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
 							if [ "$$changed" ]; then \
-								echo Some local changes not pushed.; \
+								echo Local check-ins are not in the shared repo or visa versa; \
 							else \
 								echo ; \
 							fi; \
