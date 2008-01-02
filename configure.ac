@@ -135,13 +135,13 @@ AC_ARG_WITH(vyatta-op-dhcp-server,
 
 AC_ARG_WITH(vyatta-serial,
 [AS_HELP_STRING([--with-vyatta-serial],
-  [ fetch (default) or build named package])]
+  [ fetch (default) or build named package])],
 [],
 [with_vyatta_serial=fetch])
 
 AC_ARG_WITH(vyatta-op-firewall,
 [AS_HELP_STRING([--with-vyatta-op-firewall],
-  [ fetch (default) or build named package])]
+  [ fetch (default) or build named package])],
 [],
 [with_vyatta_op_firewall=fetch])
 
