@@ -133,11 +133,15 @@ AC_ARG_WITH(vyatta-op-dhcp-server,
 [],
 [with_vyatta_op_dhcp_server=fetch])
 
+AC_ARG_WITH(vyatta-serial,
+[AS_HELP_STRING([--with-vyatta-serial],
+  [ fetch (default) or build named package])]
+[],
+[with_vyatta_serial=fetch])
+
 AC_ARG_WITH(vyatta-op-firewall,
 [AS_HELP_STRING([--with-vyatta-op-firewall],
   [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-op-firewall],
-  [exclude named package])],
 [],
 [with_vyatta_op_firewall=fetch])
 
@@ -298,7 +302,7 @@ FETCH_PKGS=
 for pkg in kernel vyatta-op vyatta-op-dhcp-server vyatta-op-firewall vyatta-cfg vyatta-op-quagga \
            vyatta-cfg-quagga vyatta-config-migrate vyatta-cfg-system \
 	   vyatta-cfg-firewall vyatta-bash vyatta-cluster vyatta-nat \ 
-           vyatta-cfg-dhcp-server vyatta-cfg-vpn wanpipe vyatta-ravpn
+           vyatta-cfg-dhcp-server vyatta-cfg-vpn wanpipe vyatta-ravpn vyatta-serial
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg

@@ -38,5 +38,7 @@
 /vyatta-cfg-vpn
 /vyatta-cfg-dhcp-server
 /vyatta-ravpn
+/vyatta-serial
+/vyatta-op-dhcp-server
 /ppp
 /wanpipe
