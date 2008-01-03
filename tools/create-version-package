@@ -1,0 +1,163 @@
+#!/bin/sh
+#
+# This scripts starts from a virgin debian install;
+# it adds all packages needed to build a OFR .iso;
+# it then "git-clone"s the remote repositories
+# and actually builds the .iso .
+# It requires root priveleges
+#
+# For further information, see the vyatta community wiki:
+# http://www.vyatta.com/twiki/bin/view/Community/WebHome
+#
+# **** License ****
+# Version: VPL 1.0
+# 
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+# 
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+# 
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+# 
+# Author: Rick Balocca
+# Date: 2007
+# Description:
+# 
+# **** End License ****
+
+
+if [ $# -lt 2 ]
+then
+	usage=no
+fi
+
+while getopts v:r:d:o:htn:x opt
+do
+  case $opt in
+  r)    ARCHIVE="$OPTARG"
+        ;;
+  d)
+	DEST=`cd "$OPTARG";pwd`
+	;;
+  o)	OFILE="$OPTARG"
+	(
+		cd `dirname "$OFILE"`
+		OFILE=$PWD/`basename "$OFILE"`
+	)
+	;;
+  h)	usage=no
+	;;
+  n)	NEWFORMAT="$OPTARG"
+	;;
+  x)	DONT_RUN_DEBARCHIVE=yes
+	;;
+  v)	VERSION="$OPTARG"
+	;;
+  t)	TRIM=true
+	;;
+  esac
+done
+
+case "$ARCHIVE" in
+vyatta | supported )
+	ARCHIVE=supported
+	prefix=vyatta
+	;;
+vc* | community )
+	ARCHIVE=community
+	prefix=vc
+	;;
+* )	ARCHIVE=$ARCHIVE
+	prefix=vyatta
+esac
+
+if [ "$usage" -o ! "$ARCHIVE" ]
+then
+	echo Usage: $0 system_version_number ' -v VERSION [ -r supported | -r community ] [ -d debian_archive_dir ] [ -o output_file ]'
+	exit 1
+fi
+
+[ "$DEST" ] || DEST="/var/www/vyatta/pool/$ARCHIVE/main/"
+[ "$OFILE" ] || OFILE="$DEST/v/vyatta/."
+
+chmod +x "$0" 2>/dev/null	# just in case
+basedir=`which $0`
+basedir=`dirname "$basedir"`
+bindir=`cd "$basedir";echo $PWD`
+PATH="$bindir":$PATH
+
+tmpdir=/tmp/$$-version
+
+vf=opt/vyatta/etc
+mkdir -p $tmpdir/$vf
+SAVEDIR=$PWD
+cd $tmpdir
+
+echo Baseline Version: "${VERSION}" |tee $vf/version >$vf/version.master
+
+(
+	cd "$DEST"
+	[ -f .Released ] || touch .Released
+	sed 's/.*/\^& /' .Released >/tmp/$$Released
+	archive-report | grep -f /tmp/$$Released
+	echo $prefix-version "${VERSION}"
+) | sort -u >$tmpdir/$vf/deb-versions.txt
+
+<$tmpdir/$vf/deb-versions.txt sed 's/^/ii /' >"$SAVEDIR/$ARCHIVE-dpkg-l"
+<$tmpdir/$vf/deb-versions.txt sed -e 's,  *,_,' -e 's,.*,/&_\*.deb,' >"$SAVEDIR/$ARCHIVE-list-l"
+
+mkdir DEBIAN
+(
+	echo "Package: $prefix-version"
+	echo "Version: ${VERSION}"
+	echo "Architecture: i386"
+	echo "Maintainer: Vyatta <debs@vyatta.com>"
+	echo "Essential: no"
+	echo "Section: base"
+	echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version"
+	echo -n Suggests: 
+	<$tmpdir/$vf/deb-versions.txt sed -e 's/ *\([^ ]*\)$/(>=\1),/' -e 's/^/ /'
+	echo " nano"
+	echo Description: "$prefix version file"
+	echo " This package sets up the version file and a file containing"
+	echo " the list of recommended packages (with the recommended versions"
+) >DEBIAN/control
+
+dpkg --build . "../$prefix-version_${VERSION}_i386.deb" >/dev/null
+
+cd $SAVEDIR
+
+# Don't use mv in case the user has specified /dev/null
+cp "/tmp/$prefix-version_${VERSION}_i386.deb" "$OFILE"
+rm /tmp/$prefix-version_${VERSION}_i386.deb
+
+rm -rf $tmpdir&
+
+#if [ "$TRIM" ]
+#then
+#(
+#	cd "$DEST"
+#	for i in `cat .Released`; do latestdeb $i; done>/tmp/$$list
+#	rm -rf pool1
+#	rsync -v --files-from=/tmp/$$list . pool1
+#	rm -rf pool
+#	mv pool1 pool
+#	#rm /tmp/$$list
+#)
+#fi
+
+[ "$DONT_RUN_DEBARCHIVE" ] && exit 0
+
+case "$OFILE" in
+/var/www/vyatta/pool/* )
+	deb-archive -r "$ARCHIVE";;
+* )
+	deb-archive -r "$ARCHIVE" -d $DEST;;
+esac
