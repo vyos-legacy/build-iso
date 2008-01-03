@@ -288,6 +288,7 @@ AC_ARG_WITH(all,
      with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_cfg_vpn=yes;
      with_vyatta_ravpn=yes;
+     with_vyatta_serial=yes;
   fi ],
 [])
 
