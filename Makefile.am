@@ -125,13 +125,16 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 					git-clean-n ) eval "git-clean -n";; \
 					git-lsmods ) eval "git-ls-files -m";; \
 					git-fetch )	git-fetch -q 2>/dev/null; \
+							if ! (git-status|head -3|grep '^nothing to commit' >/dev/null) ; \
+							then \
+								echo There are uncommited changes.; \
+							fi; \
 							branch=`git-branch|grep '^\* '|sed 's/..//'`; \
 							changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
 							if [ "$$changed" ]; then \
-								echo Local check-ins are not in the shared repo or visa versa; \
-							else \
-								echo ; \
+								echo A local commit is not in the shared repo or visa versa.; \
 							fi; \
+							echo ; \
 							;; \
 					git-diff-cached )	eval "git-diff --cached";; \
 					* ) eval "$@";; \
