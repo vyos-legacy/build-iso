@@ -352,8 +352,8 @@ rm -f deb-install/pool/main/lock
 	cd deb-install/pool/main/v/vyatta
 	rm *source*.deb
 	mkdir sav$$
-	mv linux-* sav$$/.
-	mv sav$$/linux-image* .
+	mv linux-* sav$$/. 2>/dev/null
+	mv sav$$/linux-image* . 2>/dev/null
 	rm -rf sav$$
 )
 
@@ -376,7 +376,7 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 
 	rsync -ar --exclude="*.deb" pool pool.udeb
 	find pool -name '*.udeb' -exec rm -f {} \;
-	rm -rf pool/main/l/linux*2.6
+	rm -rf pool/main/l/linux*2.6 2>/dev/null
 
 	(
 		cd pool
