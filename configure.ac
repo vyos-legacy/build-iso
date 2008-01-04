@@ -89,15 +89,6 @@ AC_ARG_WITH(target-dist,
 
 LH_DISTRIBUTION="$with_target_dist"
 
-# quagga 0.99.9 is available on lenny
-# AC_ARG_WITH(quagga,
-# [AS_HELP_STRING([--with-quagga],
-#   [ fetch (default) or build named package])]
-# [AS_HELP_STRING([--without-quagga],
-#   [exclude named package])],
-# [],
-# [with_quagga=fetch])
-
 AC_ARG_WITH(aufs,
 [AS_HELP_STRING([--with-aufs],
   [use aufs instead of unionfs])])
@@ -259,6 +250,21 @@ AC_ARG_WITH(vyatta-ravpn,
 [],
 [with_vyatta_ravpn=fetch])
 
+AC_ARG_WITH(vyatta-quagga,
+[AS_HELP_STRING([--with-vyatta-quagga],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-quagga],
+  [use debian or ubuntu package instead of vyatta])],
+[],
+[with_vyatta_quagga=fetch])
+
+if test X$with_vyatta_quagga = no ; then
+# use debian or ubuntu quagga instead of vyatta
+   with_quagga=fetch
+else
+   with_quagga=no
+fi
+
 AC_ARG_WITH(kernel,
 [AS_HELP_STRING([--with-kernel],
   [ fetch (default) or vyatta kernel])]
@@ -283,19 +289,20 @@ AC_ARG_WITH(all,
 [ if test X$with_all = Xyes ; then
      with_vyatta_cfg=yes;
      with_vyatta_op=yes;
+     with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_op_dhcp_server=yes;
+     with_vyatta_cfg_firewall=yes;
      with_vyatta_op_firewall=yes;
      with_vyatta_cfg_quagga=yes;
      with_vyatta_op_quagga=yes;
-     with_vyatta_cfg_system=yes;
-     with_vyatta_cfg_firewall=yes;
-     with_vyatta_config_migrate=yes;
-     with_vyatta_bash=yes;
-     with_vyatta_cluster=yes;
-     with_vyatta_nat=yes;
-     with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_cfg_vpn=yes;
      with_vyatta_op_vpn=yes;
+     with_vyatta_cfg_system=yes;
+     with_vyatta_bash=yes;
+     with_vyatta_config_migrate=yes;
+     with_vyatta_cluster=yes;
+     with_vyatta_nat=yes;
+     with_vyatta_quagga=yes;
      with_vyatta_ravpn=yes;
      with_vyatta_serial=yes;
   fi ],
@@ -309,10 +316,26 @@ BUILD_PKGS=
 EXCLUDE_PKGS=
 FETCH_PKGS=
 
-for pkg in kernel vyatta-op vyatta-op-dhcp-server vyatta-op-firewall vyatta-op-vpn vyatta-cfg vyatta-op-quagga \
-           vyatta-cfg-quagga vyatta-config-migrate vyatta-cfg-system \
-	   vyatta-cfg-firewall vyatta-bash vyatta-cluster vyatta-nat \ 
-           vyatta-cfg-dhcp-server vyatta-cfg-vpn wanpipe vyatta-ravpn vyatta-serial
+for pkg in kernel \
+    quagga vyatta-quagga \
+    vyatta-bash \
+    vyatta-op \
+    vyatta-cfg \
+    vyatta-op-dhcp-server \
+    vyatta-cfg-dhcp-server \
+    vyatta-op-firewall \
+    vyatta-cfg-firewall \
+    vyatta-op-quagga \
+    vyatta-cfg-quagga \
+    vyatta-op-vpn \
+    vyatta-cfg-vpn \
+    vyatta-config-migrate \
+    vyatta-cfg-system \
+    vyatta-cluster \
+    vyatta-nat \
+    vyatta-ravpn \
+    vyatta-serial \
+    wanpipe
 do
   npkg=${pkg//-/_}
   eval with_pkg=\$with_$npkg
