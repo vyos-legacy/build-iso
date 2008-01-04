@@ -24,22 +24,6 @@
 *.iso
 
 /kernel
-/vyatta-cfg
-/vyatta-op
-/vyatta-cfg-quagga
-/vyatta-op-quagga
-/vyatta-cfg-system
-/vyatta-config-migrate
-/vyatta-bash
-/vyatta-cfg-firewall
-/vyatta-cluster
-/vyatta-op-firewall
-/vyatta-nat
-/vyatta-cfg-vpn
-/vyatta-cfg-dhcp-server
-/vyatta-ravpn
-/vyatta-serial
-/vyatta-op-dhcp-server
-/vyatta-quagga
+/vyatta-*
 /ppp
 /wanpipe

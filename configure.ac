@@ -124,6 +124,14 @@ AC_ARG_WITH(vyatta-op-dhcp-server,
 [],
 [with_vyatta_op_dhcp_server=fetch])
 
+AC_ARG_WITH(vyatta-op-vpn,
+[AS_HELP_STRING([--with-vyatta-op-vpn],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-op-vpn],
+  [exclude named package])],
+[],
+[with_vyatta_op_vpn=fetch])
+
 AC_ARG_WITH(vyatta-serial,
 [AS_HELP_STRING([--with-vyatta-serial],
   [ fetch (default) or build named package])],
@@ -281,20 +289,22 @@ AC_ARG_WITH(all,
 [ if test X$with_all = Xyes ; then
      with_vyatta_cfg=yes;
      with_vyatta_op=yes;
+     with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_op_dhcp_server=yes;
+     with_vyatta_cfg_firewall=yes;
      with_vyatta_op_firewall=yes;
      with_vyatta_cfg_quagga=yes;
      with_vyatta_op_quagga=yes;
+     with_vyatta_cfg_vpn=yes;
+     with_vyatta_op_vpn=yes;
      with_vyatta_cfg_system=yes;
-     with_vyatta_cfg_firewall=yes;
-     with_vyatta_config_migrate=yes;
      with_vyatta_bash=yes;
+     with_vyatta_config_migrate=yes;
      with_vyatta_cluster=yes;
      with_vyatta_nat=yes;
-     with_vyatta_cfg_dhcp_server=yes;
-     with_vyatta_cfg_vpn=yes;
-     with_vyatta_ravpn=yes;
      with_vyatta_quagga=yes;
+     with_vyatta_ravpn=yes;
+     with_vyatta_serial=yes;
   fi ],
 [])
 
@@ -317,11 +327,12 @@ for pkg in kernel \
     vyatta-cfg-firewall \
     vyatta-op-quagga \
     vyatta-cfg-quagga \
+    vyatta-op-vpn \
+    vyatta-cfg-vpn \
     vyatta-config-migrate \
     vyatta-cfg-system \
     vyatta-cluster \
     vyatta-nat \
-    vyatta-cfg-vpn \
     vyatta-ravpn \
     vyatta-serial \
     wanpipe
