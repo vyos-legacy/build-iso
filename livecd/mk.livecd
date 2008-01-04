@@ -1,6 +1,4 @@
-#!/bin/bash -x
-
-PATH="$PWD/tools:$PATH"
+#!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -31,7 +29,7 @@ declare -a local_packages=( ${BUILD_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
-: ${BUILDID:=$(buildid)}
+: ${BUILDID:=$(tools/buildid)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${LIVECD:=livecd/livecd_$CDLABEL.iso}
 : ${BUILDFILE:=/opt/vyatta/etc/build.txt}
@@ -176,6 +174,7 @@ fi
 if ! test -f chroot/etc/network/interfaces || \
    ! grep -q '^auto lo' chroot/etc/network/interfaces ; then
     echo I: Configure network loopback interface
+    mkdir -p -m 0755 chroot/etc/network
     cat >> chroot/etc/network/interfaces <<-EOF
 	# interfaces(5) file used by ifup(8) and ifdown(8)
 
@@ -211,7 +210,7 @@ build_chroot ()
   lh_chroot_cache restore || return 1
   lh_chroot_proc install || return 1
   lh_chroot_sysfs install || return 1
-  lh_chroot_debianchroot install || return 1
+  lh_chroot_debianchroot install --force || return 1
   lh_chroot_dpkg install || return 1
   lh_chroot_sysv-rc install || return 1
   lh_chroot_hosts install || return 1
@@ -310,10 +309,12 @@ done
 
 set_up_apt_pref
 # exclude more files
-echo etc/apt/preferences	>> chroot/tmp/mksquashfs.exclude
-echo etc/resolv.conf	 	>> chroot/tmp/mksquashfs.exclude
-echo var/log/bootstrap.log	>> chroot/tmp/mksquashfs.exclude
-echo var/log/dpkg.log		>> chroot/tmp/mksquashfs.exclude
+cat <<EOF >> chroot/tmp/mksquashfs.exclude
+etc/apt/preferences
+etc/resolv.conf
+var/log/bootstrap.log
+var/log/dpkg.log
+EOF
 
 remove_dir()
 {
@@ -357,7 +358,7 @@ rm -f deb-install/pool/main/lock
 	rm -rf sav$$
 )
 
-chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
+chroot chroot dpkg -l | awk '/^ii/ {print $2}' >deb-install/.Released
 
 #cat >>deb-install/.Released <<'EOF'
 #debconf-english
@@ -370,9 +371,10 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 
 (
 	cd deb-install
+	toolsdir=../../tools
 
-	create-version-package -v 1 -d . -r lenny -x -o /dev/null
-	for i in `cat .Released`; do latestdeb $i; done>/tmp/$$list
+	$toolsdir/create-version-package -v 1 -d . -r lenny -x -o /dev/null
+	for i in `cat .Released`; do $toolsdir/latestdeb $i; done>/tmp/$$list
 
 	rsync -ar --exclude="*.deb" pool pool.udeb
 	find pool -name '*.udeb' -exec rm -f {} \;
@@ -387,7 +389,7 @@ chroot chroot dpkg -l|grep '^ii'|awk '{print $2}'>deb-install/.Released
 
 	wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
 
-	deb-archive -r lenny -n main -d .
+	$toolsdir/deb-archive -r lenny -n main -d .
 	(
 		cd pool.udeb/pool
 		cp -a * ../../pool/.

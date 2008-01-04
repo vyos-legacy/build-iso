@@ -40,5 +40,6 @@
 /vyatta-ravpn
 /vyatta-serial
 /vyatta-op-dhcp-server
+/vyatta-quagga
 /ppp
 /wanpipe
