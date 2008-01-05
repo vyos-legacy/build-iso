@@ -383,7 +383,7 @@ chroot chroot dpkg -l | awk '/^ii/ {print $2}' >deb-install/.Released
 
 	(
 		cd pool
-		archive-report -f>/tmp/report$$
+		$toolsdir/archive-report -f>/tmp/report$$
 		rm_files=`find -name '*.deb'|sort|comm -3 - /tmp/report$$`
 		rm -f $rm_files /tmp/report$$
 	)
