@@ -132,6 +132,14 @@ AC_ARG_WITH(vyatta-op-vpn,
 [],
 [with_vyatta_op_vpn=fetch])
 
+AC_ARG_WITH(vyatta-op-xml,
+[AS_HELP_STRING([--with-vyatta-op-xml],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-op-xml],
+  [exclude named package])],
+[],
+[with_vyatta_op_xml=fetch])
+
 AC_ARG_WITH(vyatta-serial,
 [AS_HELP_STRING([--with-vyatta-serial],
   [ fetch (default) or build named package])],
@@ -297,6 +305,7 @@ AC_ARG_WITH(all,
      with_vyatta_op_quagga=yes;
      with_vyatta_cfg_vpn=yes;
      with_vyatta_op_vpn=yes;
+     with_vyatta_op_xml=yes;
      with_vyatta_cfg_system=yes;
      with_vyatta_bash=yes;
      with_vyatta_config_migrate=yes;
