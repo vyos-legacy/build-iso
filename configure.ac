@@ -337,6 +337,7 @@ for pkg in kernel \
     vyatta-op-quagga \
     vyatta-cfg-quagga \
     vyatta-op-vpn \
+    vyatta-op-xml \
     vyatta-cfg-vpn \
     vyatta-config-migrate \
     vyatta-cfg-system \
