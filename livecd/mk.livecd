@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
+toolsdir=`cd $PWD/../tools;pwd`
 
 if [ -r ./mk.livecd.conf ] ; then
     source ./mk.livecd.conf
@@ -29,7 +30,7 @@ declare -a local_packages=( ${BUILD_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
-: ${BUILDID:=$(tools/buildid)}
+: ${BUILDID:=$($toolsdir/buildid)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${LIVECD:=livecd/livecd_$CDLABEL.iso}
 : ${BUILDFILE:=/opt/vyatta/etc/build.txt}
@@ -109,7 +110,7 @@ mk_buildid ()
     echo I: generating package list
     [ -d chroot/opt/vyatta/bin ] || mkdir -p -m 0755 chroot/opt/vyatta/bin
     [ -d chroot/opt/vyatta/etc ] || mkdir -p -m 0755 chroot/opt/vyatta/etc
-    cp tools/save-package-report chroot/opt/vyatta/bin
+    cp $toolsdir/save-package-report chroot/opt/vyatta/bin
     chroot chroot /bin/sh /opt/vyatta/bin/save-package-report
     rm chroot/opt/vyatta/bin/save-package-report
     rm -f $STAGEBUILDFILE
@@ -387,7 +388,7 @@ chroot chroot dpkg -l | awk '/^ii/ {print $2}' >deb-install/.Released
 		rm -f $rm_files /tmp/report$$
 	)
 
-	wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
+	[ -f vyatta-pubkey.gpg ] || wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
 
 	$toolsdir/deb-archive -r lenny -n main -d .
 	(
@@ -395,8 +396,8 @@ chroot chroot dpkg -l | awk '/^ii/ {print $2}' >deb-install/.Released
 		cp -a * ../../pool/.
 	)
 	rm dists/lenny/Release.gpg
-	rm -rf pool.udeb
-	touch vyatta$BUILDID
+	rm -rf pool.udeb .disk/ID*
+	touch .disk/ID$BUILDID
 	genisoimage -quiet -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
 )
 

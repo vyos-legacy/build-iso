@@ -119,8 +119,12 @@ EOF
 
   mv /tmp/$$-Release Release
   rm -f Release.gpg
-  #gpg --use-agent --output Release.gpg --detach-sig Release
-  gpg --output Release.gpg --detach-sig Release
+  if [ X`id -n -u` = Xautobuild ]
+  then
+    #gpg --use-agent --output Release.gpg --detach-sig Release
+    gpg --output Release.gpg --detach-sig Release
+  fi
+
   rmdir lock
   cd $HOME
 
