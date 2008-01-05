@@ -70,8 +70,13 @@ accumulate_newest()
 	echo $newest
 }
 
-archive_prefix=`echo "$1" | sed 's/_.*//'`
-archive=`basename "$archive_prefix"`
-dir=`dirname "$1"`
-list=`find "$dir" -type f -name "$archive"_"*.deb"`
-accumulate_newest $list
+latestdeb()
+{
+	archive_prefix=`echo "$1" | sed 's/_.*//'`
+	archive=`basename "$archive_prefix"`
+	dir=`dirname "$1"`
+	list=`find "$dir" -type f -name "$archive"_"*.deb"`
+	accumulate_newest $list
+}
+
+latestdeb "$1"

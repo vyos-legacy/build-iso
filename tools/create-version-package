@@ -87,11 +87,40 @@ fi
 [ "$DEST" ] || DEST="/var/www/vyatta/pool/$ARCHIVE/main/"
 [ "$OFILE" ] || OFILE="$DEST/v/vyatta/."
 
-chmod +x "$0" 2>/dev/null	# just in case
+
+path_to()
+{
+	local mypath
+
+	mypath="$1"
+	chmod +x "$mypath" 2>/dev/null
+	if which "$mypath"  >/dev/null
+	then
+		# path is OK
+		return 0
+	fi
+
+	chmod +x "$0" 2>/dev/null
+	mypath=`which $0`
+	mypath=`dirname "$mypath"`/"$1"
+	chmod -x "$mypath" 2>/dev/null
+	if which "$mypath"  >/dev/null
+	then
+		PATH="$PATH":`dirname "$mypath"`
+		return 0
+	fi
+
+	echo Can't find "$1"
+	exit 1
+}
+
+path_to archive-report
+path_to deb-archive
+
 basedir=`which $0`
 basedir=`dirname "$basedir"`
-bindir=`cd "$basedir";echo $PWD`
-PATH="$bindir":$PATH
+bindir=`cd "$basedir";pwd`
+PATH=$PATH:"$bindir"
 
 tmpdir=/tmp/$$-version
 
@@ -140,6 +169,8 @@ rm /tmp/$prefix-version_${VERSION}_i386.deb
 
 rm -rf $tmpdir&
 
+#path_to latestdeb
+#
 #if [ "$TRIM" ]
 #then
 #(
