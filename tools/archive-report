@@ -61,7 +61,7 @@ path_to()
 		return 0
 	fi
 
-	echo Can't find "$1"
+	echo Cannot find "$1"
 	exit 1
 }
 
