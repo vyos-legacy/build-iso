@@ -54,7 +54,7 @@ path_to()
 	chmod +x "$0" 2>/dev/null
 	mypath=`which $0`
 	mypath=`dirname "$mypath"`/"$1"
-	chmod -x "$mypath" 2>/dev/null
+	chmod +x "$mypath" 2>/dev/null
 	if which "$mypath"  >/dev/null
 	then
 		PATH="$PATH":`dirname "$mypath"`

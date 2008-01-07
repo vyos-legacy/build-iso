@@ -400,7 +400,6 @@ chroot chroot dpkg -l | awk '/^ii/ {print $2}' >deb-install/.Released
 	genisoimage -quiet -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
 )
 
-
 echo I: building binary
 if ! lh_binary; then
   echo E: binary build failed
