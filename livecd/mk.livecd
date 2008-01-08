@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export DEBIAN_FRONTEND=noninteractive
 toolsdir=`cd $PWD/../tools;pwd`
@@ -238,6 +238,15 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
  
+  KPKG=`cd config/chroot_local-packages;echo ${VYATTA_LINUX_PKG}*`
+  if [ "$KPKG" ]
+  then
+    # Kernel is built locally. Install it first.
+    mv config/chroot_local-packages/"$KPKG" chroot/.
+    chroot chroot dpkg -i "$KPKG"
+    rm chroot/"$KPKG"
+  fi
+
   # we do local packages first since they are "newer".
   set_up_apt_pref
   lh_chroot_local-packages || return 1
