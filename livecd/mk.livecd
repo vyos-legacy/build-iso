@@ -278,6 +278,7 @@ build_chroot ()
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
 
+  chroot chroot depmod -a `cd chroot/lib/modules;echo *`
 # FIXME! we no longer appear to need this update
 #	so, comment out for now
 #  echo I: Update initramfs
