@@ -70,7 +70,7 @@ path_to latestdeb
 list=`find $* -type f -name '*.deb' -exec basename {} \;|sed 's/_.*$//'|sort -u`
 for i in $list
 do
-	nm=`"latestdeb" $i`
+	nm=`latestdeb $i`
 	if [ "$full_path" ]
 	then
 		echo $nm
