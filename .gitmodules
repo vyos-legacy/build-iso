@@ -34,3 +34,6 @@
 [submodule "pkgs/vyatta-cluster"]
 	path = pkgs/vyatta-cluster
 	url = http://git.vyatta.com/vyatta-cluster.git
+[submodule "pkgs/vyatta-ravpn"]
+	path = pkgs/vyatta-ravpn
+	url = http://git.vyatta.com/vyatta-ravpn.git
