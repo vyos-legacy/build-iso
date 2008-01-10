@@ -46,3 +46,6 @@
 [submodule "pkgs/vyatta-bash"]
 	path = pkgs/vyatta-bash
 	url = http://git.vyatta.com/vyatta-bash.git
+[submodule "pkgs/linux-vyatta"]
+	path = pkgs/linux-vyatta
+	url = http://git.vyatta.com/linux-vyatta.git
