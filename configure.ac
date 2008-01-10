@@ -108,6 +108,16 @@ else
    LH_EXPOSED_ROOT=disabled
 fi
 
+AC_ARG_WITH(deb-install,
+[AS_HELP_STRING([--without-deb-install],
+[don't build Debian installer CD])])
+
+if test X$with_deb_install = Xno ; then
+   BUILD_DEB_INSTALL=no
+else
+   BUILD_DEB_INSTALL=yes
+fi
+
 AC_ARG_WITH(vyatta-op,
 [AS_HELP_STRING([--with-vyatta-op],
   [ fetch (default) or build named package])]
@@ -489,6 +499,7 @@ AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_UNION_FILESYSTEM)
 
+AC_SUBST(BUILD_DEB_INSTALL)
 AC_SUBST(PKG_DOT_DEB)
 AC_SUBST(PKG_DOT_CLEAN)
 AC_SUBST(PKG_DOT_CONFIGURE)
