@@ -25,3 +25,6 @@
 [submodule "pkgs/vyatta-cfg-system"]
 	path = pkgs/vyatta-cfg-system
 	url = http://git.vyatta.com/vyatta-cfg-system.git
+[submodule "pkgs/vyatta-config-migrate"]
+	path = pkgs/vyatta-config-migrate
+	url = http://git.vyatta.com/vyatta-config-migrate.git
