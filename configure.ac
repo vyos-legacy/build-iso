@@ -118,6 +118,14 @@ else
    BUILD_DEB_INSTALL=yes
 fi
 
+AC_ARG_WITH(vyatta-dhcp3,
+[AS_HELP_STRING([--with-vyatta-dhcp3],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-dhcp3],
+  [exclude named package])],
+[],
+[with_vyatta_dhcp3=fetch])
+
 AC_ARG_WITH(vyatta-op,
 [AS_HELP_STRING([--with-vyatta-op],
   [ fetch (default) or build named package])]
@@ -306,6 +314,7 @@ AC_ARG_WITH(all,
   [build all vyatta packages locally (except kernel)])],
 [ if test X$with_all = Xyes ; then
      with_vyatta_cfg=yes;
+     with_vyatta_dhcp3=yes;
      with_vyatta_op=yes;
      with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_op_dhcp_server=yes;
@@ -340,6 +349,7 @@ for pkg in kernel \
     vyatta-bash \
     vyatta-op \
     vyatta-cfg \
+    vyatta-dhcp3 \
     vyatta-op-dhcp-server \
     vyatta-cfg-dhcp-server \
     vyatta-op-firewall \
