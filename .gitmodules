@@ -31,3 +31,6 @@
 [submodule "pkgs/vyatta-nat"]
 	path = pkgs/vyatta-nat
 	url = http://git.vyatta.com/vyatta-nat.git
+[submodule "pkgs/vyatta-cluster"]
+	path = pkgs/vyatta-cluster
+	url = http://git.vyatta.com/vyatta-cluster.git
