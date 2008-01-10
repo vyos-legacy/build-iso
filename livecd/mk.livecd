@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
 toolsdir=`cd $PWD/../tools;pwd`
@@ -25,8 +25,6 @@ done
 
 declare pkglistdir=config/chroot_local-packageslists
 declare -a exclude_packages=( ${EXCLUDE_PKGS[@]} )
-declare -a include_packages=( ${FETCH_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
-declare -a local_packages=( ${BUILD_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
@@ -36,6 +34,9 @@ declare -a local_packages=( ${BUILD_PKGS[@]/kernel/${VYATTA_LINUX_PKG}} )
 : ${BUILDFILE:=/opt/vyatta/etc/build.txt}
 : ${STAGEBUILDFILE=chroot/$BUILDFILE}
 : ${ORGANIZATION:=vyatta.com}
+
+shopt -s extglob
+shopt -s nullglob
 
 if [ -z "$BUILTBY" ] ; then
     if [ -n "$GIT_COMMITTER_EMAIL" ] ; then
@@ -93,14 +94,12 @@ if [ ! -d config ]; then
   # set up grub template
   cp templates/grub/menu.lst config/binary_grub/
 
-  # set up packages to be fetched
-  if (( ${#include_packages[@]} > 0 )); then
-    echo "${include_packages[*]}" >> ${pkglistdir}/vyatta-pkgs
-  fi
-
-  # and add packages to be removed
   for x in ${exclude_packages[@]} ; do
-    echo $x- >>${pkglistdir}/vyatta-pkgs
+      if grep -q "^$x\$" ${pkglistdir}/vyatta-pkgs ; then
+	  sed -i "/^$x\$/d" ${pkglistdir}/vyatta-pkgs
+      else
+	  echo $x- >>${pkglistdir}/vyatta-pkgs
+      fi
   done
 fi
 
@@ -135,11 +134,13 @@ EOF
 
 # set up locally-built packages
 rm -f config/chroot_local-packages/*
-if (( ${#local_packages[@]} > 0 )); then
-  for bpkg in ${local_packages[@]}; do
-    cp -p ../*/${bpkg}*.deb config/chroot_local-packages/
-  done
-fi
+# FIXME! remove these pre-submodule package directories 
+for deb in ../!(pkgs)/*.deb ; do
+    cp -p $deb config/chroot_local-packages/
+done
+for deb in ../pkgs/*.deb ; do
+    cp -p $deb config/chroot_local-packages/
+done
 
 if [ "$ISO_FAST" == "yes" ]; then
   # do a "fast" build. just install the local packages and then do lh_binary.
@@ -238,13 +239,14 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
  
-  KPKG=`cd config/chroot_local-packages;echo ${VYATTA_LINUX_PKG}*`
-  if [ "$KPKG" ]
-  then
-    # Kernel is built locally. Install it first.
-    mv config/chroot_local-packages/"$KPKG" chroot/.
-    chroot chroot dpkg -i "$KPKG"
-    rm chroot/"$KPKG"
+  if [ -n "${VYATTA_LINUX_PKG}" ] ; then
+      KPKG=`cd config/chroot_local-packages;echo ${VYATTA_LINUX_PKG}*`
+      if [ "$KPKG" ] ;  then
+          # Kernel is built locally. Install it first.
+	  mv config/chroot_local-packages/"$KPKG" chroot/.
+	  chroot chroot dpkg -i "$KPKG"
+	  rm chroot/"$KPKG"
+      fi
   fi
 
   # we do local packages first since they are "newer".
@@ -326,17 +328,6 @@ var/log/bootstrap.log
 var/log/dpkg.log
 EOF
 
-remove_dir()
-{
-	[ ! -d $1 ] && return 0
-
-	mv $1 $1-$$
-	(
-		chmod u+w -R $1-$$
-		rm -rf $1-$$
-	)&
-}
-
 [ -f deb-install.tar ] || wget -nv http://archive.vyatta.com/build-root/deb-install.tar
 
 if [ -d deb-install ]
@@ -361,7 +352,7 @@ rm -f deb-install/pool/main/lock
 	mkdir -p deb-install/pool/main/v/vyatta/.
 	cp ../*/*.deb deb-install/pool/main/v/vyatta/.
 	cd deb-install/pool/main/v/vyatta
-	rm *source*.deb
+	rm -f *source*.deb
 	mkdir sav$$
 	mv linux-* sav$$/. 2>/dev/null
 	mv sav$$/linux-image* . 2>/dev/null

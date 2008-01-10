@@ -21,6 +21,11 @@
 /livecd/iso-label
 /livecd/mk.livecd.conf
 
+/pkgs/*.build
+/pkgs/*.changes
+/pkgs/*.deb
+/pkgs/*.tar.gz
+
 *.iso
 
 /kernel

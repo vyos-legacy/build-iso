@@ -13,15 +13,6 @@ AC_PREFIX_DEFAULT([/opt/vyatta])
 
 # Checks for programs.
 AC_PROG_LN_S
-AC_PROG_CC
-AM_PROG_AS
-AM_PROG_CC_C_O
-AC_PROG_LIBTOOL
-AC_PROG_LEX
-AC_PROG_YACC
-
-# Checks for libraries.
-AC_CHECK_LIB(crypt, crypt, [ LIBS="$LIBS -lcrypt" ])
 
 # Checks for header files.
 
@@ -34,18 +25,6 @@ AC_ARG_VAR(LH_APT, [default: apt])
 test ! "$LH_BOOTAPPEND_LIVE" && \
       LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser])
-
-AC_ARG_WITH(ppp,
-	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
-	  [Include ppp (fetch: download package)])],
-	[],
-	[with_vyatta_ppp=fetch])
-
-AC_ARG_WITH(wanpipe,
-	[AS_HELP_STRING([--with-wanpipe=fetch|yes|no (default fetch)],
-	  [Include wanpipe (fetch: download package)])],
-	[],
-	[with_vyatta_wanpipe=fetch])
 
 test ! "$LH_BOOTLOADER" && LH_BOOTLOADER=syslinux
 AC_ARG_VAR(LH_BOOTLOADER, [default: syslinux])
@@ -81,6 +60,15 @@ test "X$LH_PACKAGES_LISTS" = "X" && LH_PACKAGES_LISTS=none
 AC_ARG_VAR(LH_PACKAGES_LISTS, [default: none])
 
 # process --with[out] arguments
+AC_ARG_WITH(exclude,
+[AS_HELP_STRING([--with-exclude],
+  [comma separated package list to exclude from iso])])
+
+EXCLUDE_PKGS=
+for p in `echo "$with_exclude" | tr , ' '` ; do
+    EXCLUDE_PKGS+=" $p"
+done
+
 AC_ARG_WITH(target-dist,
 	[AS_HELP_STRING([--with-target-dist=<dist>],
 	  [Target distribution (e.g., "lenny"), default to the host distribution])],
@@ -108,171 +96,6 @@ else
    LH_EXPOSED_ROOT=disabled
 fi
 
-AC_ARG_WITH(vyatta-op,
-[AS_HELP_STRING([--with-vyatta-op],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-op],
-  [exclude named package])],
-[],
-[with_vyatta_op=fetch])
-
-AC_ARG_WITH(vyatta-op-dhcp-server,
-[AS_HELP_STRING([--with-vyatta-op-dhcp-server],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-op-dhcp-server],
-  [exclude named package])],
-[],
-[with_vyatta_op_dhcp_server=fetch])
-
-AC_ARG_WITH(vyatta-op-vpn,
-[AS_HELP_STRING([--with-vyatta-op-vpn],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-op-vpn],
-  [exclude named package])],
-[],
-[with_vyatta_op_vpn=fetch])
-
-AC_ARG_WITH(vyatta-op-xml,
-[AS_HELP_STRING([--with-vyatta-op-xml],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-op-xml],
-  [exclude named package])],
-[],
-[with_vyatta_op_xml=fetch])
-
-AC_ARG_WITH(vyatta-serial,
-[AS_HELP_STRING([--with-vyatta-serial],
-  [ fetch (default) or build named package])],
-[],
-[with_vyatta_serial=fetch])
-
-AC_ARG_WITH(vyatta-op-firewall,
-[AS_HELP_STRING([--with-vyatta-op-firewall],
-  [ fetch (default) or build named package])],
-[],
-[with_vyatta_op_firewall=fetch])
-
-AC_ARG_WITH(vyatta-op-quagga,
-[AS_HELP_STRING([--with-vyatta-op-quagga],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-op-quagga],
-  [exclude named package])],
-[],
-[with_vyatta_op_quagga=fetch])
-
-AC_ARG_WITH(any-vyatta-cfg,
-[AS_HELP_STRING([--without-any-vyatta-cfg],
-  [exclude all vyatta config packages])])
-
-if test X$with_any_vyatta_cfg = Xno ; then
-    default_vyatta_cfg=no
-else
-    default_vyatta_cfg=fetch ;
-fi
-
-AC_ARG_WITH(vyatta-cfg,
-[AS_HELP_STRING([--with-vyatta-cfg],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cfg],
-  [exclude named package])],
-[],
-[with_vyatta_cfg=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-cfg-quagga,
-[AS_HELP_STRING([--with-vyatta-cfg-quagga],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cfg-quagga],
-  [exclude named package])],
-[],
-[with_vyatta_cfg_quagga=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-cfg-system,
-[AS_HELP_STRING([--with-vyatta-cfg-system],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cfg-system],
-  [exclude named package])],
-[],
-[with_vyatta_cfg_system=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-cfg-firewall,
-[AS_HELP_STRING([--with-vyatta-cfg-firewall],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cfg-firewall],
-  [exclude named package])],
-[],
-[with_vyatta_cfg_firewall=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-config-migrate,
-[AS_HELP_STRING([--with-vyatta-config-migrate],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-config-migrate],
-  [exclude named package])],
-[],
-[with_vyatta_config_migrate=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-bash,
-[AS_HELP_STRING([--with-vyatta-bash],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-bash],
-  [exclude named package])],
-[],
-[with_vyatta_bash=fetch])
-
-AC_ARG_WITH(vyatta-cluster,
-[AS_HELP_STRING([--with-vyatta-cluster],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cluster],
-  [exclude named package])],
-[],
-[with_vyatta_cluster=fetch])
-
-AC_ARG_WITH(vyatta-nat,
-[AS_HELP_STRING([--with-vyatta-nat],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-nat],
-  [exclude named package])],
-[],
-[with_vyatta_nat=fetch])
-
-AC_ARG_WITH(vyatta-cfg-dhcp-server,
-[AS_HELP_STRING([--with-vyatta-cfg-dhcp-server],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cfg-dhcp-server],
-  [exclude named package])],
-[],
-[with_vyatta_cfg_dhcp_server=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-cfg-vpn,
-[AS_HELP_STRING([--with-vyatta-cfg-vpn],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-cfg-vpn],
-  [exclude named package])],
-[],
-[with_vyatta_cfg_vpn=$default_vyatta_cfg])
-
-AC_ARG_WITH(vyatta-ravpn,
-[AS_HELP_STRING([--with-vyatta-ravpn],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-ravpn],
-  [exclude named package])],
-[],
-[with_vyatta_ravpn=fetch])
-
-AC_ARG_WITH(vyatta-quagga,
-[AS_HELP_STRING([--with-vyatta-quagga],
-  [ fetch (default) or build named package])]
-[AS_HELP_STRING([--without-vyatta-quagga],
-  [use debian or ubuntu package instead of vyatta])],
-[],
-[with_vyatta_quagga=fetch])
-
-if test X$with_vyatta_quagga = no ; then
-# use debian or ubuntu quagga instead of vyatta
-   with_quagga=fetch
-else
-   with_quagga=no
-fi
-
 AC_ARG_WITH(kernel,
 [AS_HELP_STRING([--with-kernel],
   [ fetch (default) or vyatta kernel])]
@@ -290,71 +113,12 @@ else
    use_xen=false
 fi
 
-# with all vyatta packages (except kernel)
-AC_ARG_WITH(all,
-[AS_HELP_STRING([--with-all],
-  [build all vyatta packages locally (except kernel)])],
-[ if test X$with_all = Xyes ; then
-     with_vyatta_cfg=yes;
-     with_vyatta_op=yes;
-     with_vyatta_cfg_dhcp_server=yes;
-     with_vyatta_op_dhcp_server=yes;
-     with_vyatta_cfg_firewall=yes;
-     with_vyatta_op_firewall=yes;
-     with_vyatta_cfg_quagga=yes;
-     with_vyatta_op_quagga=yes;
-     with_vyatta_cfg_vpn=yes;
-     with_vyatta_op_vpn=yes;
-     with_vyatta_op_xml=yes;
-     with_vyatta_cfg_system=yes;
-     with_vyatta_bash=yes;
-     with_vyatta_config_migrate=yes;
-     with_vyatta_cluster=yes;
-     with_vyatta_nat=yes;
-     with_vyatta_quagga=yes;
-     with_vyatta_ravpn=yes;
-     with_vyatta_serial=yes;
-  fi ],
-[])
-
 # FIXME! fetch version from source
 VYATTA_LINUX_PKG=linux-image-2.6.23-1-486-vyatta
 LH_LINUX_FLAVOURS="486-vyatta"
 LH_LINUX_PACKAGES=none
 BUILD_PKGS=
-EXCLUDE_PKGS=
 FETCH_PKGS=
-
-for pkg in kernel \
-    quagga vyatta-quagga \
-    vyatta-bash \
-    vyatta-op \
-    vyatta-cfg \
-    vyatta-op-dhcp-server \
-    vyatta-cfg-dhcp-server \
-    vyatta-op-firewall \
-    vyatta-cfg-firewall \
-    vyatta-op-quagga \
-    vyatta-cfg-quagga \
-    vyatta-op-vpn \
-    vyatta-op-xml \
-    vyatta-cfg-vpn \
-    vyatta-config-migrate \
-    vyatta-cfg-system \
-    vyatta-cluster \
-    vyatta-nat \
-    vyatta-ravpn \
-    vyatta-serial \
-    wanpipe
-do
-  npkg=${pkg//-/_}
-  eval with_pkg=\$with_$npkg
-  if test "$with_pkg" = fetch; then
-    FETCH_PKGS+=" $pkg"
-  elif test "$with_pkg" != no; then
-    BUILD_PKGS+=" $pkg"
-  fi
-done
 
 case "$LH_DISTRIBUTION" in
 gutsy | hardy )
@@ -428,23 +192,6 @@ gutsy | hardy )
 	;;
 esac
 
-for pkg in $BUILD_PKGS; do
-  PKG_DOT_DEB+=" ${pkg}.deb"
-  PKG_DOT_CLEAN+=" ${pkg}.clean"
-  PKG_DOT_CONFIGURE+=" ${pkg}.configure"
-  PKG_DOT_CLEANPKG+=" ${pkg}.cleanpkg"
-  PKG_DOT_MKDIST+=" ${pkg}.mkdist"
-  PKG_DOT_MKDIST_SIGN+=" ${pkg}.mkdist_sign"
-done
-
-test -z "$STAMPFILE" && STAMPFILE=.pkg_stamp
-
-for pkg in $BUILD_PKGS; do
-  PKG_STAMPS+=" ${pkg}/${STAMPFILE}"
-done
-
-AC_CONFIG_COMMANDS([configure_clone_packages], [tools/pkg-clone $build_pkgs],
-                   [build_pkgs="$BUILD_PKGS"])
 
 AC_CONFIG_FILES([Makefile livecd/mk.livecd.conf])
 
@@ -456,11 +203,7 @@ AC_SUBST(MACHINE_CFLAG)
 AC_SUBST(MACHINE_PREFIX)
 AC_SUBST(NOSTRIP)
 
-AC_SUBST(FETCH_PKGS)
 AC_SUBST(EXCLUDE_PKGS)
-AC_SUBST(BUILD_PKGS)
-AC_SUBST(STAMPFILE)
-AC_SUBST(PKG_STAMPS)
 
 AC_SUBST(LH_APT)
 AC_SUBST(LH_BOOTAPPEND_LIVE)
@@ -488,13 +231,6 @@ AC_SUBST(LH_SECURITY)
 AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_UNION_FILESYSTEM)
-
-AC_SUBST(PKG_DOT_DEB)
-AC_SUBST(PKG_DOT_CLEAN)
-AC_SUBST(PKG_DOT_CONFIGURE)
-AC_SUBST(PKG_DOT_CLEANPKG)
-AC_SUBST(PKG_DOT_MKDIST)
-AC_SUBST(PKG_DOT_MKDIST_SIGN)
 
 AC_SUBST(use_xen)
 

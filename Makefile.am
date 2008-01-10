@@ -2,143 +2,96 @@
 ## Process this file with automake or autoreconf to produce Makefile.in
 
 export MAKEFLAGS
+export ISO_FAST
 
-BUILD_PKGS	 = @BUILD_PKGS@
-EXCLUDE_PKGS	 = @EXCLUDE_PKGS@
-FETCH_PKGS	 = @FETCH_PKGS@
-STAMPFILE	 = @STAMPFILE@
-PKG_STAMPS	 = @PKG_STAMPS@
-VYATTA_LINUX_PKG = @VYATTA_LINUX_PKG@
+# build missing .deb for updated pkgs
+# (i.e. those that have had: git-submodule update pkgs/PKG)
+define debuild_pkgs
+    shopt -s nullglob ; \
+    declare -a debs ; \
+    for debian in pkgs/*/debian ; do \
+	pkg=$${debian%/*} ; \
+	debs=( $${pkg}_*.deb ) ; \
+	if [ $${#debs[@]} -eq 0 ] ; then \
+	    echo P: \($${pkg}\) debuild... ; \
+	    ( cd $${pkg} ; debuild -i -b -nc -uc -us ) ; \
+	fi ; \
+    done
+endef
 
-op_hyphen_all	 = configure-all
-op_hyphen_all	+= clean-all
-op_hyphen_all	+= cleanpkg-all
-op_hyphen_all	+= mkdist-all
-op_hyphen_all	+= mkdist_sign-all
-
-.PHONY : all
-all: livecd/binary.iso
-
-# env var PKG_OP_ARG: target name.
-# XXX kernel.configure will fail (no target).
-define pkg_dot_op
-	( \
-	OP=$${PKG_OP_ARG##*.} ; \
-	PKG=$${PKG_OP_ARG%.*} ; \
-	cd $$PKG/$$PKG && \
-	case "$$OP" in \
-		deb) \
-			debuild -i -uc -us -b -nc && \
-			touch ../$(STAMPFILE);; \
-		clean) \
-			debuild clean && \
-			rm -f ../*.deb ../$(STAMPFILE);; \
-		cleanpkg) \
-			rm -f ../*.deb ../$(STAMPFILE);; \
-		configure) \
-			$(MAKE) -f debian/rules configure;; \
-		mkdist) \
-			git-buildpackage -uc -us && \
-			touch ../$(STAMPFILE);; \
-		mkdist_sign) \
-			if [ -n "$$VYATTA_DIST_KEY_ID" ]; then \
-				git-buildpackage -k\'$$VYATTA_DIST_KEY_ID\'; \
-			else \
-				git-buildpackage; \
-			fi && \
-			touch ../$(STAMPFILE);; \
-		*) \
-			echo nothing to do for $$PKG_OP_ARG.;; \
-	esac ; \
-	cd ../..; \
-	)
+define op_pkg
+    if [ -z "$(PKG)" ] ; then \
+	echo E: must set PKG make variable ; \
+	echo E: \(i.e. \"make PKG=foo OP-pkg\"\) ; \
+	false ; \
+    elif [ ! -d pkgs/$(PKG) ] ; then \
+	echo E: no such PKG: $(PKG) ; \
+	false ; \
+    elif [ ! -d pkgs/$(PKG)/debian ] ; then \
+	echo E: you must: git-submodule update pkg/$(PKG) ; \
+	false ; \
+    else \
+	echo P: \(pkgs/$(PKG)\) $$op... ; \
+	cd pkgs/$(PKG) ; $$op ; \
+    fi
 endef
 
 define mk_iso
-	cd livecd ; \
-	if [ `id -u` -eq 0 ] ; then \
-		./mk.livecd ; \
-	else \
-		touch .permissions ; \
-		fakeroot -i .permissions -s .permissions fakechroot \
-			./mk.livecd ; \
-	fi
+    cd livecd ; \
+    if [ `id -u` -eq 0 ] ; then \
+	./mk.livecd ; \
+    else \
+	touch .permissions ; \
+	fakeroot -i .permissions -s .permissions fakechroot ./mk.livecd ; \
+    fi
 endef
 
-livecd/binary.iso : $(PKG_STAMPS)
+all-local :
+	@$(debuild_pkgs)
 	@$(mk_iso)
 
-.PHONY : iso.fast
-iso.fast : $(PKG_STAMPS)
-	@export ISO_FAST=yes; $(mk_iso)
+.PHONY : all-debs
+all-debs :
+	@$(debuild_pkgs)
 
-.PHONY : iso.clean
-iso.clean :
+.PHONY : debuild-pkg
+build-pkg :
+	@op="debuild -i -b -nc -uc -us" ; $(op_pkg)
+
+.PHONY : build-spkg
+build-spkg :
+	@op="git-buildpackage -nc -uc -us" ; $(op_pkg)
+
+.PHONY : build-signed-pkg
+build-signed-pkg :
+	@op="git-buildpackage -nc" ; $(op_pkg)
+
+.PHONY : clean-pkg
+clean-pkg :
+	@op="debuild clean" ; $(op_pkg)
+	rm -f pkgs/$(PKG)_*.{build,changes,deb,tar.gz}
+
+mostlyclean-local :
+	@if grep -q proc-live /proc/mounts ; then umount proc-live ; fi
+	@if grep -q sysfs-live /proc/mounts ; then umount sysfs-live ; fi
 	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock,deb-install.iso}
 
+clean-local :
+	@rm -f pkgs/*.{build,changes,deb,tar.gz}
+	@shopt -s nullglob ; \
+	for debian in pkgs/*/debian ; do \
+	    echo P: \($${debian%/*}\) debuild clean ... ; \
+	  ( cd $${debian%/*} ; debuild clean ) ; \
+	done
+
+distclean-local :
+	@rm -rf livecd/{cache,deb-install,deb-install.tar}
+
 .PHONY : iso.cleanstage
-iso.cleanstage : iso.clean
+iso.cleanstage :
 	@rm -rf livecd/cache/stage*
 
 .PHONY : iso.cleanmsgq
 iso.cleanmsgq :
 	@ipcs -q | awk '{print $$2}' | egrep [0-9] \
 	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
-
-.PHONY : iso.cleanall
-iso.cleanall : iso.cleanstage iso.cleanmsgq iso.clean
-	@rm -rf livecd/{cache,deb-install,deb-install.tar}
-
-$(PKG_STAMPS) :
-	@PKG_OP_ARG=$(@D).deb; $(pkg_dot_op)
-
-.PHONY : deb-all
-deb-all : $(PKG_STAMPS)
-
-.PHONY : upload-all
-upload-all : $(PKG_STAMPS)
-	@export VYATTA_LINUX_PKG="$(VYATTA_LINUX_PKG)" ;\
-	./tools/pkg-upload `git-branch|grep '^\*'|sed 's/..//'` $(BUILD_PKGS)
-
-.PHONY : $(op_hyphen_all)
-$(op_hyphen_all) :
-	@OP_ALL=$@ ; OP=$${OP_ALL%-all} ; \
-	for pkg in $(BUILD_PKGS); do \
-		PKG_OP_ARG=$$pkg.$$OP; \
-		$(pkg_dot_op) || exit $$?; \
-	done
-
-.PHONY : @PKG_DOT_DEB@ @PKG_DOT_CLEAN@ @PKG_DOT_CONFIGURE@ @PKG_DOT_CLEANPKG@ @PKG_DOT_MKDIST@ @PKG_DOT_MKDIST_SIGN@
-@PKG_DOT_DEB@ @PKG_DOT_CLEAN@ @PKG_DOT_CONFIGURE@ @PKG_DOT_CLEANPKG@ @PKG_DOT_MKDIST@ @PKG_DOT_MKDIST_SIGN@ :
-	@PKG_OP_ARG=$@; $(pkg_dot_op)
-
-.PHONY : git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status git-push git-diff git-diff-cached
-git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status git-push git-diff git-diff-cached:
-	@for g in ./.git */*/.git; do \
-		d=$${g/\/.git/}; \
-		if [ -d "$$d" ]; then \
-			echo ========= $${d/./\/} =============; \
-			( \
-				cd "$$d"; \
-			 	case "$@" in \
-					git-branch-av ) eval "git-branch -a -v";; \
-					git-clean-n ) eval "git-clean -n";; \
-					git-lsmods ) eval "git-ls-files -m";; \
-					git-fetch )	git-fetch -q 2>/dev/null; \
-							if ! (git-status|head -3|grep '^nothing to commit' >/dev/null) ; \
-							then \
-								echo There are uncommited changes.; \
-							fi; \
-							branch=`git-branch|grep '^\* '|sed 's/..//'`; \
-							changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
-							if [ "$$changed" ]; then \
-								echo A local commit is not in the shared repo or visa versa.; \
-							fi; \
-							echo ; \
-							;; \
-					git-diff-cached )	eval "git-diff --cached";; \
-					* ) eval "$@";; \
-				esac; \
-			); \
-		fi; \
-	done || true
