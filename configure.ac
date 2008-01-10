@@ -390,6 +390,7 @@ gutsy | hardy )
 	LH_SECTIONS="main restricted universe multiverse"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" dash"
+	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 # FIXME! can no longer exlude exim like this...
 #	EXCLUDE_PKGS+=" exim4-daemon-light"
 #	EXCLUDE_PKGS+=" exim4-config"
@@ -445,6 +446,7 @@ gutsy | hardy )
 	EXCLUDE_PKGS+=" exim4"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" mail-transport-agent"
+	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	;;
 esac
 
