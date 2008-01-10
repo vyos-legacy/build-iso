@@ -13,3 +13,6 @@
 [submodule "pkgs/vyatta-cfg-firewall"]
 	path = pkgs/vyatta-cfg-firewall
 	url = http://git.vyatta.com/vyatta-cfg-firewall.git
+[submodule "pkgs/vyatta-op-quagga"]
+	path = pkgs/vyatta-op-quagga
+	url = http://git.vyatta.com/vyatta-op-quagga.git
