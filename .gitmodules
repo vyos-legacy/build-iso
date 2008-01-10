@@ -37,3 +37,6 @@
 [submodule "pkgs/vyatta-ravpn"]
 	path = pkgs/vyatta-ravpn
 	url = http://git.vyatta.com/vyatta-ravpn.git
+[submodule "pkgs/vyatta-serial"]
+	path = pkgs/vyatta-serial
+	url = http://git.vyatta.com/vyatta-serial.git
