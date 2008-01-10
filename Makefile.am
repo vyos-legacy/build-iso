@@ -49,8 +49,7 @@ define pkg_dot_op
 			touch ../$(STAMPFILE);; \
 		*) \
 			echo nothing to do for $$PKG_OP_ARG.;; \
-	esac ; \
-	cd ../..; \
+	esac \
 	)
 endef
 
