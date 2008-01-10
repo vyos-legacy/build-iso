@@ -108,6 +108,24 @@ else
    LH_EXPOSED_ROOT=disabled
 fi
 
+AC_ARG_WITH(deb-install,
+[AS_HELP_STRING([--without-deb-install],
+[don't build Debian installer CD])])
+
+if test X$with_deb_install = Xno ; then
+   BUILD_DEB_INSTALL=no
+else
+   BUILD_DEB_INSTALL=yes
+fi
+
+AC_ARG_WITH(vyatta-dhcp3,
+[AS_HELP_STRING([--with-vyatta-dhcp3],
+  [ fetch (default) or build named package])]
+[AS_HELP_STRING([--without-vyatta-dhcp3],
+  [exclude named package])],
+[],
+[with_vyatta_dhcp3=fetch])
+
 AC_ARG_WITH(vyatta-op,
 [AS_HELP_STRING([--with-vyatta-op],
   [ fetch (default) or build named package])]
@@ -296,6 +314,7 @@ AC_ARG_WITH(all,
   [build all vyatta packages locally (except kernel)])],
 [ if test X$with_all = Xyes ; then
      with_vyatta_cfg=yes;
+     with_vyatta_dhcp3=yes;
      with_vyatta_op=yes;
      with_vyatta_cfg_dhcp_server=yes;
      with_vyatta_op_dhcp_server=yes;
@@ -331,6 +350,7 @@ for pkg in kernel \
     vyatta-bash \
     vyatta-op \
     vyatta-cfg \
+    vyatta-dhcp3 \
     vyatta-op-dhcp-server \
     vyatta-cfg-dhcp-server \
     vyatta-op-firewall \
@@ -360,7 +380,7 @@ done
 
 case "$LH_DISTRIBUTION" in
 gutsy | hardy )
-	LH_BOOTSTRAP_INCLUDE="less,gnupg"
+	LH_BOOTSTRAP_INCLUDE="less,gnupg,rsync"
 	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
 	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu/"
 	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
@@ -372,6 +392,7 @@ gutsy | hardy )
 	LH_SECTIONS="main restricted universe multiverse"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" dash"
+	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 # FIXME! can no longer exlude exim like this...
 #	EXCLUDE_PKGS+=" exim4-daemon-light"
 #	EXCLUDE_PKGS+=" exim4-config"
@@ -399,7 +420,7 @@ gutsy | hardy )
 	fi
 	;;
 * )
-	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1"
+	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
@@ -427,6 +448,7 @@ gutsy | hardy )
 	EXCLUDE_PKGS+=" exim4"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" mail-transport-agent"
+	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	;;
 esac
 
@@ -491,6 +513,7 @@ AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_UNION_FILESYSTEM)
 
+AC_SUBST(BUILD_DEB_INSTALL)
 AC_SUBST(PKG_DOT_DEB)
 AC_SUBST(PKG_DOT_CLEAN)
 AC_SUBST(PKG_DOT_CONFIGURE)

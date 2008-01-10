@@ -238,7 +238,8 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
  
-  KPKG=`cd config/chroot_local-packages;echo ${VYATTA_LINUX_PKG}*`
+  KPKG=`shopt -s nullglob; cd config/chroot_local-packages; \
+        echo ${VYATTA_LINUX_PKG}*`
   if [ "$KPKG" ]
   then
     # Kernel is built locally. Install it first.
@@ -338,80 +339,137 @@ remove_dir()
 	)&
 }
 
-[ -f deb-install.tar ] || wget -nv http://archive.vyatta.com/build-root/deb-install.tar
+add_debian_installer ()
+{
+  [ -f deb-install.tar ] \
+    || wget -nv http://archive.vyatta.com/build-root/deb-install.tar
 
-if [ -d deb-install ]
-then
-	tar xf deb-install.tar deb-install/md5sum.txt
-else
-	tar xf deb-install.tar
-fi
+  if [ ! -d deb-install ]
+  then
+    tar xf deb-install.tar
+  fi
+  rsync -avz deb-install/ binary
+  rsync -avz d-i/ binary
 
+  cp -a ./cache/packages* binary/pool/main/
+  rm -f binary/pool/main/lock
 
-(
-	cd d-i
-	cp -a * ../deb-install
-	cd ../deb-install
-	md5sum full-upgrade preseed.cfg >>md5sum.txt
-)
+  (
+    mkdir -p binary/pool/main/v/vyatta/.
+    cp ../*/*.deb binary/pool/main/v/vyatta/.
+    cd binary/pool/main/v/vyatta
+    rm -f *source*.deb
+    mkdir sav$$
+    mv linux-* sav$$/. 2>/dev/null
+    mv sav$$/linux-image* . 2>/dev/null
+    rm -rf sav$$
+  )
 
-cp -a ./cache/packages* deb-install/pool/main/
-rm -f deb-install/pool/main/lock
+  chroot chroot dpkg -l | awk '/^ii/ {print $2}' >binary/.Released
 
-(
-	mkdir -p deb-install/pool/main/v/vyatta/.
-	cp ../*/*.deb deb-install/pool/main/v/vyatta/.
-	cd deb-install/pool/main/v/vyatta
-	rm *source*.deb
-	mkdir sav$$
-	mv linux-* sav$$/. 2>/dev/null
-	mv sav$$/linux-image* . 2>/dev/null
-	rm -rf sav$$
-)
+  #cat >>deb-install/.Released <<'EOF'
+  #debconf-english
+  #bootable-system
+  #created-fstab
+  #mounted-partitions
+  #libdebconfclient0
+  #rootskel
+  #EOF
 
-chroot chroot dpkg -l | awk '/^ii/ {print $2}' >deb-install/.Released
+  (
+    cd binary
 
-#cat >>deb-install/.Released <<'EOF'
-#debconf-english
-#bootable-system
-#created-fstab
-#mounted-partitions
-#libdebconfclient0
-#rootskel
-#EOF
+    $toolsdir/create-version-package -v 1 -d . -r lenny -x -o /dev/null
+    for i in `cat .Released`; do $toolsdir/latestdeb $i; done>/tmp/$$list
 
-(
-	cd deb-install
+    rsync -avz --exclude="*.deb" pool pool.udeb
+    find pool -name '*.udeb' -exec rm -f {} \;
+    rm -rf pool/main/l/linux*2.6 2>/dev/null
 
-	$toolsdir/create-version-package -v 1 -d . -r lenny -x -o /dev/null
-	for i in `cat .Released`; do $toolsdir/latestdeb $i; done>/tmp/$$list
+    (
+      cd pool
+      $toolsdir/archive-report -f>/tmp/report$$
+      rm_files=`find -name '*.deb'|sort|comm -3 - /tmp/report$$`
+      rm -f $rm_files /tmp/report$$
+    )
 
-	rsync -ar --exclude="*.deb" pool pool.udeb
-	find pool -name '*.udeb' -exec rm -f {} \;
-	rm -rf pool/main/l/linux*2.6 2>/dev/null
+    [ -f vyatta-pubkey.gpg ] \
+      || wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
 
-	(
-		cd pool
-		$toolsdir/archive-report -f>/tmp/report$$
-		rm_files=`find -name '*.deb'|sort|comm -3 - /tmp/report$$`
-		rm -f $rm_files /tmp/report$$
-	)
+    $toolsdir/deb-archive -r lenny -n main -d .
+    (
+      cd pool.udeb/pool
+      cp -a * ../../pool/.
+    )
 
-	[ -f vyatta-pubkey.gpg ] || wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
+    rm -rf pool.udeb .disk/ID*
+    touch .disk/ID$BUILDID
+    #genisoimage -quiet -J -o ../deb-install.iso -r -b isolinux/isolinux.bin \
+    #  -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
+  )
+}
 
-	$toolsdir/deb-archive -r lenny -n main -d .
-	(
-		cd pool.udeb/pool
-		cp -a * ../../pool/.
-	)
+# do lh_binary
+build_binary ()
+{
+  lh_binary_chroot || return 1
+  
+  lh_chroot_devpts install || return 1
+  lh_chroot_proc install || return 1
+  lh_chroot_sysfs install || return 1
+  lh_chroot_hosts install || return 1
+  lh_chroot_resolv install || return 1
+  lh_chroot_hostname install || return 1
+  lh_chroot_sources install || return 1
 
-	rm -rf pool.udeb .disk/ID*
-	touch .disk/ID$BUILDID
-	genisoimage -quiet -J -o ../deb-install.iso -r -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
-)
+  lh_binary_rootfs || return 1
+  lh_binary_manifest || return 1
+  lh_binary_encryption || return 1
+
+  lh_binary_local-packageslists || return 1
+  lh_binary_linux-image || return 1
+  lh_binary_debian-installer || return 1
+  lh_binary_memtest || return 1
+  lh_binary_grub || return 1
+  lh_binary_syslinux || return 1
+  lh_binary_yaboot || return 1
+  lh_binary_disk || return 1
+  lh_binary_includes || return 1
+  lh_binary_local-includes || return 1
+  lh_binary_local-hooks || return 1
+ 
+  # build live-only cd
+  lh_binary_md5sum || return 1
+  lh_binary_iso || return 1
+  mv -f binary.iso cache/
+
+  if [ "$BUILD_DEB_INSTALL" == "yes" ]; then
+    # build live/deb-install combo cd
+    rm -f .stage/binary_{md5sum,iso}
+    add_debian_installer || return 1
+    lh_binary_md5sum || return 1
+    lh_binary_iso || return 1
+    mv -f binary.iso deb-install.iso
+  fi
+  
+  mv -f cache/binary.iso .
+
+  lh_binary_net || return 1
+  lh_binary_tar || return 1
+  lh_binary_usb-hdd || return 1
+
+  rm -f .stage/chroot_sources
+  lh_chroot_hostname remove || return 1
+  lh_chroot_resolv remove || return 1
+  lh_chroot_hosts remove || return 1
+
+  lh_chroot_sysfs remove || return 1
+  lh_chroot_proc remove || return 1
+  lh_chroot_devpts remove || return 1
+}
 
 echo I: building binary
-if ! lh_binary; then
+if ! build_binary; then
   echo E: binary build failed
   exit 1
 fi
