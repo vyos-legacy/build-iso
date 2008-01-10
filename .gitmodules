@@ -58,3 +58,6 @@
 [submodule "pkgs/vyatta-cfg-dhcp-server"]
 	path = pkgs/vyatta-cfg-dhcp-server
 	url = http://git.vyatta.com/vyatta-cfg-dhcp-server.git
+[submodule "pkgs/vyatta-dhcp3-client"]
+	path = pkgs/vyatta-dhcp3-client
+	url = http://git.vyatta.com/vyatta-dhcp3.git
