@@ -1,3 +1,6 @@
 [submodule "pkgs/vyatta-op"]
 	path = pkgs/vyatta-op
 	url = http://git.vyatta.com/vyatta-op.git
+[submodule "pkgs/vyatta-cfg"]
+	path = pkgs/vyatta-cfg
+	url = http://git.vyatta.com/vyatta-cfg.git
