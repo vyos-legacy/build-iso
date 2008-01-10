@@ -378,7 +378,7 @@ done
 
 case "$LH_DISTRIBUTION" in
 gutsy | hardy )
-	LH_BOOTSTRAP_INCLUDE="less,gnupg"
+	LH_BOOTSTRAP_INCLUDE="less,gnupg,rsync"
 	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
 	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu/"
 	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
@@ -418,7 +418,7 @@ gutsy | hardy )
 	fi
 	;;
 * )
-	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1"
+	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
