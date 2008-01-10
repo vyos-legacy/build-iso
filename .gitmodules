@@ -52,3 +52,6 @@
 [submodule "pkgs/vyatta-op-vpn"]
 	path = pkgs/vyatta-op-vpn
 	url = http://git.vyatta.com/vyatta-op-vpn.git
+[submodule "pkgs/vyatta-op-dhcp-server"]
+	path = pkgs/vyatta-op-dhcp-server
+	url = http://git.vyatta.com/vyatta-op-dhcp-server.git
