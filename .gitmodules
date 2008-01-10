@@ -7,3 +7,6 @@
 [submodule "pkgs/vyatta-op-xml"]
 	path = pkgs/vyatta-op-xml
 	url = http://git.vyatta.com/vyatta-op-xml.git
+[submodule "pkgs/vyatta-op-firewall"]
+	path = pkgs/vyatta-op-firewall
+	url = http://git.vyatta.com/vyatta-op-firewall.git
