@@ -22,3 +22,6 @@
 [submodule "pkgs/vyatta-quagga"]
 	path = pkgs/vyatta-quagga
 	url = http://git.vyatta.com/vyatta-quagga.git
+[submodule "pkgs/vyatta-cfg-system"]
+	path = pkgs/vyatta-cfg-system
+	url = http://git.vyatta.com/vyatta-cfg-system.git
