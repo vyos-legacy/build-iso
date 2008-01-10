@@ -43,3 +43,6 @@
 [submodule "pkgs/vyatta-cfg-vpn"]
 	path = pkgs/vyatta-cfg-vpn
 	url = http://git.vyatta.com/vyatta-cfg-vpn.git
+[submodule "pkgs/vyatta-bash"]
+	path = pkgs/vyatta-bash
+	url = http://git.vyatta.com/vyatta-bash.git
