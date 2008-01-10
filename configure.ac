@@ -35,7 +35,7 @@ test ! "$LH_BOOTAPPEND_LIVE" && \
       LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser])
 
-AC_ARG_WITH(ppp,
+AC_ARG_WITH(vyatta-ppp,
 	[AS_HELP_STRING([--with-ppp=fetch|yes|no (default fetch)],
 	  [Include ppp (fetch: download package)])],
 	[],
@@ -314,6 +314,7 @@ AC_ARG_WITH(all,
      with_vyatta_quagga=yes;
      with_vyatta_ravpn=yes;
      with_vyatta_serial=yes;
+     with_vyatta_ppp=yes;
   fi ],
 [])
 
@@ -345,6 +346,7 @@ for pkg in kernel \
     vyatta-nat \
     vyatta-ravpn \
     vyatta-serial \
+    vyatta-ppp \
     wanpipe
 do
   npkg=${pkg//-/_}
