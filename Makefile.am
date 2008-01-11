@@ -77,7 +77,7 @@ mostlyclean-local :
 	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock,deb-install.iso}
 
 clean-local :
-	@rm -f pkgs/*.{build,changes,deb,tar.gz}
+	@rm -f pkgs/*.{build,changes,deb,tar.gz,udeb}
 	@shopt -s nullglob ; \
 	for debian in pkgs/*/debian ; do \
 	    echo P: \($${debian%/*}\) debuild clean ... ; \
