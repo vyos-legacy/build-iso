@@ -178,10 +178,10 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
-	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BINARY_SECURITY="http://sydney.vyatta.com/debian-security/"
-	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://sydney.vyatta.com/debian-security/"
+	LH_MIRROR_BINARY="http://packages.vyatta.com/debian/"
+	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security/"
+	LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian/"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security/"
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
 	EXCLUDE_PKGS+=" exim4-daemon-light"
