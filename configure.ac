@@ -42,10 +42,10 @@ AC_ARG_WITH(vyatta-ppp,
 	[with_vyatta_ppp=fetch])
 
 AC_ARG_WITH(wanpipe,
-	[AS_HELP_STRING([--with-wanpipe=fetch|yes|no (default fetch)],
+	[AS_HELP_STRING([--with-wanpipe=fetch|yes|no (default no)],
 	  [Include wanpipe (fetch: download package)])],
 	[],
-	[with_vyatta_wanpipe=fetch])
+	[with_wanpipe=no])
 
 test ! "$LH_BOOTLOADER" && LH_BOOTLOADER=syslinux
 AC_ARG_VAR(LH_BOOTLOADER, [default: syslinux])
