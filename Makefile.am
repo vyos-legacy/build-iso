@@ -75,7 +75,7 @@ clean-pkg :
 mostlyclean-local :
 	@if grep -q proc-live /proc/mounts ; then umount proc-live ; fi
 	@if grep -q sysfs-live /proc/mounts ; then umount sysfs-live ; fi
-	@rm -rf livecd/{.permissions,.stage,binary,binary.iso,chroot,config,.lock,deb-install.iso}
+	@rm -rf livecd/{.permissions,.stage,binary,*.iso,chroot,config,.lock,deb-install.iso}
 
 clean-local :
 	@rm -f pkgs/*.{build,changes,deb,tar.gz,udeb}
