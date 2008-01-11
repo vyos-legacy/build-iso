@@ -15,6 +15,7 @@ vyatta-op-firewall
 vyatta-op-quagga
 vyatta-op-vpn
 vyatta-op-xml
+vyatta-ppp
 vyatta-quagga
 vyatta-ravpn
 vyatta-serial
