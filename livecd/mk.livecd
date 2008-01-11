@@ -28,7 +28,7 @@ declare -a exclude_packages=( ${EXCLUDE_PKGS[@]} )
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
-: ${BUILDID:=$($toolsdir/buildid)}
+: ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${LIVECD:=livecd/livecd_$CDLABEL.iso}
 : ${BUILDFILE:=/opt/vyatta/etc/build.txt}
