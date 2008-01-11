@@ -70,6 +70,7 @@ build-signed-pkg :
 clean-pkg :
 	@op="debuild clean" ; $(op_pkg)
 	rm -f pkgs/$(PKG)_*.{build,changes,deb,tar.gz}
+	if [[ "$(PKG)" == linux-* ]] ; then rm -f pkgs/linux-*.{build,changes,deb,tar.gz} ; fi
 
 mostlyclean-local :
 	@if grep -q proc-live /proc/mounts ; then umount proc-live ; fi
