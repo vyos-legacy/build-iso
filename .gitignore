@@ -25,6 +25,7 @@
 /pkgs/*.changes
 /pkgs/*.deb
 /pkgs/*.tar.gz
+/pkgs/*.udeb
 
 *.iso
 
