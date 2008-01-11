@@ -24,7 +24,6 @@ for arg ; do
 done
 
 declare pkglistdir=config/chroot_local-packageslists
-declare -a exclude_packages=( ${EXCLUDE_PKGS[@]} )
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
@@ -94,7 +93,7 @@ if [ ! -d config ]; then
   # set up grub template
   cp templates/grub/menu.lst config/binary_grub/
 
-  for x in ${exclude_packages[@]} ; do
+  for x in ${EXCLUDE_PKGS[@]} ; do
       if grep -q "^$x\$" ${pkglistdir}/vyatta-pkgs ; then
 	  sed -i "/^$x\$/d" ${pkglistdir}/vyatta-pkgs
       else
