@@ -132,15 +132,25 @@ Pin-Priority: 50
 EOF
 }
 
+filtered_local_packages ()
+{
+    for deb ; do
+	local xpkg=${deb%%_*}
+	local pkg=${xpkg##*/}
+
+	for (( i=0; i<${#EXCLUDE_PKGS[@]}; i++)) ; do
+	    [ $pkg == ${EXCLUDE_PKGS[i]} ] && \
+		continue 2;
+	done
+	cp -p $deb config/chroot_local-packages/
+    done
+}
+
 # set up locally-built packages
 rm -f config/chroot_local-packages/*
 # FIXME! remove these pre-submodule package directories 
-for deb in ../!(pkgs)/*.deb ; do
-    cp -p $deb config/chroot_local-packages/
-done
-for deb in ../pkgs/*.deb ; do
-    cp -p $deb config/chroot_local-packages/
-done
+filtered_local_packages ../!(pkgs)/*.deb
+filtered_local_packages ../pkgs/*.deb
 
 if [ "$ISO_FAST" == "yes" ]; then
   # do a "fast" build. just install the local packages and then do lh_binary.
