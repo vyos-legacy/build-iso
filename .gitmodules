@@ -46,9 +46,6 @@
 [submodule "pkgs/vyatta-bash"]
 	path = pkgs/vyatta-bash
 	url = http://git.vyatta.com/vyatta-bash.git
-[submodule "pkgs/linux-vyatta"]
-	path = pkgs/linux-vyatta
-	url = http://git.vyatta.com/linux-vyatta.git
 [submodule "pkgs/vyatta-op-vpn"]
 	path = pkgs/vyatta-op-vpn
 	url = http://git.vyatta.com/vyatta-op-vpn.git
@@ -61,3 +58,9 @@
 [submodule "pkgs/vyatta-dhcp3-client"]
 	path = pkgs/vyatta-dhcp3-client
 	url = http://git.vyatta.com/vyatta-dhcp3.git
+[submodule "pkgs/wanpipe"]
+	path = pkgs/wanpipe
+	url = http://git.vyatta.com/wanpipe.git
+[submodule "pkgs/linux-image-2.6.23-1-486-vyatta"]
+	path = pkgs/linux-image-2.6.23-1-486-vyatta
+	url = http://git.vyatta.com/linux-vyatta.git
