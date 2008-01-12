@@ -54,6 +54,10 @@ all-local :
 all-debs :
 	@$(debuild_pkgs)
 
+.PHONY : iso
+iso :
+	@$(mk_iso)
+
 .PHONY : debuild-pkg
 build-pkg :
 	@op="debuild -i -b -nc -uc -us" ; $(op_pkg)
