@@ -100,7 +100,7 @@ AC_ARG_WITH(kernel,
 [AS_HELP_STRING([--with-kernel],
   [ fetch (default) or vyatta kernel])]
 [AS_HELP_STRING([--without-kernel],
-  [fetch appropriate distro kernel])],
+  [do not fetch appropriate distro kernel])],
 [],
 [with_kernel=fetch])
 
@@ -111,6 +111,16 @@ if test X$with_xen = Xyes ; then
    use_xen=true
 else
    use_xen=false
+fi
+
+AC_ARG_WITH(deb-install,
+[AS_HELP_STRING([--without-deb-install],
+[don't build Debian installer CD])])
+
+if test "$with_deb_install" = no ; then
+   BUILD_DEB_INSTALL=no
+else
+   BUILD_DEB_INSTALL=yes
 fi
 
 # FIXME! fetch version from source
@@ -234,6 +244,7 @@ AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_UNION_FILESYSTEM)
 
+AC_SUBST(BUILD_DEB_INSTALL)
 AC_SUBST(use_xen)
 
 AC_SUBST(VYATTA_LINUX_PKG)
