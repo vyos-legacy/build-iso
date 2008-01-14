@@ -76,12 +76,12 @@ clean-pkg :
 	rm -f pkgs/$(PKG)_*.{build,changes,deb,tar.gz}
 	if [[ "$(PKG)" == linux-* ]] ; then rm -f pkgs/linux-*.{build,changes,deb,tar.gz} ; fi
 
-mostlyclean-local :
+mostlyclean-local : iso.cleanmsgq
 	@if grep -q proc-live /proc/mounts ; then umount proc-live ; fi
 	@if grep -q sysfs-live /proc/mounts ; then umount sysfs-live ; fi
 	@rm -rf livecd/{.permissions,.stage,binary,*.iso,chroot,config,.lock,deb-install.iso}
 
-clean-local :
+clean-local : iso.cleanstage
 	@rm -f pkgs/*.{build,changes,deb,tar.gz,udeb}
 	@shopt -s nullglob ; \
 	for debian in pkgs/*/debian ; do \
