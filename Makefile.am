@@ -100,3 +100,35 @@ iso.cleanstage :
 iso.cleanmsgq :
 	@ipcs -q | awk '{print $$2}' | egrep [0-9] \
 	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
+
+.PHONY : git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status git-push git-diff git-diff-cached
+git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status git-push git-diff git-diff-cached:
+	@for g in ./.git pkgs/*/.git; do \
+	 d=$${g/\/.git/}; \
+	 if [ -d "$$d" ]; then \
+	   echo ========= $${d/./\/} =============; \
+	   ( \
+	     cd "$$d"; \
+	     case "$@" in \
+	       git-branch-av ) git-branch -a -v;; \
+	       git-clean-n ) git-clean -n;; \
+	       git-lsmods ) git-ls-files -m;; \
+	       git-fetch ) git-fetch -q 2>/dev/null; \
+	           if ! (git-status|head -3|grep '^nothing to commit' >/dev/null) ; \
+	           then \
+	             echo There are uncommited changes.; \
+	           fi; \
+	           branch=`git-branch|grep '^\* '|sed 's/..//'`; \
+	           changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
+	           if [ "$$changed" ]; then \
+	             echo A local commit is not in the shared repo or visa versa.; \
+	           fi; \
+	           echo ; \
+	           ;; \
+	       git-diff-cached ) git-diff --cached;; \
+	       * ) eval "$@";; \
+	     esac; \
+	   ); \
+	 fi; \
+	done || true
+
