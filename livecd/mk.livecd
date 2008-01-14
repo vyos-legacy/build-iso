@@ -30,8 +30,6 @@ declare pkglistdir=config/chroot_local-packageslists
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${LIVECD:=livecd/livecd_$CDLABEL.iso}
-: ${BUILDFILE:=/opt/vyatta/etc/build.txt}
-: ${STAGEBUILDFILE=chroot/$BUILDFILE}
 : ${ORGANIZATION:=vyatta.com}
 
 shopt -s extglob
@@ -105,19 +103,26 @@ fi
 # create the buildid file
 mk_buildid ()
 {
-    echo I: generating package list
-    [ -d chroot/opt/vyatta/bin ] || mkdir -p -m 0755 chroot/opt/vyatta/bin
-    [ -d chroot/opt/vyatta/etc ] || mkdir -p -m 0755 chroot/opt/vyatta/etc
-    cp $toolsdir/save-package-report chroot/opt/vyatta/bin
-    chroot chroot /bin/sh /opt/vyatta/bin/save-package-report
-    rm chroot/opt/vyatta/bin/save-package-report
-    rm -f $STAGEBUILDFILE
-    cat <<-EOF >$STAGEBUILDFILE
+    local etcdir=chroot/opt/vyatta/etc
+
+    echo I: generating build record
+    [ -d $etcdir ] || mkdir -p -m 0755 $etcdir
+    rm -f $etcdir/build.txt $etcdir/iso-build.txt $etc/iso-submodules.txt
+    cat <<-EOF > $etcdir/iso-build.txt
 	Built by:    $BUILTBY
 	Built on:    $HUMANTIME
 	Build ID:    $CDLABEL
 	EOF
+    # backwards compatible symlink
+    ln -s iso-build.txt $etcdir/build.txt
+    ( cd .. ; git-submodule status ) > $etcdir/iso-submodules.txt
     echo "$CDLABEL">iso-label
+
+    echo I: generating package list
+    cp $toolsdir/save-package-report chroot
+    chroot chroot /bin/sh /vyatta-save-package-report
+    rm chroot/vyatta-save-package-report
+
 }
 
 set_up_apt_pref ()
