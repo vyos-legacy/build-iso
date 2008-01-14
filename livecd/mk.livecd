@@ -251,11 +251,13 @@ build_chroot ()
   if [ -n "${VYATTA_LINUX_PKG}" ] ; then
       KPKG=`shopt -s nullglob; cd config/chroot_local-packages; \
           echo ${VYATTA_LINUX_PKG}*`
-      if [ "$KPKG" ] ;  then
+      if [ -n "$KPKG" ] ;  then
           # Kernel is built locally. Install it first.
 	  mv config/chroot_local-packages/"$KPKG" chroot/.
 	  chroot chroot dpkg -i "$KPKG"
 	  rm chroot/"$KPKG"
+      elif ! grep -q "${VYATTA_LINUX_PKG}" ${pkglistdir}/vyatta-pkgs ; then
+	  echo "${VYATTA_LINUX_PKG}" >> ${pkglistdir}/vyatta-pkgs
       fi
   fi
 
