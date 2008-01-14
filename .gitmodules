@@ -67,3 +67,6 @@
 [submodule "pkgs/vyatta-ppp"]
 	path = pkgs/vyatta-ppp
 	url = http://git.vyatta.com/vyatta-ppp.git
+[submodule "pkgs/vyatta-cfg-dhcp-relay"]
+	path = pkgs/vyatta-cfg-dhcp-relay
+	url = http://git.vyatta.com/vyatta-cfg-dhcp-relay.git
