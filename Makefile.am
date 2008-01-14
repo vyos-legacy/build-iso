@@ -103,7 +103,7 @@ iso.cleanmsgq :
 
 .PHONY : git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status git-push git-diff git-diff-cached
 git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge git-pull git-status git-push git-diff git-diff-cached:
-	@for g in ./.git pkgs/*/.git; do \
+	@for g in pkgs/*/.git ./.git; do \
 	 d=$${g/\/.git/}; \
 	 if [ -d "$$d" ]; then \
 	   echo ========= $${d/./\/} =============; \
