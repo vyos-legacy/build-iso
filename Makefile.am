@@ -119,10 +119,18 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 	             echo There are uncommited changes.; \
 	           fi; \
 	           branch=`git-branch|grep '^\* '|sed 's/..//'`; \
-	           changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
-	           if [ "$$changed" ]; then \
-	             echo A local commit is not in the shared repo or visa versa.; \
-	           fi; \
+		   if [ branch='(no branch)' -a "$$d" != "./.git" ]; then \
+			parent=`cd ../../.git 2>/dev/null&&cd ..&&git-submodule status "$$d"|sed 's/\(.\).*/\1/'`; \
+			case "$$parent" in \
+			'+' ) echo This submodule has a commit not in the parent;;\
+			'-' ) echo This submodule is not up to date;; \
+			esac; \
+		   else \
+	               changed=`git-diff "$$branch" origin/"$$branch"|head -1`; \
+	               if [ "$$changed" ]; then \
+	                 echo A local commit is not in the shared repo or visa versa.; \
+	               fi; \
+		   fi; \
 	           echo ; \
 	           ;; \
 	       git-diff-cached ) git-diff --cached;; \
@@ -131,4 +139,3 @@ git-branch git-branch-av git-clean git-clean-n git-fetch git-lsmods git-merge gi
 	   ); \
 	 fi; \
 	done || true
-
