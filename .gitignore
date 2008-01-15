@@ -28,8 +28,3 @@
 /pkgs/*.udeb
 
 *.iso
-
-/kernel
-/vyatta-*
-/ppp
-/wanpipe
