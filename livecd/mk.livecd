@@ -142,6 +142,11 @@ filtered_local_packages ()
 	local xpkg=${deb%%_*}
 	local pkg=${xpkg##*/}
 
+        # don't install kernel source/header packages
+        if [[ $pkg == linux-* ]] && [[ $pkg != linux-image-* ]]; then
+          continue
+        fi
+
 	for (( i=0; i<${#EXCLUDE_PKGS[@]}; i++)) ; do
 	    [ $pkg == ${EXCLUDE_PKGS[i]} ] && \
 		continue 2;
