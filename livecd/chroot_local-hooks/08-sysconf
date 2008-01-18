@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo I: Rewriting /etc/motd.tail
+for conf in motd.tail syslog.conf; do
+  cp -f /opt/vyatta/etc/$conf /etc/$conf
+done
+
+cp -f /opt/vyatta/etc/logrotate_messages /etc/logrotate.d/messages
+cp -f /opt/vyatta/etc/default_ssh /etc/default/ssh
+
