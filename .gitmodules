@@ -64,9 +64,9 @@
 [submodule "pkgs/linux-image-2.6.23-1-486-vyatta"]
 	path = pkgs/linux-image-2.6.23-1-486-vyatta
 	url = http://git.vyatta.com/linux-vyatta.git
-[submodule "pkgs/vyatta-ppp"]
-	path = pkgs/vyatta-ppp
-	url = http://git.vyatta.com/vyatta-ppp.git
 [submodule "pkgs/vyatta-cfg-dhcp-relay"]
 	path = pkgs/vyatta-cfg-dhcp-relay
 	url = http://git.vyatta.com/vyatta-cfg-dhcp-relay.git
+[submodule "pkgs/ppp"]
+	path = pkgs/ppp
+	url = http://git.vyatta.com/ppp.git
