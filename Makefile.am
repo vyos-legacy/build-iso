@@ -54,6 +54,15 @@ all-local :
 all-debs :
 	@$(debuild_pkgs)
 
+.PHONY : clean-debs
+clean-debs :
+	@rm -f pkgs/*.{build,changes,deb,tar.gz,udeb}
+	@shopt -s nullglob ; \
+	for debian in pkgs/*/debian ; do \
+	    echo P: \($${debian%/*}\) debuild clean ... ; \
+	  ( cd $${debian%/*} ; debuild clean ) ; \
+	done
+
 .PHONY : iso
 iso :
 	@$(mk_iso)
@@ -81,13 +90,7 @@ mostlyclean-local : iso.cleanmsgq
 	@if grep -q sysfs-live /proc/mounts ; then umount sysfs-live ; fi
 	@rm -rf livecd/{.permissions,.stage,binary,*.iso,chroot,config,.lock,deb-install.iso}
 
-clean-local : iso.cleanstage
-	@rm -f pkgs/*.{build,changes,deb,tar.gz,udeb}
-	@shopt -s nullglob ; \
-	for debian in pkgs/*/debian ; do \
-	    echo P: \($${debian%/*}\) debuild clean ... ; \
-	  ( cd $${debian%/*} ; debuild clean ) ; \
-	done
+clean-local : iso.cleanstage clean-debs
 
 distclean-local :
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
