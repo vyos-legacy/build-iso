@@ -8,3 +8,16 @@ done
 cp -f /opt/vyatta/etc/logrotate_messages /etc/logrotate.d/messages
 cp -f /opt/vyatta/etc/default_ssh /etc/default/ssh
 
+sysctl_conf=/etc/sysctl.conf
+if grep -q "^kernel.printk =" $sysctl_conf ; then
+    sed -i "s/^\(kernel.printk\) = [ \t0-9]*/\1 = 4 4 1 7/" $sysctl_conf
+elif grep -q "^#kernel.printk = 4 4 1 7" $sysctl_conf ; then
+    sed -i "s/^#\(kernel.printk = 4 4 1 7\)/\1/" $sysctl_conf
+else
+    cat <<-EOF >> $sysctl_conf
+
+	# the following stops low-level messages on console
+	kernel.printk = 4 4 1 7
+
+	EOF
+fi
