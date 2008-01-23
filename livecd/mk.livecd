@@ -119,7 +119,7 @@ mk_buildid ()
     echo "$CDLABEL">iso-label
 
     echo I: generating package list
-    cp $toolsdir/save-package-report chroot
+    cp $toolsdir/save-package-report chroot/vyatta-save-package-report
     chroot chroot /bin/sh /vyatta-save-package-report
     rm chroot/vyatta-save-package-report
 
