@@ -238,6 +238,7 @@ build_chroot ()
   lh_chroot_resolv install || return 1
   lh_chroot_hostname install || return 1
   lh_chroot_apt install || return 1
+  echo 'quiet "1";' > chroot/etc/apt/apt.conf.d/03quiet
   lh_chroot_sources install || return 1
 
   lh_chroot_linux-image install || return 1
