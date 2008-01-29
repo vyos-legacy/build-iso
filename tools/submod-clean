@@ -1,0 +1,40 @@
+#!/bin/bash
+
+progname=${0##*/}
+shopt -s nullglob
+cd pkgs
+
+trace=
+
+declare -a cloned=( */debian )
+declare -a submodule=( ${cloned[@]%/*} )
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+	-h | --help )
+	    cat <<-EOF
+Usage: $progname [-n] [ SUBMODULE... ]
+Option:
+  -n	Don´t actually remove anything,
+	just show what would be done.
+
+If no SUBMODULE(s) given, clean all checked-out submodules
+EOF
+	    exit 0;;
+	-n )
+	    trace=echo
+	    shift;;	    
+	* )
+	    submodule=( $@ )
+	    break;;
+    esac
+done
+
+for (( i=0; i<${#submodule[@]}; i++)) ; do
+    if [[ "${submodule}" == linux-* ]] ; then
+	eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;
+    else
+	eval $trace rm -f ${submodule}.{build,changes,deb,tar.gz,udeb}
+    fi
+    ( cd ${submodule[i]} ; eval $trace debclean )
+done

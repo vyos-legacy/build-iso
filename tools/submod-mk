@@ -1,0 +1,64 @@
+#!/bin/bash
+
+progname=${0##*/}
+shopt -s nullglob
+cd pkgs
+
+info=echo
+trace=
+build="debuild -i -b -nc -uc -us"
+
+declare -a submodule
+declare -a debs
+for debian in */debian ; do
+    smod=${debian%/*}
+    debs=( ${smod}_*.deb )
+    if [ ${#debs[@]} -eq 0 ] ; then
+	submodule+=( $smod )
+    fi
+done
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+	-h | --help )
+	    cat <<-EOF
+Usage: $progname [-n | -q] [--binary | --source | --signed-source] [ SUBMODULE... ]
+Option:
+-n		Don´t actually remove or build anything,
+		just show what would be done.
+-q		Quiet, don't print progress info
+--binary	Skip source package build (default)
+--source	Build binary and source packages
+--signed-source	Build and sign packages
+
+If no SUBMODULE(s) given, build all checked-out submodules w/o debs.
+EOF
+	    exit 0;;
+	-n )
+	    trace=echo
+	    shift;;	    
+	-q )
+	    info='#'
+	    shift;;
+	--binary ) shift ;;		# default
+	--source )
+	    build="git-buildpackage -nc -uc -us"
+	    shift;;
+	--signed-source )
+	    build="git-buildpackage -nc"
+	    shift;;
+	* )
+	    submodule=( $@ )
+	    break;;
+    esac
+done
+
+for (( i=0; i<${#submodule[@]}; i++)) ; do
+    if [[ "${submodule[i]}" == linux-* ]] ; then
+	eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;
+    else
+	eval $trace rm -f ${submodule[i]}.{build,changes,deb,tar.gz,udeb}
+    fi
+    eval $info P: ${submodule[i]}
+    ( cd ${submodule[i]} ; eval $trace $build )
+done

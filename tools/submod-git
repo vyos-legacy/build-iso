@@ -1,0 +1,121 @@
+#!/bin/bash
+
+progname=${0##*/}
+shopt -s nullglob
+cd pkgs
+
+info=echo
+trace=
+git="status"
+
+declare -a cloned=( */debian )
+declare -a submodule=( ${cloned[@]%/*} )
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+	-h | --help )
+	    cat <<-EOF
+Usage: $progname [-n | -q] COMMAND [ SUBMODULE... ]
+Option:
+  -n		Don´t actually execute anything,
+		just show what would be done.
+  -q		Quiet, don't print progress info
+
+COMMAND:
+  branch	Show current branch
+  branch-av	Show all branches
+  clean		Clean tree of non-indexed files
+  clean-n	Show files to be cleaned
+  diff		Show diff from HEAD to tree
+  diff-cached	Show diff from HEAD to index cache
+  fetch		Fetch updates
+  lsmods	ls-files -m
+  merge		merge current branch with origin/BRANCH
+  pull		fetch and merge current branch 
+  push		push commits upstream
+  status	Show status (default)
+  update-mods	Update index for all modified files
+
+SUBMODULE:
+  If no submodule given, perform git-COMMAND on all checked-out submodules
+
+EOF
+	    exit 0;;
+	-n )
+	    trace=echo
+	    shift;;	    
+	-q )
+	    info='#'
+	    shift;;
+	  branch \
+	      | branch-av \
+	      | clean \
+	      | clean-n \
+	      | diff \
+	      | diff-cached \
+	      | fetch \
+	      | lsmods \
+	      | merge \
+	      | pull \
+	      | push \
+	      | status \
+	      | update-mods )
+	      git=git-$1
+	      shift;;
+	* )
+	    submodule=( $@ )
+	    break;;
+    esac
+done
+
+git-branch-av ()
+{
+    git-branch -a -v
+}
+
+git-clean-n ()
+{
+    git-clean -n
+}
+
+git-lsmods ()
+{
+    git-ls-files -m
+}
+
+git-fetch ()
+{
+    git-fetch -q 2>/dev/null
+    if ! (git-status|head -3|grep '^nothing to commit' >/dev/null) ; then
+	echo There are uncommited changes.
+    fi
+    branch=`git-branch|grep '^\* '|sed 's/..//'`
+    if [ branch='(no branch)' -a "$$d" != "./.git" ]; then
+	parent=`cd ../../.git 2>/dev/null&&cd ..&&git-submodule status "$$d"|sed 's/\(.\).*/\1/'`;
+	case "$$parent" in
+	    '+' ) echo This submodule has a commit not in the parent;;
+	    '-' ) echo This submodule is not up to date;;
+	esac
+    else
+	changed=`git-diff "$branch" origin/"$branch"|head -1`;
+	if [ "$changed" ]; then
+	    echo A local commit is not in the shared repo or visa versa.;
+	fi
+    fi
+    echo
+}
+
+git-diff-cached ()
+{
+    git-diff --cached
+}
+
+git-update-mods ()
+{
+    git-ls-files -m | git-update-index --stdin
+}
+
+for (( i=0; i<${#submodule[@]}; i++)) ; do
+    eval $info ========= ${submodule[i]} =========
+    ( cd ${submodule[i]} ; eval $trace $git )
+done
