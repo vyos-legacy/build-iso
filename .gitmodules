@@ -76,3 +76,6 @@
 [submodule "pkgs/vyatta-iproute"]
 	path = pkgs/vyatta-iproute
 	url = http://git.vyatta.com/vyatta-iproute.git
+[submodule "pkgs/vyatta-cfg-qos"]
+	path = pkgs/vyatta-cfg-qos
+	url = http://git.vyatta.com/vyatta-cfg-qos.git
