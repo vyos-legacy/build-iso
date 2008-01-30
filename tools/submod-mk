@@ -27,6 +27,7 @@ Option:
 -n		Don´t actually remove or build anything,
 		just show what would be done.
 -q		Quiet, don't print progress info
+-c		Clean the submodule build
 --binary	Skip source package build (default)
 --source	Build binary and source packages
 --signed-source	Build and sign packages
@@ -39,6 +40,9 @@ EOF
 	    shift;;	    
 	-q )
 	    info='#'
+	    shift;;
+	-c )
+	    build="debuild clean"
 	    shift;;
 	--binary ) shift ;;		# default
 	--source )
