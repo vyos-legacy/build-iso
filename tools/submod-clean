@@ -31,10 +31,10 @@ EOF
 done
 
 for (( i=0; i<${#submodule[@]}; i++)) ; do
-    if [[ "${submodule}" == linux-* ]] ; then
+    if [[ "${submodule[i]}" == linux-* ]] ; then
 	eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;
     else
-	eval $trace rm -f ${submodule}.{build,changes,deb,tar.gz,udeb}
+	eval $trace rm -f ${submodule[i]}*.{build,changes,deb,tar.gz,udeb}
     fi
     ( cd ${submodule[i]} ; eval $trace debclean )
 done
