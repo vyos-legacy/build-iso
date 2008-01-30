@@ -6,7 +6,8 @@ cd pkgs
 
 info=echo
 trace=
-build="debuild -i -b -nc -uc -us"
+noclean="-nc"
+build="debuild -i -b -uc -us"
 
 declare -a submodule
 declare -a debs
@@ -22,34 +23,35 @@ while [ $# -gt 0 ] ; do
     case "$1" in
 	-h | --help )
 	    cat <<-EOF
-Usage: $progname [-n | -q] [--binary | --source | --signed-source] [ SUBMODULE... ]
-Option:
--n		Don´t actually remove or build anything,
-		just show what would be done.
--q		Quiet, don't print progress info
--c		Clean the submodule build
---binary	Skip source package build (default)
---source	Build binary and source packages
---signed-source	Build and sign packages
+Usage: $progname [Options] [ SUBMODULE... ]
+Options:
+  -n | --do-nothing	Don´t actually remove or build anything,
+  			just show what would be done
+  -q | --quiet		Quiet, don't print progress info
+  -c | --clean		Clean build
+  -b | --binary		Skip source package build (default)
+  -s | --source		Build binary and source packages
+  -S | --signed-source	Build and sign packages
 
 If no SUBMODULE(s) given, build all checked-out submodules w/o debs.
 EOF
 	    exit 0;;
-	-n )
+	-n | --do-nothing )
 	    trace=echo
 	    shift;;	    
-	-q )
+	-q | --quiet )
 	    info='#'
 	    shift;;
-	-c )
-	    build="debuild clean"
+	-c | --clean )
+	    noclean=
 	    shift;;
-	--binary ) shift ;;		# default
-	--source )
-	    build="git-buildpackage -nc -uc -us"
+	-b | --binary )
+	    shift ;;		# default
+	-s | --source )
+	    build="git-buildpackage -uc -us"
 	    shift;;
-	--signed-source )
-	    build="git-buildpackage -nc"
+	-S | --signed-source )
+	    build="git-buildpackage"
 	    shift;;
 	* )
 	    submodule=( $@ )
@@ -64,5 +66,5 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
 	eval $trace rm -f ${submodule[i]}.{build,changes,deb,tar.gz,udeb}
     fi
     eval $info P: ${submodule[i]}
-    ( cd ${submodule[i]} ; eval $trace $build )
+    ( cd ${submodule[i]} ; eval $trace $build $noclean)
 done
