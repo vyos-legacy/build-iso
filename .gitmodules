@@ -73,3 +73,6 @@
 [submodule "pkgs/vyatta-cfg-op-pppoe"]
 	path = pkgs/vyatta-cfg-op-pppoe
 	url = http://git.vyatta.com/vyatta-cfg-op-pppoe.git
+[submodule "pkgs/vyatta-iproute"]
+	path = pkgs/vyatta-iproute
+	url = http://git.vyatta.com/vyatta-iproute.git
