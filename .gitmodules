@@ -79,3 +79,6 @@
 [submodule "pkgs/vyatta-cfg-qos"]
 	path = pkgs/vyatta-cfg-qos
 	url = http://git.vyatta.com/vyatta-cfg-qos.git
+[submodule "pkgs/vyatta-op-qos"]
+	path = pkgs/vyatta-op-qos
+	url = http://git.vyatta.com/vyatta-op-qos.git
