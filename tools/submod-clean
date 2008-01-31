@@ -31,10 +31,15 @@ EOF
 done
 
 for (( i=0; i<${#submodule[@]}; i++)) ; do
-    if [[ "${submodule[i]}" == linux-* ]] ; then
-	eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;
-    else
-	eval $trace rm -f ${submodule[i]}*.{build,changes,deb,tar.gz,udeb}
-    fi
+    case "${submodule[i]}" in
+	linux-* )
+	    eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;;
+	vyatta-dhcp3-client )
+	    eval $trace rm -f vyatta-dhcp3-*.{build,changes,deb,tar.gz,udeb} ;;
+	wanpipe )
+	    eval $trace rm -f wanpipe*.{build,changes,deb,tar.gz,udeb} ;;
+	* )
+	    eval $trace rm -f ${submodule[i]}_*.{build,changes,deb,tar.gz,udeb} ;;
+    esac
     ( cd ${submodule[i]} ; eval $trace debclean )
 done
