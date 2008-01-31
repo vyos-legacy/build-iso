@@ -181,14 +181,17 @@ Clean
 
     To clean files generated during all submodule builds,
 
-    build-iso# tools/submod-clean --all
+    build-iso# tools/submod-clean
+
+    To also clean the submodule build stage(s),
+
+    build-iso# tools/submod-clean -d [ SUBMODULE... ]
 
     To clean the source tree of submodules to skip subsequent builds,
 
-    build-iso$ git-clean -q -d pkg/SUBMODULE/
+    build-iso# tools/submod-clean -g [ SUBMODULE... ]
 
-    This retains the local bare submodule repository for quick
-    updates.
+    This retains the local bare git repository for quicker updates.
 
 Changes
 
