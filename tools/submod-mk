@@ -65,6 +65,9 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
     else
 	eval $trace rm -f ${submodule[i]}*.{build,changes,deb,tar.gz,udeb}
     fi
+done
+
+for (( i=0; i<${#submodule[@]}; i++)) ; do
     eval $info P: ${submodule[i]}
     ( cd ${submodule[i]} ; eval $trace $build $noclean)
 done
