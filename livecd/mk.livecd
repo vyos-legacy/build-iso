@@ -361,8 +361,8 @@ add_debian_installer ()
   then
     tar xf deb-install.tar
   fi
-  rsync -avz deb-install/ binary
-  rsync -avz d-i/ binary
+  rsync -avz deb-install/ binary >/dev/null
+  rsync -avz d-i/ binary >/dev/null
 
   cp -a ./cache/packages* binary/pool/main/
   rm -f binary/pool/main/lock
@@ -395,7 +395,7 @@ add_debian_installer ()
     $toolsdir/create-version-package -v 1 -d . -r lenny -x -o /dev/null
     for i in `cat .Released`; do $toolsdir/latestdeb $i; done>/tmp/$$list
 
-    rsync -avz --exclude="*.deb" pool pool.udeb
+    rsync -avz --exclude="*.deb" pool pool.udeb >/dev/null
     find pool -name '*.udeb' -exec rm -f {} \;
     rm -rf pool/main/l/linux*2.6 2>/dev/null
 
