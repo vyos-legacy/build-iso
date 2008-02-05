@@ -84,4 +84,4 @@
 	url = http://git.vyatta.com/vyatta-op-qos.git
 [submodule "vyatta-wanloadbalance"]
 	path = vyatta-wanloadbalance
-	url = /home/slioch/glendale5/glendale/pkgs/vyatta-wanloadbalance/.git
+	url = http://git.vyatta.com/vyatta-wanloadbalance.git
