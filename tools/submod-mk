@@ -61,5 +61,5 @@ done
 
 for (( i=0; i<${#submodule[@]}; i++)) ; do
     eval $info P: ${submodule[i]}
-    ( cd ${submodule[i]} ; eval $trace $build $noclean )
+    ( cd ${submodule[i]} && eval $trace $build $noclean ) || exit $?
 done

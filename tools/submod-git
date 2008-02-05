@@ -74,6 +74,16 @@ git_pull ()
     git-pull
 }
 
+git_push ()
+{
+    git-push
+}
+
+git_diff ()
+{
+    git-diff
+}
+
 git_branch-av ()
 {
     git-branch -a -v
