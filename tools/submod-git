@@ -157,7 +157,7 @@ git_fetch ()
     #git-diff "$branch" origin/"$branch"|head -1
     changed=`git-diff "$branch" origin/"$branch"|head -1`
     if [ "$changed" ]; then
-	echo Local branch not is up-to-date.
+	echo Local branch is out of sync with shared repo.
     fi
 }
 
