@@ -1,1 +1,1 @@
-deb http://packages.vyatta.com/vyatta/ etch main
+deb http://packages.vyatta.com/vyatta-dev/ etch main
