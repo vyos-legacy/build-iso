@@ -151,13 +151,12 @@ git_fetch ()
     in_repo=`git-log -1 -- "$sha"`
     if [ ! "$in_repo" ]; then
 	echo A local commit is not in the shared repo.
-    fi
-
-    branch=`guess_branch`
-    #git-diff "$branch" origin/"$branch"|head -1
-    changed=`git-diff "$branch" origin/"$branch"|head -1`
-    if [ "$changed" ]; then
-	echo Local branch is out of sync with shared repo.
+    else
+	branch=`guess_branch`
+	changed=`git-diff "$branch" origin/"$branch"|head -1`
+	if [ "$changed" ]; then
+	    echo Local branch is out of sync with shared repo.
+	fi
     fi
 }
 
