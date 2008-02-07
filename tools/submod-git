@@ -2,7 +2,7 @@
 
 progname=${0##*/}
 shopt -s nullglob
-cd pkgs
+cd pkgs 2>/dev/null
 
 info=echo
 trace=
@@ -99,9 +99,14 @@ git_lsmods ()
     git-ls-files -m
 }
 
+get_branch_info()
+{
+    git-branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'
+}
+
 get_branch()
 {
-    git-branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'|awk '{ print $2 }'
+    get_branch_info|awk '{ print $2 }'
 }
 
 guess_branch()
@@ -110,13 +115,13 @@ guess_branch()
 
     branch=`get_branch`
     [ "$branch" = NOBRANCH -o ! "$branch" ] && branch="$SUPERBRANCH"
-    [ "$branch" ] || branch=master
+    [ "$branch" = NOBRANCH ] && branch=master
     echo "$branch"
 }
 
 get_sha()
 {
-    git-branch|grep '^\* '|awk '{ print $3 }'
+    get_branch_info|awk '{ print $3 }'
 }
 
 git_checkout()
@@ -147,17 +152,15 @@ git_fetch ()
     fi
     )
 
-    sha=`get_sha`
-    in_repo=`git-log -1 -- "$sha"`
-    if [ ! "$in_repo" ]; then
-	echo A local commit is not in the shared repo.
-    else
-	branch=`guess_branch`
-	changed=`git-diff "$branch" origin/"$branch"|head -1`
-	if [ "$changed" ]; then
-	    echo Local branch is not up-to-date with respect to shared repo.
-	fi
-    fi
+    branch=`guess_branch`
+    upstream=origin/"$branch"
+    git-branch -a|grep "$upstream" >/dev/null || upstream=origin/master
+
+    in_repo=`git-log -1 --name-status "$upstream".."$branch"`
+    [ "$in_repo" ] && echo A local commit is not in the shared repo.
+
+    in_repo=`git-log -1 --name-status "$branch".."$upstream"`
+    [ "$in_repo" ] && echo Local branch is does not have a commit from the shared repo.
 }
 
 git_diff-cached ()
