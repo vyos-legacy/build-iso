@@ -154,6 +154,7 @@ Build ISO(s)
 
     To build with a compatible fakeroot/fakechroot,
 
+    build-iso$ PATH=/sbin:/usr/sbin:$PATH
     build-iso$ make
 
     Either way, the end results are these livecd and, if so
