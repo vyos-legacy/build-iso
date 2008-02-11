@@ -160,7 +160,7 @@ git_fetch ()
     [ "$in_repo" ] && echo A local commit is not in the shared repo.
 
     in_repo=`git-log -1 --name-status "$branch".."$upstream"`
-    [ "$in_repo" ] && echo Local branch is does not have a commit from the shared repo.
+    [ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
 }
 
 git_diff-cached ()
