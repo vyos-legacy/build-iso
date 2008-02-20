@@ -1,0 +1,108 @@
+#!/bin/bash
+
+progname=${0##*/}
+shopt -s nullglob
+cd pkgs
+
+info=echo
+trace=
+noclean="-nc"
+build="debuild -i -b -uc -us"
+
+declare -a submodule
+declare -a debs
+for debian in */debian ; do
+    smod=${debian%/*}
+    debs=( ${smod}_*.deb )
+    if [ ${#debs[@]} -eq 0 ] ; then
+	submodule+=( $smod )
+    fi
+done
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+	-h | --help )
+	    cat <<-EOF
+Usage: $progname [Options] [ SUBMODULE... ]
+Options:
+  -n | --do-nothing	Don´t actually remove or build anything,
+  			just show what would be done
+  -q | --quiet		Quiet, don't print progress info
+  -c | --clean		Clean build
+  -b | --binary		Skip source package build (default)
+  -s | --source		Build binary and source packages
+  -S | --signed-source	Build and sign packages
+
+If no SUBMODULE(s) given, build all checked-out submodules w/o debs.
+EOF
+	    exit 0;;
+	-n | --do-nothing )
+	    trace=echo
+	    shift;;
+	-q | --quiet )
+	    info='#'
+	    shift;;
+	-c | --clean )
+	    noclean=
+	    shift;;
+	-b | --binary )
+	    shift ;;		# default
+	-s | --source )
+	    build="git-buildpackage -uc -us"
+	    shift;;
+	-S | --signed-source )
+	    build="git-buildpackage"
+	    shift;;
+	-m )
+	    shift
+	    RELEASENAME="$1"
+	    shift;;
+	* )
+	    submodule=( $@ )
+	    break;;
+    esac
+done
+
+follow_link()
+{(
+	link="$1"
+	while true
+	do
+		dir=`dirname "$link"`
+		link=`basename "$link"`
+		cd "$dir"
+
+		[ ! -L "$link" ] && break
+		link=`readlink "$link"`
+	done
+
+	echo "$PWD"/"$link"
+)}
+
+mod_changelog()
+{(
+	branch=`git-branch|sed -e 's/^[^\*].*//' -e 's/^\* //'`
+	if ! EDITOR=true git-dch --release --debian-branch "$branch"
+	then
+		true		# actually cannot use this yet because the git-dch changelog parser has bugs
+		# return 0	# ignore because branch does not exist
+	fi
+
+	cp debian/changelog /tmp/changelog$$
+	sed -e 's/^  \* UNRELEASED$//' -e '3i \
+  '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
+	rm /tmp/changelog$$
+	git-commit -a -m "$RELEASENAME" >/dev/null
+	TAG=`head -1 debian/changelog|sed 's/.*(\([^)]*\)).*/\1/'`
+	git-tag -a -m "$RELEASENAME" debian/"$TAG" HEAD
+	return 0
+)}
+
+for (( i=0; i<${#submodule[@]}; i++))
+do
+(
+	eval $info P: ${submodule[i]}
+	cd ${submodule[i]} &&
+	$trace mod_changelog "$RELEASENAME"
+) || exit $?
+done
