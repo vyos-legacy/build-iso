@@ -111,5 +111,6 @@ do
 ) || exit $?
 done
 
-eval $info P: a.
+eval $info P: .
+cd ..
 $trace mod_changelog "$RELEASENAME"
