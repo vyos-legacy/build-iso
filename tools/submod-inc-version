@@ -79,6 +79,11 @@ follow_link()
 	echo "$PWD"/"$link"
 )}
 
+get_tag()
+{
+	head -1 debian/changelog|sed 's/.*(\([^)]*\)).*/\1/'
+}
+
 mod_changelog()
 {(
 	branch=`git-branch|sed -e 's/^[^\*].*//' -e 's/^\* //'`
@@ -93,8 +98,7 @@ mod_changelog()
   '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
 	rm /tmp/changelog$$
 	git-commit -a -m "$RELEASENAME" >/dev/null
-	TAG=`head -1 debian/changelog|sed 's/.*(\([^)]*\)).*/\1/'`
-	git-tag -a -m "$RELEASENAME" debian/"$TAG" HEAD
+	git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD
 	return 0
 )}
 
@@ -103,6 +107,15 @@ do
 (
 	eval $info P: ${submodule[i]}
 	cd ${submodule[i]} &&
+	if [ ${submodule[i]} = vyatta-cfg-system ]
+	then
+		echo "Version :    $RELEASENAME">sysconf/version
+		git-commit -m "Update version file to $RELEASENAME" sysconf/version
+	fi
 	$trace mod_changelog "$RELEASENAME"
 ) || exit $?
 done
+
+eval $info P: .
+cd ..
+$trace mod_changelog "$RELEASENAME"
