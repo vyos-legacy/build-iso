@@ -107,6 +107,11 @@ do
 (
 	eval $info P: ${submodule[i]}
 	cd ${submodule[i]} &&
+	if [ ${submodule[i]} = vyatta-cfg-system ]
+	then
+		echo "Version :    $RELEASENAME">sysconf/version
+		git-commit -m "Update version file to $RELEASENAME" sysconf/version
+	fi
 	$trace mod_changelog "$RELEASENAME"
 ) || exit $?
 done
