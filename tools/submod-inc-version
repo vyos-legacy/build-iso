@@ -9,15 +9,8 @@ trace=
 noclean="-nc"
 build="debuild -i -b -uc -us"
 
-declare -a submodule
-declare -a debs
-for debian in */debian ; do
-    smod=${debian%/*}
-    debs=( ${smod}_*.deb )
-    if [ ${#debs[@]} -eq 0 ] ; then
-	submodule+=( $smod )
-    fi
-done
+declare -a cloned=( */debian )
+declare -a submodule=( ${cloned[@]%/*} )
 
 while [ $# -gt 0 ] ; do
     case "$1" in
@@ -97,25 +90,39 @@ mod_changelog()
 	sed -e 's/^  \* UNRELEASED$//' -e '3i \
   '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
 	rm /tmp/changelog$$
-	git-commit -a -m "$RELEASENAME" >/dev/null
-	git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD
 	return 0
 )}
 
-for (( i=0; i<${#submodule[@]}; i++))
-do
+do_inc_version()
+{
+	local repo
+	eval $info P: "$1"
+	repo="$1"
 (
-	eval $info P: ${submodule[i]}
-	cd ${submodule[i]} &&
-	if [ ${submodule[i]} = vyatta-cfg-system ]
-	then
+	cd "$repo" &&
+	case "$repo" in
+	vyatta-cfg-system )
 		echo "Version :    $RELEASENAME">sysconf/version
 		git-commit -m "Update version file to $RELEASENAME" sysconf/version
-	fi
-	$trace mod_changelog "$RELEASENAME"
-) || exit $?
+		$trace mod_changelog "$RELEASENAME"
+		;;
+	linux-image* )
+		$trace mod_changelog "$RELEASENAME"
+		debuild -i -b -us -uc >/dev/null 2>/dev/null # we need to check-in some derived files for the build to work
+		;;
+	* )
+		$trace mod_changelog "$RELEASENAME"
+		;;
+	esac
+
+	git-commit -a -m "$RELEASENAME" >/dev/null
+	git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD 2>/dev/null
+)
+}
+
+for (( i=0; i<${#submodule[@]}; i++))
+do
+	do_inc_version "${submodule[i]}"
 done
 
-eval $info P: .
-cd ..
-$trace mod_changelog "$RELEASENAME"
+do_inc_version ..
