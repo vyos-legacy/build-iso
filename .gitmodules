@@ -73,3 +73,15 @@
 [submodule "pkgs/vyatta-cfg-op-pppoe"]
 	path = pkgs/vyatta-cfg-op-pppoe
 	url = http://git.vyatta.com/vyatta-cfg-op-pppoe.git
+[submodule "vyatta-cfg-qos"]
+	path = vyatta-cfg-qos
+	url = /home/rbalocca/tmp/glendale/pkgs/vyatta-cfg-qos/.git
+[submodule "vyatta-iproute"]
+	path = vyatta-iproute
+	url = /home/rbalocca/tmp/glendale/pkgs/vyatta-iproute/.git
+[submodule "vyatta-op-qos"]
+	path = vyatta-op-qos
+	url = /home/rbalocca/tmp/glendale/pkgs/vyatta-op-qos/.git
+[submodule "vyatta-wanloadbalance"]
+	path = vyatta-wanloadbalance
+	url = /home/rbalocca/tmp/glendale/pkgs/vyatta-wanloadbalance/.git
