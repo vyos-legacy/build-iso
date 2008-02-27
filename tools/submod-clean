@@ -4,7 +4,10 @@ progname=${0##*/}
 shopt -s nullglob
 cd pkgs
 
+info=echo
 trace=
+do_debclean=false
+do_gitclean=false
 
 declare -a cloned=( */debian )
 declare -a submodule=( ${cloned[@]%/*} )
@@ -15,15 +18,30 @@ while [ $# -gt 0 ] ; do
 	    cat <<-EOF
 Usage: $progname [-n] [ SUBMODULE... ]
 Option:
-  -n	Don´t actually remove anything,
-	just show what would be done.
+  -n | --do-nothing	Don´t actually remove anything,
+ 			just show what would be done.
+  -q | --quiet		Quiet, don't print progress info
+  -d | --debclean	Also clean debian build stage
+  -g | --gitclean	Also clean git tree
 
 If no SUBMODULE(s) given, clean all checked-out submodules
 EOF
 	    exit 0;;
-	-n )
+	-n | --do-nothing )
 	    trace=echo
-	    shift;;	    
+	    shift;;
+	-q | --quiet )
+	    info='#'
+	    shift;;
+	-d | --debclean )
+	    do_debclean=true
+	    shift;;
+	-g | --gitclean )
+	    do_gitclean=true
+	    shift;;
+	-* )
+	    echo Unkown option: \""$1"\"
+	    exit 1;;
 	* )
 	    submodule=( $@ )
 	    break;;
@@ -31,10 +49,21 @@ EOF
 done
 
 for (( i=0; i<${#submodule[@]}; i++)) ; do
-    if [[ "${submodule}" == linux-* ]] ; then
-	eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;
-    else
-	eval $trace rm -f ${submodule}.{build,changes,deb,tar.gz,udeb}
+    eval $info P: ${submodule[i]}    
+    case "${submodule[i]}" in
+	linux-* )
+	    eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;;
+	vyatta-dhcp3-client )
+	    eval $trace rm -f vyatta-dhcp3-*.{build,changes,deb,tar.gz,udeb} ;;
+	wanpipe )
+	    eval $trace rm -f wanpipe*.{build,changes,deb,tar.gz,udeb} ;;
+	* )
+	    eval $trace rm -f ${submodule[i]}_*.{build,changes,deb,tar.gz,udeb} ;;
+    esac
+    if eval $do_debclean  ; then
+	( cd ${submodule[i]} ; eval $trace debclean )
     fi
-    ( cd ${submodule[i]} ; eval $trace debclean )
+    if eval $do_gitclean ; then
+	eval $trace git-clean -d ${submodule[i]}/
+    fi
 done

@@ -1,0 +1,128 @@
+#!/bin/bash
+
+progname=${0##*/}
+shopt -s nullglob
+cd pkgs
+
+info=echo
+trace=
+noclean="-nc"
+build="debuild -i -b -uc -us"
+
+declare -a cloned=( */debian )
+declare -a submodule=( ${cloned[@]%/*} )
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+	-h | --help )
+	    cat <<-EOF
+Usage: $progname [Options] [ SUBMODULE... ]
+Options:
+  -n | --do-nothing	Don´t actually remove or build anything,
+  			just show what would be done
+  -q | --quiet		Quiet, don't print progress info
+  -c | --clean		Clean build
+  -b | --binary		Skip source package build (default)
+  -s | --source		Build binary and source packages
+  -S | --signed-source	Build and sign packages
+
+If no SUBMODULE(s) given, build all checked-out submodules w/o debs.
+EOF
+	    exit 0;;
+	-n | --do-nothing )
+	    trace=echo
+	    shift;;
+	-q | --quiet )
+	    info='#'
+	    shift;;
+	-c | --clean )
+	    noclean=
+	    shift;;
+	-b | --binary )
+	    shift ;;		# default
+	-s | --source )
+	    build="git-buildpackage -uc -us"
+	    shift;;
+	-S | --signed-source )
+	    build="git-buildpackage"
+	    shift;;
+	-m )
+	    shift
+	    RELEASENAME="$1"
+	    shift;;
+	* )
+	    submodule=( $@ )
+	    break;;
+    esac
+done
+
+follow_link()
+{(
+	link="$1"
+	while true
+	do
+		dir=`dirname "$link"`
+		link=`basename "$link"`
+		cd "$dir"
+
+		[ ! -L "$link" ] && break
+		link=`readlink "$link"`
+	done
+
+	echo "$PWD"/"$link"
+)}
+
+get_tag()
+{
+	head -1 debian/changelog|sed 's/.*(\([^)]*\)).*/\1/'
+}
+
+mod_changelog()
+{(
+	branch=`git-branch|sed -e 's/^[^\*].*//' -e 's/^\* //'`
+	if ! EDITOR=true git-dch --release --debian-branch "$branch"
+	then
+		true		# actually cannot use this yet because the git-dch changelog parser has bugs
+		# return 0	# ignore because branch does not exist
+	fi
+
+	cp debian/changelog /tmp/changelog$$
+	sed -e 's/^  \* UNRELEASED$//' -e '3i \
+  '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
+	rm /tmp/changelog$$
+	return 0
+)}
+
+do_inc_version()
+{
+	local repo
+	eval $info P: "$1"
+	repo="$1"
+(
+	cd "$repo" &&
+	case "$repo" in
+	vyatta-cfg-system )
+		echo "Version :    $RELEASENAME">sysconf/version
+		git-commit -m "Update version file to $RELEASENAME" sysconf/version
+		$trace mod_changelog "$RELEASENAME"
+		;;
+	linux-image* )
+		$trace mod_changelog "$RELEASENAME"
+		debuild -i -b -us -uc >/dev/null 2>/dev/null # we need to check-in some derived files for the build to work
+		;;
+	* )
+		$trace mod_changelog "$RELEASENAME"
+		;;
+	esac
+
+	git-commit -a -m "$RELEASENAME" >/dev/null
+	git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD 2>/dev/null
+)
+}
+
+for (( i=0; i<${#submodule[@]}; i++))
+do
+	do_inc_version "${submodule[i]}"
+done
+
+do_inc_version ..

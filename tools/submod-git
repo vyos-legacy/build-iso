@@ -2,13 +2,13 @@
 
 progname=${0##*/}
 shopt -s nullglob
-cd pkgs
+cd pkgs 2>/dev/null
 
 info=echo
 trace=
-git="status"
+git="git_status"
 
-declare -a cloned=( */debian )
+declare -a cloned=( */.git pkgs/*/.git )
 declare -a submodule=( ${cloned[@]%/*} )
 
 while [ $# -gt 0 ] ; do
@@ -59,8 +59,9 @@ EOF
 	      | pull \
 	      | push \
 	      | status \
+	      | checkout \
 	      | update-mods )
-	      git=git-$1
+	      git=git_$1
 	      shift;;
 	* )
 	    submodule=( $@ )
@@ -68,53 +69,118 @@ EOF
     esac
 done
 
-git-branch-av ()
+git_pull ()
+{
+    git-pull
+}
+
+git_push ()
+{
+    git-push
+}
+
+git_diff ()
+{
+    git-diff
+}
+
+git_branch-av ()
 {
     git-branch -a -v
 }
 
-git-clean-n ()
+git_clean-n ()
 {
     git-clean -n
 }
 
-git-lsmods ()
+git_lsmods ()
 {
     git-ls-files -m
 }
 
-git-fetch ()
+get_branch_info()
 {
+    git-branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'
+}
+
+get_branch()
+{
+    get_branch_info|awk '{ print $2 }'
+}
+
+guess_branch()
+{
+    local branch
+
+    branch=`get_branch`
+    [ "$branch" = NOBRANCH -o ! "$branch" ] && branch="$SUPERBRANCH"
+    [ "$branch" = NOBRANCH ] && branch=master
+    echo "$branch"
+}
+
+get_sha()
+{
+    get_branch_info|awk '{ print $3 }'
+}
+
+git_checkout()
+{
+	if ! git-checkout "$SUPERBRANCH" 2>/dev/null
+	then
+		echo No branch "$branch"
+	fi
+}
+
+git_fetch ()
+{
+    local modulename=`basename "$PWD"`
+
     git-fetch -q 2>/dev/null
     if ! (git-status|head -3|grep '^nothing to commit' >/dev/null) ; then
 	echo There are uncommited changes.
     fi
-    branch=`git-branch|grep '^\* '|sed 's/..//'`
-    if [ branch='(no branch)' -a "$$d" != "./.git" ]; then
-	parent=`cd ../../.git 2>/dev/null&&cd ..&&git-submodule status "$$d"|sed 's/\(.\).*/\1/'`;
-	case "$$parent" in
-	    '+' ) echo This submodule has a commit not in the parent;;
-	    '-' ) echo This submodule is not up to date;;
+
+    (
+    if cd ../../.git 2>/dev/null
+    then
+	parent=`cd .. && git-submodule status pkgs/"$modulename"|sed 's/\(.\).*/\1/'`;
+	case "$parent" in
+	    '+' ) echo This submodule has a commit not in the parent.;;
+	    '-' ) echo This submodule is not up to date.;;
 	esac
-    else
-	changed=`git-diff "$branch" origin/"$branch"|head -1`;
-	if [ "$changed" ]; then
-	    echo A local commit is not in the shared repo or visa versa.;
-	fi
     fi
-    echo
+    )
+
+    branch=`guess_branch`
+    upstream=origin/"$branch"
+    git-branch -a|grep "$upstream" >/dev/null || upstream=origin/master
+
+    in_repo=`git-log -1 --name-status "$upstream".."$branch"`
+    [ "$in_repo" ] && echo A local commit is not in the shared repo.
+
+    in_repo=`git-log -1 --name-status "$branch".."$upstream"`
+    [ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
 }
 
-git-diff-cached ()
+git_diff-cached ()
 {
     git-diff --cached
 }
 
-git-update-mods ()
+git_update-mods ()
 {
     git-ls-files -m | git-update-index --stdin
 }
 
+git_status()
+{
+	git-status|grep -v -e '^nothing to commit' -e '^# On branch '
+}
+
+SUPERBRANCH=`get_branch`
+eval $info ========= . =========
+eval $trace $git
 for (( i=0; i<${#submodule[@]}; i++)) ; do
     eval $info ========= ${submodule[i]} =========
     ( cd ${submodule[i]} ; eval $trace $git )
