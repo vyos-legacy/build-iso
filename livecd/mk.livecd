@@ -1,7 +1,15 @@
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
+
+if [[ "$PATH" != */sbin* ]] ; then
+    export PATH+=:/usr/local/sbin:/usr/sbin:/sbin
+fi
+
 toolsdir=`cd $PWD/../tools;pwd`
+if [[ "$PATH" != *${toolsdir}* ]] ; then
+    export PATH=${toolsdir}:$PATH
+fi
 
 if [ -r ./mk.livecd.conf ] ; then
     source ./mk.livecd.conf
@@ -23,17 +31,48 @@ for arg ; do
     esac
 done
 
-declare pkglistdir=config/chroot_local-packageslists
+declare -a xdebs debs pkgs depends
 
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
-: ${LIVECD:=livecd/livecd_$CDLABEL.iso}
 : ${ORGANIZATION:=vyatta.com}
+
+LH_ISO_VOLUME+=" -- $CDLABEL"
+
+chroot_exclude_pattern='cpp'
+chroot_exclude_pattern+='|cpp-*'
+chroot_exclude_pattern+='|*-dev'
+chroot_exclude_pattern+='|*-doc'
+chroot_exclude_pattern+='|dhcp3-*'
+chroot_exclude_pattern+='|fakechroot'
+chroot_exclude_pattern+='|gcc*'
+chroot_exclude_pattern+='|git*'
+chroot_exclude_pattern+='|groff*'
+chroot_exclude_pattern+='|iproute'
+chroot_exclude_pattern+='|linux-headers*'
+chroot_exclude_pattern+='|linux-source*'
+chroot_exclude_pattern+='|man*'
+for (( i=0; i<${#EXCLUDE_PKGS[@]}; i++)) ; do
+    chroot_exclude_pattern+=\|${EXCLUDE_PKGS[i]}
+done
+binary_exclude_pattern=$chroot_exclude_pattern
+binary_exclude_pattern+='|squashfs-tools'
+binary_exclude_pattern+='|live-initramfs'
 
 shopt -s extglob
 shopt -s nullglob
+
+declare -a deb_sources=( deb_sources/${LH_DISTRIBUTION}-*bootstrap* )
+
+set_conf_var ()
+{
+  local conf=$1
+  local var=$2
+  local val=$3
+  sed -i 's#^\('"$var"'\).*#\1="'"$val"'"#' config/$conf
+}
 
 if [ -z "$BUILTBY" ] ; then
     if [ -n "$GIT_COMMITTER_EMAIL" ] ; then
@@ -53,133 +92,87 @@ if [ -z "$BUILTBY" ] ; then
 fi
 
 if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
-    # we are in fakeroot
-    LH_OPTIONAL_FAKEROOT="--use-fakeroot enabled"
-else
-    LH_OPTIONAL_FAKEROOT=
+    export LH_USE_FAKEROOT=enabled
 fi
 
-set_conf_var ()
-{
-  local conf=$1
-  local var=$2
-  local val=$3
-  sed -i "s/^$var=\".*\"/$var=\"$val\"/" config/$conf
-}
+echo I: fetching vyatta binary packages
+mkdir -p cache/vyatta-deb-mirror
+rsync --archive --delete ${VYATTA_POOL}/ cache/vyatta-deb-mirror/ || true
+# FIXME! hack around vyatta-dhcp3 dependency issues
+rm cache/vyatta-deb-mirror/vyatta-dhcp3-*-2*.deb
 
-if [ ! -d config ]; then
-  echo I: configuring build
-  lh_config ${LH_OPTIONAL_FAKEROOT}
+[ -f cache/vyatta-pubkey.gpg ] || \
+    wget --quiet -O cache/vyatta-pubkey.gpg \
+ 	http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
 
-  # set up custom repo(s)
-  if ls deb_sources/${LH_DISTRIBUTION}-*bootstrap* >& /dev/null; then
-    cp deb_sources/${LH_DISTRIBUTION}-*bootstrap* config/chroot_sources/
-  fi
- 
-  # set up custom pkg list(s)
-  echo "# vyatta packages" > ${pkglistdir}/vyatta-pkgs
-  cat deb_lists/default-pkglist >> ${pkglistdir}/vyatta-pkgs
-  if ls deb_lists/${LH_DISTRIBUTION}-* >& /dev/null; then
-    for list in deb_lists/${LH_DISTRIBUTION}-*; do
-      cat $list >> ${pkglistdir}/vyatta-pkgs
-    done
-  fi
+> cache/vyatta-pkgs
 
-  # set up binary hook(s)
-  cp hooks_binary/default-hooks config/binary_local-hooks/
+case "${LH_ARCHITECTURE:=`dpkg --print-architecture`}" in
+    amd64 | i386 )
+	echo grub-pc >> cache/vyatta-pkgs
+	echo grub- >> cache/vyatta-pkgs
+	;;
 
-  # set up grub template
-  cp templates/grub/menu.lst config/binary_grub/
+    * )
+	echo "FIXME\! research boot loader for ${LH_ARCHITECTURE}" >&2
+	exit 1
+	;;
+esac
 
-  for x in ${EXCLUDE_PKGS[@]} ; do
-      if grep -q "^$x\$" ${pkglistdir}/vyatta-pkgs ; then
-	  sed -i "/^$x\$/d" ${pkglistdir}/vyatta-pkgs
-      else
-	  echo $x- >>${pkglistdir}/vyatta-pkgs
-      fi
-  done
-fi
+rm -f config/chroot_local-packages/*.deb
+mkdir -p config/chroot_local-packages
 
-# create the buildid file
-mk_buildid ()
-{
-    local etcdir=chroot/opt/vyatta/etc
+for xdeb in cache/vyatta-deb-mirror/*.deb ../pkgs/*.deb ; do
+    deb=${xdeb##*/}
+    pkg=${deb%%_*}
+    
+    if grep -q "^${pkg}-\$" cache/vyatta-pkgs ; then
+	continue
+    fi
 
-    echo I: generating build record
-    [ -d $etcdir ] || mkdir -p -m 0755 $etcdir
-    rm -f $etcdir/build.txt $etcdir/iso-build.txt $etc/iso-submodules.txt
-    cat <<-EOF > $etcdir/iso-build.txt
-	Built by:    $BUILTBY
-	Built on:    $HUMANTIME
-	Build ID:    $CDLABEL
-	EOF
-    # backwards compatible symlink
-    ln -s iso-build.txt $etcdir/build.txt
-    ( cd .. ; git-submodule status ) > $etcdir/iso-submodules.txt
-    echo "$CDLABEL">iso-label
+    if [[ "$pkg" == @($chroot_exclude_pattern) ]] ; then
+	continue
+    fi
 
-    echo I: generating package list
-    cp $toolsdir/save-package-report chroot/vyatta-save-package-report
-    chroot chroot /bin/sh /vyatta-save-package-report
-    rm chroot/vyatta-save-package-report
+    if [[ $xdeb == ../pkgs* ]] ; then
+	ln -sf ../../../pkgs/$deb config/chroot_local-packages/$deb
+    else
+	ln -sf ../../cache/vyatta-deb-mirror/$deb \
+	    config/chroot_local-packages/$deb
+    fi
+done
 
-}
+echo I: configuring build
+lh_config
+find \
+    binary_local-hooks \
+    binary_local-includes \
+    chroot_local-hooks \
+    chroot_local-includes \
+    \! -name \*~ \! -name .\*.swp -print0 | \
+    cpio --null --quiet -pdmu config
 
-set_up_apt_pref ()
-{
-  # set vyatta archive priority to 50 so that remote packages are only
-  # installed if not already installed locally.
-  cat >chroot/etc/apt/preferences <<'EOF'
-Package: *
-Pin: release l=Vyatta
-Pin-Priority: 50
+cat <<EOF > config/chroot_local-includes/iso-build.txt
+Built by:    $BUILTBY
+Built on:    $HUMANTIME
+Build ID:    $CDLABEL
 EOF
-}
 
-filtered_local_packages ()
-{
-    for deb ; do
-	local xpkg=${deb%%_*}
-	local pkg=${xpkg##*/}
+( cd .. ; git-submodule status ) \
+    > config/chroot_local-includes/iso-submodules.txt
 
-        # don't install kernel source/header packages
-        if [[ $pkg == linux-* ]] && [[ $pkg != linux-image-* ]]; then
-          continue
-        fi
+## NOTE: the 00-mk_buildid hook moves these to /opt/vyatta/etc
+##	 during live image build, and binary install respectively
+cp config/chroot_local-includes/iso-*.txt config/binary_local-includes/
+cp config/chroot_local-includes/vyatta-save-package-report \
+    config/binary_local-includes/
 
-	for (( i=0; i<${#EXCLUDE_PKGS[@]}; i++)) ; do
-	    [ $pkg == ${EXCLUDE_PKGS[i]} ] && \
-		continue 2;
-	done
-	cp -p $deb config/chroot_local-packages/
-    done
-}
-
-# set up locally-built packages
-rm -f config/chroot_local-packages/*
-# FIXME! remove these pre-submodule package directories 
-filtered_local_packages ../!(pkgs)/*.deb
-filtered_local_packages ../pkgs/*.deb
-
-if [ "$ISO_FAST" == "yes" ]; then
-  # do a "fast" build. just install the local packages and then do lh_binary.
-  # there may be problems if, for example, dependencies have changed, etc.
-  rm -f .stage/chroot_local-packages .stage/binary_*
-  
-  set_up_apt_pref
-  echo I: installing local packages
-  lh_chroot_local-packages || return 1
-
-  mk_buildid
-
-  echo I: building binary
-  if ! lh_binary; then
-    echo E: binary build failed
-    exit 1
-  fi
-
-  exit 0
+if [ ${#deb_sources[@]} -gt 0 ]; then
+    echo I: set up custom source repos
+    cp ${deb_sources[@]} config/chroot_sources/
 fi
+ 
+cp cache/vyatta-pkgs config/chroot_local-packageslists/vyatta-pkgs
 
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
@@ -192,26 +185,12 @@ if ! lh_bootstrap; then
   exit 1
 fi
 
-if ! test -f chroot/etc/network/interfaces || \
-   ! grep -q '^auto lo' chroot/etc/network/interfaces ; then
-    echo I: Configure network loopback interface
-    mkdir -p -m 0755 chroot/etc/network
-    cat >> chroot/etc/network/interfaces <<-EOF
-	# interfaces(5) file used by ifup(8) and ifdown(8)
-
-	# The loopback network interface
-	auto lo
-	iface lo inet loopback
-
-	EOF
-fi
-
 if [ -d cache/lists ] ; then
     echo I: Restore cached package lists
-    cp -a cache/lists chroot/var/lib/apt/
+    ( cd cache && \
+	find lists -print0 | \
+	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
 fi
-
-cp chroot_local-hooks/*[^~] config/chroot_local-hooks/
 
 if eval "$use_xen" ; then
     echo I: Disabling TLS
@@ -220,9 +199,10 @@ else
     rm -f config/chroot_local-hooks/*xen*
 fi
 
-echo I: Adding live-bottom/*[^~]
-mkdir -p -m 0755 chroot/usr/share/initramfs-tools/scripts/live-bottom/
-cp live-bottom/*[^~] chroot/usr/share/initramfs-tools/scripts/live-bottom/
+mkdir -p config/binary_local-includes/install/late-commands
+( cd config/chroot_local-hooks && \
+    find . -print0 | \
+    cpio --null --quiet -pdmu ../binary_local-includes/install/late-commands )
 
 # do the steps in lh_chroot
 build_chroot ()
@@ -258,22 +238,8 @@ build_chroot ()
   lh_chroot_tasks || return 1
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
- 
-  if [ -n "${VYATTA_LINUX_PKG}" ] ; then
-      KPKG=`shopt -s nullglob; cd config/chroot_local-packages; \
-          echo ${VYATTA_LINUX_PKG}*`
-      if [ -n "$KPKG" ] ;  then
-          # Kernel is built locally. Install it first.
-	  mv config/chroot_local-packages/"$KPKG" chroot/.
-	  chroot chroot dpkg -i "$KPKG"
-	  rm chroot/"$KPKG"
-      elif ! grep -q "${VYATTA_LINUX_PKG}" ${pkglistdir}/vyatta-pkgs ; then
-	  echo "${VYATTA_LINUX_PKG}" >> ${pkglistdir}/vyatta-pkgs
-      fi
-  fi
 
   # we do local packages first since they are "newer".
-  set_up_apt_pref
   lh_chroot_local-packages || return 1
   lh_chroot_local-packageslists || return 1
 
@@ -304,10 +270,6 @@ build_chroot ()
   lh_chroot_cache save || return 1
 
   chroot chroot depmod -a `cd chroot/lib/modules;echo *`
-# FIXME! we no longer appear to need this update
-#	so, comment out for now
-#  echo I: Update initramfs
-#  chroot chroot update-initramfs -t -u -k all
 }
 
 echo I: building chroot
@@ -316,23 +278,24 @@ if ! build_chroot; then
   exit 1
 fi
 
-mk_buildid
-
 # remove backup files for ISO
 rm -f chroot/etc/*.vyatta-save chroot/etc/*/*.vyatta-save
 
-echo I: restoring ldd/ldconfig
 if [ -f chroot/usr/bin/ldd.REAL ]; then
-  rm -f chroot/usr/bin/ldd
-  mv chroot/usr/bin/ldd.REAL chroot/usr/bin/ldd 
+    echo I: restoring ldd
+    rm -f chroot/usr/bin/ldd
+    mv chroot/usr/bin/ldd.REAL chroot/usr/bin/ldd 
 fi
 if [ -f chroot/sbin/ldconfig.REAL ]; then
-  rm -f chroot/sbin/ldconfig
-  mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
+    echo I: restoring ldd/ldconfig
+    rm -f chroot/sbin/ldconfig
+    mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
 fi
 
 echo I: Cache Package files
-cp -a chroot/var/lib/apt/lists cache/
+( cd chroot/var/lib/apt && \
+    find lists -print0 | \
+    cpio --null --quiet -pdmu ../../../../cache )
 
 declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 >chroot/tmp/mksquashfs.exclude
@@ -343,7 +306,6 @@ for b in chroot/boot/initrd.img-* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
 
-set_up_apt_pref
 # exclude more files
 cat <<EOF >> chroot/tmp/mksquashfs.exclude
 etc/apt/preferences
@@ -352,137 +314,53 @@ var/log/bootstrap.log
 var/log/dpkg.log
 EOF
 
-add_debian_installer ()
-{
-  [ -f deb-install.tar ] \
-    || wget -nv http://archive.vyatta.com/build-root/deb-install.tar
+## restore apt/preferences for binary build
+cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
 
-  if [ ! -d deb-install ]
-  then
-    tar xf deb-install.tar
-  fi
-  rsync -avz deb-install/ binary >/dev/null
-  rsync -avz d-i/ binary >/dev/null
+echo I: Copy packages to install pool
+rm -f config/binary_local-debs/*.deb
+mkdir -p config/binary_depend-debs
+for xdeb in cache/packages_linux-image/*.deb ; do
+    deb=${xdeb##*/}
+    pkg=${deb%%_*}
+    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
+	ln -sf ../../cache/packages_linux-image/$deb \
+	    config/binary_local-debs/$deb
+    fi
+done
+for xdeb in cache/packages_local-packages/*.deb ; do
+    deb=${xdeb##*/}
+    pkg=${deb%%_*}
+    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
+	ln -sf ../../cache/packages_local-packages/$deb \
+	    config/binary_local-debs/$deb
+    fi
+done
+for xdeb in cache/packages_local-packageslists/*.deb ; do
+    deb=${xdeb##*/}
+    pkg=${deb%%_*}
+    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
+	ln -sf ../../cache/packages_local-packageslists/$deb \
+	    config/binary_local-debs/$deb
+    fi
+done
+for xdeb in config/chroot_local-packages/*.deb ; do
+    deb=${xdeb##*/}
+    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
+	ln -sf ../chroot_local-packages/$deb \
+	    config/binary_local-debs/$deb
+    fi
+done
 
-  cp -a ./cache/packages* binary/pool/main/
-  rm -f binary/pool/main/lock
+mkdir -p config/binary_local-includes/install
+cp d-i/preseed.cfg config/binary_local-includes/install/preseed.cfg
 
-  (
-    mkdir -p binary/pool/main/v/vyatta/.
-    cp ../*/*.deb binary/pool/main/v/vyatta/.
-    cd binary/pool/main/v/vyatta
-    rm -f *source*.deb
-    mkdir sav$$
-    mv linux-* sav$$/. 2>/dev/null
-    mv sav$$/linux-image* . 2>/dev/null
-    rm -rf sav$$
-  )
-
-  chroot chroot dpkg -l | awk '/^ii/ {print $2}' >binary/.Released
-
-  #cat >>deb-install/.Released <<'EOF'
-  #debconf-english
-  #bootable-system
-  #created-fstab
-  #mounted-partitions
-  #libdebconfclient0
-  #rootskel
-  #EOF
-
-  (
-    cd binary
-
-    $toolsdir/create-version-package -v 1 -d . -r lenny -x -o /dev/null
-    for i in `cat .Released`; do $toolsdir/latestdeb $i; done>/tmp/$$list
-
-    rsync -avz --exclude="*.deb" pool pool.udeb >/dev/null
-    find pool -name '*.udeb' -exec rm -f {} \;
-    rm -rf pool/main/l/linux*2.6 2>/dev/null
-
-    (
-      cd pool
-      $toolsdir/archive-report -f>/tmp/report$$
-      rm_files=`find -name '*.deb'|sort|comm -3 - /tmp/report$$`
-      rm -f $rm_files /tmp/report$$
-    )
-
-    [ -f vyatta-pubkey.gpg ] \
-      || wget http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
-
-    $toolsdir/deb-archive -r lenny -n main -d .
-    (
-      cd pool.udeb/pool
-      cp -a * ../../pool/.
-    )
-
-    rm -rf pool.udeb .disk/ID*
-    touch .disk/ID$BUILDID
-    #genisoimage -quiet -J -o ../deb-install.iso -r -b isolinux/isolinux.bin \
-    #  -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table .
-  )
-}
-
-# do lh_binary
-build_binary ()
-{
-  lh_binary_chroot || return 1
-  
-  lh_chroot_devpts install || return 1
-  lh_chroot_proc install || return 1
-  lh_chroot_sysfs install || return 1
-  lh_chroot_hosts install || return 1
-  lh_chroot_resolv install || return 1
-  lh_chroot_hostname install || return 1
-  lh_chroot_sources install || return 1
-
-  lh_binary_rootfs || return 1
-  lh_binary_manifest || return 1
-  lh_binary_encryption || return 1
-
-  lh_binary_local-packageslists || return 1
-  lh_binary_linux-image || return 1
-  lh_binary_debian-installer || return 1
-  lh_binary_memtest || return 1
-  lh_binary_grub || return 1
-  lh_binary_syslinux || return 1
-  lh_binary_yaboot || return 1
-  lh_binary_disk || return 1
-  lh_binary_includes || return 1
-  lh_binary_local-includes || return 1
-  lh_binary_local-hooks || return 1
- 
-  # build live-only cd
-  lh_binary_md5sum || return 1
-  lh_binary_iso || return 1
-  mv -f binary.iso cache/
-
-  if [ "$BUILD_DEB_INSTALL" == "yes" ]; then
-    # build live/deb-install combo cd
-    rm -f .stage/binary_{md5sum,iso}
-    add_debian_installer || return 1
-    lh_binary_md5sum || return 1
-    lh_binary_iso || return 1
-    mv -f binary.iso deb-install.iso
-  fi
-  
-  mv -f cache/binary.iso .
-
-  lh_binary_net || return 1
-  lh_binary_tar || return 1
-  lh_binary_usb-hdd || return 1
-
-  rm -f .stage/chroot_sources
-  lh_chroot_hostname remove || return 1
-  lh_chroot_resolv remove || return 1
-  lh_chroot_hosts remove || return 1
-
-  lh_chroot_sysfs remove || return 1
-  lh_chroot_proc remove || return 1
-  lh_chroot_devpts remove || return 1
-}
+ls config/binary_local-debs/*.deb | \
+    sed 's#.*/##g; s#_.*##' | \
+    sort -u > config/binary_local-includes/install/apt-install-list.txt
 
 echo I: building binary
-if ! build_binary; then
+if ! lh_binary ; then
   echo E: binary build failed
   exit 1
 fi

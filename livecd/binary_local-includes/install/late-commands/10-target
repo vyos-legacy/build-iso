@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# cp files from /cdrom to target
+
+cd /cdrom/install/target && \
+    find . -print 0 | cpio --null --quiet -pdmu /
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

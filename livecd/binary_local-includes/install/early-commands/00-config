@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# scan and save existing Vyatta config.boot on target
+
+progname=`basename $0`
+
+log() {
+    logger -t "preseed/early_command $progname" $@
+}
+
+error() {
+    log "error: $*"
+}
+
+warning() {
+    log "warning: $*"
+}
+
+info() {
+    log "info: $*"
+}
+
+log FIXME! scan ...
+log FIXME! save to /tmp/config.boot
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

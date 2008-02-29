@@ -22,9 +22,13 @@ AC_PROG_LN_S
 test "X$LH_APT" = "X" && LH_APT=apt
 AC_ARG_VAR(LH_APT, [default: apt])
 
-test ! "$LH_BOOTAPPEND_LIVE" && \
-      LH_BOOTAPPEND_LIVE="console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser"
-AC_ARG_VAR(LH_BOOTAPPEND_LIVE, [default: console=tty0 console=ttyS0,9600n8 persistent noautologin nonetworking nouser])
+test ! "$LH_BOOTAPPEND_LIVE" && LH_BOOTAPPEND_LIVE=""
+AC_ARG_VAR(LH_BOOTAPPEND_LIVE,
+	[empty by default since bypassed with custom config file])
+
+test ! "$LH_BOOTAPPEND_INSTALL" && LH_BOOTAPPEND_INSTALL=""
+AC_ARG_VAR(LH_BOOTAPPEND_INSTALL,
+	[empty by default since bypassed with custom config file])
 
 test ! "$LH_BOOTLOADER" && LH_BOOTLOADER=syslinux
 AC_ARG_VAR(LH_BOOTLOADER, [default: syslinux])
@@ -38,6 +42,12 @@ AC_ARG_VAR(LH_BOOTSTRAP_FLAVOUR, [default: minimal])
 test "X$LH_CHROOT_FILESYSTEM" = "X" && LH_CHROOT_FILESYSTEM=squashfs
 AC_ARG_VAR(LH_CHROOT_FILESYSTEM, [default: squashfs])
 
+test "X$LH_DEBIAN_INSTALLER" = "X" && LH_DEBIAN_INSTALLER=cdrom
+AC_ARG_VAR(LH_DEBIAN_INSTALLER, [default: cdrom])
+
+test "X$LH_DEBIAN_INSTALLER_DAILY" = "X" && LH_DEBIAN_INSTALLER_DAILY=enabled
+AC_ARG_VAR(LH_DEBIAN_INSTALLER_DAILY, [default: enabled])
+
 test "X$LH_HOSTNAME" = "X" && LH_HOSTNAME=vyatta
 AC_ARG_VAR(LH_HOSTNAME, [default: vyatta])
 
@@ -50,14 +60,36 @@ AC_ARG_VAR(LH_ISO_APPLICATION, [default: Vyatta OFR])
 test "X$LH_ISO_PUBLISHER" = "X" && LH_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
 AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
 
-test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR Live $(date +%Y%m%d-%H:%M)'
-AC_ARG_VAR(LH_ISO_VOLUME, [default: build date])
+test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR'
+AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta OFR])
 
 test "X$LH_MEMTEST" = "X" && LH_MEMTEST=disabled
 AC_ARG_VAR(LH_MEMTEST, [default: disabled])
 
 test "X$LH_PACKAGES_LISTS" = "X" && LH_PACKAGES_LISTS=none
 AC_ARG_VAR(LH_PACKAGES_LISTS, [default: none])
+
+test "X$LH_QUIET" = "X" && LH_QUIET=enabled
+AC_ARG_VAR(LH_QUIET, [default: enabled])
+
+test "X$LH_VERBOSE" = "X" && LH_VERBOSE=disabled
+AC_ARG_VAR(LH_VERBOSE, [default: disabled])
+
+test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=d-i/isolinux/isolinux.cfg
+AC_ARG_VAR(LH_SYSLINUX_CFG, [default: d-i/isolinux/isolinux.cfg])
+
+test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disable
+AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disable])
+
+test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=d-i/isolinux/vyatta.lss
+AC_ARG_VAR(LH_SYSLINUX_SPALSH, [default: vyatta logo])
+
+test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
+AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
+
+test "X$VYATTA_POOL" = "X" && \
+     VYATTA_POOL="rsync://packages.vyatta.com/vyatta-dev/pool/glendale/main"
+AC_ARG_VAR(VYATTA_POOL, [default: Vyatta nightly build])
 
 # process --with[out] arguments
 AC_ARG_WITH(exclude,
@@ -113,16 +145,6 @@ else
    use_xen=false
 fi
 
-AC_ARG_WITH(deb-install,
-[AS_HELP_STRING([--without-deb-install],
-[don't build Debian installer CD])])
-
-if test "$with_deb_install" = no ; then
-   BUILD_DEB_INSTALL=no
-else
-   BUILD_DEB_INSTALL=yes
-fi
-
 # FIXME! fetch version from source
 VYATTA_LINUX_PKG=linux-image-2.6.23-1-486-vyatta
 LH_LINUX_FLAVOURS="486-vyatta"
@@ -133,10 +155,10 @@ FETCH_PKGS=
 case "$LH_DISTRIBUTION" in
 gutsy | hardy )
 	LH_BOOTSTRAP_INCLUDE="less,gnupg,rsync"
-	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu/"
-	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu/"
-	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.ubuntu.com/ubuntu/"
+	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu"
+	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu"
+	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.ubuntu.com/ubuntu"
 	# FIXME! /usr/bin/lh_chroot_sources currently uses
 	# LH_DISTRIBUTION/updates but the ubuntu archive is
 	# LH_DISTRIBUTION-updates
@@ -188,10 +210,12 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
-	LH_MIRROR_BINARY="http://packages.vyatta.com/debian/"
-	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security/"
-	LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security/"
+	LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
+#	LH_MIRROR_BINARY="http://ftp.us.debian.org/debian"
+	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
+	LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
+#	LH_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
 	EXCLUDE_PKGS+=" exim4-daemon-light"
@@ -219,12 +243,15 @@ AC_SUBST(EXCLUDE_PKGS)
 
 AC_SUBST(LH_APT)
 AC_SUBST(LH_BOOTAPPEND_LIVE)
+AC_SUBST(LH_BOOTAPPEND_INSTALL)
 AC_SUBST(LH_BOOTLOADER)
 AC_SUBST(LH_BOOTSTRAP)
 AC_SUBST(LH_BOOTSTRAP_EXCLUDE)
 AC_SUBST(LH_BOOTSTRAP_FLAVOUR)
 AC_SUBST(LH_BOOTSTRAP_INCLUDE)
 AC_SUBST(LH_CHROOT_FILESYSTEM)
+AC_SUBST(LH_DEBIAN_INSTALLER)
+AC_SUBST(LH_DEBIAN_INSTALLER_DAILY)
 AC_SUBST(LH_DISTRIBUTION)
 AC_SUBST(LH_EXPOSED_ROOT)
 AC_SUBST(LH_HOSTNAME)
@@ -239,14 +266,20 @@ AC_SUBST(LH_MIRROR_BINARY)
 AC_SUBST(LH_MIRROR_BINARY_SECURITY)
 AC_SUBST(LH_MIRROR_BOOTSTRAP)
 AC_SUBST(LH_MIRROR_BOOTSTRAP_SECURITY)
-AC_SUBST(LH_SECURITY)
 AC_SUBST(LH_PACKAGES_LISTS)
+AC_SUBST(LH_QUIET)
 AC_SUBST(LH_SECTIONS)
+AC_SUBST(LH_SECURITY)
+AC_SUBST(LH_SYSLINUX_CFG)
+AC_SUBST(LH_SYSLINUX_MENU)
+AC_SUBST(LH_SYSLINUX_SPLASH)
+AC_SUBST(LH_SYSLINUX_TIMEOUT)
 AC_SUBST(LH_UNION_FILESYSTEM)
+AC_SUBST(LH_VERBOSE)
 
-AC_SUBST(BUILD_DEB_INSTALL)
 AC_SUBST(use_xen)
 
+AC_SUBST(VYATTA_POOL)
 AC_SUBST(VYATTA_LINUX_PKG)
 
 AC_OUTPUT

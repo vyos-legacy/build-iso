@@ -1,0 +1,13 @@
+#!/bin/sh
+
+for cmd in /cdrom/install/early-commands/*
+do
+    bcmd=`basename $cmd`
+    logger -t preseed/early_command $bcmd
+    $cmd
+done
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:
