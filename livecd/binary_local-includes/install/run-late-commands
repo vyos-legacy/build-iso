@@ -6,6 +6,10 @@
 DEBIAN_FRONTEND=noninteractive
 export DEBIAN_FRONTEND
 
+# FIXME! vyatta-ppp install blocks trying to overwrite conffile shared
+#        with ppp; work around this by installing ppp first, remove
+#        the file, then install vyatta-ppp along with the other packages
+
 logger -t preseed/late_command "info: apt-install ppp pppoe"
 apt-install ppp pppoe
 rm -f /target/etc/ppp/chap-secrets
