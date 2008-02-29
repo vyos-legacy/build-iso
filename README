@@ -52,11 +52,10 @@ Build Host Setup
     packages,
 
 	bison flex docbook-utils >=gcc_4:4.1 g++ git-buildpackage
-	groff gs gs-gpl imagemagickgroff libncurses5-dev libpam0g-dev
+	groff gs gs-gpl imagemagick groff libncurses5-dev libpam0g-dev
 	libpcap0.8-dev libreadline-dev libsablot0-dev libtool lintian
 	linda manpages-dev tetex-bin texi2html texinfo transfig xmlto
-	zlib1g-dev
-
+	zlib1g-dev libatm1-dev libdb-dev linuxdoc-tools
 
     If available, the Vyatta source packages will use the "git2cl"
     script to generate GNU style change logs from the respective GIT
@@ -154,6 +153,7 @@ Build ISO(s)
 
     To build with a compatible fakeroot/fakechroot,
 
+    build-iso$ PATH=/sbin:/usr/sbin:$PATH
     build-iso$ make
 
     Either way, the end results are these livecd and, if so
