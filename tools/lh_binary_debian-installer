@@ -1,0 +1,474 @@
+#!/bin/sh
+
+# lh_binary_debian-installer(1) - install debian-installer into binary
+# Copyright (C) 2006-2007 Daniel Baumann <daniel@debian.org>
+#
+# live-helper comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
+# This is free software, and you are welcome to redistribute it
+# under certain conditions; see COPYING for details.
+
+set -e
+
+# Including common functions
+LH_BASE="${LH_BASE:-/usr/share/live-helper}"
+
+for FUNCTION in "${LH_BASE}"/functions/*.sh
+do
+	. "${FUNCTION}"
+done
+
+# Setting static variables
+DESCRIPTION="install debian-installer into binary"
+HELP=""
+USAGE="${PROGRAM} [--force]"
+
+Arguments "${@}"
+
+# Reading configuration files
+Read_conffile config/common
+Read_conffile config/bootstrap
+Read_conffile config/chroot
+Read_conffile config/binary
+Read_conffile config/source
+Read_conffile "${LH_CONFIG}"
+Set_defaults
+
+if [ "${LH_QUIET}" = "enabled" ]
+then
+	WGET_OPTIONS="${WGET_OPTIONS} --quiet"
+fi
+
+# Setting remote d-i directories
+case "${LH_DEBIAN_INSTALLER}" in
+	enabled|cdrom|netinst|businesscard|live)
+		DI="cdrom"
+		DI_GTK="${DI}/gtk"
+		DI_KERNEL="vmlinuz"
+		;;
+
+	netboot)
+		DI="netboot/debian-installer/${LH_ARCHITECTURE}"
+ 		DI_GTK="netboot/gtk/debian-installer/${LH_ARCHITECTURE}"
+		DI_KERNEL="linux"
+		;;
+
+	disabled)
+		exit 0
+		;;
+
+	*)
+		Echo_error "debian-installer flavor ${LH_DEBIAN_INSTALLER} not supported."
+		exit 1
+		;;
+esac
+
+Echo_message "Begin installing debian-installer..."
+
+# Requiring stage file
+Require_stagefile .stage/bootstrap
+
+# Checking stage file
+Check_stagefile .stage/binary_debian-installer
+
+# Checking lock file
+Check_lockfile .lock
+
+# Creating lock file
+Create_lockfile .lock
+
+# Setting destination directory
+case "${LH_BINARY_IMAGES}" in
+	iso)
+		DESTDIR="binary/install"
+		;;
+
+	net)
+		DESTDIR="tftpboot"
+		DI="netboot"
+
+		Echo_error "Not supported yet (FIXME)"
+		exit 1
+		;;
+
+	tar|usb-hdd)
+		DESTDIR="binary/install"
+
+		# Workaround for syslinux (<< 3.36) which doesn't support long file/path names
+		if [ "${LH_DISTRIBUTION}" = "etch" ] && [ "${LH_BOOTLOADER}" = "syslinux" ]
+		then
+			DESTDIR="binary"
+		fi
+		;;
+esac
+
+Check_multiarchitecture
+
+CACHEDIR=cache/debian-installer
+
+VMLINUZ_DI="vmlinuz"
+INITRD_DI="initrd.gz"
+DESTDIR_DI="${DESTDIR}"
+CACHEDIR_DI="${CACHEDIR}"
+
+VMLINUZ_GI="gtk/vmlinuz"
+INITRD_GI="gtk/initrd.gz"
+DESTDIR_GI="${DESTDIR}/gtk"
+CACHEDIR_GI="${CACHEDIR}/gtk"
+
+CACHEDIR_DEB="${CACHEDIR}/deb"
+
+DEFAULT_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
+
+# Workaround for syslinux (<< 3.36) which doesn't support long file/path names
+if [ "${LH_DISTRIBUTION}" = "etch" ]
+then
+	if [ "${LH_BINARY_IMAGES}" = "tar" ] || [ "${LH_BINARY_IMAGES}" = "usb-hdd" ]
+	then
+		VMLINUZ_DI="vmlinuz.di"
+		INITRD_DI="initrddi.gz"
+		DESTDIR_DI="${DESTDIR}"
+
+		VMLINUZ_GI="vmlinuz.gi"
+		INITRD_GI="initrdgi.gz"
+		DESTDIR_GI="${DESTDIR}"
+	fi
+fi
+
+if [ "${LH_DEBIAN_INSTALLER_DAILY}" = "enabled" ]
+then
+	# Debian Installer daily builds
+	case "${LH_ARCHITECTURE}" in
+		alpha)
+			URL="http://people.debian.org/~vorlon/d-i/alpha/daily/"
+			;;
+
+		amd64)
+			URL="http://people.debian.org/~aba/d-i/images/daily/"
+			;;
+
+		arm)
+			URL="http://people.debian.org/~kmuto/d-i/images/daily/"
+			;;
+
+		hppa)
+			URL="http://people.debian.org/~kyle/d-i/hppa/daily/"
+			;;
+
+		i386)
+			URL="http://people.debian.org/~joeyh/d-i/images/daily/"
+			;;
+
+		ia64)
+			URL="http://people.debian.org/~dannf/d-i/images/daily/"
+			;;
+
+		m68k)
+			URL="http://people.debian.org/~smarenka/d-i/images-m68k/daily/"
+			;;
+
+		mips)
+			URL="http://people.debian.org/~ths/d-i/mips/images/daily/"
+			;;
+
+		mipsel)
+			URL="http://people.debian.org/~ths/d-i/mipsel/images/daily/"
+			;;
+
+		powerpc)
+			URL="http://people.debian.org/~wouter/d-i/powerpc/daily/"
+			;;
+
+		s390)
+			URL="http://lophos.multibuild.org/d-i/images/daily/"
+			;;
+
+		sparc)
+			URL="http://people.debian.org/~stappers/d-i/images/daily/"
+			;;
+
+		*)
+			Echo_error "No daily-builds found for your architecture."
+			exit 1
+			;;
+	esac
+else
+	URL="${LH_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/installer-${LH_ARCHITECTURE}/current/images/"
+fi
+
+# Downloading debian-installer
+mkdir -p "${CACHEDIR_DI}"
+[ -f "${CACHEDIR}"/"${VMLINUZ_DI}" ] || \
+    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${VMLINUZ_DI}" ${URL}/${DI}/${DI_KERNEL}
+[ -f "${CACHEDIR}"/"${INITRD_DI}" ] || \
+    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${INITRD_DI}" ${URL}/${DI}/initrd.gz
+
+mkdir -p "${DESTDIR_DI}"
+cp "${CACHEDIR}"/"${VMLINUZ_DI}" "${DESTDIR}"/"${VMLINUZ_DI}"
+cp "${CACHEDIR}"/"${INITRD_DI}" "${DESTDIR}"/"${INITRD_DI}"
+
+# Downloading graphical-installer
+if [ "${LH_ARCHITECTURE}" = "amd64" ] || [ "${LH_ARCHITECTURE}" = "i386" ] || [ "${LH_ARCHITECTURE}" = "powerpc" ]
+then
+	mkdir -p "${CACHEDIR_GI}"
+	[ -f "${CACHEDIR}"/"${VMLINUZ_GI}" ] || \
+		wget ${WGET_OPTIONS} --no-clobber \
+			-O "${CACHEDIR}"/"${VMLINUZ_GI}" \
+			${URL}/${DI_GTK}/${DI_KERNEL}
+	[ -f "${CACHEDIR}"/"${INITRD_GI}" ] || \
+		wget ${WGET_OPTIONS} --no-clobber \
+			-O "${CACHEDIR}"/"${INITRD_GI}" \
+			${URL}/${DI_GTK}/initrd.gz
+	mkdir -p "${DESTDIR_GI}"
+	cp "${CACHEDIR}"/"${VMLINUZ_GI}" "${DESTDIR}"/"${VMLINUZ_GI}"
+	cp "${CACHEDIR}"/"${INITRD_GI}" "${DESTDIR}"/"${INITRD_GI}"
+fi
+
+if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
+	# preload cached debs
+	if ls ${CACHEDIR_DEB}/*.deb > /dev/null 2>&1 ; then
+		mkdir -p chroot/var/cache/apt/archives
+		cp ${CACHEDIR_DEB}/*.deb chroot/var/cache/apt/archives/
+	fi
+	# Downloading additional packages
+	mv chroot/var/lib/dpkg/status chroot/var/lib/dpkg/status.tmp
+	touch chroot/var/lib/dpkg/status
+
+	case "${LH_ARCHITECTURE}" in
+		amd64)
+			DI_PACKAGES="linux-image-2.6-amd64 lilo grub"
+			;;
+
+		i386)
+			DI_PACKAGES="grub-pc"
+			;;
+
+		powerpc)
+			DI_PACKAGES="linux-image-2.6-powerpc linux-image-2.6-powerpc64 linux-image-2.6-powerpc-smp linux-image-2.6-prep yaboot" # FIXME bootloader?
+			;;
+	esac
+
+	DI_PACKAGES="${DI_PACKAGES} cryptsetup lvm2"
+
+	Chroot "apt-get -q --download-only install --yes ${DI_PACKAGES}"
+	mkdir -p  ${CACHEDIR_DEB}/
+	cp chroot/var/cache/apt/archives/*.deb ${CACHEDIR_DEB}/
+	mv chroot/var/lib/dpkg/status.tmp chroot/var/lib/dpkg/status
+	Chroot "apt-get -q clean"
+fi
+
+# Including base debian packages
+if [ -d cache/packages_bootstrap ]
+then
+	for FILE in cache/packages_bootstrap/*.deb ${CACHEDIR_DEB}/*.deb
+	do
+		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
+
+		if [ -z "${SOURCE}" ]
+		then
+			SOURCE="$(basename ${FILE} | awk -F_ '{ print $1 }')"
+		fi
+
+		case "${SOURCE}" in
+			lib?*)
+				LETTER="$(echo ${SOURCE} | sed 's/\(....\).*/\1/')"
+				;;
+
+			*)
+				LETTER="$(echo ${SOURCE} | sed 's/\(.\).*/\1/')"
+				;;
+		esac
+
+		# Install directory
+		mkdir -p binary/pool/main/"${LETTER}"/"${SOURCE}"
+
+		# Move files
+		cp "${FILE}" binary/pool/main/"${LETTER}"/"${SOURCE}"
+	done
+else
+	Echo_error "E: Could not find cache/packages_bootstrap"
+	exit 1
+fi
+
+# Including local debs
+if ls config/binary_local-debs/*.deb > /dev/null 2>&1
+then
+	for FILE in config/binary_local-debs/*_"${LH_ARCHITECTURE}".deb config/binary_local-debs/*_all.deb
+	do
+		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
+
+		if [ -z "${SOURCE}" ]
+		then
+			SOURCE="$(basename ${FILE} | awk -F_ '{ print $1 }')"
+		fi
+
+		case "${SOURCE}" in
+			lib?*)
+				LETTER="$(echo ${SOURCE} | sed 's/\(....\).*/\1/')"
+				;;
+
+			*)
+				LETTER="$(echo ${SOURCE} | sed 's/\(.\).*/\1/')"
+				;;
+		esac
+
+		# Install directory
+		mkdir -p binary/pool/main/"${LETTER}"/"${SOURCE}"
+
+		# Move files
+		cp "${FILE}" binary/pool/main/"${LETTER}"/"${SOURCE}"
+	done
+fi
+
+# Generating deb indices
+mkdir -p binary/dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}
+
+cd binary
+apt-ftparchive packages pool/main > dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages
+gzip -9 -c dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages > dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages.gz
+cd "${OLDPWD}"
+
+# Fetching release
+[ -f ${CACHEDIR}/Release ] || \
+	wget ${WGET_OPTIONS} \
+		-O ${CACHEDIR}/Release \
+		"${LH_MIRROR_BOOTSTRAP}"/dists/"${LH_DISTRIBUTION}"/main/binary-"${LH_ARCHITECTURE}"/Release
+cp ${CACHEDIR}/Release binary/dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Release
+
+# Fetching Packages file
+[ -f ${CACHEDIR}/Packages.gz ] || \
+	wget ${WGET_OPTIONS} \
+		-O ${CACHEDIR}/Packages.gz \
+		"${LH_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz" || \
+	wget ${WGET_OPTIONS} \
+		-O ${CACHEDIR}/Packages.gz \
+		"${DEFAULT_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
+
+# Sorting udebs
+UDEBS="$(gunzip -c ${CACHEDIR}/Packages.gz | awk '/Filename: / { print $2 }')"
+
+rm -rf binary.udeb
+mkdir -p binary.udeb
+cd binary.udeb
+
+# Downloading udebs
+mkdir -p ../cache/packages_debian-installer.udeb
+for UDEB in ${UDEBS}
+do
+	CACHE_UDEB=../cache/packages_debian-installer.udeb/"$(basename ${UDEB})"
+	[ -f  ${CACHE_UDEB} ] || \
+		wget ${WGET_OPTIONS} \
+			-O ${CACHE_UDEB} \
+			"${LH_MIRROR_BOOTSTRAP}"/${UDEB} || \
+		wget ${WGET_OPTIONS} \
+			-O ${CACHE_UDEB} \
+			${DEFAULT_MIRROR_BOOTSTRAP}/${UDEB}
+
+	cp ${CACHE_UDEB} ./
+done
+
+# Including local udebs
+if ls ../config/binary_local-udebs/*.udeb > /dev/null 2>&1
+then
+	for FILE in ../config/binary_local-udebs/*_"${LH_ARCHITECTURE}".udeb ../config/binary_local-udebs/*_all.udeb
+	do
+		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
+
+		if [ -z "${SOURCE}" ]
+		then
+			SOURCE="$(basename ${FILE} | awk -F_ '{ print $1 }')"
+		fi
+
+		case "${SOURCE}" in
+			lib?*)
+				LETTER="$(echo ${SOURCE} | sed 's/\(....\).*/\1/')"
+				;;
+
+			*)
+				LETTER="$(echo ${SOURCE} | sed 's/\(.\).*/\1/')"
+				;;
+		esac
+
+		# Install directory
+		mkdir -p pool/main/"${LETTER}"/"${SOURCE}"
+
+		# Copy files
+		cp "${FILE}" pool/main/"${LETTER}"/"${SOURCE}"
+
+		# Prefere local udebs over downloaded udebs
+		rm -f "$(basename ${FILE} | awk -F_ '{ print $1 }')"_*.udeb
+	done
+fi
+
+# Excluding udebs
+grep -v "^#" "${LH_BASE}"/data/debian-cd/"${LH_DISTRIBUTION}"/udeb_exclude > exclude
+grep -v "^#" "${LH_BASE}"/data/debian-cd/"${LH_DISTRIBUTION}"/exclude-udebs >> exclude
+grep -v "^#" "${LH_BASE}"/data/debian-cd/"${LH_DISTRIBUTION}"/exclude-udebs-${LH_ARCHITECTURE} >> exclude
+
+# Local exclude file
+if [ -e ../config/binary_debian-installer/udeb_exclude ]
+then
+	cat ../config/binary_debian-installer/udeb_exclude >> exclude
+fi
+
+for EXCLUDE in $(cat exclude)
+do
+	rm -f "${EXCLUDE}"_*.udeb
+done
+
+# Enable live-installer
+if [ "${LH_DEBIAN_INSTALLER}" = "live" ]
+then
+	# Remove local udebs
+	rm -f pool/main/b/base-installer/bootstrap-base_*.udeb
+
+	# Remove d-i udebs
+	rm -f bootstrap-base_*.udeb
+fi
+
+# Moving udebs
+for UDEB in ${UDEBS}
+do
+	if [ -f "$(basename ${UDEB})" ]
+	then
+		mkdir -p $(dirname ${UDEB})
+		mv "$(basename ${UDEB})" "$(dirname ${UDEB})"
+	fi
+done
+
+# Creating udeb indices
+mkdir -p dists/"${LH_DISTRIBUTION}"/main/debian-installer/binary-"${LH_ARCHITECTURE}"
+apt-ftparchive packages pool/main > dists/"${LH_DISTRIBUTION}"/main/debian-installer/binary-"${LH_ARCHITECTURE}"/Packages
+gzip -9 -c dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages > dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz
+
+rm -f Packages* exclude
+find . | cpio -dmpu "${OLDPWD}"/binary
+cd "${OLDPWD}"
+
+rm -rf binary.udeb
+
+# Generating release file
+apt-ftparchive \
+	-o APT::FTPArchive::Release::Origin="Debian" \
+	-o APT::FTPArchive::Release::Label="Debian" \
+	-o APT::FTPArchive::Release::Suite="${LH_DISTRIBUTION}" \
+	-o APT::FTPArchive::Release::Version="4.0" \
+	-o APT::FTPArchive::Release::Codename="${LH_DISTRIBUTION}" \
+	-o APT::FTPArchive::Release::Date="$(date -R)" \
+	-o APT::FTPArchive::Release::Architectures="${LH_ARCHITECTURE}" \
+	-o APT::FTPArchive::Release::Components="main" \
+	-o APT::FTPArchive::Release::Description="Last updated: $(date -R)" \
+release binary/dists/${LH_DISTRIBUTION} > binary/dists/${LH_DISTRIBUTION}/Release
+
+# Creating dist symlinks
+for DISTRIBUTION in frozen stable testing unstable
+do
+	ln -s ${LH_DISTRIBUTION} binary/dists/${DISTRIBUTION}
+done
+
+if [ "${LH_BINARY_IMAGES}" != "usb-hdd" ]
+then
+	ln -s . binary/debian
+fi
+
+# Creating stage file
+Create_stagefile .stage/binary_debian-installer

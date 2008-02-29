@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# NOTE this is run from the install initrd that just has busybox shell
+#      so, donot use bash extensions
+
+DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND
+
+# FIXME! vyatta-ppp install blocks trying to overwrite conffile shared
+#        with ppp; work around this by installing ppp first, remove
+#        the file, then install vyatta-ppp along with the other packages
+
+logger -t preseed/late_command "info: apt-install ppp pppoe"
+apt-install ppp pppoe
+rm -f /target/etc/ppp/chap-secrets
+
+pkgs=`cat /cdrom/install/apt-install-list.txt | sed '/^ppp$/d; /^pppoe/d`
+logger -t preseed/late_command "info: apt-install $pkgs"
+apt-install $pkgs
+
+mount -o bind /proc /target/proc
+mount -o bind /cdrom /target/cdrom
+
+for cmd in /cdrom/install/late-commands/*
+do
+    bcmd=`basename $cmd`
+    logger -t preseed/late_command info: $bcmd
+    chroot /target $cmd
+done
+
+umount /target/cdrom
+umount /target/proc
+
+if [ -r /tmp/config.boot ]
+then
+    logger -t preseed/late_command info: restore config.boot
+    mv /tmp/config.boot /target/opt/vyatta/etc/config/
+fi
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# adjust /etc/default/grub config file and run update-grub
+
+progname=`basename $0`
+rootdev=`awk '$2 ~ /^\/$/ { print $1 }' /etc/mtab`
+
+logger -t "$progname" "info: FIXME!"
+
+if [ -e /etc/default/grub ] ; then
+    source /etc/default/grub
+else
+    touch /etc/default/grub
+fi
+
+: ${GRUB_CMDLINE_LINUX:=}
+: ${GRUB_PRELOAD_MODULES:=}
+: ${GRUB_SERIAL_COMMAND:=}
+: ${GRUB_TERMINAL:=}
+
+GRUB_DISTRIBUTOR=Vyatta
+GRUB_PRELOAD_MODULES+=" echo iso9660 ls lspci pc sleep serial terminal"
+
+if grep -q console=ttyS0 /proc/cmdline ; then
+    GRUB_SERIAL_COMMAND="serial -u 0 -s 9600 -w 8 -r no -t 1"
+    GRUB_CMDLINE_LINUX+=" console=ttyS0"
+    if grep -q console=tty0 ; then
+	# use both serial and tty0
+	GRUB_CMDLINE_LINUX+=" console=tty0"
+    else
+	# just serial so direct grub to that console
+	GRUB_TERMINAL=pc:serial
+    fi
+elif grep -q video=vesa /proc/cmdline ; then
+    GRUB_TERMINAL=gfxterm
+    GRUB_CMDLINE_LINUX+=" video=vesa:ywrap,mtrr vga=788"
+else
+    GRUB_TERMINAL=console
+    GRUB_CMDLINE_LINUX+=" vga=normal"
+fi
+
+for grub_var in CMDLINE_LINUX DISTRIBUTOR PRELOAD_MODULES SERIAL TERMINAL ; do
+    var=GRUB_${grub_var}
+    eval val=\$$var
+    if [ -n "$val" ] ; then
+	if grep -q "^${var}=" /etc/default/grub ; then
+	    sed -i 's#^'"$var"'=.*#'"$var"'="'"$val"'"#' /etc/default/grub
+	else
+	    echo "$var"=\""$val"\" >> /etc/default/grub
+	fi
+    fi
+done
+
+/usr/sbin/update-grub
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

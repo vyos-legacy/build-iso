@@ -23,9 +23,10 @@ iso :
 	@$(mk_iso)
 
 mostlyclean-local :
-	@if grep -q proc-live /proc/mounts ; then umount proc-live ; fi
-	@if grep -q sysfs-live /proc/mounts ; then umount sysfs-live ; fi
-	@rm -rf livecd/{.permissions,.stage,binary,*.iso,chroot,config,.lock,deb-install.iso}
+	@for m in proc-live sysfs-live devpts-live ; do \
+		if grep -q $$m /proc/mounts ; then umount $$m ; fi \
+	 done
+	@rm -rf livecd/{.permissions,.stage,binary,*.iso,chroot,config,.lock}
 	@ipcs -q | awk '{print $$2}' | egrep [0-9] \
 	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
 
