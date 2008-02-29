@@ -46,6 +46,10 @@ EOF
 	-S | --signed-source )
 	    build="git-buildpackage"
 	    shift;;
+	-i )
+	    INCVNUM=yes
+	    RELEASENAME="Start of development"
+	    shift;;
 	-m )
 	    shift
 	    RELEASENAME="$1"
@@ -78,12 +82,17 @@ get_tag()
 	head -1 debian/changelog|sed 's/.*(\([^)]*\)).*/\1/'
 }
 
+get_branch()
+{
+	git-branch|grep '^\* '|sed 's/^\* //'
+}
+
 mod_changelog()
 {(
-	[ "$RELEASENAME" != UNRELEASED ] && rel=--release
-rel=--release
 
-	branch=`git-branch|grep '^\* '|sed 's/^\* //'`
+	[ "$RELEASENAME" = UNRELEASED ] || $rel=--release
+
+	branch=`get_branch`
 	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
@@ -105,7 +114,15 @@ do_inc_version()
 	eval $info P: "$1"
 	repo="$1"
 (
-	cd "$repo" &&
+	cd "$repo" || exit
+	if [ "$INCVNUM" ]
+	then
+		branch=`get_branch`
+		echo "$RELEASENAME for $branch">STATUS
+		git-add STATUS
+		git-commit -m `cat STATUS`
+	fi
+
 	case "$repo" in
 	vyatta-cfg-system )
 		if [ "$RELEASENAME" != UNRELEASED ]
