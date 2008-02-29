@@ -49,6 +49,7 @@ EOF
 	-m )
 	    shift
 	    RELEASENAME="$1"
+	    [ "$RELEASENAME" ] || RELEASENAME=UNRELEASED
 	    shift;;
 	* )
 	    submodule=( $@ )
@@ -79,14 +80,19 @@ get_tag()
 
 mod_changelog()
 {(
-	branch=`git-branch|sed -e 's/^[^\*].*//' -e 's/^\* //'`
-	if ! EDITOR=true git-dch --release --debian-branch "$branch"
+	[ "$RELEASENAME" != UNRELEASED ] && rel=--release
+rel=--release
+
+	branch=`git-branch|grep '^\* '|sed 's/^\* //'`
+	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
 		# return 0	# ignore because branch does not exist
 	fi
 
 	cp debian/changelog /tmp/changelog$$
+	[ "$RELEASENAME" = UNRELEASED ] && return 0
+
 	sed -e 's/^  \* UNRELEASED$//' -e '3i \
   '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
 	rm /tmp/changelog$$
@@ -102,9 +108,12 @@ do_inc_version()
 	cd "$repo" &&
 	case "$repo" in
 	vyatta-cfg-system )
-		echo "Version :    $RELEASENAME">sysconf/version
-		git-commit -m "Update version file to $RELEASENAME" sysconf/version
-		$trace mod_changelog "$RELEASENAME"
+		if [ "$RELEASENAME" != UNRELEASED ]
+		then
+			echo "Version :    $RELEASENAME">sysconf/version
+			git-commit -m "Update version file to $RELEASENAME" sysconf/version
+			$trace mod_changelog "$RELEASENAME"
+		fi
 		;;
 	linux-image* )
 		$trace mod_changelog "$RELEASENAME"
@@ -115,8 +124,14 @@ do_inc_version()
 		;;
 	esac
 
-	git-commit -a -m "$RELEASENAME" >/dev/null
-	git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD 2>/dev/null
+	if [ "$RELEASENAME" = UNRELEASED ]
+	then
+		#git-commit -a -m "Setting changelog to UNRELEASED" >/dev/null
+		true
+	else
+		git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD 2>/dev/null
+		git-commit -a -m "$RELEASENAME" >/dev/null
+	fi
 )
 }
 
