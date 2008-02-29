@@ -103,13 +103,21 @@ esac
 
 Check_multiarchitecture
 
+CACHEDIR=cache/debian-installer
+
 VMLINUZ_DI="vmlinuz"
 INITRD_DI="initrd.gz"
 DESTDIR_DI="${DESTDIR}"
+CACHEDIR_DI="${CACHEDIR}"
 
 VMLINUZ_GI="gtk/vmlinuz"
 INITRD_GI="gtk/initrd.gz"
 DESTDIR_GI="${DESTDIR}/gtk"
+CACHEDIR_GI="${CACHEDIR}/gtk"
+
+CACHEDIR_DEB="${CACHEDIR}/deb"
+
+DEFAULT_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
 
 # Workaround for syslinux (<< 3.36) which doesn't support long file/path names
 if [ "${LH_DISTRIBUTION}" = "etch" ]
@@ -188,21 +196,40 @@ else
 fi
 
 # Downloading debian-installer
+mkdir -p "${CACHEDIR_DI}"
+[ -f "${CACHEDIR}"/"${VMLINUZ_DI}" ] || \
+    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${VMLINUZ_DI}" ${URL}/${DI}/${DI_KERNEL}
+[ -f "${CACHEDIR}"/"${INITRD_DI}" ] || \
+    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${INITRD_DI}" ${URL}/${DI}/initrd.gz
+
 mkdir -p "${DESTDIR_DI}"
-wget ${WGET_OPTIONS} --no-clobber -O "${DESTDIR}"/"${VMLINUZ_DI}" ${URL}/${DI}/${DI_KERNEL}
-wget ${WGET_OPTIONS} --no-clobber -O "${DESTDIR}"/"${INITRD_DI}" ${URL}/${DI}/initrd.gz
+cp "${CACHEDIR}"/"${VMLINUZ_DI}" "${DESTDIR}"/"${VMLINUZ_DI}"
+cp "${CACHEDIR}"/"${INITRD_DI}" "${DESTDIR}"/"${INITRD_DI}"
 
 # Downloading graphical-installer
 if [ "${LH_ARCHITECTURE}" = "amd64" ] || [ "${LH_ARCHITECTURE}" = "i386" ] || [ "${LH_ARCHITECTURE}" = "powerpc" ]
 then
+	mkdir -p "${CACHEDIR_GI}"
+	[ -f "${CACHEDIR}"/"${VMLINUZ_GI}" ] || \
+		wget ${WGET_OPTIONS} --no-clobber \
+			-O "${CACHEDIR}"/"${VMLINUZ_GI}" \
+			${URL}/${DI_GTK}/${DI_KERNEL}
+	[ -f "${CACHEDIR}"/"${INITRD_GI}" ] || \
+		wget ${WGET_OPTIONS} --no-clobber \
+			-O "${CACHEDIR}"/"${INITRD_GI}" \
+			${URL}/${DI_GTK}/initrd.gz
 	mkdir -p "${DESTDIR_GI}"
-	wget ${WGET_OPTIONS} --no-clobber -O "${DESTDIR}"/"${VMLINUZ_GI}" ${URL}/${DI_GTK}/${DI_KERNEL}
-	wget ${WGET_OPTIONS} --no-clobber -O "${DESTDIR}"/"${INITRD_GI}" ${URL}/${DI_GTK}/initrd.gz
+	cp "${CACHEDIR}"/"${VMLINUZ_GI}" "${DESTDIR}"/"${VMLINUZ_GI}"
+	cp "${CACHEDIR}"/"${INITRD_GI}" "${DESTDIR}"/"${INITRD_GI}"
 fi
 
 if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
+	# preload cached debs
+	if ls ${CACHEDIR_DEB}/*.deb > /dev/null 2>&1 ; then
+		mkdir -p chroot/var/cache/apt/archives
+		cp ${CACHEDIR_DEB}/*.deb chroot/var/cache/apt/archives/
+	fi
 	# Downloading additional packages
-	mkdir -p chroot/binary.deb/archives/partial
 	mv chroot/var/lib/dpkg/status chroot/var/lib/dpkg/status.tmp
 	touch chroot/var/lib/dpkg/status
 
@@ -212,7 +239,7 @@ if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 			;;
 
 		i386)
-			DI_PACKAGES="linux-image-2.6-486 linux-image-2.6-686 elilo lilo grub"
+			DI_PACKAGES="grub-pc"
 			;;
 
 		powerpc)
@@ -222,15 +249,17 @@ if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 
 	DI_PACKAGES="${DI_PACKAGES} cryptsetup lvm2"
 
-	Chroot "apt-get -o Dir::Cache=/binary.deb --download-only install --yes ${DI_PACKAGES}"
-	mv chroot/binary.deb ./
+	Chroot "apt-get -q --download-only install --yes ${DI_PACKAGES}"
+	mkdir -p  ${CACHEDIR_DEB}/
+	cp chroot/var/cache/apt/archives/*.deb ${CACHEDIR_DEB}/
 	mv chroot/var/lib/dpkg/status.tmp chroot/var/lib/dpkg/status
+	Chroot "apt-get -q clean"
 fi
 
 # Including base debian packages
 if [ -d cache/packages_bootstrap ]
 then
-	for FILE in cache/packages_bootstrap/*.deb binary.deb/archives/*.deb
+	for FILE in cache/packages_bootstrap/*.deb ${CACHEDIR_DEB}/*.deb
 	do
 		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
 
@@ -299,35 +328,43 @@ gzip -9 -c dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages > di
 cd "${OLDPWD}"
 
 # Fetching release
-wget ${WGET_OPTIONS} "${LH_MIRROR_BOOTSTRAP}"/dists/"${LH_DISTRIBUTION}"/main/binary-"${LH_ARCHITECTURE}"/Release -O binary/dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Release
+[ -f ${CACHEDIR}/Release ] || \
+	wget ${WGET_OPTIONS} \
+		-O ${CACHEDIR}/Release \
+		"${LH_MIRROR_BOOTSTRAP}"/dists/"${LH_DISTRIBUTION}"/main/binary-"${LH_ARCHITECTURE}"/Release
+cp ${CACHEDIR}/Release binary/dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Release
 
-mkdir binary.udeb
-cd binary.udeb
-
-# Downloading udeb indices
-wget ${WGET_OPTIONS} "${LH_MIRROR_BOOTSTRAP}"/dists/"${LH_DISTRIBUTION}"/main/debian-installer/binary-"${LH_ARCHITECTURE}"/Packages.gz
-gunzip -c Packages.gz > Packages
+# Fetching Packages file
+[ -f ${CACHEDIR}/Packages.gz ] || \
+	wget ${WGET_OPTIONS} \
+		-O ${CACHEDIR}/Packages.gz \
+		"${LH_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz" || \
+	wget ${WGET_OPTIONS} \
+		-O ${CACHEDIR}/Packages.gz \
+		"${DEFAULT_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
 
 # Sorting udebs
-UDEBS="$(awk '/Filename: / { print $2 }' Packages)"
+UDEBS="$(gunzip -c ${CACHEDIR}/Packages.gz | awk '/Filename: / { print $2 }')"
+
+rm -rf binary.udeb
+mkdir -p binary.udeb
+cd binary.udeb
 
 # Downloading udebs
+mkdir -p ../cache/packages_debian-installer.udeb
 for UDEB in ${UDEBS}
 do
-	if [ -f ../cache/packages_debian-installer.udeb/"$(basename ${UDEB})" ]
-	then
-		# Copying cached udebs
-		cp ../cache/packages_debian-installer.udeb/"$(basename ${UDEB})" ./
-	else
-		# Downloading udebs
-		wget ${WGET_OPTIONS} "${LH_MIRROR_BOOTSTRAP}"/${UDEB}
-	fi
-done
+	CACHE_UDEB=../cache/packages_debian-installer.udeb/"$(basename ${UDEB})"
+	[ -f  ${CACHE_UDEB} ] || \
+		wget ${WGET_OPTIONS} \
+			-O ${CACHE_UDEB} \
+			"${LH_MIRROR_BOOTSTRAP}"/${UDEB} || \
+		wget ${WGET_OPTIONS} \
+			-O ${CACHE_UDEB} \
+			${DEFAULT_MIRROR_BOOTSTRAP}/${UDEB}
 
-# Caching udebs
-rm -rf ../cache/packages_debian-installer.udeb
-mkdir -p ../cache/packages_debian-installer.udeb
-cp *.udeb ../cache/packages_debian-installer.udeb
+	cp ${CACHE_UDEB} ./
+done
 
 # Including local udebs
 if ls ../config/binary_local-udebs/*.udeb > /dev/null 2>&1
@@ -408,7 +445,6 @@ find . | cpio -dmpu "${OLDPWD}"/binary
 cd "${OLDPWD}"
 
 rm -rf binary.udeb
-rm -rf binary.deb
 
 # Generating release file
 apt-ftparchive \
