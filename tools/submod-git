@@ -156,11 +156,15 @@ git_fetch ()
     upstream=origin/"$branch"
     git-branch -a|grep "$upstream" >/dev/null || upstream=origin/master
 
-    in_repo=`git-log -1 --name-status "$upstream".."$branch"`
-    [ "$in_repo" ] && echo A local commit is not in the shared repo.
+    diffs=`git-diff "$branch" "$upstream"|head -1`
+    if [ "$diffs" ]
+    then 
+	in_repo=`git-log -1 --name-status "$upstream".."$branch"`
+	[ "$in_repo" ] && echo A local commit is not in the shared repo.
 
-    in_repo=`git-log -1 --name-status "$branch".."$upstream"`
-    [ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
+	in_repo=`git-log -1 --name-status "$branch".."$upstream"`
+	[ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
+   fi
 }
 
 git_diff-cached ()
