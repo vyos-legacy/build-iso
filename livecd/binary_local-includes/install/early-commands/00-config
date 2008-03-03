@@ -5,23 +5,45 @@
 progname=`basename $0`
 
 log() {
-    logger -t "preseed/early_command $progname" $@
+    logger -t "$progname" $@
 }
 
 error() {
     log "error: $*"
 }
 
-warning() {
-    log "warning: $*"
-}
-
 info() {
     log "info: $*"
 }
 
-log FIXME! scan ...
-log FIXME! save to /tmp/config.boot
+partitions=`sed '1,2d; /[hs]d[a-z]$/d; s/^[^hs]*//' /proc/partitions`
+
+mnt=/tmp/$progname
+
+mkdir $mnt
+rm -f /tmp/config.boot
+
+for partition in $partitions
+do
+    if mount -t ext2 -o ro /dev/$partition $mnt >/dev/null 2>&1
+    then
+	for dir in $mnt/opt/vyatta/etc/config $mnt
+	do
+	    if [ -r $dir/config.boot ]
+	    then
+		cp $dir/config.boot /tmp
+		info saved $dir/config.boot from /dev/$partition
+	    fi
+	done
+	umount $mnt
+	if [ -r /tmp/config.boot ]
+	then
+	    break
+	fi
+    fi
+done
+
+rmdir $mnt
 
 # Local Variables:
 # mode: shell-script
