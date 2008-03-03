@@ -3,7 +3,7 @@
 # cp files from /cdrom to target
 
 cd /cdrom/install/target && \
-    find . -print 0 | cpio --null --quiet -pdmu /
+    find . | cpio --quiet -pdmu /
 
 # Local Variables:
 # mode: shell-script
