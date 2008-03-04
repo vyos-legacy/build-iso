@@ -188,18 +188,12 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
-	LH_MIRROR_BINARY="http://packages.vyatta.com/debian/"
-	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security/"
-	LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security/"
+	LH_MIRROR_BINARY="http://packages.vyatta.com/vyatta-dev/"
+	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/vyatta-dev/"
+	LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/vyatta-dev/"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/vyatta-dev/"
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
-	EXCLUDE_PKGS+=" exim4-daemon-light"
-	EXCLUDE_PKGS+=" exim4-config"
-	EXCLUDE_PKGS+=" exim4-base"
-	EXCLUDE_PKGS+=" exim4"
-	EXCLUDE_PKGS+=" mailx"
-	EXCLUDE_PKGS+=" mail-transport-agent"
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	;;
 esac
