@@ -97,7 +97,19 @@ fi
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
-rsync --archive --delete ${VYATTA_POOL}/ cache/vyatta-deb-mirror/ || true
+
+# FIXME! hack around convoluted hollywood repository that is currently
+#	 both a debian mirror and vyatta content repos; we only want the
+#	 new content and the prior version of squashfs-tools
+rsync \
+    --archive \
+    --delete \
+    --filter='+ *vyatta*' \
+    --filter='+ squashfs-tools*' \
+    --filter='- *' \
+    ${VYATTA_POOL}/ \
+    cache/vyatta-deb-mirror/ || true
+
 # FIXME! hack around vyatta-dhcp3 dependency issues
 rm cache/vyatta-deb-mirror/vyatta-dhcp3-*-2*.deb
 
