@@ -88,7 +88,7 @@ test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
 AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
 
 test "X$VYATTA_POOL" = "X" && \
-     VYATTA_POOL="rsync://packages.vyatta.com/vyatta-dev/pool/glendale/main"
+     VYATTA_POOL="rsync://packages.vyatta.com/vyatta-dev/pool/hollywood/main"
 AC_ARG_VAR(VYATTA_POOL, [default: Vyatta nightly build])
 
 # process --with[out] arguments
