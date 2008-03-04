@@ -95,6 +95,15 @@ if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
     export LH_USE_FAKEROOT=enabled
 fi
 
+echo I: cleaning earlier build
+for m in proc-live sysfs-live devpts-live ; do
+    if grep -q $m /proc/mounts ; then
+	echo I: unmounting $m
+	umount $m
+    fi
+done
+rm -rf {.permissions,.stage,binary,*.iso,chroot,config,.lock}
+
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
 
