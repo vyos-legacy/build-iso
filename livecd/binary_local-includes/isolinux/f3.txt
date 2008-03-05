@@ -2,9 +2,10 @@
 
 0fAvailable boot methods:07
 
-0flive07, 0flive-gui07, or  0flive-serial07
-  Start the live system with respective console.
-  (default is 0flive07 with both VGA and serial consoles)
+0flive07, 0flive-console07, 0flive-serial07
+  Start the live system with both or only VGA/serial consoles respectively.
+0flive-debug07
+  Start the live system with verbose boot messages.
 0finstall07, 0finstall-gui07, or 0finstall-serial07
   Start the installation.
 0fexpert07,  0fexpert-gui07, and 0fexpert-serial07
@@ -20,7 +21,5 @@ followed by any boot parameters. For example:
 
 If unsure, you should use the default boot method, with no special
 parameters, by simply pressing enter at the boot prompt.
-
-Except in expert mode, non-critical kernel boot messages are suppressed.
 
 Press F1control and F then 1 for the help index, or ENTER to
