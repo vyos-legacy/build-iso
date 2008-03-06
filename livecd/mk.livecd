@@ -38,6 +38,7 @@ declare -a xdebs debs pkgs depends
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${ORGANIZATION:=vyatta.com}
+: ${LH_ARCHITECTURE:=`dpkg --print-architecture`}
 
 LH_ISO_VOLUME+=" -- $CDLABEL"
 
@@ -119,8 +120,27 @@ rsync \
     ${VYATTA_POOL}/ \
     cache/vyatta-deb-mirror/ || true
 
-# FIXME! hack around vyatta-dhcp3 dependency issues
-rm cache/vyatta-deb-mirror/vyatta-dhcp3-*-2*.deb
+mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
+touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
+true || rsync \
+    --archive \
+    --delete \
+    ${VYATTA_POOL/pool/dists}/ \
+    cache/vyatta-dists-mirror || true
+
+declare -a pkgs_in_vyatta_deb_mirror=($( \
+    printf "%s\n" cache/vyatta-deb-mirror/*.deb | \
+    sed -e 's,.*/,,; s,_.*,,' | \
+    sort -u ))
+
+declare -a selected_debs_from_vyatta_deb_mirror
+for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
+    deb=$( sed -n "/^Filename: .*\/${pkg}_/ { s,.*/,,g; s,%3a,:,g; p }" \
+	cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages )
+    if [ -n "$deb" ] ; then
+	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
+    fi
+done
 
 [ -f cache/vyatta-pubkey.gpg ] || \
     wget --quiet -O cache/vyatta-pubkey.gpg \
@@ -128,14 +148,16 @@ rm cache/vyatta-deb-mirror/vyatta-dhcp3-*-2*.deb
 
 > cache/vyatta-pkgs
 
-case "${LH_ARCHITECTURE:=`dpkg --print-architecture`}" in
+case "${LH_ARCHITECTURE}" in
     amd64 | i386 )
-	echo grub-pc >> cache/vyatta-pkgs
-	echo grub- >> cache/vyatta-pkgs
+	cat <<-EOF >> cache/vyatta-pkgs
+	grub-pc
+	grub-
+	EOF
 	;;
 
     * )
-	echo "FIXME\! research boot loader for ${LH_ARCHITECTURE}" >&2
+	echo "FIXME\! select boot loader for ${LH_ARCHITECTURE}" >&2
 	exit 1
 	;;
 esac
@@ -143,7 +165,7 @@ esac
 rm -f config/chroot_local-packages/*.deb
 mkdir -p config/chroot_local-packages
 
-for xdeb in cache/vyatta-deb-mirror/*.deb ../pkgs/*.deb ; do
+for xdeb in ${selected_debs_from_vyatta_deb_mirror[@]} ../pkgs/*.deb ; do
     deb=${xdeb##*/}
     pkg=${deb%%_*}
     
@@ -376,8 +398,8 @@ done
 mkdir -p config/binary_local-includes/install
 cp d-i/preseed.cfg config/binary_local-includes/install/preseed.cfg
 
-ls config/binary_local-debs/*.deb | \
-    sed 's#.*/##g; s#_.*##' | \
+printf "%s\n" config/binary_local-debs/*.deb | \
+    sed -e 's,.*/,,; s,_.*,,' | \
     sort -u > config/binary_local-includes/install/apt-install-list.txt
 
 echo I: building binary
