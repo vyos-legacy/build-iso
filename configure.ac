@@ -144,6 +144,7 @@ gutsy | hardy )
 	LH_SECTIONS="main restricted universe multiverse"
 	EXCLUDE_PKGS+=" mailx"
 	EXCLUDE_PKGS+=" dash"
+	EXCLUDE_PKGS+=" openhpid"
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 # FIXME! can no longer exlude exim like this...
 #	EXCLUDE_PKGS+=" exim4-daemon-light"
@@ -173,6 +174,7 @@ gutsy | hardy )
 	;;
 * )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
+	EXCLUDE_PKGS+=" openhpid"
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
