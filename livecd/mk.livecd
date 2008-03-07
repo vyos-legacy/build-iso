@@ -122,7 +122,7 @@ rsync \
 
 mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
 touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
-true || rsync \
+rsync \
     --archive \
     --delete \
     ${VYATTA_POOL/pool/dists}/ \
