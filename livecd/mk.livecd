@@ -192,6 +192,7 @@ find \
     binary_local-includes \
     chroot_local-hooks \
     chroot_local-includes \
+    install-gtk_local-includes \
     \! -name \*~ \! -name .\*.swp -print0 | \
     cpio --null --quiet -pdmu config
 
