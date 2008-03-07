@@ -220,7 +220,17 @@ then
 			${URL}/${DI_GTK}/initrd.gz
 	mkdir -p "${DESTDIR_GI}"
 	cp "${CACHEDIR}"/"${VMLINUZ_GI}" "${DESTDIR}"/"${VMLINUZ_GI}"
-	cp "${CACHEDIR}"/"${INITRD_GI}" "${DESTDIR}"/"${INITRD_GI}"
+	if [ -d config/install-gtk_local-includes ]
+	then
+		gunzip < "${CACHEDIR}"/"${INITRD_GI}" > initrd.cpio
+		( cd config/install-gtk_local-includes && \
+		    find * -print0 | \
+		    cpio  --quiet -o0 -H newc -AO ../../initrd.cpio )
+		gzip -9 < initrd.cpio > "${DESTDIR}"/"${INITRD_GI}"
+		rm -f initrd.cpio
+	else
+		cp "${CACHEDIR}"/"${INITRD_GI}" "${DESTDIR}"/"${INITRD_GI}"
+	fi
 fi
 
 if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
