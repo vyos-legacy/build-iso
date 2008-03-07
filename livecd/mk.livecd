@@ -272,6 +272,7 @@ build_chroot ()
   echo I: customizing live-initramfs
   ( shopt -s nullglob; cd chroot/ && \
     for patch in ../patches/${LH_DISTRIBUTION}-*.patch ; do \
+        echo I: applying $patch ; \
         patch -p1 < $patch ; \
     done )
   
