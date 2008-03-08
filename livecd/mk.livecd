@@ -270,13 +270,6 @@ build_chroot ()
   test -r live.conf/${LH_DISTRIBUTION} && \
       cp live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
 
-  echo I: customizing live-initramfs
-  ( shopt -s nullglob; cd chroot/ && \
-    for patch in ../patches/${LH_DISTRIBUTION}-*.patch ; do \
-        echo I: applying $patch ; \
-        patch -p1 < $patch ; \
-    done )
-  
   echo I: customizing chroot
   lh_chroot_preseed || return 1
   lh_chroot_local-preseed || return 1
