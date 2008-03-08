@@ -6,6 +6,7 @@ export ISO_FAST
 
 define mk_iso
     cd livecd ; \
+    rm -rf .lock .permissions .stage binary binary.iso chroot config ; \
     if [ `id -u` -eq 0 ] ; then \
 	./mk.livecd ; \
     else \

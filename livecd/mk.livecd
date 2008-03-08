@@ -103,7 +103,6 @@ for m in proc-live sysfs-live devpts-live ; do
 	umount $m
     fi
 done
-rm -rf {.permissions,.stage,binary,*.iso,chroot,config,.lock}
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
