@@ -84,6 +84,11 @@ git_diff ()
     git-diff
 }
 
+git_branch ()
+{
+    git-branch
+}
+
 git_branch-av ()
 {
     git-branch -a -v
