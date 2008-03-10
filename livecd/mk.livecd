@@ -145,7 +145,10 @@ done
     wget --quiet -O cache/vyatta-pubkey.gpg \
  	http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
 
-> cache/vyatta-pkgs
+cat <<EOF > cache/vyatta-pkgs
+snmp
+tcpdump
+EOF
 
 case "${LH_ARCHITECTURE}" in
     amd64 | i386 )
