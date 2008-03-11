@@ -7,6 +7,7 @@ done
 
 cp -f /opt/vyatta/etc/logrotate_messages /etc/logrotate.d/messages
 cp -f /opt/vyatta/etc/default_ssh /etc/default/ssh
+>/etc/pam_radius_auth.conf
 
 sysctl_conf=/etc/sysctl.conf
 if grep -q "^kernel.printk =" $sysctl_conf ; then
