@@ -250,6 +250,29 @@ mkdir -p config/binary_local-includes/install/late-commands
     find . -print0 | \
     cpio --null --quiet -pdmu ../binary_local-includes/install/late-commands )
 
+# mimic lh_chroot_local-packages but install selected vyatta linux package before
+# any other local packages
+vyatta_chroot_local-packages ()
+{
+  declare -a vyatta_linux_debs=( config/chroot_local-packages/linux-*-vyatta*_${LH_ARCHITECTURE}.deb )
+
+  mkdir -p chroot/root/debs
+  if [ ${#vyatta_linux_debs[@]} -gt 0 ] ;then
+      cp ${vyatta_linux_debs[@]} chroot/root/debs
+      chroot chroot dpkg -i -R root/debs
+      rm chroot/root/debs/*.deb
+  fi
+
+  cp config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
+      chroot/root/debs
+  cp config/chroot_local-packages/*_all.deb \
+      chroot/root/debs
+  chroot chroot dpkg -i -R root/debs || true
+  chroot chroot apt-get install -f --yes
+  rm chroot/root/debs/*.deb
+  rmdir chroot/root/debs
+}
+
 # do the steps in lh_chroot
 build_chroot ()
 {
@@ -279,8 +302,7 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
 
-  # we do local packages first since they are "newer".
-  lh_chroot_local-packages || return 1
+  vyatta_chroot_local-packages || return 1
   lh_chroot_local-packageslists || return 1
 
   lh_chroot_localization || return 1
