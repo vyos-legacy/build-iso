@@ -75,7 +75,11 @@ AC_ARG_WITH(target-dist,
 	[],
 	[with_target_dist=$(lsb_release -c -s)])
 
-LH_DISTRIBUTION="$with_target_dist"
+if test "$with_target_dist" = "n/a"; then
+  LH_DISTRIBUTION=lenny
+else
+  LH_DISTRIBUTION="$with_target_dist"
+fi
 
 AC_ARG_WITH(aufs,
 [AS_HELP_STRING([--with-aufs],
@@ -114,13 +118,13 @@ else
 fi
 
 AC_ARG_WITH(deb-install,
-[AS_HELP_STRING([--without-deb-install],
-[don't build Debian installer CD])])
+[AS_HELP_STRING([--with-deb-install],
+[build Debian installer CD])])
 
-if test "$with_deb_install" = no ; then
-   BUILD_DEB_INSTALL=no
-else
+if test "$with_deb_install" = yes ; then
    BUILD_DEB_INSTALL=yes
+else
+   BUILD_DEB_INSTALL=no
 fi
 
 # FIXME! fetch version from source
