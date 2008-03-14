@@ -81,8 +81,9 @@ AC_ARG_VAR(LH_SYSLINUX_CFG, [default: d-i/isolinux/isolinux.cfg])
 test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disable
 AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disable])
 
-test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=d-i/isolinux/vyatta.lss
-AC_ARG_VAR(LH_SYSLINUX_SPALSH, [default: vyatta logo])
+test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=
+AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
+	[default: none, overridden with binary_local-includes])
 
 test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
 AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
