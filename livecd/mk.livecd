@@ -141,10 +141,6 @@ for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
     fi
 done
 
-[ -f cache/vyatta-pubkey.gpg ] || \
-    wget --quiet -O cache/vyatta-pubkey.gpg \
- 	http://archive.vyatta.com/vyatta/vyatta-pubkey.gpg
-
 cat <<EOF > cache/vyatta-pkgs
 snmp
 tcpdump
@@ -212,6 +208,10 @@ EOF
 cp config/chroot_local-includes/iso-*.txt config/binary_local-includes/
 cp config/chroot_local-includes/vyatta-save-package-report \
     config/binary_local-includes/
+
+## NOTE: the 07-apt hook adds this key during live image build, and
+## 	binary install respectively
+cp config/chroot_local-includes/vyatta-pubkey.gpg config/binary_local-includes/
 
 if [ ${#deb_sources[@]} -gt 0 ]; then
     echo I: set up custom source repos
