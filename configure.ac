@@ -59,6 +59,29 @@ AC_ARG_VAR(LH_MEMTEST, [default: disabled])
 test "X$LH_PACKAGES_LISTS" = "X" && LH_PACKAGES_LISTS=none
 AC_ARG_VAR(LH_PACKAGES_LISTS, [default: none])
 
+test "X$LH_QUIET" = "X" && LH_QUIET=enabled
+AC_ARG_VAR(LH_QUIET, [default: enabled])
+
+test "X$LH_VERBOSE" = "X" && LH_VERBOSE=disabled
+AC_ARG_VAR(LH_VERBOSE, [default: disabled])
+
+test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=d-i/isolinux/isolinux.cfg
+AC_ARG_VAR(LH_SYSLINUX_CFG, [default: d-i/isolinux/isolinux.cfg])
+
+test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disable
+AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disable])
+
+test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=
+AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
+	[default: none, overridden with binary_local-includes])
+
+test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
+AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
+
+test "X$VYATTA_POOL" = "X" && \
+     VYATTA_POOL="rsync://packages.vyatta.com/vyatta-dev/pool/hollywood/main"
+AC_ARG_VAR(VYATTA_POOL, [default: Vyatta nightly build])
+
 # process --with[out] arguments
 AC_ARG_WITH(exclude,
 [AS_HELP_STRING([--with-exclude],
