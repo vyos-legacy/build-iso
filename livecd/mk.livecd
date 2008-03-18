@@ -190,7 +190,7 @@ fi
 # is cached, so the bootstrap step only restores the cached stage.
 rm -rf .stage
 
-echo I: buidling bootstrap
+echo I: building bootstrap
 if ! lh_bootstrap; then
   echo E: bootstrap build failed
   exit 1
