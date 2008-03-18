@@ -1,0 +1,22 @@
+0fCOPYRIGHTS AND WARRANTIES07                                                    09F1007
+
+Vyatta is Copyright (C) 2005-2008 Vyatta, Inc., and others.
+
+Vyatta is open source software. After installation,
+the exact distribution terms for each package are described in the
+corresponding file /usr/share/doc/0bpackagename07/copyright.
+
+Vyatta Community Edition comes with 0fABSOLUTELY NO WARRANTY07, to the extent
+permitted by applicable law.
+
+
+
+
+
+
+
+
+
+
+
+Press F1control and F then 1 for the help index, or ENTER to 
