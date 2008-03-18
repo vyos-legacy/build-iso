@@ -17,13 +17,15 @@ Build Host Setup
 
     To set up a build environment (e.g., system or VM), we recommend
     installing Debian "lenny" (i.e. "testing") with either business-card
-    or net-install image,
+    or net-install image.  You can also use the Vyatta livecd ISO for a
+    build host.
 
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-netinst.iso
+	http://packages.vyatta.com/iso/livecd-vc4.0.0.iso
 
-    The respective installation prompts for distribution mirror. To
-    include Vyatta's Debian miror, add this to /etc/apt/sources.list,
+    The respective installation prompts for distribution mirror. Any debian "lenny"
+    mirror will do.  To include Vyatta's Debian miror, add this to /etc/apt/sources.list:
 
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
@@ -38,12 +40,8 @@ Build Host Setup
 	    http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
 	$ sudo apt-key add vyatta-pubkey.gpg
 
-    To build an ISO with all pre-built, binary, packages, install
-    these tools on the build host,
-
-	automake autoconf bzip2 curl debhelper devscripts dpatch
-	fakeroot fakechroot genisoimage git-core sysv-rc-conf
-	live-helper lsb-release rsync sudo
+    To build an ISO with all pre-built binary, packages, you need to install
+    certain tools on the build host.
 
     Note that the latest versions of the "fakechroot" and "live-helper"
     packages are currently incompatible with this livecd build. As a
@@ -57,6 +55,12 @@ Build Host Setup
 	Package: live-helper
 	Pin: version 1.0~a37-2
 	Pin-Priority: 1001
+
+    Here are the list of packages (don't forget to run "apt-get update" first):
+
+	automake autoconf bzip2 curl debhelper devscripts dpatch
+	fakeroot fakechroot genisoimage git-core sysv-rc-conf
+	live-helper lsb-release rsync sudo
 
     To build submodules, each package should list all build
     dependencies. However, to save some iteration, install these
@@ -81,8 +85,7 @@ Getting Source
     To create and checkout a working glendale branch,
 
 	$ cd build-iso
-	build-iso$ git branch --track glendale origin/glendale
-	build-iso$ git checkout glendale
+	build-iso$ git checkout --track -b glendale origin/glendale
 
     If you don't want to build any submodules and just want to build an
     ISO with all pre-built packages, you can skip the following submodule
@@ -104,8 +107,7 @@ Getting Source
     branch,
 
 	build-iso$ cd pkgs/SUBMODULE
-	build-iso/pkgs/SUBMODULE$ git branch --track glendale origin/glendale
-	build-iso/pkgs/SUBMODULE$ git checkout glendale
+	build-iso/pkgs/SUBMODULE$ git checkout --track -b glendale origin/glendale
 
     To clone all sub-modules for full verification build,
 
@@ -119,7 +121,7 @@ Configuration
     The Vyatta ISO builder has GNU autotool configuration,
 
 	build-iso$ autoreconf -i
-	build-iso$ ./configure
+	build-iso$ ./configure  ---with-target-dist=lenny
 
     To see all configure options,
 
@@ -247,4 +249,3 @@ Updates
 
     The "git-status" for pkgs/SUBMODULE should now be clean. Iterate
     through the other updated submodules, then rebuild the iso.
-
