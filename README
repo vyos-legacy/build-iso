@@ -2,7 +2,7 @@ Vyatta VC4 (Glendale) ISO Build Procedures
 
     This document describes how to build a Vyatta VC4 (Glendale) ISO image.
     The most recent version of this document is the top-level README file of
-    the "glendale" branch of the "build-iso" source tree.
+    the "hollywood" branch of the "build-iso" source tree.
 
 Prerequisites
 
@@ -82,10 +82,10 @@ Getting Source
 
 	$ git-clone http://git.vyatta.com/build-iso.git
 
-    To create and checkout a working glendale branch,
+    To create and checkout a working hollywood branch,
 
 	$ cd build-iso
-	build-iso$ git checkout --track -b glendale origin/glendale
+	build-iso$ git checkout --track -b hollywood origin/hollywood
 
     If you don't want to build any submodules and just want to build an
     ISO with all pre-built packages, you can skip the following submodule
@@ -103,17 +103,17 @@ Getting Source
 	build-iso$ git-submodule update pkgs/SUBMODULE
 
     This command clones the SUBMODULE repository in the "pkgs/SUBMODULE"
-    directory, and you need to create and checkout a glendale tracking
+    directory, and you need to create and checkout a hollywood tracking
     branch,
 
 	build-iso$ cd pkgs/SUBMODULE
-	build-iso/pkgs/SUBMODULE$ git checkout --track -b glendale origin/glendale
+	build-iso/pkgs/SUBMODULE$ git checkout --track -b hollywood origin/hollywood
 
     To clone all sub-modules for full verification build,
 
 	build-iso$ git-submodule update
 
-    Remember to create and checkout a glendale tracking branch for each
+    Remember to create and checkout a hollywood tracking branch for each
     updated submodule.
     
 Configuration
@@ -209,8 +209,8 @@ Updates
     build-iso$ git-pull
     or for the paranoid,
     build-iso$ git-fetch origin
-    build-iso$ git-whatchanged HEAD..origin/glendale
-    build-iso$ git-merge origin/glendale
+    build-iso$ git-whatchanged HEAD..origin/hollywood
+    build-iso$ git-merge origin/hollywood
 
     If new submodules were added, include these in the config,
 
@@ -242,8 +242,8 @@ Updates
     To merge these submodule changes,
 
     build-iso$ cd pkgs/SUBMODULE
-    build-iso/pkgs/SUBMODULE$ git checkout glendale
-    build-iso/pkgs/SUBMODULE$ git merge origin/glendale
+    build-iso/pkgs/SUBMODULE$ git checkout hollywood
+    build-iso/pkgs/SUBMODULE$ git merge origin/hollywood
     build-iso/pkgs/SUBMODULE$ debuild -i -b -us -uc
     build-iso/pkgs/SUBMODULE$ cd ../..
 
