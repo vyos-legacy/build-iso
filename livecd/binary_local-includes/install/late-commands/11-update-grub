@@ -3,33 +3,21 @@
 # adjust /etc/default/grub config file and run update-grub
 
 progname=`basename $0`
-rootdev=`awk '$2 ~ /^\/$/ { print $1 }' /etc/mtab`
 
-logger -t "$progname" "info: FIXME!"
-
-if [ -e /etc/default/grub ] ; then
-    source /etc/default/grub
-else
-    touch /etc/default/grub
-fi
-
-: ${GRUB_CMDLINE_LINUX:=}
-: ${GRUB_PRELOAD_MODULES:=}
-: ${GRUB_SERIAL_COMMAND:=}
-: ${GRUB_TERMINAL:=}
+touch /etc/default/grub
 
 GRUB_DISTRIBUTOR=Vyatta
-GRUB_PRELOAD_MODULES+=" echo iso9660 ls lspci pc sleep serial terminal"
+GRUB_PRELOAD_MODULES="echo iso9660 ls lspci pc sleep serial terminal"
 
 if grep -q console=ttyS0 /proc/cmdline ; then
     GRUB_SERIAL_COMMAND="serial -u 0 -s 9600 -w 8 -r no -t 1"
-    GRUB_CMDLINE_LINUX+=" console=ttyS0"
-    if grep -q console=tty0 ; then
+    if grep -q console=tty0 /proc/cmdline ; then
 	# use both serial and tty0
-	GRUB_CMDLINE_LINUX+=" console=tty0"
+	GRUB_CMDLINE_LINUX="console=tty0 console=ttyS0"
     else
 	# just serial so direct grub to that console
-	GRUB_TERMINAL=pc:serial
+	GRUB_CMDLINE_LINUX="console=ttyS0"
+	GRUB_TERMINAL="serial"
     fi
 elif grep -q video=vesa /proc/cmdline ; then
     # /usr/sbin/update-grub doesnot properly test for GRUB_TERMINAL=gfxterm
@@ -46,11 +34,11 @@ elif grep -q video=vesa /proc/cmdline ; then
 	fi
     done
 else
-    GRUB_TERMINAL=console
-    GRUB_CMDLINE_LINUX+=" vga=normal"
+    GRUB_TERMINAL="console"
+    GRUB_CMDLINE_LINUX="vga=normal"
 fi
 
-for grub_var in CMDLINE_LINUX DISTRIBUTOR PRELOAD_MODULES SERIAL TERMINAL ; do
+for grub_var in CMDLINE_LINUX DISTRIBUTOR PRELOAD_MODULES SERIAL_COMMAND TERMINAL ; do
     var=GRUB_${grub_var}
     eval val=\$$var
     if [ -n "$val" ] ; then
