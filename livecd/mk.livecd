@@ -109,9 +109,9 @@ mk_buildid ()
     [ -d $etcdir ] || mkdir -p -m 0755 $etcdir
     rm -f $etcdir/build.txt $etcdir/iso-build.txt $etc/iso-submodules.txt
     cat <<-EOF > $etcdir/iso-build.txt
-	Built by:    $BUILTBY
-	Built on:    $HUMANTIME
-	Build ID:    $CDLABEL
+	Built by :    $BUILTBY
+	Built on :    $HUMANTIME
+	Build ID :    $CDLABEL
 	EOF
     # backwards compatible symlink
     ln -s iso-build.txt $etcdir/build.txt
