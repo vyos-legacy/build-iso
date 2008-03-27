@@ -57,6 +57,8 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
 	    eval $trace rm -f vyatta-dhcp3-*.{build,changes,deb,tar.gz,udeb} ;;
 	wanpipe )
 	    eval $trace rm -f wanpipe*.{build,changes,deb,tar.gz,udeb} ;;
+	vyatta-snort )
+	    eval $trace rm -f vyatta-snort*.{build,changes,deb,tar.gz,udeb} ;;
 	* )
 	    eval $trace rm -f ${submodule[i]}_*.{build,changes,deb,tar.gz,udeb} ;;
     esac
