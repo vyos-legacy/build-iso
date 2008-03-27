@@ -58,20 +58,20 @@ Build Host Setup
 
     Here are the list of packages (don't forget to run "apt-get update" first):
 
-	automake autoconf bzip2 curl debhelper devscripts dpatch
-	fakeroot fakechroot genisoimage git-core sysv-rc-conf
+	automake autoconf bzip2 curl debhelper devscripts dpatch \
+	fakeroot fakechroot genisoimage git-core sysv-rc-conf \
 	live-helper lsb-release rsync sudo
 
     To build submodules, each package should list all build
     dependencies. However, to save some iteration, install these
     packages,
 
-	bison flex docbook-utils gcc g++ git-buildpackage groff gs
-	gs-gpl imagemagick groff libncurses5-dev libpam0g-dev
-	libpcap0.8-dev libreadline-dev libsablot0-dev libtool lintian
-	manpages-dev tetex-bin texi2html texinfo transfig xmlto
-	zlib1g-dev libatm1-dev libdb-dev linuxdoc-tools git2cl
-	kernel-package lynx libcap-dev
+	bison flex docbook-utils gcc g++ git-buildpackage groff gs \
+	gs-gpl imagemagick groff libpam0g-dev libpcap0.8-dev \
+	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
+	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
+	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
+	lynx libcap-dev
 
 Getting Source
 
