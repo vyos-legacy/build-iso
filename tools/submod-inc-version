@@ -128,6 +128,7 @@ do_inc_version()
 		if [ "$RELEASENAME" != UNRELEASED ]
 		then
 			echo "Version :    $RELEASENAME">sysconf/version
+			echo "Copyright:   2006-2008 Vyatta Inc.">>sysconf/version
 			git-commit -m "Update version file to $RELEASENAME" sysconf/version
 			$trace mod_changelog "$RELEASENAME"
 		fi

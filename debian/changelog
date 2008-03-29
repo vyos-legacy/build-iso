@@ -1,3 +1,165 @@
+build-iso (0.3) unstable; urgency=low
+
+  VC4.0.1
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update vyatta-ravpn
+  * update vyatta-cluster
+  * vyatta-cfg: fix for bug 2868
+  * vyatta-cfg: fix for bug 2749
+  * vyatta-op: fix for bug 2771
+  * vyatta-op: revert accidental push
+  * vyatta-op: fix for bug 2911
+  * update submodules
+  * update vyatta-op
+  * vyatta-cfg: fix for bug 2912
+  * vyatta-cfg: fix for bug 2924
+  * update vyatta-op
+  * update vyatta-op
+  * update vyatta-cfg-firewall
+  * freeze the packages used in iso build for glendale.
+  * vyatta-nat: fix for bug 2963
+  * vyatta-cfg: fix for bug 2950
+  * vyatta-ravpn: fix for bug 2961
+  * fix typo in submod-git
+  * update vyatta-cfg-system
+  * vyatta-nat: fix for bug 2975
+  * vyatta-cfg-system: fix for bug 2083
+  * update vyatta-cfg
+  * update vyatta-cfg
+  * update vyatta-cfg
+  * vyatta-ravpn: fix for bug 3005
+  * set glendale defaults of target-dist and deb-install.
+  * vyatta-ravpn: fix for bug 3013
+  * new instructions for internal/external build
+  * update vyatta-cluster
+
+  [ Bob Gilligan ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-op-pppoe
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-quagga
+  * update sub-module vyatta-serial
+  * update sub-module vyatta-cfg-op-pppoe
+  * update sub-module vyatta-op
+  * Bugfix: 2793
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg
+
+  [ Christopher Liljenstolpe ]
+  * update index
+
+  [ Justin Fletcher ]
+  * update submodule vyatta-op-quagga
+  * update submodule vyatta-op
+  * update submodule vyatta-op-quagga
+
+  [ Marat Nepomnyashy ]
+  * submodule vyatta-op-dhcp-server:  Check the current runtime config
+    rather than the new config not available in op mode.  Bug 2892 fix.
+  * submodule vyatta-op-vpn:  Query original/active runtime config
+    rather than the new/pending config.
+  * submodule vyatta-op-vpn:  Added 'libsablot0' dependencies.
+  * submodule vyatta-op-dhcp-server:  Moved script 'vyatta-clear-dhcp-
+    lease.pl' to '/opt/vyatta/bin/sudo-users/' so that operator user is
+    not prompted for sudo password.  Bug 2984 fix.
+  * submodule vyatta-op-dhcp-server:  Quote user input.
+  * Properly write out multiple wins-servers to the DHCP server
+    configuration file.  Bug 2857 fix.
+
+  [ Mark O'Brien ]
+  * vc4.0.0
+  * vc4.0.0
+  * Update indices
+
+  [ Mohit Mehta ]
+  * Updated index for Bug 2707
+
+  [ Robert Bays ]
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-quagga
+  * Update indices
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+
+  [ Stephen Hemminger ]
+  * Updated vyatta-cfg-qos submodule
+  * update vyatta-cfg-qos
+  * update vyatta-cfg-qos index
+  * update vyatta-cfg-system index
+  * update indices to catch bugfix 2698
+  * update vyatta-cfg-qos
+  * update vyatta-cfg-qos
+  * update vyatta-serial
+  * update index to pickup GPLv2
+  * update indices
+  * update indices to catch latest GPLv2
+  * update indices for vyatta-cfg
+  * Update indices for init-floppy fix
+  * update index
+  * update index
+  * update index
+
+  [ Stig Thormodsrud ]
+  * update indexes
+  * update indexes
+  * update index
+  * update index
+  * update index
+  * update index
+  * update index
+  * update indexes
+  * update index
+
+  [ Tom Grennan ]
+  * replace iso splash with graphic that includes the registered
+    trademark
+
+  [ rbalocca ]
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update indices
+  * donot configure LH_SYSLINUX_CFG
+  * move splash reference to displayed boot.txt
+  * Update indices
+  * Add new splash with [tm] to isolinux boot
+  * Merge from hollywood
+  * Update index
+  * Update indices
+  * Fix typo in mk.livecd
+  * Update README information for external builders
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 18 Mar 2008 19:06:02 -0700
+
 build-iso (0.2) unstable; urgency=low
 
   vc4.0.0
