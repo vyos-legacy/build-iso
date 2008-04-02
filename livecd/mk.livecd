@@ -161,9 +161,9 @@ mk_version_package ()
 
     rm -rf $tmpdir
     cd $savedir
-    cp /tmp/vyatta-version_${VVERSION}_all.deb chroot/vyatta-version.deb
-    chroot chroot dpkg -i /vyatta-version.deb
-    rm -f chroot/vyatta-version.deb
+    cp /tmp/vyatta-version_${VVERSION}_all.deb chroot/.
+    chroot chroot dpkg -i /vyatta-version_${VVERSION}_all.deb
+    mv chroot/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
 }
 
 set_up_apt_pref ()
