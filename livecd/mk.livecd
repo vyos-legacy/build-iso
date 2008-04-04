@@ -157,13 +157,15 @@ mk_version_package ()
 	echo " the list of recommended packages (with the recommended versions)"
     ) >DEBIAN/control
 
-    dpkg --build . "../vyatta-version_${VVERSION}_all.deb" >/dev/null
+    mkdir ../$$-deb
+    dpkg --build . "../$$-deb/vyatta-version_${VVERSION}_all.deb" >/dev/null
 
     rm -rf $tmpdir
     cd $savedir
-    cp /tmp/vyatta-version_${VVERSION}_all.deb chroot/.
+    mv /tmp/$$-deb/vyatta-version_${VVERSION}_all.deb chroot/.
     chroot chroot dpkg -i /vyatta-version_${VVERSION}_all.deb
     mv chroot/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
+    rm -rf /tmp/$$-deb
 }
 
 set_up_apt_pref ()
@@ -216,9 +218,6 @@ if [ "$ISO_FAST" == "yes" ]; then
   lh_chroot_local-packages || return 1
 
   mk_version_package
-  cp /tmp/vyatta-version*.deb chroot/vyatta-version.deb
-  chroot chroot dpkg -i /vyatta-version.deb
-  rm -f chroot/vyatta-version.deb
 
   echo I: building binary
   if ! lh_binary; then
@@ -365,9 +364,6 @@ if ! build_chroot; then
 fi
 
 mk_version_package
-cp /tmp/vyatta-version*.deb chroot/vyatta-version.deb
-chroot chroot dpkg -i /vyatta-version.deb
-rm -f chroot/vyatta-version_*_all.deb
 
 # remove backup files for ISO
 rm -f chroot/etc/*.vyatta-save chroot/etc/*/*.vyatta-save
