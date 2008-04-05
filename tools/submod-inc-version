@@ -149,6 +149,6 @@ do
 	do_inc_version "${submodule[i]}"
 done
 
-echo "$RELEASENAME">livecd/version
+echo "$RELEASENAME">../livecd/version
 $trace mod_changelog "$RELEASENAME"
 do_inc_version ..
