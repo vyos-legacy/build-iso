@@ -183,6 +183,74 @@ for xdeb in ${selected_debs_from_vyatta_deb_mirror[@]} ../pkgs/*.deb ; do
     fi
 done
 
+# create the buildid file
+mk_version_package ()
+{
+    local savedir="$PWD"
+    local etcdir="$savedir"/chroot/opt/vyatta/etc
+
+    VVERSION=`cat version`
+    tmpdir=/tmp/$$-version
+    vf=$tmpdir/opt/vyatta/etc
+
+    mkdir -p $vf
+    cd $tmpdir
+    mkdir DEBIAN
+
+    echo I: generating build record
+    cat <<-EOF > $vf/iso-build.txt
+	Built by :    $BUILTBY
+	Built on :    $HUMANTIME
+	Build ID :    $CDLABEL
+	EOF
+
+    # backwards compatible symlink
+    ln -s iso-build.txt $vf/build.txt
+    echo "$CDLABEL">$savedir/iso-label
+
+    echo I: generating package list
+    (
+	cd "$savedir"
+	cp $toolsdir/save-package-report chroot/vyatta-save-package-report
+	chroot chroot /bin/sh /vyatta-save-package-report
+	rm chroot/vyatta-save-package-report
+	mv $etcdir/deb-versions.txt $vf/.
+	cd ..
+	git-submodule status > $vf/iso-submodules.txt
+    )
+
+    echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
+
+    echo "Version  :    ${VVERSION}">$vf/version
+    echo "Copyright:    2006-2008 Vyatta, Inc.">>$vf/version
+
+    (
+	echo "Package: vyatta-version"
+	echo "Version: ${VVERSION}"
+	echo "Architecture: i386"
+	echo "Maintainer: Vyatta <debs@vyatta.com>"
+	echo "Essential: no"
+	echo "Section: base"
+	echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
+	echo -n Suggests: 
+	<$vf/deb-versions.txt sed -e 's/ *\([^ ]*\)$/(>=\1),/' -e 's/^/ /'
+	echo " nano"
+	echo Description: "$prefix version file"
+	echo " This package sets up the version file and a file containing"
+	echo " the list of recommended packages (with the recommended versions)"
+    ) >DEBIAN/control
+
+    mkdir ../$$-deb
+    dpkg --build . "../$$-deb/vyatta-version_${VVERSION}_all.deb" >/dev/null
+
+    rm -rf $tmpdir
+    cd $savedir
+    mv /tmp/$$-deb/vyatta-version_${VVERSION}_all.deb chroot/.
+    chroot chroot dpkg -i /vyatta-version_${VVERSION}_all.deb
+    mv chroot/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
+    rm -rf /tmp/$$-deb
+}
+
 echo I: configuring build
 lh_config
 find \
@@ -339,6 +407,8 @@ if ! build_chroot; then
   echo E: chroot build failed
   exit 1
 fi
+
+mk_version_package
 
 # remove backup files for ISO
 rm -f chroot/etc/*.vyatta-save chroot/etc/*/*.vyatta-save
