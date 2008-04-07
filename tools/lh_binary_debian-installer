@@ -134,8 +134,13 @@ then
 	fi
 fi
 
+lh_daily_distribution=${LH_DISTRIBUTION}
 if [ "${LH_DEBIAN_INSTALLER_DAILY}" = "enabled" ]
 then
+	if [ "${LH_DISTRIBUTION}" = "lenny" ]
+	then
+		lh_daily_distribution=sid
+	fi
 	# Debian Installer daily builds
 	case "${LH_ARCHITECTURE}" in
 		alpha)
@@ -338,20 +343,23 @@ gzip -9 -c dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages > di
 cd "${OLDPWD}"
 
 # Fetching release
-[ -f ${CACHEDIR}/Release ] || \
+if [ ! -f ${CACHEDIR}/Release ]
+then
+	echo I: fetching "${DEFAULT_MIRROR_BOOTSTRAP}/dists/${lh_daily_distribution}/main/binary-${LH_ARCHITECTURE}/Release"
 	wget ${WGET_OPTIONS} \
 		-O ${CACHEDIR}/Release \
-		"${LH_MIRROR_BOOTSTRAP}"/dists/"${LH_DISTRIBUTION}"/main/binary-"${LH_ARCHITECTURE}"/Release
+		"${DEFAULT_MIRROR_BOOTSTRAP}/dists/${lh_daily_distribution}/main/binary-${LH_ARCHITECTURE}/Release"
+fi
 cp ${CACHEDIR}/Release binary/dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Release
 
 # Fetching Packages file
-[ -f ${CACHEDIR}/Packages.gz ] || \
+if [ ! -f ${CACHEDIR}/Packages.gz ]
+then
+	echo I: fetching "${DEFAULT_MIRROR_BOOTSTRAP}/dists/${lh_daily_distribution}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
 	wget ${WGET_OPTIONS} \
 		-O ${CACHEDIR}/Packages.gz \
-		"${LH_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz" || \
-	wget ${WGET_OPTIONS} \
-		-O ${CACHEDIR}/Packages.gz \
-		"${DEFAULT_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
+		"${DEFAULT_MIRROR_BOOTSTRAP}/dists/${lh_daily_distribution}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
+fi
 
 # Sorting udebs
 UDEBS="$(gunzip -c ${CACHEDIR}/Packages.gz | awk '/Filename: / { print $2 }')"
