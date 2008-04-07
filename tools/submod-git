@@ -60,6 +60,7 @@ EOF
 	      | push \
 	      | status \
 	      | checkout \
+	      | push-with-tags \
 	      | update-mods )
 	      git=git_$1
 	      shift;;
@@ -77,6 +78,11 @@ git_pull ()
 git_push ()
 {
     git-push
+}
+
+git_push-with-tags ()
+{
+    git-push --tags
 }
 
 git_diff ()
