@@ -38,7 +38,9 @@ declare -a xdebs debs pkgs depends
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${ORGANIZATION:=vyatta.com}
-: ${LH_ARCHITECTURE:=`dpkg --print-architecture`}
+: ${LANGUAGE:=${LH_LANGUAGE:-en}}
+: ${LC_ALL:=C}
+export LANGUAGE LC_ALL
 
 LH_ISO_VOLUME+=" -- $CDLABEL"
 

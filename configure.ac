@@ -19,6 +19,9 @@ AC_PROG_LN_S
 # Checks for typedefs, structures, and compiler characteristics.
 
 # process argument variables
+test "X$LH_ARCHITECTURE" = "X" && LH_ARCHITECTURE=`dpkg --print-architecture`
+AC_ARG_VAR(LH_ARCHITECTURE, [default: dpkg --print-architecture])
+
 test "X$LH_APT" = "X" && LH_APT=apt
 AC_ARG_VAR(LH_APT, [default: apt])
 
@@ -62,6 +65,9 @@ AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
 
 test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR'
 AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta OFR])
+
+test "X$LH_LANGUANGE" = "X" && LH_LANGUAGE=en
+AC_ARG_VAR(LH_LANGUAGE, [default: en])
 
 test "X$LH_MEMTEST" = "X" && LH_MEMTEST=disabled
 AC_ARG_VAR(LH_MEMTEST, [default: disabled])
@@ -253,6 +259,7 @@ AC_SUBST(NOSTRIP)
 AC_SUBST(EXCLUDE_PKGS)
 
 AC_SUBST(LH_APT)
+AC_SUBST(LH_ARCHITECTURE)
 AC_SUBST(LH_BOOTAPPEND_LIVE)
 AC_SUBST(LH_BOOTAPPEND_INSTALL)
 AC_SUBST(LH_BOOTLOADER)
@@ -270,6 +277,7 @@ AC_SUBST(LH_INITRAMFS)
 AC_SUBST(LH_ISO_APPLICATION)
 AC_SUBST(LH_ISO_PUBLISHER)
 AC_SUBST(LH_ISO_VOLUME)
+AC_SUBST(LH_LANGUAGE)
 AC_SUBST(LH_LINUX_PACKAGES)
 AC_SUBST(LH_LINUX_FLAVOURS)
 AC_SUBST(LH_MEMTEST)
