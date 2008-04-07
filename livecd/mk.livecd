@@ -103,6 +103,7 @@ for m in proc-live sysfs-live devpts-live ; do
 	umount $m
     fi
 done
+rm -rf binary binary.iso chroot config
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
