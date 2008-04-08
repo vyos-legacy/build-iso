@@ -2,9 +2,9 @@
 
 # configured environment variables for mk.livecd/live-helper scripts
 
-declare -a EXCLUDE_PKGS=( @EXCLUDE_PKGS@ )
-
+declare -x EXCLUDE_PKGS="@EXCLUDE_PKGS@"
 declare -x LH_APT="@LH_APT@"
+declare -x LH_ARCHITECTURE="@LH_ARCHITECTURE@"
 declare -x LH_BOOTAPPEND_LIVE="@LH_BOOTAPPEND_LIVE@"
 declare -x LH_BOOTAPPEND_INSTALL="@LH_BOOTAPPEND_INSTALL@"
 declare -x LH_BOOTLOADER="@LH_BOOTLOADER@"
@@ -22,6 +22,7 @@ declare -x LH_INITRAMFS="@LH_INITRAMFS@"
 declare -x LH_ISO_APPLICATION="@LH_ISO_APPLICATION@"
 declare -x LH_ISO_PUBLISHER="@LH_ISO_PUBLISHER@"
 declare -x LH_ISO_VOLUME="@LH_ISO_VOLUME@"
+declare -x LH_LANGUAGE="@LH_LANGUAGE@"
 declare -x LH_LINUX_PACKAGES="@LH_LINUX_PACKAGES@"
 declare -x LH_LINUX_FLAVOURS="@LH_LINUX_FLAVOURS@"
 declare -x LH_MEMTEST="@LH_MEMTEST@"

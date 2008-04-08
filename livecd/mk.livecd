@@ -38,26 +38,26 @@ declare -a xdebs debs pkgs depends
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${ORGANIZATION:=vyatta.com}
-: ${LH_ARCHITECTURE:=`dpkg --print-architecture`}
+: ${LANGUAGE:=${LH_LANGUAGE:-en}}
+: ${LC_ALL:=C}
+export LANGUAGE LC_ALL
 
 LH_ISO_VOLUME+=" -- $CDLABEL"
 
-chroot_exclude_pattern='cpp'
-chroot_exclude_pattern+='|cpp-*'
-chroot_exclude_pattern+='|*-dev'
-chroot_exclude_pattern+='|*-doc'
-chroot_exclude_pattern+='|dhcp3-*'
-chroot_exclude_pattern+='|fakechroot'
-chroot_exclude_pattern+='|gcc*'
-chroot_exclude_pattern+='|git*'
-chroot_exclude_pattern+='|groff*'
-chroot_exclude_pattern+='|iproute'
-chroot_exclude_pattern+='|linux-headers*'
-chroot_exclude_pattern+='|linux-source*'
-chroot_exclude_pattern+='|man*'
-for (( i=0; i<${#EXCLUDE_PKGS[@]}; i++)) ; do
-    chroot_exclude_pattern+=\|${EXCLUDE_PKGS[i]}
-done
+chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}
+
+cat <<EOF > cache/vyatta-pkgs
+installation-report
+laptop-detect
+usbutils
+popularity-contest
+tasksel
+snmp
+tcpdump
+EOF
+
+echo -e ${EXCLUDE_PKGS//,/-\\n}- >> cache/vyatta-pkgs
+
 binary_exclude_pattern=$chroot_exclude_pattern
 binary_exclude_pattern+='|squashfs-tools'
 binary_exclude_pattern+='|live-initramfs'
@@ -103,6 +103,7 @@ for m in proc-live sysfs-live devpts-live ; do
 	umount $m
     fi
 done
+rm -rf binary binary.iso chroot config
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
@@ -140,11 +141,6 @@ for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
 	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
     fi
 done
-
-cat <<EOF > cache/vyatta-pkgs
-snmp
-tcpdump
-EOF
 
 case "${LH_ARCHITECTURE}" in
     amd64 | i386 )
@@ -252,7 +248,8 @@ mk_version_package ()
 }
 
 echo I: configuring build
-lh_config
+lh_config  -p cache/vyatta-pkgs
+
 find \
     binary_local-hooks \
     binary_local-includes \
@@ -286,8 +283,6 @@ if [ ${#deb_sources[@]} -gt 0 ]; then
     cp ${deb_sources[@]} config/chroot_sources/
 fi
  
-cp cache/vyatta-pkgs config/chroot_local-packageslists/vyatta-pkgs
-
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
 # is cached, so the bootstrap step only restores the cached stage.

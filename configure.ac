@@ -19,6 +19,9 @@ AC_PROG_LN_S
 # Checks for typedefs, structures, and compiler characteristics.
 
 # process argument variables
+test "X$LH_ARCHITECTURE" = "X" && LH_ARCHITECTURE=`dpkg --print-architecture`
+AC_ARG_VAR(LH_ARCHITECTURE, [default: dpkg --print-architecture])
+
 test "X$LH_APT" = "X" && LH_APT=apt
 AC_ARG_VAR(LH_APT, [default: apt])
 
@@ -63,6 +66,9 @@ AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
 test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR'
 AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta OFR])
 
+test "X$LH_LANGUANGE" = "X" && LH_LANGUAGE=en
+AC_ARG_VAR(LH_LANGUAGE, [default: en])
+
 test "X$LH_MEMTEST" = "X" && LH_MEMTEST=disabled
 AC_ARG_VAR(LH_MEMTEST, [default: disabled])
 
@@ -97,10 +103,11 @@ AC_ARG_WITH(exclude,
 [AS_HELP_STRING([--with-exclude],
   [comma separated package list to exclude from iso])])
 
-EXCLUDE_PKGS=
-for p in `echo "$with_exclude" | tr , ' '` ; do
-    EXCLUDE_PKGS+=" $p"
-done
+if test "X$with_exclude" = "X" ; then
+   EXCLUDE_PKGS=''
+else
+   EXCLUDE_PKGS=$with_exclude,
+fi
 
 AC_ARG_WITH(target-dist,
 	[AS_HELP_STRING([--with-target-dist=<dist>],
@@ -179,30 +186,26 @@ gutsy | hardy )
 	# LH_DISTRIBUTION-updates
 	LH_SECURITY="disabled"
 	LH_SECTIONS="main restricted universe multiverse"
-	EXCLUDE_PKGS+=" mailx"
-	EXCLUDE_PKGS+=" dash"
-	EXCLUDE_PKGS+=" openhpid"
+	EXCLUDE_PKGS+=mailx,
+	EXCLUDE_PKGS+=dash,
+	EXCLUDE_PKGS+=openhpid,
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 # FIXME! can no longer exlude exim like this...
-#	EXCLUDE_PKGS+=" exim4-daemon-light"
-#	EXCLUDE_PKGS+=" exim4-config"
-#	EXCLUDE_PKGS+=" exim4-base"
-#	EXCLUDE_PKGS+=" exim4"
-#	EXCLUDE_PKGS+=" ubuntu-minimal"
+#	EXCLUDE_PKGS+=exim4-daemon-light,exim4-config,exim4-base,exim4,ubuntu-minimal,
 	if eval "$use_xen" ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
 	    LH_LINUX_FLAVOURS="xen"
 	    LH_BOOTSTRAP_INCLUDE+=",libc6-xen"
-	    EXCLUDE_PKGS+=" alsa-base"
-	    EXCLUDE_PKGS+=" alsa-utils"
-	    EXCLUDE_PKGS+=" console-setup"
-	    EXCLUDE_PKGS+=" console-terminus"
-	    EXCLUDE_PKGS+=" console-tools"
-	    EXCLUDE_PKGS+=" pciutils"
-	    EXCLUDE_PKGS+=" pcmciautils"
-	    EXCLUDE_PKGS+=" wireless-tools"
-	    EXCLUDE_PKGS+=" wpasupplicant"
+	    EXCLUDE_PKGS+=alsa-base,
+	    EXCLUDE_PKGS+=alsa-utils,
+	    EXCLUDE_PKGS+=console-setup,
+	    EXCLUDE_PKGS+=console-terminus,
+	    EXCLUDE_PKGS+=console-tools,
+	    EXCLUDE_PKGS+=pciutils,
+	    EXCLUDE_PKGS+=pcmciautils,
+	    EXCLUDE_PKGS+=wireless-tools,
+	    EXCLUDE_PKGS+=wpasupplicant,
 	elif test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
@@ -211,7 +214,13 @@ gutsy | hardy )
 	;;
 * )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
-	EXCLUDE_PKGS+=" openhpid"
+	EXCLUDE_PKGS+=aptitude-doc-en,
+	EXCLUDE_PKGS+=cpp,cpp-4.2,
+	EXCLUDE_PKGS+=fakechroot,
+	EXCLUDE_PKGS+=linux-headers,linux-source,
+	EXCLUDE_PKGS+=openhpid,
+	EXCLUDE_PKGS+=perl-doc,
+	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
@@ -238,7 +247,7 @@ gutsy | hardy )
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 	;;
 esac
-
+EXCLUDE_PKGS=${EXCLUDE_PKGS/,$/}
 
 AC_CONFIG_FILES([Makefile livecd/mk.livecd.conf])
 
@@ -253,6 +262,7 @@ AC_SUBST(NOSTRIP)
 AC_SUBST(EXCLUDE_PKGS)
 
 AC_SUBST(LH_APT)
+AC_SUBST(LH_ARCHITECTURE)
 AC_SUBST(LH_BOOTAPPEND_LIVE)
 AC_SUBST(LH_BOOTAPPEND_INSTALL)
 AC_SUBST(LH_BOOTLOADER)
@@ -270,6 +280,7 @@ AC_SUBST(LH_INITRAMFS)
 AC_SUBST(LH_ISO_APPLICATION)
 AC_SUBST(LH_ISO_PUBLISHER)
 AC_SUBST(LH_ISO_VOLUME)
+AC_SUBST(LH_LANGUAGE)
 AC_SUBST(LH_LINUX_PACKAGES)
 AC_SUBST(LH_LINUX_FLAVOURS)
 AC_SUBST(LH_MEMTEST)

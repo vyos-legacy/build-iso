@@ -14,7 +14,7 @@ logger -t preseed/late_command "info: apt-install ppp pppoe"
 apt-install ppp pppoe
 rm -f /target/etc/ppp/chap-secrets
 
-pkgs=`cat /cdrom/install/apt-install-list.txt | sed '/^ppp$/d; /^pppoe/d`
+pkgs=`sed -e '/^ppp$/d; /^pppoe/d' /cdrom/install/apt-install-list.txt`
 logger -t preseed/late_command "info: apt-install $pkgs"
 apt-install $pkgs
 
