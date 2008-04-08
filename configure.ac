@@ -217,7 +217,7 @@ gutsy | hardy )
 	EXCLUDE_PKGS+=aptitude-doc-en,
 	EXCLUDE_PKGS+=cpp,cpp-4.2,
 	EXCLUDE_PKGS+=fakechroot,
-	EXCLUDE_PKGS+=linux-headers,linux-source,
+	EXCLUDE_PKGS+=linux-headers,linux-source,linux-libc-dev,
 	EXCLUDE_PKGS+=openhpid,
 	EXCLUDE_PKGS+=perl-doc,
 	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1
