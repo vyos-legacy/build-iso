@@ -44,22 +44,12 @@ export LANGUAGE LC_ALL
 
 LH_ISO_VOLUME+=" -- $CDLABEL"
 
-chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}
-
 mkdir -p cache
 
-cat <<EOF > cache/vyatta-pkgs
-installation-report
-laptop-detect
-usbutils
-popularity-contest
-tasksel
-snmp
-tcpdump
-EOF
+echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/-\\n}- | \
+    sort > cache/vyatta-pkgs
 
-echo -e ${EXCLUDE_PKGS//,/-\\n}- >> cache/vyatta-pkgs
-
+chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}\|linux-headers\*\|linux-source\*\|\*-dev
 binary_exclude_pattern=$chroot_exclude_pattern
 binary_exclude_pattern+='|squashfs-tools'
 binary_exclude_pattern+='|live-initramfs'
@@ -143,20 +133,6 @@ for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
 	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
     fi
 done
-
-case "${LH_ARCHITECTURE}" in
-    amd64 | i386 )
-	cat <<-EOF >> cache/vyatta-pkgs
-	grub-pc
-	grub-
-	EOF
-	;;
-
-    * )
-	echo "FIXME\! select boot loader for ${LH_ARCHITECTURE}" >&2
-	exit 1
-	;;
-esac
 
 rm -f config/chroot_local-packages/*.deb
 mkdir -p config/chroot_local-packages

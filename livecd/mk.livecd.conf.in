@@ -3,6 +3,7 @@
 # configured environment variables for mk.livecd/live-helper scripts
 
 declare -x EXCLUDE_PKGS="@EXCLUDE_PKGS@"
+declare -x INCLUDE_PKGS="@INCLUDE_PKGS@"
 declare -x LH_APT="@LH_APT@"
 declare -x LH_ARCHITECTURE="@LH_ARCHITECTURE@"
 declare -x LH_BOOTAPPEND_LIVE="@LH_BOOTAPPEND_LIVE@"

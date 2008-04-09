@@ -109,6 +109,16 @@ else
    EXCLUDE_PKGS=$with_exclude,
 fi
 
+AC_ARG_WITH(include,
+[AS_HELP_STRING([--with-include],
+  [comma separated package list to include with iso])])
+
+if test "X$with_include" = "X" ; then
+   INCLUDE_PKGS=''
+else
+   INCLUDE_PKGS=$with_include,
+fi
+
 AC_ARG_WITH(target-dist,
 	[AS_HELP_STRING([--with-target-dist=<dist>],
 	  [Target distribution (e.g., "lenny"), default to the host distribution])],
@@ -214,14 +224,15 @@ gutsy | hardy )
 	;;
 * )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
-	EXCLUDE_PKGS+=aptitude-doc-en,
 	EXCLUDE_PKGS+=cpp,cpp-4.2,
-	EXCLUDE_PKGS+=exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,bsd-mailx,mail-transport-agent,
-	EXCLUDE_PKGS+=fakechroot,
-	EXCLUDE_PKGS+=linux-source-2.6.23,linux-libc-dev,
+	EXCLUDE_PKGS+=exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,bsd-mailx,
+	EXCLUDE_PKGS+=linux-libc-dev,
 	EXCLUDE_PKGS+=openhpid,
 	EXCLUDE_PKGS+=perl-doc,
-	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1
+	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1,
+	INCLUDE_PKGS+=installation-report,laptop-detect,usbutils,popularity-contest,tasksel,snmp,tcpdump,
+	INCLUDE_PKGS+=grub-pc
+	EXCLUDE_PKGS+=grub
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
@@ -249,6 +260,7 @@ gutsy | hardy )
 	;;
 esac
 EXCLUDE_PKGS=${EXCLUDE_PKGS/,$/}
+INCLUDE_PKGS=${INCLUDE_PKGS/,$/}
 
 AC_CONFIG_FILES([Makefile livecd/mk.livecd.conf])
 
@@ -261,6 +273,7 @@ AC_SUBST(MACHINE_PREFIX)
 AC_SUBST(NOSTRIP)
 
 AC_SUBST(EXCLUDE_PKGS)
+AC_SUBST(INCLUDE_PKGS)
 
 AC_SUBST(LH_APT)
 AC_SUBST(LH_ARCHITECTURE)
