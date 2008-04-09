@@ -1,3 +1,95 @@
+build-iso (0.4) unstable; urgency=low
+
+  3.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 3037
+  * update vyatta-cfg
+  * update vyatta-cfg
+  * vyatta-ravpn, vyatta-cfg: allow L2TP VPN to work with clustering.
+  * vyatta-cfg, vyatta-cfg-system: fix for bug 3032
+  * vyatta-ravpn: fix for bug 3072
+  * vyatta-cfg: fix for bug 2675
+  * update vyatta-cluster
+  * vyatta-cfg, vyatta-cluster: add workaround for watchlink to cluster.
+  * vyatta-cfg: fix for bug 2689
+  * vyatta-cfg-system: fix for bug 3087
+  * vyatta-cfg: fix for bug 3097
+  * vyatta-cfg: fix for bug 3090
+
+  [ Bob Gilligan ]
+  * update sub-module vyatta-cfg-op-pppoe
+  * update sub-modules vyatta-cfg-op-pppoe and vyatta-cfg-system
+  * update sub-module vyatta-cfg-op-pppoe
+
+  [ Mark O'Brien ]
+  * VC4.0.1
+  * 3.0.1
+  * Update index
+  * Update indices
+
+  [ Michael Larson ]
+  * update-index
+
+  [ Rick Balocca ]
+  * Update indices
+  * Add Copyright to version file generation
+
+  [ Robert Bays ]
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update submodule linux-vyatta
+
+  [ Stephen Hemminger ]
+  * update index for kernel netlink fix
+  * update index
+  * update qos index
+  * Update index for quagga and config
+
+  [ Stig Thormodsrud ]
+  * update index for 3023
+  * update index for 3026
+  * update-index
+  * update-index
+  * Revert "update-index"
+  * update index for vyatta-cfg
+  * update index
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+  * Update index
+  * Add push-with-tags to script
+  * Update indices
+  * Update index
+  * Line up the colons with the copyright notice (for show version)
+  * Update indices
+  * Add new package vyatta-base
+  * Update index
+  * Update modules
+  * Update index
+  * Update index
+  * Update indices
+  * Create version package during livecd processing
+  * Add version file to livecd dir
+  * Update index
+  * Move vyatta-version into config/chroot_local-packages
+  * Update indices
+  * Update index
+  * Update index
+  * Update index
+  * Update index
+  * Assemble the vyatta-version package in a user-unique tmp directory.
+  * Fix typo
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Fri, 04 Apr 2008 18:01:48 -0700
+
 build-iso (0.3) unstable; urgency=low
 
   VC4.0.1
