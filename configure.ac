@@ -216,6 +216,7 @@ gutsy | hardy )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
 	EXCLUDE_PKGS+=aptitude-doc-en,
 	EXCLUDE_PKGS+=cpp,cpp-4.2,
+	EXCLUDE_PKGS+=exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,bsd-mailx,mail-transport-agent,
 	EXCLUDE_PKGS+=fakechroot,
 	EXCLUDE_PKGS+=linux-source-2.6.23,linux-libc-dev,
 	EXCLUDE_PKGS+=openhpid,
