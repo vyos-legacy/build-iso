@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # lh_binary_debian-installer(1) - install debian-installer into binary
 # Copyright (C) 2006-2007 Daniel Baumann <daniel@debian.org>
@@ -203,9 +203,9 @@ fi
 # Downloading debian-installer
 mkdir -p "${CACHEDIR_DI}"
 [ -f "${CACHEDIR}"/"${VMLINUZ_DI}" ] || \
-    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${VMLINUZ_DI}" ${URL}/${DI}/${DI_KERNEL}
+    wget ${WGET_OPTIONS} -O "${CACHEDIR}"/"${VMLINUZ_DI}" ${URL}/${DI}/${DI_KERNEL}
 [ -f "${CACHEDIR}"/"${INITRD_DI}" ] || \
-    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${INITRD_DI}" ${URL}/${DI}/initrd.gz
+    wget ${WGET_OPTIONS} -O "${CACHEDIR}"/"${INITRD_DI}" ${URL}/${DI}/initrd.gz
 
 mkdir -p "${DESTDIR_DI}"
 cp "${CACHEDIR}"/"${VMLINUZ_DI}" "${DESTDIR}"/"${VMLINUZ_DI}"
