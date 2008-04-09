@@ -216,11 +216,11 @@ if [ "${LH_ARCHITECTURE}" = "amd64" ] || [ "${LH_ARCHITECTURE}" = "i386" ] || [ 
 then
 	mkdir -p "${CACHEDIR_GI}"
 	[ -f "${CACHEDIR}"/"${VMLINUZ_GI}" ] || \
-		wget ${WGET_OPTIONS} --no-clobber \
+		wget ${WGET_OPTIONS} \
 			-O "${CACHEDIR}"/"${VMLINUZ_GI}" \
 			${URL}/${DI_GTK}/${DI_KERNEL}
 	[ -f "${CACHEDIR}"/"${INITRD_GI}" ] || \
-		wget ${WGET_OPTIONS} --no-clobber \
+		wget ${WGET_OPTIONS} \
 			-O "${CACHEDIR}"/"${INITRD_GI}" \
 			${URL}/${DI_GTK}/initrd.gz
 	mkdir -p "${DESTDIR_GI}"

@@ -46,6 +46,8 @@ LH_ISO_VOLUME+=" -- $CDLABEL"
 
 chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}
 
+mkdir -p cache
+
 cat <<EOF > cache/vyatta-pkgs
 installation-report
 laptop-detect
@@ -207,9 +209,9 @@ mk_version_package ()
     echo I: generating package list
     (
 	cd "$savedir"
-	cp $toolsdir/save-package-report chroot/vyatta-save-package-report
-	chroot chroot /bin/sh /vyatta-save-package-report
-	rm chroot/vyatta-save-package-report
+	#cp $toolsdir/save-package-report chroot/save-package-report
+	chroot chroot /opt/vyatta/bin/save-package-report
+	#rm chroot/save-package-report
 	mv $etcdir/deb-versions.txt $vf/.
 	cd ..
 	git-submodule status > $vf/iso-submodules.txt
@@ -272,9 +274,9 @@ EOF
 
 ## NOTE: the 00-mk_buildid hook moves these to /opt/vyatta/etc
 ##	 during live image build, and binary install respectively
-cp config/chroot_local-includes/iso-*.txt config/binary_local-includes/
-cp config/chroot_local-includes/vyatta-save-package-report \
-    config/binary_local-includes/
+#cp config/chroot_local-includes/iso-*.txt config/binary_local-includes/
+#cp config/chroot_local-includes/vyatta-save-package-report \
+    #config/binary_local-includes/
 
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
