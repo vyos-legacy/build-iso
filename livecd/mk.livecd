@@ -274,7 +274,7 @@ EOF
 ##	 during live image build, and binary install respectively
 #cp config/chroot_local-includes/iso-*.txt config/binary_local-includes/
 #cp config/chroot_local-includes/vyatta-save-package-report \
-    config/binary_local-includes/
+    #config/binary_local-includes/
 
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
