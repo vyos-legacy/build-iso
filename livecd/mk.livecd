@@ -248,7 +248,9 @@ mk_version_package ()
 }
 
 echo I: configuring build
-lh_config  -p cache/vyatta-pkgs
+lh_config
+
+cp cache/vyatta-pkgs config/chroot_local-packageslists
 
 find \
     binary_local-hooks \
