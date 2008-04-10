@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -137,7 +137,7 @@ done
 rm -f config/chroot_local-packages/*.deb
 mkdir -p config/chroot_local-packages
 
-for xdeb in ${selected_debs_from_vyatta_deb_mirror[@]} ../pkgs/*.deb ; do
+for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
     deb=${xdeb##*/}
     pkg=${deb%%_*}
     
@@ -149,9 +149,10 @@ for xdeb in ${selected_debs_from_vyatta_deb_mirror[@]} ../pkgs/*.deb ; do
 	continue
     fi
 
+    cnt=`echo config/chroot_local-packages/${pkg}_*.deb|wc -w`
     if [[ $xdeb == ../pkgs* ]] ; then
 	ln -sf ../../../pkgs/$deb config/chroot_local-packages/$deb
-    else
+    elif [[ "$cnt" = 0 ]]; then
 	ln -sf ../../cache/vyatta-deb-mirror/$deb \
 	    config/chroot_local-packages/$deb
     fi
@@ -427,35 +428,12 @@ cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
 echo I: Copy packages to install pool
 rm -f config/binary_local-debs/*.deb
 mkdir -p config/binary_depend-debs
-for xdeb in cache/packages_linux-image/*.deb ; do
+for xdeb in cache/packages_linux-image/*.deb cache/packages_local-packages/*.deb cache/packages_local-packageslists/*.deb config/chroot_local-packages/*.deb; do
     deb=${xdeb##*/}
     pkg=${deb%%_*}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../../cache/packages_linux-image/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-for xdeb in cache/packages_local-packages/*.deb ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../../cache/packages_local-packages/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-for xdeb in cache/packages_local-packageslists/*.deb ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../../cache/packages_local-packageslists/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-for xdeb in config/chroot_local-packages/*.deb ; do
-    deb=${xdeb##*/}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../chroot_local-packages/$deb \
-	    config/binary_local-debs/$deb
+    cnt=`echo config/binary_local-debs/${pkg}_*.deb|wc -w`
+    if [[ "$pkg" == !($binary_exclude_pattern) ]] && [[ "$cnt" = 0 ]] ; then
+	ln -sf ../../$xdeb config/binary_local-debs/$deb
     fi
 done
 
