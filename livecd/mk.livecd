@@ -149,10 +149,10 @@ for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
 	continue
     fi
 
-    cnt=`echo config/chroot_local-packages/${pkg}_*.deb|wc -w`
+    file=`echo config/chroot_local-packages/${pkg}_*.deb`
     if [[ $xdeb == ../pkgs* ]] ; then
 	ln -sf ../../../pkgs/$deb config/chroot_local-packages/$deb
-    elif [[ "$cnt" = 0 ]]; then
+    elif [[ ! "$file" ]]; then
 	ln -sf ../../cache/vyatta-deb-mirror/$deb \
 	    config/chroot_local-packages/$deb
     fi
@@ -248,12 +248,6 @@ EOF
 
 ( cd .. ; git-submodule status ) \
     > config/chroot_local-includes/iso-submodules.txt
-
-## NOTE: the 00-mk_buildid hook moves these to /opt/vyatta/etc
-##	 during live image build, and binary install respectively
-#cp config/chroot_local-includes/iso-*.txt config/binary_local-includes/
-#cp config/chroot_local-includes/vyatta-save-package-report \
-    #config/binary_local-includes/
 
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
@@ -431,8 +425,8 @@ mkdir -p config/binary_depend-debs
 for xdeb in cache/packages_linux-image/*.deb cache/packages_local-packages/*.deb cache/packages_local-packageslists/*.deb config/chroot_local-packages/*.deb; do
     deb=${xdeb##*/}
     pkg=${deb%%_*}
-    cnt=`echo config/binary_local-debs/${pkg}_*.deb|wc -w`
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] && [[ "$cnt" = 0 ]] ; then
+    file=`echo config/binary_local-debs/${pkg}_*.deb`
+    if [[ "$pkg" == !($binary_exclude_pattern) ]] && [[ ! "$file" ]] ; then
 	ln -sf ../../$xdeb config/binary_local-debs/$deb
     fi
 done
