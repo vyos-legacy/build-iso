@@ -1,3 +1,50 @@
+build-iso (0.5) unstable; urgency=low
+
+  VC4.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * vyatta-cluster: fix for bugs 2970, 3109, 3110
+  * vyatta-cfg-firewall: fix for bug 3127
+  * vyatta-cluster: fix for bug 3147
+
+  [ Mark O'Brien ]
+  * 3.0.2
+  * 3.0.2
+  * update sub-module vyatta-cfg-quagga
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server - Fix Bug 2418 Need to
+    expose dhcp-server-identifier option in CLI
+
+  [ Robert Bays ]
+  * update submodule vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+
+  [ Stephen Hemminger ]
+  * update index
+  * update index on Qos
+  * update index
+  * update index
+  * update index
+
+  [ Stig Thormodsrud ]
+  * update indexes
+  * update index
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+  * Update index
+  * Update indices
+  * Update indices
+  * Update indices
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Wed, 16 Apr 2008 09:50:43 -0700
+
 build-iso (0.4) unstable; urgency=low
 
   3.0.2
