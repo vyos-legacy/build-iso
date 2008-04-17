@@ -129,7 +129,11 @@ declare -a selected_debs_from_vyatta_deb_mirror
 for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
     deb=$( sed -n "/^Filename: .*\/${pkg}_/ { s,.*/,,g; s,%3a,:,g; p }" \
 	cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages )
-    if [ -n "$deb" ] ; then
+    if [[ $pkg =~ linux-image-.* ]] ; then
+	if [ $pkg = $VYATTA_LINUX_PKG ] ; then
+	    selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
+	fi
+    elif [ -n "$deb" ] ; then
 	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
     fi
 done
