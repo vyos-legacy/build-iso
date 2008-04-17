@@ -178,7 +178,7 @@ else
 fi
 
 # FIXME! fetch version from source
-VYATTA_LINUX_PKG=linux-image-2.6.24-1-486-vyatta
+VYATTA_LINUX_PKG=linux-image-2.6.23-1-486-vyatta
 LH_LINUX_FLAVOURS="486-vyatta"
 LH_LINUX_PACKAGES=none
 BUILD_PKGS=

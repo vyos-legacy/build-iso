@@ -61,8 +61,8 @@
 [submodule "pkgs/wanpipe"]
 	path = pkgs/wanpipe
 	url = http://git.vyatta.com/wanpipe.git
-[submodule "pkgs/linux-image-2.6.24-1-486-vyatta"]
-	path = pkgs/linux-image-2.6.24-1-486-vyatta
+[submodule "pkgs/linux-image-2.6.23-1-486-vyatta"]
+	path = pkgs/linux-image-2.6.23-1-486-vyatta
 	url = http://git.vyatta.com/linux-vyatta.git
 [submodule "pkgs/vyatta-cfg-dhcp-relay"]
 	path = pkgs/vyatta-cfg-dhcp-relay
