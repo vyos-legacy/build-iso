@@ -91,3 +91,6 @@
 [submodule "pkgs/vyatta-base"]
 	path = pkgs/vyatta-base
 	url = http://git.vyatta.com/vyatta-base.git
+[submodule "pkgs/vyatta-idp-snort"]
+	path = pkgs/vyatta-idp-snort
+	url = http://git.vyatta.com/vyatta-idp-snort.git
