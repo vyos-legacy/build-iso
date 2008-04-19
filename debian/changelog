@@ -1,3 +1,21 @@
+build-iso (0.6) unstable; urgency=low
+
+  VC4.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg-firewall: fix for bug 3167
+  * update vyatta-cfg-quagga
+
+  [ Robert Bays ]
+  * bug 3177: update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Sat, 19 Apr 2008 11:56:36 -0700
+
 build-iso (0.5) unstable; urgency=low
 
   VC4.0.2
