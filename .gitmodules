@@ -94,3 +94,6 @@
 [submodule "pkgs/vyatta-idp-snort"]
 	path = pkgs/vyatta-idp-snort
 	url = http://git.vyatta.com/vyatta-idp-snort.git
+[submodule "pkgs/linux-kernel-di-i386-2.6"]
+	path = pkgs/linux-kernel-di-i386-2.6
+	url = http://git.vyatta.com/linux-kernel-di-i386-2.6.git
