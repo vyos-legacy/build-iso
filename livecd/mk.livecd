@@ -172,7 +172,19 @@ mk_version_package ()
     tmpdir=/tmp/$$-version
     vf=$tmpdir/opt/vyatta/etc
 
-    mkdir -p $vf
+    mkdir -p $vf/config
+
+    case "$VVERSION" in
+    V*|v*)
+		config_src=community
+		;;
+    *)
+		config_src=supported
+    esac
+
+    pwd
+    cp templates/$config_src/config.boot.default $vf/config/.
+
     cd $tmpdir
     mkdir DEBIAN
 
