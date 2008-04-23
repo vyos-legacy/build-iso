@@ -182,7 +182,6 @@ mk_version_package ()
 		config_src=supported
     esac
 
-    pwd
     cp templates/$config_src/config.boot.default $vf/config/.
 
     cd $tmpdir
