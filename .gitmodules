@@ -97,3 +97,6 @@
 [submodule "pkgs/linux-kernel-di-i386-2.6"]
 	path = pkgs/linux-kernel-di-i386-2.6
 	url = http://git.vyatta.com/linux-kernel-di-i386-2.6.git
+[submodule "pkgs/installer"]
+	path = pkgs/installer
+	url = http://git.vyatta.com/installer.git
