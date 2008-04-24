@@ -182,7 +182,7 @@ mk_version_package ()
 		config_src=supported
     esac
 
-    cp templates/$config_src/config.boot.default $vf/config/.
+    cp templates/$config_src/config.boot.default $vf/.
 
     cd $tmpdir
     mkdir DEBIAN
