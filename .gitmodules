@@ -85,6 +85,9 @@
 [submodule "pkgs/vyatta-wanloadbalance"]
 	path = pkgs/vyatta-wanloadbalance
 	url = http://git.vyatta.com/vyatta-wanloadbalance.git
+[submodule "pkgs/vyatta-base"]
+	path = pkgs/vyatta-base
+	url = http://git.vyatta.com/vyatta-base.git
 [submodule "pkgs/vyatta-snort"]
 	path = pkgs/vyatta-snort
 	url = http://git.vyatta.com/vyatta-snort.git

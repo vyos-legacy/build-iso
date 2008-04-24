@@ -1,3 +1,322 @@
+build-iso (0.6) unstable; urgency=low
+
+  VC4.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg-firewall: fix for bug 3167
+  * update vyatta-cfg-quagga
+
+  [ Robert Bays ]
+  * bug 3177: update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Sat, 19 Apr 2008 11:56:36 -0700
+
+build-iso (0.5) unstable; urgency=low
+
+  VC4.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * vyatta-cluster: fix for bugs 2970, 3109, 3110
+  * vyatta-cfg-firewall: fix for bug 3127
+  * vyatta-cluster: fix for bug 3147
+
+  [ Mark O'Brien ]
+  * 3.0.2
+  * 3.0.2
+  * update sub-module vyatta-cfg-quagga
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server - Fix Bug 2418 Need to
+    expose dhcp-server-identifier option in CLI
+
+  [ Robert Bays ]
+  * update submodule vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+
+  [ Stephen Hemminger ]
+  * update index
+  * update index on Qos
+  * update index
+  * update index
+  * update index
+
+  [ Stig Thormodsrud ]
+  * update indexes
+  * update index
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+  * Update index
+  * Update indices
+  * Update indices
+  * Update indices
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Wed, 16 Apr 2008 09:50:43 -0700
+
+build-iso (0.4) unstable; urgency=low
+
+  3.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 3037
+  * update vyatta-cfg
+  * update vyatta-cfg
+  * vyatta-ravpn, vyatta-cfg: allow L2TP VPN to work with clustering.
+  * vyatta-cfg, vyatta-cfg-system: fix for bug 3032
+  * vyatta-ravpn: fix for bug 3072
+  * vyatta-cfg: fix for bug 2675
+  * update vyatta-cluster
+  * vyatta-cfg, vyatta-cluster: add workaround for watchlink to cluster.
+  * vyatta-cfg: fix for bug 2689
+  * vyatta-cfg-system: fix for bug 3087
+  * vyatta-cfg: fix for bug 3097
+  * vyatta-cfg: fix for bug 3090
+
+  [ Bob Gilligan ]
+  * update sub-module vyatta-cfg-op-pppoe
+  * update sub-modules vyatta-cfg-op-pppoe and vyatta-cfg-system
+  * update sub-module vyatta-cfg-op-pppoe
+
+  [ Mark O'Brien ]
+  * VC4.0.1
+  * 3.0.1
+  * Update index
+  * Update indices
+
+  [ Michael Larson ]
+  * update-index
+
+  [ Rick Balocca ]
+  * Update indices
+  * Add Copyright to version file generation
+
+  [ Robert Bays ]
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update submodule linux-vyatta
+
+  [ Stephen Hemminger ]
+  * update index for kernel netlink fix
+  * update index
+  * update qos index
+  * Update index for quagga and config
+
+  [ Stig Thormodsrud ]
+  * update index for 3023
+  * update index for 3026
+  * update-index
+  * update-index
+  * Revert "update-index"
+  * update index for vyatta-cfg
+  * update index
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+  * Update index
+  * Add push-with-tags to script
+  * Update indices
+  * Update index
+  * Line up the colons with the copyright notice (for show version)
+  * Update indices
+  * Add new package vyatta-base
+  * Update index
+  * Update modules
+  * Update index
+  * Update index
+  * Update indices
+  * Create version package during livecd processing
+  * Add version file to livecd dir
+  * Update index
+  * Move vyatta-version into config/chroot_local-packages
+  * Update indices
+  * Update index
+  * Update index
+  * Update index
+  * Update index
+  * Assemble the vyatta-version package in a user-unique tmp directory.
+  * Fix typo
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Fri, 04 Apr 2008 18:01:48 -0700
+
+build-iso (0.3) unstable; urgency=low
+
+  VC4.0.1
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update vyatta-ravpn
+  * update vyatta-cluster
+  * vyatta-cfg: fix for bug 2868
+  * vyatta-cfg: fix for bug 2749
+  * vyatta-op: fix for bug 2771
+  * vyatta-op: revert accidental push
+  * vyatta-op: fix for bug 2911
+  * update submodules
+  * update vyatta-op
+  * vyatta-cfg: fix for bug 2912
+  * vyatta-cfg: fix for bug 2924
+  * update vyatta-op
+  * update vyatta-op
+  * update vyatta-cfg-firewall
+  * freeze the packages used in iso build for glendale.
+  * vyatta-nat: fix for bug 2963
+  * vyatta-cfg: fix for bug 2950
+  * vyatta-ravpn: fix for bug 2961
+  * fix typo in submod-git
+  * update vyatta-cfg-system
+  * vyatta-nat: fix for bug 2975
+  * vyatta-cfg-system: fix for bug 2083
+  * update vyatta-cfg
+  * update vyatta-cfg
+  * update vyatta-cfg
+  * vyatta-ravpn: fix for bug 3005
+  * set glendale defaults of target-dist and deb-install.
+  * vyatta-ravpn: fix for bug 3013
+  * new instructions for internal/external build
+  * update vyatta-cluster
+
+  [ Bob Gilligan ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-op-pppoe
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-quagga
+  * update sub-module vyatta-serial
+  * update sub-module vyatta-cfg-op-pppoe
+  * update sub-module vyatta-op
+  * Bugfix: 2793
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg
+
+  [ Christopher Liljenstolpe ]
+  * update index
+
+  [ Justin Fletcher ]
+  * update submodule vyatta-op-quagga
+  * update submodule vyatta-op
+  * update submodule vyatta-op-quagga
+
+  [ Marat Nepomnyashy ]
+  * submodule vyatta-op-dhcp-server:  Check the current runtime config
+    rather than the new config not available in op mode.  Bug 2892 fix.
+  * submodule vyatta-op-vpn:  Query original/active runtime config
+    rather than the new/pending config.
+  * submodule vyatta-op-vpn:  Added 'libsablot0' dependencies.
+  * submodule vyatta-op-dhcp-server:  Moved script 'vyatta-clear-dhcp-
+    lease.pl' to '/opt/vyatta/bin/sudo-users/' so that operator user is
+    not prompted for sudo password.  Bug 2984 fix.
+  * submodule vyatta-op-dhcp-server:  Quote user input.
+  * Properly write out multiple wins-servers to the DHCP server
+    configuration file.  Bug 2857 fix.
+
+  [ Mark O'Brien ]
+  * vc4.0.0
+  * vc4.0.0
+  * Update indices
+
+  [ Mohit Mehta ]
+  * Updated index for Bug 2707
+
+  [ Robert Bays ]
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-quagga
+  * Update indices
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+  * update sub-module vyatta-cfg-quagga
+  * update submodule vyatta-cfg-quagga
+
+  [ Stephen Hemminger ]
+  * Updated vyatta-cfg-qos submodule
+  * update vyatta-cfg-qos
+  * update vyatta-cfg-qos index
+  * update vyatta-cfg-system index
+  * update indices to catch bugfix 2698
+  * update vyatta-cfg-qos
+  * update vyatta-cfg-qos
+  * update vyatta-serial
+  * update index to pickup GPLv2
+  * update indices
+  * update indices to catch latest GPLv2
+  * update indices for vyatta-cfg
+  * Update indices for init-floppy fix
+  * update index
+  * update index
+  * update index
+
+  [ Stig Thormodsrud ]
+  * update indexes
+  * update indexes
+  * update index
+  * update index
+  * update index
+  * update index
+  * update index
+  * update indexes
+  * update index
+
+  [ Tom Grennan ]
+  * replace iso splash with graphic that includes the registered
+    trademark
+
+  [ rbalocca ]
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update indices
+  * Update indices
+  * donot configure LH_SYSLINUX_CFG
+  * move splash reference to displayed boot.txt
+  * Update indices
+  * Add new splash with [tm] to isolinux boot
+  * Merge from hollywood
+  * Update index
+  * Update indices
+  * Fix typo in mk.livecd
+  * Update README information for external builders
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 18 Mar 2008 19:06:02 -0700
+
 build-iso (0.2) unstable; urgency=low
 
   vc4.0.0
