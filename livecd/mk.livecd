@@ -273,6 +273,11 @@ if [ ${#deb_sources[@]} -gt 0 ]; then
     cp ${deb_sources[@]} config/chroot_sources/
 fi
  
+# include xen Dom0 repo
+if eval "$use_xendomzero" ; then
+    cat deb_sources/xen-vyatta.bootstrap >> config/chroot_sources/${LH_DISTRIBUTION}-vyatta.bootstrap
+fi
+
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
 # is cached, so the bootstrap step only restores the cached stage.
@@ -291,7 +296,7 @@ if [ -d cache/lists ] ; then
 	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
 fi
 
-if eval "$use_xen" ; then
+if eval "$use_xen" || eval "$use_xendomzero" ; then
     echo I: Disabling TLS
     mv chroot/lib/tls chroot/lib/tls.disabled
 else
