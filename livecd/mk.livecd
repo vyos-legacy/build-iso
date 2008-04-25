@@ -172,7 +172,18 @@ mk_version_package ()
     tmpdir=/tmp/$$-version
     vf=$tmpdir/opt/vyatta/etc
 
-    mkdir -p $vf
+    mkdir -p $vf/config
+
+    case "$VVERSION" in
+    V*|v*)
+		config_src=community
+		;;
+    *)
+		config_src=supported
+    esac
+
+    cp templates/$config_src/config.boot.default $vf/.
+
     cd $tmpdir
     mkdir DEBIAN
 
@@ -262,6 +273,11 @@ if [ ${#deb_sources[@]} -gt 0 ]; then
     cp ${deb_sources[@]} config/chroot_sources/
 fi
  
+# include xen Dom0 repo
+if eval "$use_xendomzero" ; then
+    cat deb_sources/xen-vyatta.bootstrap >> config/chroot_sources/${LH_DISTRIBUTION}-vyatta.bootstrap
+fi
+
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
 # is cached, so the bootstrap step only restores the cached stage.
@@ -280,7 +296,7 @@ if [ -d cache/lists ] ; then
 	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
 fi
 
-if eval "$use_xen" ; then
+if eval "$use_xen" || eval "$use_xendomzero" ; then
     echo I: Disabling TLS
     mv chroot/lib/tls chroot/lib/tls.disabled
 else
@@ -408,9 +424,9 @@ declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
-for b in chroot/boot/initrd.img-* ; do
-    echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
-done
+#for b in chroot/boot/initrd.img-* ; do
+#    echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
+#done
 
 # exclude more files
 cat <<EOF >> chroot/tmp/mksquashfs.exclude

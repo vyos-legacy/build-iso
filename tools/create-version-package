@@ -117,15 +117,10 @@ path_to()
 path_to archive-report
 path_to deb-archive
 
-basedir=`which $0`
-basedir=`dirname "$basedir"`
-bindir=`cd "$basedir";pwd`
-PATH=$PATH:"$bindir"
-
 tmpdir=/tmp/$$-version
 
 vf=opt/vyatta/etc
-mkdir -p $tmpdir/$vf
+mkdir -p $tmpdir/$vf/config
 SAVEDIR=$PWD
 cd $tmpdir
 
@@ -150,7 +145,7 @@ mkdir DEBIAN
 	echo "Maintainer: Vyatta <debs@vyatta.com>"
 	echo "Essential: no"
 	echo "Section: base"
-	echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version"
+	echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
 	echo -n Suggests: 
 	<$tmpdir/$vf/deb-versions.txt sed -e 's/ *\([^ ]*\)$/(>=\1),/' -e 's/^/ /'
 	echo " nano"

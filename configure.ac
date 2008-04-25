@@ -72,6 +72,9 @@ AC_ARG_VAR(LH_LANGUAGE, [default: en])
 test "X$LH_MEMTEST" = "X" && LH_MEMTEST=disabled
 AC_ARG_VAR(LH_MEMTEST, [default: disabled])
 
+test "X$LH_PACKAGES" = "X" && LH_PACKAGES=none
+AC_ARG_VAR(LH_PACKAGES, [default: none])
+
 test "X$LH_PACKAGES_LISTS" = "X" && LH_PACKAGES_LISTS=none
 AC_ARG_VAR(LH_PACKAGES_LISTS, [default: none])
 
@@ -167,6 +170,16 @@ else
    use_xen=false
 fi
 
+AC_ARG_WITH(xendomzero,
+[AS_HELP_STRING([--with-xendomzero], [Xen Dom0 target])])
+
+if test X$with_xendomzero = Xyes ; then
+   use_xendomzero=true
+else
+   use_xendomzero=false
+fi
+
+
 AC_ARG_WITH(deb-install,
 [AS_HELP_STRING([--with-deb-install],
 [build Debian installer CD])])
@@ -248,6 +261,11 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
+        if eval "$use_xendomzero" ; then
+            LH_PACKAGES="linux-image-2.6.24-16-xen xen-hypervisor-3.2 xen-utils-3.2 "
+            LH_PACKAGES+="libc6-xen libc6 libsdl1.2debian libsdl1.2debian-alsa "
+            LH_PACKAGES+="python-xen-3.2 python-dev python python2.5-dev python2.5 libsqlite3-0 "
+        fi
 	LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
 #	LH_MIRROR_BINARY="http://ftp.us.debian.org/debian"
 	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
@@ -302,6 +320,7 @@ AC_SUBST(LH_MIRROR_BINARY)
 AC_SUBST(LH_MIRROR_BINARY_SECURITY)
 AC_SUBST(LH_MIRROR_BOOTSTRAP)
 AC_SUBST(LH_MIRROR_BOOTSTRAP_SECURITY)
+AC_SUBST(LH_PACKAGES)
 AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_QUIET)
 AC_SUBST(LH_SECTIONS)
@@ -314,6 +333,7 @@ AC_SUBST(LH_UNION_FILESYSTEM)
 AC_SUBST(LH_VERBOSE)
 
 AC_SUBST(use_xen)
+AC_SUBST(use_xendomzero)
 
 AC_SUBST(VYATTA_POOL)
 AC_SUBST(VYATTA_LINUX_PKG)
