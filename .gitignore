@@ -27,5 +27,7 @@
 /pkgs/*.dsc
 /pkgs/*.tar.gz
 /pkgs/*.udeb
+/pkgs/Packages
+/pkgs/Packages.gz
 
 *.iso
