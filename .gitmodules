@@ -100,3 +100,6 @@
 [submodule "pkgs/installer"]
 	path = pkgs/installer
 	url = http://git.vyatta.com/installer.git
+[submodule "pkgs/vyatta-antivirus"]
+	path = pkgs/vyatta-antivirus
+	url = http://git.vyatta.com/vyatta-antivirus.git
