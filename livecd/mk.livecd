@@ -466,10 +466,9 @@ if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian && -d ../pkgs/installer/debian 
     echo I: create installer initrd
     cat > ../pkgs/installer/build/sources.list.udeb.local <<-EOF
 	deb copy://${PWD%/*}/ pkgs/
-	deb http://ftp.debian.org/debian/ sid main/debian-installer
+	deb http://packages.vyatta.com/debian/ sid main/debian-installer
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
-	deb http://packages.vyatta.com/vyatta-dev/ buildtools main
 	EOF
     make -C ../pkgs/installer/build build_cdrom_isolinux \
 	LOCALUDEBDIR=${PWD%/*}/pkgs
