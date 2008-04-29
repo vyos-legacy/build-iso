@@ -237,6 +237,7 @@ then
 	fi
 fi
 
+shopt -u nullglob
 if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 	# preload cached debs
 	if ls ${CACHEDIR_DEB}/*.deb > /dev/null 2>&1 ; then
@@ -269,6 +270,7 @@ if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 	mv chroot/var/lib/dpkg/status.tmp chroot/var/lib/dpkg/status
 	Chroot "apt-get -q clean"
 fi
+shopt -s nullglob
 
 # Including base debian packages
 if [ -d cache/packages_bootstrap ]
