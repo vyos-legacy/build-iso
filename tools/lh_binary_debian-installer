@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 
 # lh_binary_debian-installer(1) - install debian-installer into binary
 # Copyright (C) 2006-2007 Daniel Baumann <daniel@debian.org>
@@ -8,6 +8,7 @@
 # under certain conditions; see COPYING for details.
 
 set -e
+shopt -s nullglob
 
 # Including common functions
 LH_BASE="${LH_BASE:-/usr/share/live-helper}"
