@@ -461,21 +461,31 @@ printf "%s\n" config/binary_local-debs/*.deb | \
 if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian && -d ../pkgs/installer/debian && \
     ! -e cache/debian-installer/vmlinuz ]] ; then
     echo I: repackage kernel udebs
-    ( cd ../pkgs/linux-kernel-di-i386-2.6 && \
-	debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc )
+    ( cd ../pkgs/linux-kernel-di-i386-2.6 \
+	&& debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc )
     echo I: create installer initrd
+    mkdir ../pkgs/installer/build/localudebs
     cat > ../pkgs/installer/build/sources.list.udeb.local <<-EOF
-	deb copy://${PWD%/*}/ pkgs/
+	deb copy://${PWD%/*}/pkgs/installer/ localudebs/
 	deb http://packages.vyatta.com/debian/ sid main/debian-installer
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
 	EOF
-    make -C ../pkgs/installer/build build_cdrom_isolinux \
-	LOCALUDEBDIR=${PWD%/*}/pkgs
-    mkdir -p cache/debian-installer cache/packages_debian-installer.udeb
-    cp -a ../pkgs/installer/build/dest/cdrom/* cache/debian-installer
-    cp ../pkgs/installer/build/apt.udeb/cache/archives/*.udeb \
-	cache/packages_debian-installer.udeb
+    ( cd ../pkgs/installer/build/localudebs \
+	&& ln -sf  ../../../*.udeb . )
+    make -C ../pkgs/installer/build build_cdrom_isolinux
+    echo I: cache installer kernel and initrd
+    mkdir -p cache/debian-installer
+    ( cd cache/debian-installer \
+	&& ln -sf ../../../pkgs/installer/build/dest/cdrom/@(vmlinuz|initrd.gz|gtk) . )
+    echo I: cache installer udebs
+    mkdir -p cache/packages_debian-installer.udeb
+    ( cd cache/packages_debian-installer.udeb \
+	&& ln -sf ../../../pkgs/installer/build/apt.udeb/cache/archives/*.udeb . )
+    echo I: pooling kernel udebs
+    mkdir -p config/binary_local-udebs
+    ( cd config/binary_local-udebs \
+	&& ln -sf ../../../pkgs/*.udeb . )
 fi
 
 echo I: building binary
