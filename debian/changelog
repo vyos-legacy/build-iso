@@ -1,3 +1,25 @@
+build-iso (0.7) unstable; urgency=low
+
+  3.0.3
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update vyatta-cluster
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+  * Update index
+  * Update indices
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 29 Apr 2008 16:42:55 -0700
+
 build-iso (0.6) unstable; urgency=low
 
   VC4.0.2
