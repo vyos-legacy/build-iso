@@ -237,10 +237,11 @@ then
 	fi
 fi
 
-shopt -u nullglob
 if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 	# preload cached debs
-	if ls ${CACHEDIR_DEB}/*.deb > /dev/null 2>&1 ; then
+	debs=''
+	[ -d ${CACHEDIR_DEB} ] && debs=${CACHEDIR_DEB}/*.deb
+	if [ -n "$debs" ] ; then
 		mkdir -p chroot/var/cache/apt/archives
 		cp ${CACHEDIR_DEB}/*.deb chroot/var/cache/apt/archives/
 	fi
@@ -270,7 +271,6 @@ if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 	mv chroot/var/lib/dpkg/status.tmp chroot/var/lib/dpkg/status
 	Chroot "apt-get -q clean"
 fi
-shopt -s nullglob
 
 # Including base debian packages
 if [ -d cache/packages_bootstrap ]
@@ -306,8 +306,9 @@ else
 fi
 
 # Including local debs
-if ls config/binary_local-debs/*.deb > /dev/null 2>&1
-then
+debs=''
+[ -d config/binary_local-debs ] && debs=config/binary_local-debs/*.deb
+if [ -n "$debs" ] ; then
 	for FILE in config/binary_local-debs/*_"${LH_ARCHITECTURE}".deb config/binary_local-debs/*_all.deb
 	do
 		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
@@ -367,8 +368,9 @@ do
 done
 
 # Including local udebs
-if ls ../config/binary_local-udebs/*.udeb > /dev/null 2>&1
-then
+udebs=''
+[ -d ../config/binary_local-udebs ] && udebs=../config/binary_local-udebs/*.udeb
+if [ -n "$udebs" ] ; then
 	for FILE in ../config/binary_local-udebs/*_"${LH_ARCHITECTURE}".udeb ../config/binary_local-udebs/*_all.udeb
 	do
 		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
