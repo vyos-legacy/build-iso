@@ -466,7 +466,7 @@ if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian && -d ../pkgs/installer/debian 
     echo I: create installer initrd
     mkdir ../pkgs/installer/build/localudebs
     cat > ../pkgs/installer/build/sources.list.udeb.local <<-EOF
-	deb copy://${PWD%/*}/pkgs/installer/ localudebs/
+	deb copy://${PWD%/*}/pkgs/installer/build/ localudebs/
 	deb http://packages.vyatta.com/debian/ sid main/debian-installer
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
