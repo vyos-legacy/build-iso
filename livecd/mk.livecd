@@ -458,8 +458,8 @@ printf "%s\n" config/binary_local-debs/*.deb | \
     sed -e 's,.*/,,; s,_.*,,' | \
     sort -u > config/binary_local-includes/install/apt-install-list.txt
 
-if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian && -d ../pkgs/installer/debian && \
-    ! -e cache/debian-installer/vmlinuz ]] ; then
+if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian \
+    && -d ../pkgs/installer/debian ]] ; then
     echo I: repackage kernel udebs
     ( cd ../pkgs/linux-kernel-di-i386-2.6 \
 	&& debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc )
