@@ -16,7 +16,7 @@ system {
         repository community {
 	    distribution: "stable"
             components: "main"
-            url: "http://packages.vyatta.com/vyatta"
+            url: "http://packages.vyatta.com/vyatta-supported"
         }
     }
 }
