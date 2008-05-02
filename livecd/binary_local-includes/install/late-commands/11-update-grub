@@ -19,20 +19,11 @@ if grep -q console=ttyS0 /proc/cmdline ; then
 	GRUB_CMDLINE_LINUX="console=ttyS0"
 	GRUB_TERMINAL="serial"
     fi
-elif grep -q video=vesa /proc/cmdline ; then
+elif [ -e /proc/fb ]  && ! lsmod | grep -q fbcon ; then
     # /usr/sbin/update-grub doesnot properly test for GRUB_TERMINAL=gfxterm
     # so we empty GRUB_TERMINAL to force the default
     GRUB_TERMINAL=
-    # NOTE! the fb driver is currently configured as a module in the
-    #       linux-*-vyatta package; so, we cannot use the boot
-    #       parameters video=vesa... and vyga=...; instead, we load the
-    #       respective modules after boot
-    # GRUB_CMDLINE_LINUX+=" video=vesa:ywrap,mtrr vga=788"
-    for mod in fbcon vga16fb ; do
-	if ! grep -q "^$mod" /etc/modules ; then
-	    echo $mod >> /etc/modules
-	fi
-    done
+    GRUB_CMDLINE_LINUX+=" video=vesa:ywrap,mtrr vga=788"
 else
     GRUB_TERMINAL="console"
     GRUB_CMDLINE_LINUX="vga=normal"
