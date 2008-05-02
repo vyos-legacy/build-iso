@@ -464,8 +464,8 @@ if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian \
     ( cd ../pkgs/linux-kernel-di-i386-2.6 \
 	&& debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc )
     echo I: create installer initrd
-    make -C ../pkgs/installer/build all_clean
-    mkdir ../pkgs/installer/build/localudebs
+    make -C ../pkgs/installer/build reallyclean
+    mkdir -p ../pkgs/installer/build/localudebs
     cat > ../pkgs/installer/build/sources.list.udeb.local <<-EOF
 	deb copy://${PWD%/*}/pkgs/installer/build/ localudebs/
 	deb http://packages.vyatta.com/debian/ sid main/debian-installer
