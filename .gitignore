@@ -20,6 +20,7 @@
 /livecd/binary*
 /livecd/iso-label
 /livecd/mk.livecd.conf
+/livecd/version
 
 /pkgs/*.build
 /pkgs/*.changes
