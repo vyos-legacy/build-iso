@@ -476,9 +476,18 @@ if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian \
 	&& ln -sf  ../../../*.udeb . )
     make -C ../pkgs/installer/build build_cdrom_isolinux
     echo I: cache installer kernel and initrd
-    mkdir -p cache/debian-installer
-    ( cd cache/debian-installer \
-	&& ln -sf ../../../pkgs/installer/build/dest/cdrom/@(vmlinuz|initrd.gz|gtk) . )
+    rm -f cache/debian-installer/{vmlinuz,initrd.gz}
+    # this used to be a link
+    if [ -L cache/debian-installer/gtk ] ; then
+	rm -f cache/debian-installer/gtk
+    else
+	rm -f cache/debian-installer/gtk/{vmlinuz,initrd.gz}
+    fi
+    mkdir -p cache/debian-installer/gtk
+    ln -sf ../../../pkgs/installer/build/dest/cdrom/{vmlinuz,initrd.gz} \
+	cache/debian-installer/
+    ln -sf ../../../../pkgs/installer/build/dest/cdrom/gtk/{vmlinuz,initrd.gz} \
+	cache/debian-installer/gtk/
     echo I: cache installer udebs
     mkdir -p cache/packages_debian-installer.udeb
     ( cd cache/packages_debian-installer.udeb \
