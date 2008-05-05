@@ -1,3 +1,31 @@
+build-iso (0.8) unstable; urgency=low
+
+  3.0.4
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg
+  * vyatta-cfg-system: fix for bug 3225
+
+  [ Stephen Hemminger ]
+  * update quagga index
+
+  [ Stig Thormodsrud ]
+  * update indexes
+
+  [ rbalocca ]
+  * Glendale supported default config no longer has an entry for the
+    community repo
+  * Add the community repository back into the config.boot.default, even
+    if the release is supported
+  * Supported url added to supported config.boot.default
+  * Name the supported repository as "supported"
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 05 May 2008 16:41:08 -0700
+
 build-iso (0.7) unstable; urgency=low
 
   3.0.3
