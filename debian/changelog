@@ -1,3 +1,20 @@
+build-iso (0.9) unstable; urgency=low
+
+  3.0.5
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update vyatta-quagga
+
+  [ Mark O'Brien ]
+  * 3.0.4
+  * 3.0.4
+  * Update indices
+  * Update index
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 06 May 2008 12:43:49 -0700
+
 build-iso (0.8) unstable; urgency=low
 
   3.0.4
