@@ -467,9 +467,8 @@ if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian \
     mkdir -p ../pkgs/installer/build/localudebs
     cat > ../pkgs/installer/build/sources.list.udeb.local <<-EOF
 	deb copy://${PWD%/*}/pkgs/installer/build/ localudebs/
-	deb http://packages.vyatta.com/debian/ sid main/debian-installer
-	deb http://packages.vyatta.com/debian/ lenny main
-	deb http://packages.vyatta.com/debian-security/ lenny/updates main
+	deb http://packages.vyatta.com/debian/ testing main
+	deb http://packages.vyatta.com/debian/ unstable main/debian-installer
 	EOF
     ( cd ../pkgs/installer/build/localudebs \
 	&& ln -sf  ../../../*.udeb . )
