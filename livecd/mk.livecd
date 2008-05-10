@@ -473,6 +473,8 @@ if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian \
     ( cd ../pkgs/installer/build/localudebs \
 	&& ln -sf  ../../../*.udeb . )
     make -C ../pkgs/installer/build build_cdrom_isolinux
+    make -C ../pkgs/installer/build build_netboot-gtk
+    make -C ../pkgs/installer/build CONSOLE="console=ttyS0 DEBIAN_FRONTEND=text" build_netboot
     echo I: cache installer kernel and initrd
     rm -f cache/debian-installer/{vmlinuz,initrd.gz}
     # this used to be a link
