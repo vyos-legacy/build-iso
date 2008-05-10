@@ -45,8 +45,8 @@ AC_ARG_VAR(LH_BOOTSTRAP_FLAVOUR, [default: minimal])
 test "X$LH_CHROOT_FILESYSTEM" = "X" && LH_CHROOT_FILESYSTEM=squashfs
 AC_ARG_VAR(LH_CHROOT_FILESYSTEM, [default: squashfs])
 
-test "X$LH_DEBIAN_INSTALLER" = "X" && LH_DEBIAN_INSTALLER=cdrom
-AC_ARG_VAR(LH_DEBIAN_INSTALLER, [default: cdrom])
+test "X$LH_DEBIAN_INSTALLER" = "X" && LH_DEBIAN_INSTALLER=disabled
+AC_ARG_VAR(LH_DEBIAN_INSTALLER, [default: disabled; use cdrom to enable])
 
 test "X$LH_DEBIAN_INSTALLER_DAILY" = "X" && LH_DEBIAN_INSTALLER_DAILY=disabled
 AC_ARG_VAR(LH_DEBIAN_INSTALLER_DAILY, [default: disabled])
@@ -183,12 +183,6 @@ fi
 AC_ARG_WITH(deb-install,
 [AS_HELP_STRING([--with-deb-install],
 [build Debian installer CD])])
-
-if test "$with_deb_install" = yes ; then
-   BUILD_DEB_INSTALL=yes
-else
-   BUILD_DEB_INSTALL=no
-fi
 
 # FIXME! fetch version from source
 VYATTA_LINUX_PKG=linux-image-2.6.24-1-486-vyatta
