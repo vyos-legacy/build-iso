@@ -9,6 +9,7 @@ trace=
 noclean="-nc"
 build="debuild -i -b -uc -us"
 
+export DEBCHANGE_AUTO_NMU=no
 declare -a cloned=( */debian )
 declare -a submodule=( ${cloned[@]%/*} )
 
@@ -93,7 +94,7 @@ mod_changelog()
 	[ "$RELEASENAME" = UNRELEASED ] || rel=--release
 
 	branch=`get_branch`
-	touch debian/control 2>/dev/null
+	[ ! -f debian/control ] && echo "Maintainer: eng@vyatta.com">debian/control
 	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
