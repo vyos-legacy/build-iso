@@ -162,6 +162,15 @@ else
    use_xen=false
 fi
 
+AC_ARG_WITH(virt,
+[AS_HELP_STRING([--with-virt], [Use the vyatta-virt kernel])])
+
+if test X$with_virt = Xyes ; then
+   use_virt=true
+else
+   use_virt=false
+fi
+
 AC_ARG_WITH(xendomzero,
 [AS_HELP_STRING([--with-xendomzero], [Xen Dom0 target])])
 
@@ -232,6 +241,9 @@ gutsy | hardy )
 	INCLUDE_PKGS+=installation-report,laptop-detect,usbutils,popularity-contest,tasksel,snmp,tcpdump,
 	INCLUDE_PKGS+=grub-pc
 	EXCLUDE_PKGS+=grub
+	if eval "$use_virt" ; then
+	    LH_LINUX_FLAVOURS=vyatta-virt
+	fi
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
