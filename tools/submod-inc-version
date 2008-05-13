@@ -98,6 +98,12 @@ do_inc_version()
 	local repo
 	eval $info P: "$1"
 	repo="$1"
+	local lastcommit=`cd "$repo";git-log -1 --abbrev=1 --pretty=one|sed -e 's/.* //' -e 's/[^\.]*$//'`
+
+	case "$RELEASENAME" in
+	"$lastcommit"* )
+		[ "$repo" != .. ] && return;;
+	esac
 (
 	cd "$repo" &&
 	case "$repo" in
