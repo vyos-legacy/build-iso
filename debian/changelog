@@ -1,3 +1,17 @@
+build-iso (0.10) unstable; urgency=low
+
+  3.0.6
+  [ Mark O'Brien ]
+
+
+  [ Rick Balocca ]
+  * Handle the case when the version number must increment and only an
+    external package has changed.
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 13 May 2008 15:48:24 -0700
+
 build-iso (0.9) unstable; urgency=low
 
   3.0.5
