@@ -15,9 +15,52 @@ define mk_iso
 cd livecd && $(FAKEROOT) $(FAKEPERMISSIONS) $(FAKECHROOT) ./mk.livecd
 endef
 
+have_linux_kernel_di := $(shell test -e pkgs/linux-kernel-di-i386-2.6/debian/rules && echo -n true)
+ifeq ($(have_linux_kernel_di),true)
+
+define clean_udebs
+rm -f pkgs/*.udebs
+endef
+
+define mk_udebs
+cd pkgs/linux-kernel-di-i386-2.6 ; \
+$(FAKEROOT) debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc
+endef
+
+endif
+
+have_installer := $(shell test -e pkgs/installer/build/Makefile && echo -n true)
+ifeq ($(have_installer),true)
+
+define clean_installer
+$(FAKEROOT) make -C pkgs/installer/build clean_netboot clean_netboot-gtk
+endef
+
+define mk_installer
+$(FAKEROOT) make -C pkgs/installer/build \
+	SECOPTS="--allow-unauthenticated --force-yes" \
+	CONSOLE="console=ttyS0 DEBIAN_FRONTEND=text" \
+	build_netboot
+$(FAKEROOT) make -C pkgs/installer/build \
+	SECOPTS="--allow-unauthenticated --force-yes" \
+	build_netboot-gtk
+endef
+
+endif
+
 all :
 	tools/submod-mk
+	$(mk_udebs)
+	$(mk_installer)
 	$(mk_iso)
+
+.PHONY : udebs
+udebs :
+	$(mk_udebs)
+
+.PHONY : installer
+installer :
+	$(mk_installer)
 
 .PHONY : iso
 iso :
@@ -36,6 +79,8 @@ mostlyclean :
 clean :
 	@$(MAKE) mostlyclean
 	@tools/submod-clean
+	@$(clean_udebs)
+	@$(clean_installer)
 	@rm -rf livecd/cache/stage*
 
 .PHONY : distclean

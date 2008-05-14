@@ -438,66 +438,6 @@ EOF
 ## restore apt/preferences for binary build
 cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
 
-echo I: Copy packages to install pool
-rm -f config/binary_local-debs/*.deb
-mkdir -p config/binary_depend-debs
-for xdeb in cache/packages_linux-image/*.deb cache/packages_local-packages/*.deb cache/packages_local-packageslists/*.deb config/chroot_local-packages/*.deb; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    file=`echo config/binary_local-debs/${pkg}_*.deb`
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] && [[ ! "$file" ]] ; then
-	ln -sf ../../$xdeb config/binary_local-debs/$deb
-    fi
-done
-
-mkdir -p config/binary_local-includes/install
-cp d-i/preseed.cfg config/binary_local-includes/install/preseed.cfg
-
-printf "%s\n" config/binary_local-debs/*.deb | \
-    sed -e 's,.*/,,; s,_.*,,' | \
-    sort -u > config/binary_local-includes/install/apt-install-list.txt
-
-if [[ -d ../pkgs/linux-kernel-di-i386-2.6/debian \
-    && -d ../pkgs/installer/debian ]] ; then
-    echo I: repackage kernel udebs
-    ( cd ../pkgs/linux-kernel-di-i386-2.6 \
-	&& debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc )
-    echo I: create installer initrd
-    make -C ../pkgs/installer/build reallyclean
-    mkdir -p ../pkgs/installer/build/localudebs
-    cat > ../pkgs/installer/build/sources.list.udeb.local <<-EOF
-	deb copy://${PWD%/*}/pkgs/installer/build/ localudebs/
-	deb http://packages.vyatta.com/debian/ testing main
-	deb http://packages.vyatta.com/debian/ unstable main/debian-installer
-	EOF
-    ( cd ../pkgs/installer/build/localudebs \
-	&& ln -sf  ../../../*.udeb . )
-    make -C ../pkgs/installer/build build_cdrom_isolinux
-    make -C ../pkgs/installer/build build_netboot-gtk
-    make -C ../pkgs/installer/build CONSOLE="console=ttyS0 DEBIAN_FRONTEND=text" build_netboot
-    echo I: cache installer kernel and initrd
-    rm -f cache/debian-installer/{vmlinuz,initrd.gz}
-    # this used to be a link
-    if [ -L cache/debian-installer/gtk ] ; then
-	rm -f cache/debian-installer/gtk
-    else
-	rm -f cache/debian-installer/gtk/{vmlinuz,initrd.gz}
-    fi
-    mkdir -p cache/debian-installer/gtk
-    ln -sf ../../../pkgs/installer/build/dest/cdrom/{vmlinuz,initrd.gz} \
-	cache/debian-installer/
-    ln -sf ../../../../pkgs/installer/build/dest/cdrom/gtk/{vmlinuz,initrd.gz} \
-	cache/debian-installer/gtk/
-    echo I: cache installer udebs
-    mkdir -p cache/packages_debian-installer.udeb
-    ( cd cache/packages_debian-installer.udeb \
-	&& ln -sf ../../../pkgs/installer/build/apt.udeb/cache/archives/*.udeb . )
-    echo I: pooling kernel udebs
-    mkdir -p config/binary_local-udebs
-    ( cd config/binary_local-udebs \
-	&& ln -sf ../../../pkgs/*.udeb . )
-fi
-
 echo I: building binary
 if ! lh_binary ; then
   echo E: binary build failed
