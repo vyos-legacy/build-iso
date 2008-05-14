@@ -50,8 +50,6 @@ endif
 
 all :
 	tools/submod-mk
-	$(mk_udebs)
-	$(mk_installer)
 	$(mk_iso)
 
 .PHONY : udebs
