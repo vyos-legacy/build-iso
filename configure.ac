@@ -7,7 +7,6 @@ AC_CONFIG_AUX_DIR([config])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([gnu no-dist-gzip dist-bzip2 subdir-objects])
 
 AC_PREFIX_DEFAULT([/opt/vyatta])
 
@@ -274,7 +273,7 @@ esac
 EXCLUDE_PKGS=${EXCLUDE_PKGS/,$/}
 INCLUDE_PKGS=${INCLUDE_PKGS/,$/}
 
-AC_CONFIG_FILES([Makefile livecd/mk.livecd.conf])
+AC_CONFIG_FILES([livecd/mk.livecd.conf])
 
 AC_SUBST(ARCH)
 AC_SUBST(CONFIG_BUILD)
