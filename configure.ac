@@ -3,13 +3,6 @@ AC_PREREQ(2.59)
 
 AC_INIT([ofr], [2.4], [vyatta-support@vyatta.com])
 
-AC_CONFIG_AUX_DIR([config])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-
-AC_PREFIX_DEFAULT([/opt/vyatta])
-
 # Checks for programs.
 AC_PROG_LN_S
 
