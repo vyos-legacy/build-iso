@@ -103,6 +103,3 @@
 [submodule "pkgs/vyatta-antivirus"]
 	path = pkgs/vyatta-antivirus
 	url = http://git.vyatta.com/vyatta-antivirus.git
-[submodule "vyatta-keepalived"]
-	path = vyatta-keepalived
-	url = /home/stig/git/hollywood-keepalived/pkgs/vyatta-keepalived/.git
