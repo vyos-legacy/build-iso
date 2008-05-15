@@ -90,9 +90,10 @@ get_branch()
 mod_changelog()
 {(
 
-	[ "$RELEASENAME" = UNRELEASED ] || $rel=--release
+	[ "$RELEASENAME" = UNRELEASED ] || rel=--release
 
 	branch=`get_branch`
+	touch debian/control
 	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
@@ -115,12 +116,24 @@ do_inc_version()
 	repo="$1"
 (
 	cd "$repo" || return
+
+	branch=`get_branch`
+
 	if [ "$INCVNUM" ]
 	then
-		branch=`get_branch`
 		echo "$RELEASENAME for $branch">STATUS
 		git-add STATUS
 		git-commit -m `cat STATUS`
+	fi
+
+	tag_sha=`get_tag`
+	tag_sha=`cat .git/refs/tags/debian/"$tag_sha"`
+	tag_sha=`git-cat-file -p "$tag_sha"|head -1|sed 's,.* ,,'`
+	head_sha=`cat .git/refs/heads/"$branch"`
+	if [ "$tag_sha" = "$head_sha" ]
+	then
+		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
+		return
 	fi
 
 	case "$repo" in
@@ -131,9 +144,6 @@ do_inc_version()
 	* )
 		$trace mod_changelog "$RELEASENAME"
 		;;
-	.. )
-		git-commit -m "Top level changelog for $RELEASENAME" debian/changelog
-		;;
 	esac
 
 	if [ "$RELEASENAME" = UNRELEASED ]
@@ -141,8 +151,9 @@ do_inc_version()
 		#git-commit -a -m "Setting changelog to UNRELEASED" >/dev/null
 		true
 	else
-		git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD 2>/dev/null
 		git-commit -a -m "$RELEASENAME" >/dev/null
+		git-tag -a -m "$RELEASENAME" debian/`get_tag` 2>/dev/null
+		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
 	fi
 )
 }
@@ -153,5 +164,4 @@ do
 done
 
 echo "$RELEASENAME">../livecd/version
-$trace mod_changelog "$RELEASENAME"
 do_inc_version ..
