@@ -33,4 +33,6 @@
 /pkgs/Packages
 /pkgs/Packages.gz
 
+debian/control
+
 *.iso
