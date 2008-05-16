@@ -25,6 +25,17 @@ endef
 define mk_udebs
 cd pkgs/linux-kernel-di-i386-2.6 ; \
 $(FAKEROOT) debuild -e SOURCEDIR=../../livecd/chroot -d -us -uc
+mkdir -p vyatta-udebs
+mv pkgs/*.udeb vyatta-udebs
+apt-ftparchive packages vyatta-udebs > Packages
+gzip -c9 Packages > Packages.gz
+Date=`date`; sed "s/^\(Date:\).*/\1 $$Date/" Release.template > Release
+for p in Packages Packages.gz ; do \
+	sum=`md5sum $$p | cut -d' ' -f 1` ; \
+	sz=`stat -c %s Packages` ; \
+	printf " %32s %8s main/debian-installer/binary-i386/%s\n" \
+		$$sum $$sz $$p >> Release ; \
+done
 endef
 
 endif
