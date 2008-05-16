@@ -71,6 +71,7 @@ $(FAKEROOT) make -C pkgs/installer/build \
 	build_netboot
 $(FAKEROOT) make -C pkgs/installer/build \
 	SECOPTS="--allow-unauthenticated --force-yes" \
+	CONSOLE="theme=vyatta" \
 	build_netboot-gtk
 endef
 
