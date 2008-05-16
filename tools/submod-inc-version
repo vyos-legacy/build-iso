@@ -93,7 +93,7 @@ mod_changelog()
 	[ "$RELEASENAME" = UNRELEASED ] || rel=--release
 
 	branch=`get_branch`
-	touch debian/control 2>/dev/null
+	[ ! -f debian/control ] && echo "Maintainer: eng@vyatta.com">debian/control
 	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
@@ -129,7 +129,7 @@ do_inc_version()
 	tag_sha=`get_tag`
 	tag_sha=`git-cat-file -p debian/"$tag_sha"|head -1|sed 's,.* ,,'`
 	head_sha=`cat .git/refs/heads/"$branch"`
-	diffs=`[ "$tag_sha" -a "$tag_sha" != "$head_sha" ] && git-diff "$tag_sha" "$head_sha"|head -1`
+	diffs=`git-diff "$tag_sha" "$head_sha"|head -1`
 	if [ ! "$diffs" ]
 	then
 		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
