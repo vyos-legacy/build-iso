@@ -9,7 +9,13 @@ trace=
 noclean="-nc"
 build="debuild -i -b -uc -us"
 
-export DEBCHANGE_AUTO_NMU=no
+# check to see if the version #'s will be incremented nicely
+if ! grep 'DEBCHANGE_AUTO_NMU.*=.*no' $HOME/.devscripts /etc/devscripts.conf >&/dev/null
+then
+	echo "Please set DEBCHANGE_AUTO_NMU=no in ~/.devscripts or /etc/devscripts.conf"
+	exit 1
+fi
+
 declare -a cloned=( */debian )
 declare -a submodule=( ${cloned[@]%/*} )
 
