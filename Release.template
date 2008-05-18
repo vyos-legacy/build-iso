@@ -1,0 +1,9 @@
+Origin: Vyatta
+Label: Vyatta
+Suite: unstable
+Codename: sid
+Date: WDY MON DD HH:MM:SS TZ  YYYY
+Architectures: i386
+Components: main
+Description: Debian x.y Unstable - Not Released
+MD5Sum:

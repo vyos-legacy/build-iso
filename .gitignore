@@ -1,5 +1,9 @@
 *~
 .*.swp
+/Packages*
+/Release
+/Release.gpg
+/vyatta-udebs
 
 /aclocal.m4
 /autom4te.cache
@@ -28,5 +32,7 @@
 /pkgs/*.udeb
 /pkgs/Packages
 /pkgs/Packages.gz
+
+debian/control
 
 *.iso
