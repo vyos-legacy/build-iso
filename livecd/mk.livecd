@@ -151,12 +151,24 @@ mk_version_package ()
 {
     local savedir="$PWD"
     local etcdir="$savedir"/chroot/opt/vyatta/etc
+    local config_src=community
+    local tmpdir=/tmp/$$-version
+    local vf=$tmpdir/opt/vyatta/etc
 
-    VVERSION=`cat version`
-    tmpdir=/tmp/$$-version
-    vf=$tmpdir/opt/vyatta/etc
+    VVERSION=`cat version 2>/dev/null`
+    case "$VVERSION" in
+    [0-9]*)
+		config_src=supported
+		;;
+    "" )
+		VVERSION=0.`git-branch|grep '^\*'|sed 's/..//'`
+		;;
+    esac
 
-    mkdir -p $vf
+    mkdir -p $vf/config
+
+    cp templates/$config_src/config.boot.default $vf/.
+
     cd $tmpdir
     mkdir DEBIAN
 
@@ -174,9 +186,7 @@ mk_version_package ()
     echo I: generating package list
     (
 	cd "$savedir"
-	cp $toolsdir/save-package-report chroot/vyatta-save-package-report
-	chroot chroot /bin/sh /vyatta-save-package-report
-	rm chroot/vyatta-save-package-report
+	chroot chroot /opt/vyatta/bin/save-package-report
 	mv $etcdir/deb-versions.txt $vf/.
 	cd ..
 	git-submodule status > $vf/iso-submodules.txt

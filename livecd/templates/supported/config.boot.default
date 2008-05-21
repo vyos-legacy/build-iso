@@ -1,0 +1,30 @@
+system {
+    ntp-server "69.59.150.135"
+    login {
+        user root {
+            authentication {
+                encrypted-password: "$1$$Ht7gBYnxI1xCdO/JOnodh."
+            }
+        }
+        user vyatta {
+            authentication {
+                encrypted-password: "$1$$Ht7gBYnxI1xCdO/JOnodh."
+            }
+        }
+    }
+    package {
+        repository supported {
+	    distribution: "stable"
+            components: "main"
+            url: "http://packages.vyatta.com/vyatta-supported"
+        }
+    }
+}
+
+interfaces {
+    loopback lo {
+    }
+}
+
+/* Warning: Do not remove the following line. */
+/* === vyatta-config-version: "cluster@1:dhcp-relay@1:dhcp-server@1:firewall@1:nat@2:serial@1:webgui@1" === */
