@@ -76,8 +76,8 @@ AC_ARG_VAR(LH_QUIET, [default: enabled])
 test "X$LH_VERBOSE" = "X" && LH_VERBOSE=disabled
 AC_ARG_VAR(LH_VERBOSE, [default: disabled])
 
-test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=d-i/isolinux/isolinux.cfg
-AC_ARG_VAR(LH_SYSLINUX_CFG, [default: d-i/isolinux/isolinux.cfg])
+test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=isolinux.cfg
+AC_ARG_VAR(LH_SYSLINUX_CFG, [default: isolinux.cfg])
 
 test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disable
 AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disable])

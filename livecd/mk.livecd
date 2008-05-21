@@ -246,7 +246,6 @@ lh_config
 cp cache/vyatta-pkgs config/chroot_local-packageslists
 
 find \
-    binary_local-hooks \
     binary_local-includes \
     chroot_local-hooks \
     chroot_local-includes \
@@ -301,11 +300,6 @@ if eval "$use_xen" || eval "$use_xendomzero" ; then
 else
     rm -f config/chroot_local-hooks/*xen*
 fi
-
-mkdir -p config/binary_local-includes/install/late-commands
-( cd config/chroot_local-hooks && \
-    find . -print0 | \
-    cpio --null --quiet -pdmu ../binary_local-includes/install/late-commands )
 
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages

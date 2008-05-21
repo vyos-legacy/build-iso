@@ -1,0 +1,401 @@
+#!/bin/sh
+
+# NOTE this is run from the install initrd that just has busybox shell
+#      so, donot use bash extensions
+
+DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND
+
+progname=`basename $0`
+
+log () {
+    logger -t "$progname" $@
+}
+
+error () {
+    log "error: $*"
+}
+
+info () {
+    log "info: $*"
+}
+
+target=/target/
+instdir=/usr/share/vyatta-install/
+
+mount -o bind /proc ${target}proc
+mount -o bind /dev  ${target}dev
+mkdir -p ${target}installer
+mount -o bind / ${target}installer
+
+info Rewrite /etc/issue
+cat <<EOF > ${target}etc/issue
+Welcome to Vyatta - \n \l
+
+EOF
+
+info Rewrite /etc/issue.net
+cat <<EOF > ${target}etc/issue.net
+Welcome to Vyatta
+EOF
+
+if ! grep -q '\(^[^#]*\)\(\.\|source\) /etc/bash_completion' \
+    ${target}root/.bashrc 2> /dev/null
+then
+    info Source bash_completion for root user
+    cat <<-EOF >> ${target}root/.bashrc
+	source /etc/bash_completion
+	EOF
+fi
+
+if ! [ -r ${target}etc/default/locale ] ; then
+    info Set default locale
+    cat <<-EOF > ${target}etc/default/locale
+	LANG=en_US.UTF-8
+	LC_ALL=C
+	EOF
+fi
+
+if [ -r ${target}etc/event.d/tty1 ] ; then
+    info Delay getty until rcX completes
+    sed -i \
+	-e 's/start on runlevel /start on stopped rc/' \
+	${target}etc/event.d/tty[1-6]
+    if [ ! -r ${target}etc/event.d/ttyS0 ] ; then
+	info Enable serial console login
+	cp ${instdir}vyatta_event_ttyS0 ${target}etc/event.d/ttyS0
+    fi
+fi
+
+if [ -r ${target}etc/inittab ] \
+    && grep -q '^#T0:.*getty.*ttyS0' ${target}etc/inittab
+then
+    info Enable serial console login
+    sed -i \
+	-e '/^#T0:/s|^#.*$|T0:23:respawn:/sbin/getty -L ttyS0 9600 vt100|' \
+	${target}etc/inittab
+fi
+
+if [ -e ${instdir}vyatta-pubkey.gpg ] ; then
+    info Apt-key add vyatta
+    chroot ${target} apt-key add /installer${instdir}vyatta-pubkey.gpg
+fi
+
+for conf in motd.tail syslog.conf; do
+    if [ -e ${target}opt/vyatta/etc/$conf ] ; then
+	info Rewrite /etc/$conf
+	cp -f ${target}opt/vyatta/etc/$conf ${target}etc
+    fi
+done
+
+if [ -e ${target}opt/vyatta/etc/logrotate_messages ] ; then
+    info Rewrite /etc/logrotate.d/messages
+    cp -f ${target}opt/vyatta/etc/logrotate_messages \
+	${target}etc/logrotate.d/messages
+fi
+
+if [ -e ${target}opt/vyatta/etc/default_ssh ] ; then
+    info Rewrite /etc/default/ssh
+    cp -f ${target}opt/vyatta/etc/default_ssh ${target}etc/default/ssh
+fi
+
+info Rewrite /etc/pam_radius_auth.conf
+>${target}etc/pam_radius_auth.conf
+
+info Update /etc/sysctl.conf
+update_sysctl_conf () {
+    var=$1
+    val=$2
+    comment=$3
+    sysctl_conf=${target}etc/sysctl.conf
+
+    if grep -q "^${var}[[:space:]]*=" $sysctl_conf ; then
+	sed -i \
+	    -e "/^${var}[[:space:]]*=/ s,=.*,= ${val}," \
+	    $sysctl_conf
+    elif grep -q "^#[[:space:]]*${var}[[:space:]]*=" $sysctl_conf ; then
+	sed -i \
+	    -e "/^#[[:space:]]*${var}[[:space:]]*=/ { s,^#[[:space:]]*,," \
+	    -e "s,[[:space:]]*=.*, = ${val},} " \
+	    $sysctl_conf
+    else
+	cat <<-EOF >> $sysctl_conf
+
+	# $comment
+	$var = $val
+	EOF
+    fi
+}
+
+update_sysctl_conf kernel.printk "4 4 1 7" \
+    "the following stops low-level messages on console"
+update_sysctl_conf net.ipv4.conf.default.arp_filter 1 \
+    "reset promiscous arp response"
+update_sysctl_conf net.ipv4.conf.all.promote_secondaries 1 \
+    "promote secondaries with removal of primary address"
+update_sysctl_conf net.ipv4.ip_forward 1 \
+    "enable ipv4 forwarding"
+# FIXME! need to load or staticly link ipv6 module before adding this.
+# update_sysctl_conf net.ipv6.conf.all.forwarding 1 \
+#    "enable ipv6 forwarding"
+update_sysctl_conf net.core.rmem_max 223232 \
+    "maximize netlink buffers"
+
+
+# create busybox alternatives
+
+bb=`chroot target which busybox`
+applets=`busybox | sed '1,/^Currently defined functions:/d; s/[\[,]//g'`
+
+bb_alternative () {
+    full=$1
+    full_bb=$full.bb
+    app=`basename $full`
+    if ! [ -x ${target}$full ] ; then
+	for applet in $applets ; do
+	    if [ $app = $applet ] ; then
+		info Install busybox alternative for $app
+		ln -s $bb ${target}$full_bb
+		chroot ${target} update-alternatives --install $full $app $full_bb 10
+		return 0
+	    fi
+	done
+    fi
+}
+
+bb_alternative /bin/bunzip2
+bb_alternative /bin/bzcat
+bb_alternative /bin/cat
+bb_alternative /bin/chgrp
+bb_alternative /bin/chmod
+bb_alternative /bin/chown
+bb_alternative /bin/cp
+bb_alternative /bin/cpio
+bb_alternative /bin/date
+bb_alternative /bin/dd
+bb_alternative /bin/df
+bb_alternative /bin/dmesg
+bb_alternative /bin/echo
+bb_alternative /bin/egrep
+bb_alternative /bin/false
+bb_alternative /bin/fgrep
+bb_alternative /bin/grep
+bb_alternative /bin/gunzip
+bb_alternative /bin/gzip
+bb_alternative /bin/hostname
+bb_alternative /bin/ip
+bb_alternative /bin/kill
+bb_alternative /bin/ln
+bb_alternative /bin/login
+bb_alternative /bin/ls
+bb_alternative /bin/mkdir
+bb_alternative /bin/mknod
+bb_alternative /bin/mktemp
+bb_alternative /bin/more
+bb_alternative /bin/mount
+bb_alternative /bin/mt
+bb_alternative /bin/mv
+bb_alternative /bin/nc
+bb_alternative /bin/netstat
+bb_alternative /bin/pidof
+bb_alternative /bin/ping
+bb_alternative /bin/ping6
+bb_alternative /bin/ps
+bb_alternative /bin/pwd
+bb_alternative /bin/readlink
+bb_alternative /bin/rm
+bb_alternative /bin/rmdir
+bb_alternative /bin/run-parts
+bb_alternative /bin/sed
+bb_alternative /bin/sh
+bb_alternative /bin/sleep
+bb_alternative /bin/stty
+bb_alternative /bin/sync
+bb_alternative /bin/tar
+bb_alternative /bin/touch
+bb_alternative /bin/true
+bb_alternative /bin/umount
+bb_alternative /bin/uname
+bb_alternative /bin/uncompress
+bb_alternative /bin/which
+bb_alternative /bin/zcat
+
+bb_alternative /sbin/ifconfig
+bb_alternative /sbin/ip
+bb_alternative /sbin/iptunnel
+bb_alternative /sbin/klogd
+bb_alternative /sbin/losetup
+bb_alternative /sbin/nameif
+bb_alternative /sbin/route
+bb_alternative /sbin/start-stop-daemon
+bb_alternative /sbin/swapoff
+bb_alternative /sbin/swapon
+bb_alternative /sbin/syslogd
+
+bb_alternative /usr/bin/adjtimex
+bb_alternative /usr/bin/ar
+bb_alternative /usr/bin/arping
+bb_alternative /usr/bin/awk
+bb_alternative /usr/bin/basename
+bb_alternative /usr/bin/cal
+bb_alternative /usr/bin/chvt
+bb_alternative /usr/bin/clear
+bb_alternative /usr/bin/cmp
+bb_alternative /usr/bin/cut
+bb_alternative /usr/bin/dc
+bb_alternative /usr/bin/deallocvt
+bb_alternative /usr/bin/dirname
+bb_alternative /usr/bin/dos2unix
+bb_alternative /usr/bin/dumpkmap
+bb_alternative /usr/bin/du
+bb_alternative /usr/bin/env
+bb_alternative /usr/bin/expr
+bb_alternative /usr/bin/find
+bb_alternative /usr/bin/fold
+bb_alternative /usr/bin/free
+bb_alternative /usr/bin/ftpget
+bb_alternative /usr/bin/ftpput
+bb_alternative /usr/bin/getopt
+bb_alternative /usr/bin/head
+bb_alternative /usr/bin/hexdump
+bb_alternative /usr/bin/hostid
+bb_alternative /usr/bin/id
+bb_alternative /usr/bin/ipaddr
+bb_alternative /usr/bin/ipcalc
+bb_alternative /usr/bin/iplink
+bb_alternative /usr/bin/iproute
+bb_alternative /usr/bin/killall
+bb_alternative /usr/bin/last
+bb_alternative /usr/bin/loadfont
+bb_alternative /usr/bin/loadkmap
+bb_alternative /usr/bin/logger
+bb_alternative /usr/bin/logname
+bb_alternative /usr/bin/logread
+bb_alternative /usr/bin/md5sum
+bb_alternative /usr/bin/mkfifo
+bb_alternative /usr/bin/nslookup
+bb_alternative /usr/bin/od
+bb_alternative /usr/bin/openvt
+bb_alternative /usr/bin/patch
+bb_alternative /usr/bin/printf
+bb_alternative /usr/bin/rdate
+bb_alternative /usr/bin/realpath
+bb_alternative /usr/bin/rpm
+bb_alternative /usr/bin/rpm2cpio
+bb_alternative /usr/bin/renice
+bb_alternative /usr/bin/reset
+bb_alternative /usr/bin/setkeycodes
+bb_alternative /usr/bin/sha1sum
+bb_alternative /usr/bin/sort
+bb_alternative /usr/bin/strings
+bb_alternative /usr/bin/tail
+bb_alternative /usr/bin/tee
+bb_alternative /usr/bin/telnet
+bb_alternative /usr/bin/test
+bb_alternative /usr/bin/tftp
+bb_alternative /usr/bin/time
+bb_alternative /usr/bin/top
+bb_alternative /usr/bin/touch
+bb_alternative /usr/bin/tr
+bb_alternative /usr/bin/traceroute
+bb_alternative /usr/bin/tty
+bb_alternative /usr/bin/uniq
+bb_alternative /usr/bin/unix2dos
+bb_alternative /usr/bin/unzip
+bb_alternative /usr/bin/uptime
+bb_alternative /usr/bin/usleep
+bb_alternative /usr/bin/uudecode
+bb_alternative /usr/bin/uuencode
+bb_alternative /usr/bin/vi
+bb_alternative /usr/bin/watch
+bb_alternative /usr/bin/wc
+bb_alternative /usr/bin/wget
+bb_alternative /usr/bin/which
+bb_alternative /usr/bin/who
+bb_alternative /usr/bin/whoami
+bb_alternative /usr/bin/xargs
+bb_alternative /usr/bin/yes
+
+bb_alternative /usr/sbin/chroot
+bb_alternative /usr/sbin/dumpleases
+bb_alternative /usr/sbin/httpd
+bb_alternative /usr/sbin/telnetd
+bb_alternative /usr/sbin/traceroute
+bb_alternative /usr/sbin/udhcpc
+bb_alternative /usr/sbin/udhcpd
+bb_alternative /usr/sbin/watchdog
+
+for vmlinuz in /target/boot/vmlinuz-* ; do
+    ver=`echo $vmlinuz | sed s,/target/boot/vmlinuz-,,`
+    case "$ver" in
+	*-vyatta )
+	    info Create initramfs for $ver
+	    chroot /target update-initramfs -c -k $ver ;;
+	* ) info Remove linux-image-$ver
+	    chroot /target apt-get --yes --force-yes remove linux-image-$ver ;;
+    esac
+done
+
+GRUB_DISTRIBUTOR=Vyatta
+GRUB_PRELOAD_MODULES="echo iso9660 ls lspci pc sleep serial terminal"
+
+if grep -q console=ttyS0 /proc/cmdline ; then
+    GRUB_SERIAL_COMMAND="serial -u 0 -s 9600 -w 8 -r no -t 1"
+    if grep -q console=tty0 /proc/cmdline ; then
+	# use both serial and tty0
+	GRUB_CMDLINE_LINUX="console=tty0 console=ttyS0"
+    else
+	# just serial so direct grub to that console
+	GRUB_CMDLINE_LINUX="console=ttyS0"
+	GRUB_TERMINAL="serial"
+    fi
+elif [ -e /proc/fb ]  && ! lsmod | grep -q fbcon ; then
+    # /usr/sbin/update-grub doesnot properly test for GRUB_TERMINAL=gfxterm
+    # so we empty GRUB_TERMINAL to force the default
+    GRUB_TERMINAL=
+    GRUB_CMDLINE_LINUX="video=vesa:ywrap,mtrr vga=788"
+else
+    GRUB_TERMINAL="console"
+    GRUB_CMDLINE_LINUX="vga=normal"
+fi
+
+grub_default=${target}etc/default/grub
+touch $grub_default
+
+for grub_var in CMDLINE_LINUX DISTRIBUTOR PRELOAD_MODULES SERIAL_COMMAND TERMINAL ; do
+    var=GRUB_${grub_var}
+    eval val=\$$var
+    if [ -n "$val" ] ; then
+	if grep -q "^${var}=" $grub_default ; then
+	    sed -i 's#^'"$var"'=.*#'"$var"'="'"$val"'"#' $grub_default
+	else
+	    echo "$var"=\""$val"\" >> $grub_default
+	fi
+    fi
+done
+
+info Install Vyatta boot graphic
+mkdir -p ${target}boot/graphics
+cp ${instdir}vyatta_lower_right_640x480.tga ${target}boot/graphics
+info Install Vyatta boot theme
+mkdir -p ${target}etc/grub.d
+cp ${instdir}vyatta_grub_theme ${target}etc/grub.d/05_vyatta_theme
+
+info update-grub
+chroot ${target} /usr/sbin/update-grub
+
+umount ${target}installer
+umount ${target}dev
+umount ${target}proc
+rmdir ${target}installer || true
+
+if [ -r /tmp/config.boot ]
+then
+    info restore config.boot
+    mv /tmp/config.boot ${target}opt/vyatta/etc/config/
+fi
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

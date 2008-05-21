@@ -1,0 +1,184 @@
+style "vyatta-default"
+{
+	GtkButton	::default_border	= { 0, 0, 0, 0 }
+	GtkRange	::trough_border		= 0
+	GtkPaned	::handle_size		= 6
+	GtkRange	::slider_width		= 15
+	GtkRange	::stepper_size		= 15
+	
+	GtkScrollbar	::min_slider_length	= 30
+	GtkCheckButton	::indicator_size	= 14
+	GtkMenuBar	::internal-padding	= 0
+	GtkTreeView	::expander_size		= 14
+	GtkExpander	::expander_size		= 16
+	GtkScale	::slider-length		= 27
+#	GtkToolbar	::button-relief		= GTK_RELIEF_NORMAL
+#	GtkMenuBar	::shadow-type		= GTK_SHADOW_OUT
+#	GtkScrollbar	::has-secondary-forward-stepper  = 1
+#	GtkScrollbar	::has-secondary-backward-stepper = 1
+
+	GtkButton	::child-displacement-x = 1
+	GtkButton	::child-displacement-y = 1
+
+	WnckTasklist	::fade-overlay-rect = 0
+
+	xthickness = 1
+	ythickness = 1
+
+	fg[NORMAL]		= "#d2cfcc" # Main window text
+	fg[PRELIGHT]		= "#E9E9E9" #Highlighted widget text
+	fg[SELECTED]		= "#E9E9E9" #
+	fg[ACTIVE]		= "#ADA59D" # 
+	fg[INSENSITIVE]		= "#202020" # dark beige
+
+	bg[NORMAL]		= "#181818" #
+	bg[PRELIGHT]		= "#dd6003" #
+	bg[SELECTED]		= "#d60052" # red
+	bg[INSENSITIVE]		= "#202020" #
+	bg[ACTIVE]		= "#343434" #
+
+	base[NORMAL]		= "#000000" #
+	base[PRELIGHT]		= "#313131" #
+	base[ACTIVE]		= "#a64a07" #
+	base[SELECTED]		= "#e26000" #
+	base[INSENSITIVE]	= "#f5f2ee" #
+
+	text[NORMAL]		= "#d2cfcc" #
+	text[PRELIGHT]		= "#e9e9e9" #
+	text[ACTIVE]		= "#ada59d" #
+	text[SELECTED]		= "#e9e9e9" #
+	text[INSENSITIVE]	= "#757575" #
+
+	engine "vyatta" 
+	{
+	#scrollbar_color	= "#76acde"
+	menubarstyle		= 2	# 0 = flat, 1 = sunken, 2 = flat gradient
+	#menuitemstyle		= 1	# 0 = flat, 1 = 3d-ish (gradient), 2 = 3d-ish (button)
+	#listviewitemstyle	= 1	# 0 = flat, 1 = 3d-ish (gradient)
+	#progressbarstyle	= 1	# 0 = candy bar, 1 = fancy candy bar, 2 = flat
+	animation		= FALSE
+	}
+}
+
+style "vyatta-wide" = "vyatta-default"
+{
+	xthickness = 2
+	ythickness = 2
+}
+
+style "vyatta-wider" = "vyatta-default"
+{
+	xthickness = 3
+	ythickness = 3
+}
+
+style "vyatta-button" = "vyatta-wider"
+{
+	bg[NORMAL]	= "#313131"
+	bg[INSENSITIVE]	= "#f2efeb"
+	bg[PRELIGHT]	= "#393939"
+}
+
+style "vyatta-notebook" = "vyatta-wide"
+{
+	bg[NORMAL]	= "#202020"
+	bg[INSENSITIVE] = "#101010"
+}
+
+style "vyatta-tasklist" = "vyatta-default"
+{
+	xthickness = 5
+	ythickness = 3
+}
+
+style "vyatta-menu" = "vyatta-default"
+{
+	xthickness = 2
+	ythickness = 1
+	bg[NORMAL] = "#202020"
+}
+
+style "vyatta-menubar-item" = "vyatta-button"
+{
+	fg[PRELIGHT] = "#e9e9e9"
+}
+
+style "vyatta-menu-item" = "vyatta-default"
+{
+	xthickness	= 2
+	ythickness	= 3
+	fg[PRELIGHT]	= "#e9e9e9"
+	text[PRELIGHT]	= "#e9e9e9"
+}
+
+style "vyatta-tree" = "vyatta-default"
+{
+	xthickness = 2
+	ythickness = 2
+}
+
+style "vyatta-frame-title" = "vyatta-default"
+{
+	fg[NORMAL] = "#d2cfcc"
+}
+
+style "vyatta-tooltips" = "vyatta-default"
+{
+	xthickness = 4
+	ythickness = 4
+	bg[NORMAL] = { 1.0,1.0,0.75 }
+}
+
+style "vyatta-progressbar" = "vyatta-wide"
+{
+	xthickness	= 1
+	ythickness	= 1
+	fg[PRELIGHT]	= "#d2cfcc"
+	bg[NORMAL]	= "#1d0d01"
+}
+
+style "vyatta-combo" = "vyatta-button"
+{
+}
+
+style "vyatta-menubar" = "blackrock-default"
+{
+	bg[NORMAL]	= "#bacedb"
+}
+	
+# widget styles
+class "GtkWidget"	style "vyatta-default"
+class "GtkButton"	style "vyatta-button"
+class "GtkScale"	style "vyatta-button"
+class "GtkCombo"	style "vyatta-button"
+class "GtkRange"	style "vyatta-wide"
+class "GtkFrame"	style "vyatta-wide"
+class "GtkMenu"		style "vyatta-menu"
+class "GtkEntry"	style "vyatta-wider"
+class "GtkMenuItem"	style "vyatta-menu-item"
+class "GtkNotebook"	style "vyatta-notebook"
+class "GtkProgressBar"	style "vyatta-progressbar"
+ 
+#class "GtkMenuBar"	style "vyatta-menubar"
+
+widget_class "*MenuItem.*"			style "vyatta-menu-item"
+#widget_class "*.GtkMenuBar.*MenuItem.*"	style "vyatta-menubar-item"
+
+# combobox stuff
+widget_class "*.GtkComboBox.GtkButton"		style "vyatta-combo"
+widget_class "*.GtkCombo.GtkButton"		style "vyatta-combo"
+# tooltips stuff
+widget_class "*.tooltips.*.GtkToggleButton"	style "vyatta-tasklist"
+widget "gtk-tooltips"				style "vyatta-tooltips"
+
+# treeview stuff
+widget_class "*.GtkTreeView.GtkButton"		style "vyatta-tree"
+widget_class "*.GtkCTree.GtkButton"		style "vyatta-tree"
+widget_class "*.GtkList.GtkButton"		style "vyatta-tree"
+widget_class "*.GtkCList.GtkButton"		style "vyatta-tree"
+widget_class "*.GtkFrame.GtkLabel"		style "vyatta-frame-title"
+
+# notebook stuff
+widget_class "*.GtkNotebook.*.GtkEventBox"	style "vyatta-notebook"
+widget_class "*.GtkNotebook.*.GtkViewport"	style "vyatta-notebook"
+
