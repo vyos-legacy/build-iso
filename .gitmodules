@@ -106,3 +106,6 @@
 [submodule "pkgs/vyatta-keepalived"]
 	path = pkgs/vyatta-keepalived
 	url = http://git.vyatta.com/vyatta-keepalived.git
+[submodule "pkgs/vyatta-busybox"]
+	path = pkgs/vyatta-busybox
+	url = http://git.vyatta.com/vyatta-busybox.git

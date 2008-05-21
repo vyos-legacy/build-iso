@@ -9,6 +9,13 @@ trace=
 noclean="-nc"
 build="debuild -i -b -uc -us"
 
+# check to see if the version #'s will be incremented nicely
+if ! grep 'DEBCHANGE_AUTO_NMU.*=.*no' $HOME/.devscripts /etc/devscripts.conf >&/dev/null
+then
+	echo "Please set DEBCHANGE_AUTO_NMU=no in ~/.devscripts or /etc/devscripts.conf"
+	exit 1
+fi
+
 declare -a cloned=( */debian )
 declare -a submodule=( ${cloned[@]%/*} )
 
@@ -93,7 +100,7 @@ mod_changelog()
 	[ "$RELEASENAME" = UNRELEASED ] || rel=--release
 
 	branch=`get_branch`
-	touch debian/control
+	[ ! -f debian/control ] && echo "Maintainer: eng@vyatta.com">debian/control
 	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
@@ -104,7 +111,7 @@ mod_changelog()
 	[ "$RELEASENAME" = UNRELEASED ] && return 0
 
 	sed -e 's/^  \* UNRELEASED$//' -e '3i \
-  '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
+	  '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
 	rm /tmp/changelog$$
 	return 0
 )}
@@ -127,10 +134,10 @@ do_inc_version()
 	fi
 
 	tag_sha=`get_tag`
-	tag_sha=`cat .git/refs/tags/debian/"$tag_sha"`
-	tag_sha=`git-cat-file -p "$tag_sha"|head -1|sed 's,.* ,,'`
+	tag_sha=`git-cat-file -p debian/"$tag_sha"|head -1|sed 's,.* ,,'`
 	head_sha=`cat .git/refs/heads/"$branch"`
-	if [ "$tag_sha" = "$head_sha" ]
+	diffs=`[ "$tag_sha" -a "$tag_sha" != "$head_sha" ] && git-diff "$tag_sha" "$head_sha"|head -1`
+	if [ ! "$diffs" ]
 	then
 		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
 		return
