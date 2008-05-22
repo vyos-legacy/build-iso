@@ -19,7 +19,10 @@ have_linux_kernel_di := $(shell test -e pkgs/linux-kernel-di-i386-2.6/debian/rul
 ifeq ($(have_linux_kernel_di),true)
 
 define clean_udebs
+cd pkgs/linux-kernel-di-i386-2.6 ; \
+$(FAKEROOT) debuild -e SOURCEDIR=../../livecd/chroot -d clean
 rm -f pkgs/*.udebs
+rm -rf vyatta-udebs
 endef
 
 define mk_udebs
@@ -148,6 +151,10 @@ clean :
 	@$(clean_udebs)
 	@$(clean_installer)
 	@rm -rf livecd/cache/stage*
+
+.PHONY : clean-udebs
+clean-udebs :
+	@$(clean_udebs)
 
 .PHONY : clean-installer
 clean-installer :
