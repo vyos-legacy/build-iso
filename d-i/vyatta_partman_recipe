@@ -1,0 +1,22 @@
+partman-auto/text/vyatta_scheme ::
+
+128 512 256 ext3
+	$defaultignore{ }
+	$primary{ }
+	$bootable{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ ext3 }
+	mountpoint{ /boot } .
+
+500 10000 1000000000 ext3
+	$lvmok{ }
+	$primary{ }
+	$bootable{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ ext3 }
+	mountpoint{ / } .
+

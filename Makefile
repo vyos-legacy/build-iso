@@ -50,6 +50,7 @@ inst_builddir = pkgs/installer/build
 inst_instdir  = usr/share/vyatta-install
 inst_graphicsdir = usr/share/graphics
 inst_themesdir = usr/share/themes/vyatta/gtk-2.0
+inst_partmandir = lib/partman/recipes
 kernelname = $(notdir $(lastword $(wildcard livecd/chroot/boot/vmlinuz-*-vyatta)))
 kernelversion = $(subst vmlinuz-,,$(kernelname))
 
@@ -58,9 +59,7 @@ $(FAKEROOT) make -C $(inst_builddir) --quiet --no-print-directory \
 	clean_netboot clean_netboot-gtk
 rm -f	$(inst_builddir)/config/local \
 	$(inst_builddir)/pkg-lists/netboot/local
-rm -rf	$(inst_builddir)/$(inst_instdir) \
-	$(inst_builddir)/$(inst_graphicsdir) \
-	$(inst_builddir)/$(inst_themesdir)
+rm -rf	$(inst_builddir)/lib $(inst_builddir)/usr
 endef
 
 define mk_installer
@@ -78,6 +77,8 @@ mkdir -p $(inst_builddir)/$(inst_themesdir)
 cp d-i/vyatta_gtkrc $(inst_builddir)/$(inst_themesdir)/gtkrc
 mkdir -p $(inst_builddir)/$(inst_graphicsdir)
 cp d-i/vyatta_logo.png $(inst_builddir)/$(inst_graphicsdir)/logo_debian.png
+mkdir -p $(inst_builddir)/$(inst_partmandir)
+cp d-i/vyatta_partman_recipe $(inst_builddir)/$(inst_partmandir)/20vyatta
 @printf "%s %s %s\n" \
 	KERNELNAME = $(kernelname) \
 	KERNELVERSION = $(kernelversion) \
@@ -92,6 +93,7 @@ cp d-i/vyatta_logo.png $(inst_builddir)/$(inst_graphicsdir)/logo_debian.png
 	EXTRAFILES += $(inst_instdir)/vyatta-pubkey.gpg \
 	EXTRAFILES += $(inst_themesdir)/gtkrc \
 	EXTRAFILES += $(inst_graphicsdir)/logo_debian.png \
+	EXTRAFILES += $(inst_partmandir)/20vyatta \
 	> $(inst_builddir)/config/local
 @printf "%s\n" \
 	'# kvm-qemu' \
