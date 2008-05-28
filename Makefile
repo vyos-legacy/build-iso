@@ -111,6 +111,7 @@ cp d-i/vyatta_partman_recipe $(inst_builddir)/$(inst_partmandir)/20vyatta
 	> $(inst_builddir)/pkg-lists/netboot/local
 $(FAKEROOT) make -C $(inst_builddir) \
 	SECOPTS="--allow-unauthenticated --force-yes" \
+	SYSLINUX_SERIAL="SERIAL 0 9600 0" \
 	CONSOLE="console=ttyS0 DEBIAN_FRONTEND=text" \
 	build_netboot
 $(FAKEROOT) make -C $(inst_builddir) \
