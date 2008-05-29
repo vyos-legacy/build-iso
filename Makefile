@@ -79,6 +79,7 @@ mkdir -p $(inst_builddir)/$(inst_graphicsdir)
 cp d-i/vyatta_logo.png $(inst_builddir)/$(inst_graphicsdir)/logo_debian.png
 mkdir -p $(inst_builddir)/$(inst_partmandir)
 cp d-i/vyatta_partman_recipe $(inst_builddir)/$(inst_partmandir)/20vyatta
+cp d-i/sources.list.udeb.local $(inst_builddir)
 @printf "%s %s %s\n" \
 	KERNELNAME = $(kernelname) \
 	KERNELVERSION = $(kernelversion) \
