@@ -6,11 +6,14 @@ cd pkgs
 
 info=echo
 trace=
+git_clean_flag=-f
 do_debclean=false
 do_gitclean=false
+do_wipe=false
 
 declare -a cloned=( */debian )
 declare -a submodule=( ${cloned[@]%/*} )
+declare -a targets
 
 while [ $# -gt 0 ] ; do
     case "$1" in
@@ -18,17 +21,19 @@ while [ $# -gt 0 ] ; do
 	    cat <<-EOF
 Usage: $progname [-n] [ SUBMODULE... ]
 Option:
-  -n | --do-nothing	Don´t actually remove anything,
- 			just show what would be done.
-  -q | --quiet		Quiet, don't print progress info
-  -d | --debclean	Also clean debian build stage
-  -g | --gitclean	Also clean git tree
+  -n | --do-nothing     Don´t actually remove anything,
+                        just show what would be done.
+  -q | --quiet          Quiet, don't print progress info
+  -d | --debclean       Also clean debian build stage
+  -g | --gitclean       Also clean git tree
+  -w | --wipe           Remove submodule tree and repos
 
 If no SUBMODULE(s) given, clean all checked-out submodules
 EOF
 	    exit 0;;
 	-n | --do-nothing )
 	    trace=echo
+	    git_clean_flag=-n
 	    shift;;
 	-q | --quiet )
 	    info='#'
@@ -38,6 +43,9 @@ EOF
 	    shift;;
 	-g | --gitclean )
 	    do_gitclean=true
+	    shift;;
+	-w | --wipe )
+	    do_wipe=true
 	    shift;;
 	-* )
 	    echo Unkown option: \""$1"\"
@@ -52,20 +60,25 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
     eval $info P: ${submodule[i]}    
     case "${submodule[i]}" in
 	linux-* )
-	    eval $trace rm -f linux-*.{build,changes,deb,tar.gz,udeb} ;;
+	    targets=( linux-*.{build,changes,deb,tar.gz,udeb} );;
 	vyatta-dhcp3-client )
-	    eval $trace rm -f vyatta-dhcp3-*.{build,changes,deb,tar.gz,udeb} ;;
+	    targets=( vyatta-dhcp3-*.{build,changes,deb,tar.gz,udeb} );;
 	wanpipe )
-	    eval $trace rm -f wanpipe*.{build,changes,deb,tar.gz,udeb} ;;
+	    targets=( wanpipe*.{build,changes,deb,tar.gz,udeb} );;
 	vyatta-snort )
-	    eval $trace rm -f vyatta-snort*.{build,changes,deb,tar.gz,udeb} ;;
+	    targets=( vyatta-snort*.{build,changes,deb,tar.gz,udeb} );;
 	* )
-	    eval $trace rm -f ${submodule[i]}_*.{build,changes,deb,tar.gz,udeb} ;;
+	    targets=( ${submodule[i]}_*.{build,changes,deb,tar.gz,udeb} );;
     esac
-    if eval $do_debclean  ; then
-	( cd ${submodule[i]} ; eval $trace debclean )
+    if eval $do_wipe ; then
+	targets+=( ${submodule[i]}/* ${submodule[i]}/.[^.]* )
+    else
+	eval $do_debclean && \
+	    ( cd ${submodule[i]} ; eval $trace debclean )
+	eval $do_gitclean && \
+	    ( cd ${submodule[i]} ; git-clean $git_clean_flag -d )
     fi
-    if eval $do_gitclean ; then
-	eval $trace git-clean -d ${submodule[i]}/
+    if [[ ${#targets[@]} -gt 0 ]] ; then
+	eval $trace rm -rf ${targets[@]}
     fi
 done
