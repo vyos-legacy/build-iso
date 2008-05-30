@@ -278,7 +278,7 @@ esac
 EXCLUDE_PKGS=${EXCLUDE_PKGS/,$/}
 INCLUDE_PKGS=${INCLUDE_PKGS/,$/}
 
-AC_CONFIG_FILES([livecd/mk.livecd.conf])
+AC_CONFIG_FILES([mk.conf livecd/mk.livecd.conf])
 
 AC_SUBST(ARCH)
 AC_SUBST(CONFIG_BUILD)

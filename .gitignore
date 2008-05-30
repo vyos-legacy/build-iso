@@ -24,6 +24,8 @@
 /livecd/mk.livecd.conf
 /livecd/version
 
+/mk.conf
+
 /pkgs/*.build
 /pkgs/*.changes
 /pkgs/*.deb

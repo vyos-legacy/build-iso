@@ -3,6 +3,8 @@
 
 export MAKEFLAGS
 
+include mk.conf
+
 UID := $(shell id -u)
 ifneq ($(UID),0)
 FAKEROOT = fakeroot
@@ -51,7 +53,7 @@ inst_instdir  = usr/share/vyatta-install
 inst_graphicsdir = usr/share/graphics
 inst_themesdir = usr/share/themes/vyatta/gtk-2.0
 inst_partmandir = lib/partman/recipes
-kernelname = $(notdir $(lastword $(wildcard livecd/chroot/boot/vmlinuz-*-vyatta)))
+kernelname = $(subst linux-image,vmlinuz,$(VYATTA_LINUX_PKG))
 kernelversion = $(subst vmlinuz-,,$(kernelname))
 
 define clean_installer
