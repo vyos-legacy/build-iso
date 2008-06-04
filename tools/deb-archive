@@ -1,64 +1,185 @@
 #!/bin/sh
+#
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
+# All Rights Reserved.
+# **** End License ****
 
 # tool for managing the DEB repositories on archive
 
 help() {
   echo "USAGE: sudo -u autobuild -H deb-archive [OPTIONS]"
   echo "deb-archive will process the package files in the given repo"
-  echo "and create the signed repository package summary files"
+  echo "and create the signed debian package summary files"
   echo
-  echo -e "\t-r\tSpecify the repository [for instance, main]"
+  echo -e "\t-c\tSpecify the Codename"
+  echo -e "\t-r\tSpecify the distribution (for instance, VC4)"
+  echo -e "\t-v\tSpecify the version (for instance, 3.0.9)"
+  echo -e "\t-s\tSpecify the Suite (usually testing or stable with default testing)"
   echo -e "\t-d\tSpecify root dir for the repository (default /var/www/vyatta)"
-  exit
+  echo -e "\t-l\tSpecify a file that specify the exact packages to include (in the format of dpkg -l output)"
+  echo -e "\t-h\tThis help text"
 }
-
-REPO_ROOT="/var/www/vyatta"
-
-while getopts hr:d:n: opt
-do
-  case $opt in
-  r)    REPO="$OPTARG"
-        ;;
-  d)	[ -d "$OPTARG" ] || help
-  	REPO_ROOT=`cd "$OPTARG";pwd`
-	;;
-  h)    help
-        ;;
-  n)	NEWFORMAT="$OPTARG"
-	;;
-  esac
-done
-
-if [ -z "$REPO" ]; then
-  help
-  exit 1
-fi
-
-if [ "$NEWFORMAT" ]
-then
-  REPOSITORIES="$NEWFORMAT"
-else
-  REPOSITORIES=`cd "$REPO_ROOT/pool/$REPO";find * -maxdepth 0 -type d`
-fi
-
-if [ ! "$REPOSITORIES" ]
-then
-  echo -e "Error: Invalid repository specified."
-  exit 1
-fi
 
 case X`id -n -u` in
  Xautobuild | Xroot )
 	;;
  * )
 	help
+	exit 1
 	;;
 esac
 
+# defaults
+REPO_ROOT=/var/www/vyatta
+SUITE=testing
+
+while getopts l:hr:d:n:s:c:v: opt
+do
+  case $opt in
+  r)    REPO="$OPTARG"
+	;;
+  c)    CODENAME="$OPTARG"
+	[ "$REPO" ] || REPO="$OPTARG"
+        ;;
+  v)    RELEASE_VERSION="$OPTARG"
+	;;
+  d)	if [ ! -d "$OPTARG" ]
+  	then
+		help
+		exit
+	fi
+  	REPO_ROOT=`cd "$OPTARG";pwd`
+	;;
+  h)    help
+  	exit
+        ;;
+  l)    FILELIST="$OPTARG"
+        dir=`dirname "$FILELIST"`
+        dir=`cd "$dir";echo "$PWD"`
+	FILELIST=`basename "$FILELIST"`
+        FILELIST=`echo "$dir"/"$FILELIST"`
+        ;;
+  s)
+        SUITE="$OPTARG"
+  esac
+done
+
 echo "Setting up apt repositories"
 
+set_pool()
+{
+    if [ -d pool/"$1" ]
+    then
+      echo pool/"$1"
+    else
+      echo pool/main
+    fi
+}
+
+rename_files()
+{
+    topdir=`set_pool "$1"`
+
+    list=`find "$1" -name '*.deb'`
+    for i in $list
+    do
+       newname=`echo $i|sed 's/%3a/:/g'`
+       [ "$i" != "$newname" ] && mv "$i" "$newname"
+    done
+}
+
+if [ "$FILELIST" ]
+then
+	rm -rf /tmp/$$-find
+	mkdir /tmp/$$-find
+
+	(
+	    cd $REPO_ROOT
+	    dir=`set_pool "$REPO"`
+
+	    rename_files "$dir"
+
+	    echo 'cat <<//EOF'
+
+	    grep '^ii '<"$FILELIST" |
+	    while true
+	    do
+	      read state nm v restofline
+	      [ ! "$nm" ] && break;
+
+	      found=
+	      for i in `find "$dir" -name "$nm"'_*_*.deb'`
+	      do
+		  iv=`dpkg -f "$i" version`
+		  if [ "$v" = "$iv" ]
+		  then
+		    found=$i
+		    break
+		  fi
+	      done
+
+	      # With apologies to Dykstra
+	      if [ "$found" ]
+	      then
+		echo "$found"
+	      else
+		echo ERROR: package "$nm" version "$v" from the dpkg-l list not found!
+		rm -rf /tmp/$$-find
+		exit 1
+              fi
+	    done
+
+	    echo //EOF
+	) >/tmp/$$-find/find
+
+	cnt=`wc -l /tmp/$$-find/find|awk '{ print $1 }'`
+	if [ ! "$cnt" ] || [ "$cnt" -le 2 ]
+	then
+		rm -rf /tmp/$$-find
+		echo "No debian packages in the file list!"
+		exit 1
+	fi
+
+	chmod +x /tmp/$$-find/find
+
+	PATH=/tmp/$$-find:$PATH
+
+	REPOSITORIES=main
+else
+  if [ ! "$REPO" ]; then
+    help
+    exit 1
+  fi
+
+  savedir="$PWD"
+  cd "$REPO_ROOT"
+  if [ -d "pool/$REPO" ]
+  then
+    cd "pool/$REPO"
+    REPOSITORIES=`find * -maxdepth 0 -type d` 2>/dev/null
+  elif [ -d pool/main ]
+  then
+    REPOSITORIES=main
+  else
+    echo -e "Error: Invalid repository specified."
+    exit 1
+  fi
+  cd "$savedir"
+fi
+
 for version in $REPO
-  do
+do
   for repository in $REPOSITORIES
   do
     cd $REPO_ROOT
@@ -66,49 +187,39 @@ for version in $REPO
     echo -e "\tChecking $version/$repository"
     mkdir -p dists/$version/$repository/binary-i386
 
-    # Create the Packages file
-    if [ "$NEWFORMAT" ]
-    then
-      apt-ftparchive packages pool/$repository
-    else
-      apt-ftparchive packages pool/$version/$repository
-    fi >dists/$version/$repository/binary-i386/Packages
+    # Create the Packages and Packages.gz files
+    dir=`set_pool "$version"/"$repository"`
 
-    # Create gzip copy of Packages
-    gzip --stdout dists/$version/$repository/binary-i386/Packages \
-	> dists/$version/$repository/binary-i386/Packages.gz
+    rename_files "$dir"
+    dpkg-scanpackages "$dir" 2>/dev/null |
+    tee dists/$version/$repository/binary-i386/Packages |
+    gzip >dists/$version/$repository/binary-i386/Packages.gz
+  done
 
-    # Create a local /tmp/$$-Release file
-    cat <<EOF >/tmp/$$-Release
-Archive: Vyatta
-Component: $repository
+  [ "$CODENAME" ] || CODENAME="$version"
+  [ "$RELEASE_VERSION" ] || RELEASE_VERSION="$CODENAME"
+  # Create the Top Level /tmp/$$-Release file for each version tree
+  cd "$REPO_ROOT"/dists/$version
+  (
+    cat <<EOF
 Origin: Vyatta
 Label: Vyatta
-Codename: $version
-Architecture: i386
+Suite: $SUITE
+Codename: $CODENAME
+Version: $RELEASE_VERSION
 EOF
 
-    #echo "Version: $version" >> $LOCALRELEASE
-
-  done
-
-  # Create the Top Level /tmp/$$-Release file for each version tree
-  cd dists/$version
-  echo "Origin: Vyatta" > /tmp/$$-Release
-  echo "Label: Vyatta"  >> /tmp/$$-Release
-  echo "Suite: $version" >> /tmp/$$-Release
-  echo "Codename: $version" >> /tmp/$$-Release
-
-  echo -n "Components:" >> /tmp/$$-Release
-  for repository in $REPOSITORIES
+    echo -n "Components:"
+    for repository in $REPOSITORIES
     do
-    echo -n " $repository" >> /tmp/$$-Release
-  done
-  echo "" >> /tmp/$$-Release
-  
-  echo "Description: Vyatta OFR $version" >> /tmp/$$-Release
+      echo -n " $repository"
+    done
+    echo ""
 
-  apt-ftparchive release . >> /tmp/$$-Release
+    echo "Description: Vyatta OFR $version"
+
+    apt-ftparchive release .
+  ) >/tmp/$$-Release
 
   ## gpg sign the release file
   ## Ensure single writer via a lock dir
