@@ -102,12 +102,14 @@ mkdir -p cache/vyatta-deb-mirror
 
 # FIXME! hack around convoluted hollywood repository that is currently
 #	 both a debian mirror and vyatta content repos; we only want the
-#	 new content and the prior version of squashfs-tools
+#	 new content and the prior version of squashfs-tools, ntp, and ntpdate
 rsync \
     --archive \
     --delete \
     --filter='+ *vyatta*' \
-    --filter='+ squashfs-tools*' \
+    --filter='+ squashfs-tools_*' \
+    --filter='+ ntp_*' \
+    --filter='+ ntpdate_*' \
     --filter='- *' \
     ${VYATTA_POOL}/ \
     cache/vyatta-deb-mirror/ || true
@@ -305,23 +307,27 @@ fi
 # any other local packages
 vyatta_chroot_local-packages ()
 {
+  local pool=chroot/root/pool/local/main
   declare -a vyatta_linux_debs=( config/chroot_local-packages/linux-*-vyatta*_${LH_ARCHITECTURE}.deb )
 
-  mkdir -p chroot/root/debs
+  mkdir -p $pool
+
   if [ ${#vyatta_linux_debs[@]} -gt 0 ] ;then
-      cp ${vyatta_linux_debs[@]} chroot/root/debs
-      chroot chroot dpkg -i -R root/debs
-      rm chroot/root/debs/*.deb
+      cp ${vyatta_linux_debs[@]} $pool/.
   fi
 
   cp config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
-      chroot/root/debs
-  cp config/chroot_local-packages/*_all.deb \
-      chroot/root/debs
-  chroot chroot dpkg -i -R root/debs || true
+     config/chroot_local-packages/*_all.deb \
+      $pool/.
+
+  ../tools/deb-archive -r local -d $pool/../../..
+  echo "deb file:///root local main" >>chroot/etc/apt/sources.list
+  chroot chroot apt-get update
+  chroot chroot apt-get -f install
+  chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
+  chroot chroot apt-get -y install squashfs-tools `cat $pool/list`
   chroot chroot apt-get install -f --yes
-  rm chroot/root/debs/*.deb
-  rmdir chroot/root/debs
+  rm -rf chroot/root/*
 }
 
 # do the steps in lh_chroot
