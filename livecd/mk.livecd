@@ -388,7 +388,14 @@ build_chroot ()
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
 
-  chroot chroot depmod -a `cd chroot/lib/modules;echo *`
+  local kernelname=`cd chroot/lib/modules;echo *`
+  if [ "$kernelname" ]
+  then
+     chroot chroot depmod -a `cd chroot/lib/modules;echo *`
+  else
+     echo "Missing kernel module"
+     return 1
+  fi
 }
 
 echo I: building chroot
