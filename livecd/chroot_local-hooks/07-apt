@@ -6,5 +6,3 @@ elif [ -e /vyatta-pubkey.gpg ] ; then
     apt-key add /vyatta-pubkey.gpg
     rm -f /vyatta-pubkey.gpg
 fi
-
-apt-get --yes autoremove
