@@ -35,6 +35,8 @@
 /pkgs/Packages
 /pkgs/Packages.gz
 
+/autobuild-vm
+
 debian/control
 
 *.iso
