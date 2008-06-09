@@ -111,4 +111,4 @@
 	url = git://git.vyatta.com/vyatta-busybox.git
 [submodule "pkgs/net-snmp"]
 	path = pkgs/net-snmp
-	url = suva.vyatta.com:/git/net-snmp.git
+	url = git://git.vyatta.com/net-snmp.git
