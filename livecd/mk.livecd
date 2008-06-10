@@ -327,7 +327,6 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
   chroot chroot apt-get -y install squashfs-tools `cat $pool/list`
   chroot chroot apt-get install -f --yes
-  rm -rf chroot/root/*
 }
 
 # do the steps in lh_chroot
@@ -370,6 +369,8 @@ build_chroot ()
   lh_chroot_symlinks || return 1
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
+
+  rm -rf chroot/root/*
 
   # remove resolv.conf.orig so it doesn't get restored
   rm -f chroot/etc/resolv.conf.orig
