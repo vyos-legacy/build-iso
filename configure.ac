@@ -234,7 +234,6 @@ gutsy | hardy )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
 	EXCLUDE_PKGS+=cpp,cpp-4.2,
 	EXCLUDE_PKGS+=exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,bsd-mailx,
-	EXCLUDE_PKGS+=linux-libc-dev,
 	EXCLUDE_PKGS+=openhpid,
 	EXCLUDE_PKGS+=perl-doc,
 	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1,
@@ -264,12 +263,12 @@ gutsy | hardy )
             LH_PACKAGES+="libc6-xen libc6 libsdl1.2debian libsdl1.2debian-alsa "
             LH_PACKAGES+="python-xen-3.2 python-dev python python2.5-dev python2.5 libsqlite3-0 "
         fi
-	LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
+	LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-dev"
 #	LH_MIRROR_BINARY="http://ftp.us.debian.org/debian"
-	LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
-	LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
+	LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
+	LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-dev"
 #	LH_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
