@@ -308,6 +308,7 @@ fi
 vyatta_chroot_local-packages ()
 {
   local pool=chroot/root/pool/local/main
+  local dist=chroot/root/dists/local/Release
   declare -a vyatta_linux_debs=( config/chroot_local-packages/linux-*-vyatta*_${LH_ARCHITECTURE}.deb )
 
   mkdir -p $pool
@@ -321,6 +322,8 @@ vyatta_chroot_local-packages ()
       $pool/.
 
   ../tools/deb-archive -r local -d $pool/../../..
+  cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
+  sed -i 's/^Label: Vyatta/Label: Local/' $dist
   echo "deb file:///root local main" >>chroot/etc/apt/sources.list
   chroot chroot apt-get update
   chroot chroot apt-get -f install
