@@ -10,7 +10,8 @@ noclean="-nc"
 build="debuild -i -b -uc -us"
 
 # check to see if the version #'s will be incremented nicely
-if ! grep 'DEBCHANGE_AUTO_NMU.*=.*no' $HOME/.devscripts /etc/devscripts.conf >&/dev/null
+found=`grep 'DEBCHANGE_AUTO_NMU.*=.*no' $HOME/.devscripts /etc/devscripts.conf 2>/dev/null`
+if [ ! "$found" ]
 then
 	echo "Please set DEBCHANGE_AUTO_NMU=no in ~/.devscripts or /etc/devscripts.conf"
 	exit 1
