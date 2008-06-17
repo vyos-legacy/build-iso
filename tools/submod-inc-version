@@ -147,7 +147,7 @@ do_inc_version()
 	case "$repo" in
 	linux-image* )
 		$trace mod_changelog "$RELEASENAME"
-		debuild -i -b -us -uc >/dev/null 2>/dev/null # we need to check-in some derived files for the build to work
+		#debuild -i -b -us -uc >/dev/null 2>/dev/null # we need to check-in some derived files for the build to work
 		;;
 	* )
 		$trace mod_changelog "$RELEASENAME"
