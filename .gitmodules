@@ -112,3 +112,6 @@
 [submodule "pkgs/net-snmp"]
 	path = pkgs/net-snmp
 	url = git://git.vyatta.com/net-snmp.git
+[submodule "pkgs/vyatta-webgui"]
+	path = pkgs/vyatta-webgui
+	url = git://git.vyatta.com/vyatta-webgui.git

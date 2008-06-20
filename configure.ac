@@ -185,6 +185,15 @@ AC_ARG_WITH(deb-install,
 [AS_HELP_STRING([--with-deb-install],
 [build Debian installer CD])])
 
+AC_ARG_WITH(webgui,
+[AS_HELP_STRING([--with-webgui],
+  [include Web GUI in the ISO])])
+
+VYATTA_INCLUDE_WEBGUI=no
+if test "X$with_webgui" = Xyes ; then
+  VYATTA_INCLUDE_WEBGUI=yes
+fi
+
 # FIXME! fetch version from source
 VYATTA_LINUX_PKG=linux-image-2.6.24-1-486-vyatta
 LH_LINUX_FLAVOURS="486-vyatta"
@@ -334,6 +343,7 @@ AC_SUBST(use_xendomzero)
 
 AC_SUBST(VYATTA_POOL)
 AC_SUBST(VYATTA_LINUX_PKG)
+AC_SUBST(VYATTA_INCLUDE_WEBGUI)
 
 AC_OUTPUT
 

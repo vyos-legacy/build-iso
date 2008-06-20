@@ -50,6 +50,9 @@ echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/-\\n}- | \
     sort > cache/vyatta-pkgs
 
 chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}\|linux-headers\*\|linux-source\*\|\*-dev
+if [ "$VYATTA_INCLUDE_WEBGUI" != "yes" ]; then
+  chroot_exclude_pattern+='|vyatta-webgui'
+fi
 binary_exclude_pattern=$chroot_exclude_pattern
 binary_exclude_pattern+='|squashfs-tools'
 binary_exclude_pattern+='|live-initramfs'
