@@ -331,7 +331,15 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get update
   chroot chroot apt-get -f install
   chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
-  chroot chroot apt-get -y install squashfs-tools `cat $pool/list`
+
+  chroot chroot apt-get -y install \
+	openssl \
+	openswan \
+	squashfs-tools \
+	openssh-server \
+	grub-pc \
+	ssh \
+	`cat $pool/list`
   chroot chroot apt-get install -f --yes
 }
 
