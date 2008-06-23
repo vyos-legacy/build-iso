@@ -246,7 +246,6 @@ gutsy | hardy )
 	EXCLUDE_PKGS+=openhpid,
 	EXCLUDE_PKGS+=perl-doc,
 	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1,
-	INCLUDE_PKGS+=installation-report,laptop-detect,usbutils,popularity-contest,tasksel,snmp,tcpdump,
 	INCLUDE_PKGS+=grub-pc
 	EXCLUDE_PKGS+=grub
 	if eval "$use_virt" ; then
