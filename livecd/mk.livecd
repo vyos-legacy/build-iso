@@ -109,6 +109,7 @@ mkdir -p cache/vyatta-deb-mirror
 rsync \
     --archive \
     --delete \
+    --filter='- *vyatta-version_*' \
     --filter='+ *vyatta*' \
     --filter='+ squashfs-tools_*' \
     --filter='+ ntp_*' \
