@@ -1,2 +1,0 @@
-dpkg -l | grep '^ii ' | sed -e 's/\([^ ]*\)  *\([^ ]*\)  *\([^ ]*\).*/\2 \3/' \
-        >/opt/vyatta/etc/deb-versions.txt
