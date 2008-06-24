@@ -338,6 +338,8 @@ vyatta_chroot_local-packages ()
 	openswan \
 	squashfs-tools \
 	openssh-server \
+	vim-common \
+	vim-tiny \
 	grub-pc \
 	ssh \
 	`cat $pool/list`
