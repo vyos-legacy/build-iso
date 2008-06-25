@@ -25,6 +25,3 @@ interfaces {
     loopback lo {
     }
 }
-
-/* Warning: Do not remove the following line. */
-/* === vyatta-config-version: "cluster@1:dhcp-relay@1:dhcp-server@1:firewall@1:nat@2:serial@1:webgui@1" === */
