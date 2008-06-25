@@ -201,6 +201,6 @@ SUPERBRANCH=`get_branch`
 eval $info ========= . =========
 eval $trace $git
 for (( i=0; i<${#submodule[@]}; i++)) ; do
-    eval $info ========= ${submodule[i]} =========
+    eval $info ========= pkgs/${submodule[i]} =========
     ( cd ${submodule[i]} ; eval $trace $git )
 done
