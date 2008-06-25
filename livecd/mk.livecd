@@ -326,15 +326,16 @@ vyatta_chroot_local-packages ()
       $pool/.
 
   ../tools/deb-archive -r local -d $pool/../../..
+
   cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
   sed -i 's/^Label: Vyatta/Label: Local/' $dist
   cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
   echo "deb file:///root local main" >chroot/etc/apt/sources.list
   cat chroot/etc/apt/sources.list.bak >>chroot/etc/apt/sources.list
+
   chroot chroot apt-get update
   chroot chroot apt-get -f install
   chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
-
   chroot chroot apt-get -y install \
 	openssl \
 	openswan \
@@ -343,6 +344,7 @@ vyatta_chroot_local-packages ()
 	vim-common \
 	vim-tiny \
 	grub-pc \
+	nano \
 	ssh \
 	`cat $pool/list`
   chroot chroot apt-get install -f --yes
