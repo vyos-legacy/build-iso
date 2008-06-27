@@ -178,13 +178,14 @@ mk_version_package ()
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
 
-    VVERSION=`cat version 2>/dev/null`
+    VVERSION=`cat version`
     case "$VVERSION" in
     [0-9]*)
 		config_src=supported
 		;;
     "" )
-		VVERSION=z"$TIMESTAMP"
+		#VVERSION=z"$TIMESTAMP"
+		VVERSION=0
 		;;
     esac
 
