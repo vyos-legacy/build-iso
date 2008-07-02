@@ -20,10 +20,3 @@ done
 
 # backwards compatible symlink
 ln -s iso-build.txt $etcdir/build.txt
-
-if [ -x /cdrom/vyatta-save-package-report ] ; then
-    /cdrom/vyatta-save-package-report
-elif [ -x /vyatta-save-package-report ] ; then
-    /vyatta-save-package-report
-    rm -f /vyatta-save-package-report
-fi

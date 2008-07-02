@@ -1,8 +1,10 @@
 *~
 .*.swp
+/Packages*
+/Release
+/Release.gpg
+/vyatta-udebs
 
-/Makefile.in
-/Makefile
 /aclocal.m4
 /autom4te.cache
 /config
@@ -22,10 +24,19 @@
 /livecd/mk.livecd.conf
 /livecd/version
 
+/mk.conf
+
 /pkgs/*.build
 /pkgs/*.changes
 /pkgs/*.deb
+/pkgs/*.dsc
 /pkgs/*.tar.gz
 /pkgs/*.udeb
+/pkgs/Packages
+/pkgs/Packages.gz
+
+/autobuild-vm
+
+debian/control
 
 *.iso

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
+#exort ftp_proxy= http_proxy= DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_NOWARNINGS=yes XORG_CONFIG=custom
 
 if [[ "$PATH" != */sbin* ]] ; then
     export PATH+=:/usr/local/sbin:/usr/sbin:/sbin
@@ -38,26 +39,21 @@ declare -a xdebs debs pkgs depends
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
 : ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${ORGANIZATION:=vyatta.com}
-: ${LH_ARCHITECTURE:=`dpkg --print-architecture`}
+: ${LANGUAGE:=${LH_LANGUAGE:-en}}
+: ${LC_ALL:=C}
+export LANGUAGE LC_ALL
 
 LH_ISO_VOLUME+=" -- $CDLABEL"
 
-chroot_exclude_pattern='cpp'
-chroot_exclude_pattern+='|cpp-*'
-chroot_exclude_pattern+='|*-dev'
-chroot_exclude_pattern+='|*-doc'
-chroot_exclude_pattern+='|dhcp3-*'
-chroot_exclude_pattern+='|fakechroot'
-chroot_exclude_pattern+='|gcc*'
-chroot_exclude_pattern+='|git*'
-chroot_exclude_pattern+='|groff*'
-chroot_exclude_pattern+='|iproute'
-chroot_exclude_pattern+='|linux-headers*'
-chroot_exclude_pattern+='|linux-source*'
-chroot_exclude_pattern+='|man*'
-for (( i=0; i<${#EXCLUDE_PKGS[@]}; i++)) ; do
-    chroot_exclude_pattern+=\|${EXCLUDE_PKGS[i]}
-done
+mkdir -p cache
+
+echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/-\\n}- | \
+    sort > cache/vyatta-pkgs
+
+chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}\|linux-headers\*\|linux-source\*\|\*-dev
+if [ "$VYATTA_INCLUDE_WEBGUI" != "yes" ]; then
+  chroot_exclude_pattern+='|vyatta-webgui'
+fi
 binary_exclude_pattern=$chroot_exclude_pattern
 binary_exclude_pattern+='|squashfs-tools'
 binary_exclude_pattern+='|live-initramfs'
@@ -103,18 +99,22 @@ for m in proc-live sysfs-live devpts-live ; do
 	umount $m
     fi
 done
+rm -rf binary binary.iso chroot config
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
 
 # FIXME! hack around convoluted hollywood repository that is currently
 #	 both a debian mirror and vyatta content repos; we only want the
-#	 new content and the prior version of squashfs-tools
+#	 new content and the prior version of squashfs-tools, ntp, and ntpdate
 rsync \
     --archive \
     --delete \
+    --filter='- vyatta-version_*' \
     --filter='+ *vyatta*' \
-    --filter='+ squashfs-tools*' \
+    --filter='+ squashfs-tools_*' \
+    --filter='+ ntp_*' \
+    --filter='+ ntpdate_*' \
     --filter='- *' \
     ${VYATTA_POOL}/ \
     cache/vyatta-deb-mirror/ || true
@@ -136,15 +136,38 @@ declare -a selected_debs_from_vyatta_deb_mirror
 for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
     deb=$( sed -n "/^Filename: .*\/${pkg}_/ { s,.*/,,g; s,%3a,:,g; p }" \
 	cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages )
-    if [ -n "$deb" ] ; then
+    if [[ $pkg =~ linux-image-.* ]] ; then
+	if [ $pkg = $VYATTA_LINUX_PKG ] ; then
+	    selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
+	fi
+    elif [ -n "$deb" ] ; then
 	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
     fi
 done
 
-cat <<EOF > cache/vyatta-pkgs
-snmp
-tcpdump
-EOF
+rm -f config/chroot_local-packages/*.deb
+mkdir -p config/chroot_local-packages
+
+for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
+    deb=${xdeb##*/}
+    pkg=${deb%%_*}
+    
+    if grep -q "^${pkg}-\$" cache/vyatta-pkgs ; then
+	continue
+    fi
+
+    if [[ "$pkg" == @($chroot_exclude_pattern) ]] ; then
+	continue
+    fi
+
+    file=`echo config/chroot_local-packages/${pkg}_*.deb`
+    if [[ $xdeb == ../pkgs* ]] ; then
+	ln -sf ../../../pkgs/$deb config/chroot_local-packages/$deb
+    elif [[ ! "$file" ]]; then
+	ln -sf ../../cache/vyatta-deb-mirror/$deb \
+	    config/chroot_local-packages/$deb
+    fi
+done
 
 # create the buildid file
 mk_version_package ()
@@ -155,13 +178,14 @@ mk_version_package ()
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
 
-    VVERSION=`cat version 2>/dev/null`
+    VVERSION=`cat version`
     case "$VVERSION" in
     [0-9]*)
 		config_src=supported
 		;;
     "" )
-		VVERSION=0.`git-branch|grep '^\*'|sed 's/..//'`
+		#VVERSION=z"$TIMESTAMP"
+		VVERSION=0
 		;;
     esac
 
@@ -218,16 +242,17 @@ mk_version_package ()
 
     rm -rf $tmpdir
     cd $savedir
-    mv /tmp/$$-deb/vyatta-version_${VVERSION}_all.deb chroot/.
-    chroot chroot dpkg -i /vyatta-version_${VVERSION}_all.deb
-    mv chroot/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
+    mv /tmp/$$-deb/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
+    dpkg -i --root=chroot config/chroot_local-packages/vyatta-version_${VVERSION}_all.deb
     rm -rf /tmp/$$-deb
 }
 
 echo I: configuring build
 lh_config
+
+cp cache/vyatta-pkgs config/chroot_local-packageslists
+
 find \
-    binary_local-hooks \
     binary_local-includes \
     chroot_local-hooks \
     chroot_local-includes \
@@ -244,8 +269,6 @@ EOF
 ( cd .. ; git-submodule status ) \
     > config/chroot_local-includes/iso-submodules.txt
 
-  mk_version_package
-
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
 cp config/chroot_local-includes/vyatta-pubkey.gpg config/binary_local-includes/
@@ -255,7 +278,10 @@ if [ ${#deb_sources[@]} -gt 0 ]; then
     cp ${deb_sources[@]} config/chroot_sources/
 fi
  
-cp cache/vyatta-pkgs config/chroot_local-packageslists/vyatta-pkgs
+# include xen Dom0 repo
+if eval "$use_xendomzero" ; then
+    cat deb_sources/xen-vyatta.bootstrap >> config/chroot_sources/${LH_DISTRIBUTION}-vyatta.bootstrap
+fi
 
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
@@ -275,39 +301,57 @@ if [ -d cache/lists ] ; then
 	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
 fi
 
-if eval "$use_xen" ; then
+if eval "$use_xen" || eval "$use_xendomzero" ; then
     echo I: Disabling TLS
     mv chroot/lib/tls chroot/lib/tls.disabled
 else
     rm -f config/chroot_local-hooks/*xen*
 fi
 
-mkdir -p config/binary_local-includes/install/late-commands
-( cd config/chroot_local-hooks && \
-    find . -print0 | \
-    cpio --null --quiet -pdmu ../binary_local-includes/install/late-commands )
-
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages
 vyatta_chroot_local-packages ()
 {
+  local pool=chroot/root/pool/local/main
+  local dist=chroot/root/dists/local/Release
   declare -a vyatta_linux_debs=( config/chroot_local-packages/linux-*-vyatta*_${LH_ARCHITECTURE}.deb )
 
-  mkdir -p chroot/root/debs
+  mkdir -p $pool
+
   if [ ${#vyatta_linux_debs[@]} -gt 0 ] ;then
-      cp ${vyatta_linux_debs[@]} chroot/root/debs
-      chroot chroot dpkg -i -R root/debs
-      rm chroot/root/debs/*.deb
+      cp ${vyatta_linux_debs[@]} $pool/.
   fi
 
   cp config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
-      chroot/root/debs
-  cp config/chroot_local-packages/*_all.deb \
-      chroot/root/debs
-  chroot chroot dpkg -i -R root/debs || true
+     config/chroot_local-packages/*_all.deb \
+      $pool/.
+
+  ../tools/deb-archive -r local -d $pool/../../..
+
+  cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
+  sed -i 's/^Label: Vyatta/Label: Local/' $dist
+  cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
+  echo "deb file:///root local main" >chroot/etc/apt/sources.list
+  cat chroot/etc/apt/sources.list.bak >>chroot/etc/apt/sources.list
+
+  chroot chroot apt-get update
+  chroot chroot apt-get -f install
+  chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
+  chroot chroot apt-get -y install \
+	openssl \
+	openswan \
+	squashfs-tools \
+	openssh-server \
+	vim-common \
+	vim-tiny \
+	grub-pc \
+	nano \
+	ssh \
+	`cat $pool/list`
   chroot chroot apt-get install -f --yes
-  rm chroot/root/debs/*.deb
-  rmdir chroot/root/debs
+
+  # force our current version package
+  mk_version_package	# make a partially formed version package
 }
 
 # do the steps in lh_chroot
@@ -351,6 +395,8 @@ build_chroot ()
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
 
+  rm -rf chroot/root/*
+
   # remove resolv.conf.orig so it doesn't get restored
   rm -f chroot/etc/resolv.conf.orig
 
@@ -368,7 +414,14 @@ build_chroot ()
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
 
-  chroot chroot depmod -a `cd chroot/lib/modules;echo *`
+  local kernelname=`cd chroot/lib/modules;echo *`
+  if [ "$kernelname" ]
+  then
+     chroot chroot depmod -a `cd chroot/lib/modules;echo *`
+  else
+     echo "Missing kernel module"
+     return 1
+  fi
 }
 
 echo I: building chroot
@@ -403,9 +456,9 @@ declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
 done
-for b in chroot/boot/initrd.img-* ; do
-    echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
-done
+#for b in chroot/boot/initrd.img-* ; do
+#    echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
+#done
 
 # exclude more files
 cat <<EOF >> chroot/tmp/mksquashfs.exclude
@@ -418,53 +471,14 @@ EOF
 ## restore apt/preferences for binary build
 cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
 
-echo I: Copy packages to install pool
-rm -f config/binary_local-debs/*.deb
-mkdir -p config/binary_depend-debs
-for xdeb in cache/packages_linux-image/*.deb ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../../cache/packages_linux-image/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-for xdeb in cache/packages_local-packages/*.deb ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../../cache/packages_local-packages/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-for xdeb in cache/packages_local-packageslists/*.deb ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../../cache/packages_local-packageslists/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-for xdeb in config/chroot_local-packages/*.deb ; do
-    deb=${xdeb##*/}
-    if [[ "$pkg" == !($binary_exclude_pattern) ]] ; then
-	ln -sf ../chroot_local-packages/$deb \
-	    config/binary_local-debs/$deb
-    fi
-done
-
-mkdir -p config/binary_local-includes/install
-cp d-i/preseed.cfg config/binary_local-includes/install/preseed.cfg
-
-printf "%s\n" config/binary_local-debs/*.deb | \
-    sed -e 's,.*/,,; s,_.*,,' | \
-    sort -u > config/binary_local-includes/install/apt-install-list.txt
-
 echo I: building binary
 if ! lh_binary ; then
   echo E: binary build failed
   exit 1
 fi
+
+# this is the wrong version package
+rm ./cache/packages_local-packageslists/vyatta-version_*.deb
 
 echo I: Done
 

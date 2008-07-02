@@ -67,11 +67,13 @@ Build Host Setup
     packages,
 
 	bison flex docbook-utils gcc g++ git-buildpackage groff gs \
-	gs-gpl imagemagick groff libpam0g-dev libpcap0.8-dev \
+	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
+ 	libpcap0.8-dev libpcre3-dev libprelude-dev \
 	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
 	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
 	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
-	lynx libcap-dev
+	lynx libcap-dev libclamav-dev libpopt-dev
+
 
 Getting Source
 
@@ -121,7 +123,7 @@ Configuration
     The Vyatta ISO builder has GNU autotool configuration,
 
 	build-iso$ autoreconf -i
-	build-iso$ ./configure  ---with-target-dist=lenny
+	build-iso$ ./configure --with-target-dist=lenny
 
     To see all configure options,
 

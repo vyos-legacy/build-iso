@@ -2,6 +2,7 @@
 
 progname=${0##*/}
 shopt -s nullglob
+shopt -s extglob
 cd pkgs
 
 info=echo
@@ -11,7 +12,7 @@ build="debuild -i -b -uc -us"
 
 declare -a submodule
 declare -a debs
-for debian in */debian ; do
+for debian in !(installer|linux-kernel-di-i386-2.6)/debian ; do
     smod=${debian%/*}
     debs=( ${smod}_*.deb )
     if [ ${#debs[@]} -eq 0 ] ; then

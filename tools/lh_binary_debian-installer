@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 
 # lh_binary_debian-installer(1) - install debian-installer into binary
 # Copyright (C) 2006-2007 Daniel Baumann <daniel@debian.org>
@@ -8,6 +8,7 @@
 # under certain conditions; see COPYING for details.
 
 set -e
+shopt -s nullglob
 
 # Including common functions
 LH_BASE="${LH_BASE:-/usr/share/live-helper}"
@@ -117,8 +118,6 @@ CACHEDIR_GI="${CACHEDIR}/gtk"
 
 CACHEDIR_DEB="${CACHEDIR}/deb"
 
-DEFAULT_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
-
 # Workaround for syslinux (<< 3.36) which doesn't support long file/path names
 if [ "${LH_DISTRIBUTION}" = "etch" ]
 then
@@ -132,6 +131,11 @@ then
 		INITRD_GI="initrdgi.gz"
 		DESTDIR_GI="${DESTDIR}"
 	fi
+fi
+
+if [ "X$LH_DEBIAN_INSTALLER_DIST" = "X" ]
+then
+	LH_DEBIAN_INSTALLER_DIST=sid
 fi
 
 if [ "${LH_DEBIAN_INSTALLER_DAILY}" = "enabled" ]
@@ -197,10 +201,12 @@ fi
 
 # Downloading debian-installer
 mkdir -p "${CACHEDIR_DI}"
-[ -f "${CACHEDIR}"/"${VMLINUZ_DI}" ] || \
-    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${VMLINUZ_DI}" ${URL}/${DI}/${DI_KERNEL}
-[ -f "${CACHEDIR}"/"${INITRD_DI}" ] || \
-    wget ${WGET_OPTIONS} --no-clobber -O "${CACHEDIR}"/"${INITRD_DI}" ${URL}/${DI}/initrd.gz
+[ -f "${CACHEDIR}"/"${VMLINUZ_DI}" ] || wget ${WGET_OPTIONS} \
+	-O "${CACHEDIR}"/"${VMLINUZ_DI}" \
+	${URL}/${DI}/${DI_KERNEL}
+[ -f "${CACHEDIR}"/"${INITRD_DI}" ] || wget ${WGET_OPTIONS} \
+	-O "${CACHEDIR}"/"${INITRD_DI}" \
+	${URL}/${DI}/initrd.gz
 
 mkdir -p "${DESTDIR_DI}"
 cp "${CACHEDIR}"/"${VMLINUZ_DI}" "${DESTDIR}"/"${VMLINUZ_DI}"
@@ -210,14 +216,12 @@ cp "${CACHEDIR}"/"${INITRD_DI}" "${DESTDIR}"/"${INITRD_DI}"
 if [ "${LH_ARCHITECTURE}" = "amd64" ] || [ "${LH_ARCHITECTURE}" = "i386" ] || [ "${LH_ARCHITECTURE}" = "powerpc" ]
 then
 	mkdir -p "${CACHEDIR_GI}"
-	[ -f "${CACHEDIR}"/"${VMLINUZ_GI}" ] || \
-		wget ${WGET_OPTIONS} --no-clobber \
-			-O "${CACHEDIR}"/"${VMLINUZ_GI}" \
-			${URL}/${DI_GTK}/${DI_KERNEL}
-	[ -f "${CACHEDIR}"/"${INITRD_GI}" ] || \
-		wget ${WGET_OPTIONS} --no-clobber \
-			-O "${CACHEDIR}"/"${INITRD_GI}" \
-			${URL}/${DI_GTK}/initrd.gz
+	[ -f "${CACHEDIR}"/"${VMLINUZ_GI}" ] || wget ${WGET_OPTIONS} \
+		-O "${CACHEDIR}"/"${VMLINUZ_GI}" \
+		${URL}/${DI_GTK}/${DI_KERNEL}
+	[ -f "${CACHEDIR}"/"${INITRD_GI}" ] || wget ${WGET_OPTIONS} \
+		-O "${CACHEDIR}"/"${INITRD_GI}" \
+		${URL}/${DI_GTK}/initrd.gz
 	mkdir -p "${DESTDIR_GI}"
 	cp "${CACHEDIR}"/"${VMLINUZ_GI}" "${DESTDIR}"/"${VMLINUZ_GI}"
 	if [ -d config/install-gtk_local-includes ]
@@ -235,7 +239,9 @@ fi
 
 if [ "${LH_DEBIAN_INSTALLER}" != "netboot" ]; then
 	# preload cached debs
-	if ls ${CACHEDIR_DEB}/*.deb > /dev/null 2>&1 ; then
+	debs=''
+	[ -d ${CACHEDIR_DEB} ] && debs=${CACHEDIR_DEB}/*.deb
+	if [ -n "$debs" ] ; then
 		mkdir -p chroot/var/cache/apt/archives
 		cp ${CACHEDIR_DEB}/*.deb chroot/var/cache/apt/archives/
 	fi
@@ -300,8 +306,9 @@ else
 fi
 
 # Including local debs
-if ls config/binary_local-debs/*.deb > /dev/null 2>&1
-then
+debs=''
+[ -d config/binary_local-debs ] && debs=config/binary_local-debs/*.deb
+if [ -n "$debs" ] ; then
 	for FILE in config/binary_local-debs/*_"${LH_ARCHITECTURE}".deb config/binary_local-debs/*_all.deb
 	do
 		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
@@ -337,21 +344,10 @@ apt-ftparchive packages pool/main > dists/${LH_DISTRIBUTION}/main/binary-${LH_AR
 gzip -9 -c dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages > dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Packages.gz
 cd "${OLDPWD}"
 
-# Fetching release
-[ -f ${CACHEDIR}/Release ] || \
-	wget ${WGET_OPTIONS} \
-		-O ${CACHEDIR}/Release \
-		"${LH_MIRROR_BOOTSTRAP}"/dists/"${LH_DISTRIBUTION}"/main/binary-"${LH_ARCHITECTURE}"/Release
-cp ${CACHEDIR}/Release binary/dists/${LH_DISTRIBUTION}/main/binary-${LH_ARCHITECTURE}/Release
-
 # Fetching Packages file
-[ -f ${CACHEDIR}/Packages.gz ] || \
-	wget ${WGET_OPTIONS} \
-		-O ${CACHEDIR}/Packages.gz \
-		"${LH_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz" || \
-	wget ${WGET_OPTIONS} \
-		-O ${CACHEDIR}/Packages.gz \
-		"${DEFAULT_MIRROR_BOOTSTRAP}/dists/${LH_DISTRIBUTION}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
+[ -f ${CACHEDIR}/Packages.gz ] || wget ${WGET_OPTIONS} \
+	-O ${CACHEDIR}/Packages.gz \
+	"${LH_MIRROR_BOOTSTRAP}/dists/${LH_DEBIAN_INSTALLER_DIST}/main/debian-installer/binary-${LH_ARCHITECTURE}/Packages.gz"
 
 # Sorting udebs
 UDEBS="$(gunzip -c ${CACHEDIR}/Packages.gz | awk '/Filename: / { print $2 }')"
@@ -365,20 +361,16 @@ mkdir -p ../cache/packages_debian-installer.udeb
 for UDEB in ${UDEBS}
 do
 	CACHE_UDEB=../cache/packages_debian-installer.udeb/"$(basename ${UDEB})"
-	[ -f  ${CACHE_UDEB} ] || \
-		wget ${WGET_OPTIONS} \
-			-O ${CACHE_UDEB} \
-			"${LH_MIRROR_BOOTSTRAP}"/${UDEB} || \
-		wget ${WGET_OPTIONS} \
-			-O ${CACHE_UDEB} \
-			${DEFAULT_MIRROR_BOOTSTRAP}/${UDEB}
-
+	[ -f  ${CACHE_UDEB} ] || wget ${WGET_OPTIONS} \
+		-O ${CACHE_UDEB} \
+		"${LH_MIRROR_BOOTSTRAP}"/${UDEB}
 	cp ${CACHE_UDEB} ./
 done
 
 # Including local udebs
-if ls ../config/binary_local-udebs/*.udeb > /dev/null 2>&1
-then
+udebs=''
+[ -d ../config/binary_local-udebs ] && udebs=../config/binary_local-udebs/*.udeb
+if [ -n "$udebs" ] ; then
 	for FILE in ../config/binary_local-udebs/*_"${LH_ARCHITECTURE}".udeb ../config/binary_local-udebs/*_all.udeb
 	do
 		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"

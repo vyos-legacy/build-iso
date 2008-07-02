@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # scan and save existing Vyatta config.boot on target
+# Note: this is run by busybox shell, *not* bash
 
 progname=`basename $0`
 

@@ -5,14 +5,6 @@
   Start the live system with both or only VGA/serial consoles respectively.
 0flive-debug07
   Start the live system with verbose boot messages.
-0finstall07, 0finstall-gui07, or 0finstall-serial07
-  Start the installation.
-0fexpert07,  0fexpert-gui07, and 0fexpert-serial07
-  Start the installation in expert mode, for maximum control.
-0frescue07,  0frescue-gui07, and 0frescue-serial07
-  Start the installation in rescue mode, for safe recovery.
-0fauto07,  0fauto-gui07, and 0fauto-serial07
-  Start the installation in auto mode, for minimal admin input.
 
 To use one of these boot methods, type it at the prompt, optionally
 followed by any boot parameters. For example:
