@@ -172,5 +172,4 @@ do
 done
 
 echo "$RELEASENAME">../livecd/version
-$trace mod_changelog "$RELEASENAME"
 do_inc_version ..
