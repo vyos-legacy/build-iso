@@ -345,6 +345,7 @@ vyatta_chroot_local-packages ()
 	vim-common \
 	vim-tiny \
 	grub-pc \
+	man-db \
 	nano \
 	ssh \
 	`cat $pool/list`
