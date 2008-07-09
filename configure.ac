@@ -246,8 +246,9 @@ gutsy | hardy )
 	EXCLUDE_PKGS+=openhpid,
 	EXCLUDE_PKGS+=perl-doc,
 	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1,
+	EXCLUDE_PKGS+=grub,
+	EXCLUDE_PKGS+=gcc-4.2-base
 	INCLUDE_PKGS+=grub-pc
-	EXCLUDE_PKGS+=grub
 	if eval "$use_virt" ; then
 	    LH_LINUX_FLAVOURS=vyatta-virt
 	fi
