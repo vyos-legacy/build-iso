@@ -1,3 +1,107 @@
+build-iso (0.12) unstable; urgency=low
+
+	  3.1.1
+  [ Mark O'Brien ]
+
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-serial
+  * update sub-module vyatta-serial
+  * update sub-module vyatta-op
+
+  [ rbalocca ]
+  * Update index
+  * Fix for bug #3362
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg
+
+  [ rbalocca ]
+  * Update indices
+  * Add nano to included packages
+  * Show relative paths for all sub-modules
+  * Update index
+  * Update indices
+  * Locally compiled packages need to be included before ones from the
+    debian archive
+  * Update indices
+  * Add vim to the image (requested by many people)
+  * Update index
+  * Fix typo
+
+  [ Stephen Hemminger ]
+  * update index vyatta-cfg-system
+
+  [ rbalocca ]
+  * Don't sync the vyatta-version from the debian archive
+  * Remove unused file in /
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-dhcp-server
+  * update sub-module vyatta-cfg
+
+  [ rbalocca ]
+  * bsd-mail no longer needs to be excluded
+
+  [ Rick Balocca ]
+  * grub-pc must be in the list of INCLUDE_PGKS
+  * This reverts commit 017f2746c6bcdd3eeeb29030fe8c0333cfcf12b4.
+  * Update index
+
+  [ Auto Build ]
+  * Add some packages to the apt-get step
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * All included packages are now via debian dependencies
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-op
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * add vyatta-webgui to hollywood build (excluded by default).
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg
+
+  [ Stig Thormodsrud ]
+  * update indexes
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 2622
+  * update vyatta-cfg-firewall
+  * update vyatta-config-migrate
+  * update vyatta-config-migrate
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Sat, 28 Jun 2008 11:22:42 -0700
+
 build-iso (0.11) unstable; urgency=low
 
 	  3.1.0
