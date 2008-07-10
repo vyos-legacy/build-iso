@@ -433,6 +433,11 @@ fi
 
 mk_version_package
 
+# add config version string to default config file
+chroot chroot sh -c \
+  '/opt/vyatta/sbin/vyatta_current_conf_ver.pl \
+   >> /opt/vyatta/etc/config.boot.default'
+
 # remove backup files for ISO
 rm -f chroot/etc/*.vyatta-save chroot/etc/*/*.vyatta-save
 
