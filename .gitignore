@@ -23,6 +23,7 @@
 /livecd/iso-label
 /livecd/mk.livecd.conf
 /livecd/version
+/livecd/branch
 
 /mk.conf
 
