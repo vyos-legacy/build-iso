@@ -184,8 +184,7 @@ mk_version_package ()
 		config_src=supported
 		;;
     "" )
-		#VVERSION=z"$TIMESTAMP"
-		VVERSION=0
+		VVERSION=0.`cat branch`
 		;;
     esac
 
