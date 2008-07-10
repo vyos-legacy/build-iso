@@ -148,8 +148,14 @@ git_fetch ()
     local modulename=`basename "$PWD"`
 
     git-fetch -q 2>/dev/null
-    if (git-status|grep '^# Changed but not updated:' >/dev/null) ; then
+    if git-status|grep '^# Changes to be committed:' >/dev/null
+    then
 	echo There are uncommited changes.
+    fi
+
+    if git-status|grep '^# Changed but not updated:' >/dev/null
+    then
+	echo There are changes not yet added.
     fi
 
     if (git-status|grep '^# Untracked files:' >/dev/null) ; then
