@@ -186,12 +186,12 @@ AC_ARG_WITH(deb-install,
 [build Debian installer CD])])
 
 AC_ARG_WITH(webgui,
-[AS_HELP_STRING([--with-webgui],
-  [include Web GUI in the ISO])])
+[AS_HELP_STRING([--without-webgui],
+  [exclude Web GUI from the ISO])])
 
-VYATTA_INCLUDE_WEBGUI=no
-if test "X$with_webgui" = Xyes ; then
-  VYATTA_INCLUDE_WEBGUI=yes
+VYATTA_INCLUDE_WEBGUI=yes
+if test "X$with_webgui" = Xno ; then
+  VYATTA_INCLUDE_WEBGUI=no
 fi
 
 # FIXME! fetch version from source
