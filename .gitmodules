@@ -115,3 +115,6 @@
 [submodule "pkgs/vyatta-webgui"]
 	path = pkgs/vyatta-webgui
 	url = git://git.vyatta.com/vyatta-webgui.git
+[submodule "pkgs/vyatta-openvpn"]
+	path = pkgs/vyatta-openvpn
+	url = git://git.vyatta.com/vyatta-openvpn.git
