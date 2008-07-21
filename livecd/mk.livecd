@@ -57,7 +57,7 @@ if [ "$VYATTA_INCLUDE_WEBGUI" != "yes" ]; then
   chroot_exclude_pattern+='|vyatta-webgui'
 fi
 binary_exclude_pattern=$chroot_exclude_pattern
-binary_exclude_pattern+='|squashfs-tools'
+#binary_exclude_pattern+='|squashfs-tools'
 binary_exclude_pattern+='|live-initramfs'
 
 shopt -s extglob
@@ -114,7 +114,6 @@ rsync \
     --delete \
     --filter='- vyatta-version_*' \
     --filter='+ *vyatta*' \
-    --filter='+ squashfs-tools_*' \
     --filter='+ ntp_*' \
     --filter='+ ntpdate_*' \
     --filter='- *' \
@@ -180,7 +179,7 @@ mk_version_package ()
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
 
-    VVERSION=`cat version`
+    VVERSION=`cat version` || true
     case "$VVERSION" in
     [0-9]*)
 		config_src=supported
@@ -458,7 +457,7 @@ echo I: Cache Package files
     find lists -print0 | \
     cpio --null --quiet -pdmu ../../../../cache )
 
-declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
+#declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 >chroot/tmp/mksquashfs.exclude
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
