@@ -185,7 +185,7 @@ mk_version_package ()
 		config_src=supported
 		;;
     "" )
-		VVERSION=0.`cat branch`
+		VVERSION=0.`cat branch` || true
 		;;
     esac
 
