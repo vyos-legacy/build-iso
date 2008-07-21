@@ -1,7 +1,3 @@
 Package: *
 Pin: release l=Vyatta
 Pin-Priority: 50
-
-Package: squashfs-tools
-Pin: version 1:3.2*
-Pin-Priority: 1001
