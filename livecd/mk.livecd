@@ -57,7 +57,6 @@ if [ "$VYATTA_INCLUDE_WEBGUI" != "yes" ]; then
   chroot_exclude_pattern+='|vyatta-webgui'
 fi
 binary_exclude_pattern=$chroot_exclude_pattern
-#binary_exclude_pattern+='|squashfs-tools'
 binary_exclude_pattern+='|live-initramfs'
 
 shopt -s extglob
@@ -95,12 +94,19 @@ if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
 fi
 
 echo I: cleaning earlier build
-for m in proc-live sysfs-live devpts-live ; do
-    if grep -q $m /proc/mounts ; then
-	echo I: unmounting $m
-	umount $m
-    fi
-done
+clean_mounts()
+{
+    for m in proc-live sysfs-live devpts-live ; do
+        if grep -q $m /proc/mounts ; then
+    	    echo I: unmounting $m
+    	    umount $m || true
+        fi
+    done
+}
+
+trap "clean_mounts; exit 0" EXIT
+
+clean_mounts
 rm -rf binary binary.iso chroot config
 
 echo I: fetching vyatta binary packages
@@ -108,7 +114,7 @@ mkdir -p cache/vyatta-deb-mirror
 
 # FIXME! hack around convoluted hollywood repository that is currently
 #	 both a debian mirror and vyatta content repos; we only want the
-#	 new content and the prior version of squashfs-tools, ntp, and ntpdate
+#	 new content and the prior version of ntp, and ntpdate
 rsync \
     --archive \
     --delete \
@@ -340,7 +346,6 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get -y install \
 	openssl \
 	openswan \
-	squashfs-tools \
 	openssh-server \
 	vim-common \
 	vim-tiny \
@@ -348,7 +353,7 @@ vyatta_chroot_local-packages ()
 	man-db \
 	nano \
 	ssh \
-	`cat $pool/list`
+	`cat $pool/list` || exit $?
   chroot chroot apt-get install -f --yes
 
   # force our current version package
