@@ -177,7 +177,7 @@ git_fetch ()
     upstream=origin/"$branch"
     git-branch -a|grep "$upstream" >/dev/null || upstream=origin/master
 
-    diffs=`git-diff "$branch" "$upstream"|head -1`
+    diffs=`git-diff "$upstream"|head -1`
     if [ "$diffs" ]
     then 
 	in_repo=`git-log -1 --name-status "$upstream".."$branch"`
