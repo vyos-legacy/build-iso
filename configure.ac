@@ -241,14 +241,18 @@ gutsy | hardy )
 	;;
 * )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
+
 	EXCLUDE_PKGS+=cpp,cpp-4.2,
 	EXCLUDE_PKGS+=exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,
 	EXCLUDE_PKGS+=openhpid,
 	EXCLUDE_PKGS+=perl-doc,
 	EXCLUDE_PKGS+=x11-common,xauth,libx11-6,libx11-data,libxau6,libxdmcp6,libxext6,libxmuu1,
 	EXCLUDE_PKGS+=grub,
-	EXCLUDE_PKGS+=gcc-4.2-base
+	EXCLUDE_PKGS+=gcc-4.2-base,
+	EXCLUDE_PKGS+=binutils
+
 	INCLUDE_PKGS+=grub-pc
+
 	if eval "$use_virt" ; then
 	    LH_LINUX_FLAVOURS=vyatta-virt
 	fi
