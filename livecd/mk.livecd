@@ -49,7 +49,7 @@ LH_ISO_VOLUME+=" -- $CDLABEL"
 
 mkdir -p cache
 
-echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/-\\n}- | \
+echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/_\\n}- | \
     sort > cache/vyatta-pkgs
 
 chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}\|linux-headers\*\|linux-source\*\|\*-dev
@@ -341,9 +341,12 @@ vyatta_chroot_local-packages ()
   cat chroot/etc/apt/sources.list.bak >>chroot/etc/apt/sources.list
 
   chroot chroot apt-get update
-  chroot chroot apt-get -f install
-  chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
-  chroot chroot apt-get -y install \
+  chroot chroot apt-get -y -f install
+  chroot chroot apt-get -y -f install aptitude
+  chroot chroot apt-get -y -f install
+  chroot chroot aptitude -y install \
+	"?name(vyatta)" \
+       `cat cache/vyatta-pkgs` \
 	openssl \
 	openswan \
 	openssh-server \
@@ -353,7 +356,14 @@ vyatta_chroot_local-packages ()
 	man-db \
 	nano \
 	ssh \
-	`cat $pool/list` || exit $?
+	"?name(-dev)"_ \
+	"?name(cpp-)"_ \
+	cpp_ \
+	g++_ \
+	g++-4.3_ \
+	gcc_ \
+	gcc-4.3_ \
+	|| exit $?
   chroot chroot apt-get install -f --yes
 
   # force our current version package
@@ -462,7 +472,6 @@ echo I: Cache Package files
     find lists -print0 | \
     cpio --null --quiet -pdmu ../../../../cache )
 
-#declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 >chroot/tmp/mksquashfs.exclude
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
