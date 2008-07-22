@@ -344,26 +344,13 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y -f install aptitude
   chroot chroot apt-get -y -f install
-  chroot chroot aptitude -y install \
-	"?name(vyatta)" \
+  chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \
-	openssl \
-	openswan \
-	openssh-server \
-	vim-common \
-	vim-tiny \
-	grub-pc \
-	man-db \
-	nano \
-	ssh \
+	"?name(vyatta)" \
 	"?name(-dev)"_ \
 	"?name(cpp-)"_ \
-	cpp_ \
-	g++_ \
-	g++-4.3_ \
-	gcc_ \
-	gcc-4.3_ \
 	|| exit $?
+  sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
   chroot chroot apt-get install -f --yes
 
   # force our current version package
