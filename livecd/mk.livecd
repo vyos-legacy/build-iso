@@ -314,6 +314,12 @@ else
     rm -f config/chroot_local-hooks/*xen*
 fi
 
+mknod -m 666 chroot/dev/null c 1 3
+mknod -m 666 chroot/dev/zero c 1 5
+mknod -m 666 chroot/dev/random c 1 8
+mknod -m 666 chroot/dev/urandom c 1 8
+mknod -m 666 chroot/dev/ram1 c 1 1
+
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages
 vyatta_chroot_local-packages ()
@@ -351,6 +357,7 @@ vyatta_chroot_local-packages ()
 	"?name(cpp-)"_ \
 	|| exit $?
   sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
+  sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
   chroot chroot aptitude -R -f -y install
 
   # force our current version package
