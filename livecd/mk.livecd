@@ -314,6 +314,7 @@ else
     rm -f config/chroot_local-hooks/*xen*
 fi
 
+rm -rf chroot/dev/null chroot/dev/zero chroot/dev/random chroot/dev/urandom chroot/dev/ram1
 mknod -m 666 chroot/dev/null c 1 3
 mknod -m 666 chroot/dev/zero c 1 5
 mknod -m 666 chroot/dev/random c 1 8
