@@ -314,6 +314,15 @@ else
     rm -f config/chroot_local-hooks/*xen*
 fi
 
+rm -rf chroot/dev/null chroot/dev/zero chroot/dev/random chroot/dev/urandom chroot/dev/ram1
+mknod -m 666 chroot/dev/null c 1 3
+mknod -m 666 chroot/dev/zero c 1 5
+mknod -m 666 chroot/dev/random c 1 8
+mknod -m 666 chroot/dev/urandom c 1 8
+mknod -m 666 chroot/dev/ram1 c 1 1
+
+openssl rand -out chroot/root/.rnd 4096
+
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages
 vyatta_chroot_local-packages ()
@@ -344,6 +353,16 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y -f install aptitude
   chroot chroot aptitude -R -y -f install
+
+  while true
+  do
+  	entropy=`cat /proc/sys/kernel/random/entropy_avail`
+	echo -n $entropy" "
+	[ $entropy -lt 2048 ] && sleep 1 && continue
+	break
+  done
+  chroot chroot aptitude -R -y install openssh-server
+
   chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \
 	"?name(vyatta)" \
@@ -351,6 +370,7 @@ vyatta_chroot_local-packages ()
 	"?name(cpp-)"_ \
 	|| exit $?
   sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
+  sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
   chroot chroot aptitude -R -f -y install
 
   # force our current version package
