@@ -361,7 +361,7 @@ vyatta_chroot_local-packages ()
 	[ $entropy -lt 2048 ] && sleep 1 && continue
 	break
   done
-  #chroot chroot aptitude -R -y install openssh-server
+  chroot chroot aptitude -R -y install openssh-server
 
   chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \
