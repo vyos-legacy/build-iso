@@ -321,6 +321,8 @@ mknod -m 666 chroot/dev/random c 1 8
 mknod -m 666 chroot/dev/urandom c 1 8
 mknod -m 666 chroot/dev/ram1 c 1 1
 
+openssl rand -out chroot/root/.rnd 4096
+
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages
 vyatta_chroot_local-packages ()
@@ -351,6 +353,16 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y -f install aptitude
   chroot chroot aptitude -R -y -f install
+
+  while true
+  do
+  	entropy=`cat /proc/sys/kernel/random/entropy_avail`
+	echo -n $entropy" "
+	[ $entropy -lt 2048 ] && sleep 1 && continue
+	break
+  done
+  #chroot chroot aptitude -R -y install openssh-server
+
   chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \
 	"?name(vyatta)" \
