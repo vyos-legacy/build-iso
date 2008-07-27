@@ -352,7 +352,7 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get update
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y -f install aptitude
-  chroot chroot aptitude -R -y -f install
+  chroot chroot aptitude --allow-untrusted -R -y -f install
 
   while true
   do
@@ -361,17 +361,19 @@ vyatta_chroot_local-packages ()
 	[ $entropy -lt 2048 ] && sleep 1 && continue
 	break
   done
-  chroot chroot aptitude -R -y install openssh-server
+  chroot chroot aptitude --allow-untrusted -R -y install openssh-server
 
-  chroot chroot aptitude -R -y install \
+  chroot chroot aptitude --allow-untrusted -R -y install \
        `cat cache/vyatta-pkgs` \
 	"?name(vyatta)" \
 	"?name(-dev)"_ \
 	"?name(cpp-)"_ \
+	apt-utils \
+	live-initramfs \
 	|| exit $?
   sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
   sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
-  chroot chroot aptitude -R -f -y install
+  chroot chroot aptitude --allow-untrusted -R -f -y install
 
   # force our current version package
   mk_version_package	# make a partially formed version package
@@ -392,7 +394,8 @@ build_chroot ()
   lh_chroot_hostname install || return 1
   lh_chroot_apt install || return 1
   echo 'quiet "1";' > chroot/etc/apt/apt.conf.d/03quiet
-  lh_chroot_sources install || return 1
+  vyatta_chroot_local-packages || return 1
+  lh_chroot_sources install --force || return 1
 
   lh_chroot_linux-image install || return 1
   
@@ -406,7 +409,6 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
 
-  vyatta_chroot_local-packages || return 1
   lh_chroot_local-packageslists || return 1
 
   lh_chroot_localization || return 1
@@ -425,7 +427,6 @@ build_chroot ()
 
   echo I: deconfiguring chroot
   lh_chroot_linux-image remove || return 1
-  lh_chroot_sources remove || return 1
   lh_chroot_apt remove || return 1
   lh_chroot_hostname remove || return 1
   lh_chroot_resolv remove || return 1
