@@ -111,21 +111,6 @@ rm -rf binary binary.iso chroot config
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
-
-# FIXME! hack around convoluted hollywood repository that is currently
-#	 both a debian mirror and vyatta content repos; we only want the
-#	 new content and the prior version of ntp, and ntpdate
-rsync \
-    --archive \
-    --delete \
-    --filter='- vyatta-version_*' \
-    --filter='+ *vyatta*' \
-    --filter='+ ntp_*' \
-    --filter='+ ntpdate_*' \
-    --filter='- *' \
-    ${VYATTA_POOL}/ \
-    cache/vyatta-deb-mirror/ || true
-
 mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
 touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
 rsync \
@@ -256,6 +241,10 @@ mk_version_package ()
 echo I: configuring build
 lh_config
 
+# patch bug in /usr/bin/lh_chroot_sources
+grep 'cp -l' /usr/bin/lh_chroot_sources >&/dev/null &&
+sed -i 's,cp -l,cp ,' /usr/bin/lh_chroot_sources
+
 cp cache/vyatta-pkgs config/chroot_local-packageslists
 
 find \
@@ -321,7 +310,29 @@ mknod -m 666 chroot/dev/random c 1 8
 mknod -m 666 chroot/dev/urandom c 1 8
 mknod -m 666 chroot/dev/ram1 c 1 1
 
+# set up random seed
 openssl rand -out chroot/root/.rnd 4096
+
+# check for entropy:
+# many packages demand a lot of entropy
+# be available via /dev/random
+# or else they will not install
+check_for_entropy()
+{
+  find_started=
+  while true
+  do
+  	entropy=`cat /proc/sys/kernel/random/entropy_avail`
+	echo -n $entropy" "
+	[ $entropy -ge $1 ] && break
+	if [ ! "$find_started" ]
+	then
+		find / -name asdfasdfasdfasdfasd &
+		find_started=yes
+	fi
+  done
+  [ "$find_started" ] && kill %1 #2>/dev/null
+}
 
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages
@@ -354,15 +365,13 @@ vyatta_chroot_local-packages ()
   chroot chroot apt-get -y -f install aptitude
   chroot chroot aptitude --allow-untrusted -R -y -f install
 
-  while true
-  do
-  	entropy=`cat /proc/sys/kernel/random/entropy_avail`
-	echo -n $entropy" "
-	[ $entropy -lt 2048 ] && sleep 1 && continue
-	break
-  done
+  check_for_entropy 2048
   chroot chroot aptitude --allow-untrusted -R -y install openssh-server
 
+  check_for_entropy 2048
+  chroot chroot aptitude --allow-untrusted -R -y install openswan
+
+  check_for_entropy 2048
   chroot chroot aptitude --allow-untrusted -R -y install \
        `cat cache/vyatta-pkgs` \
 	"?name(vyatta)" \
@@ -395,8 +404,6 @@ build_chroot ()
   lh_chroot_apt install || return 1
   echo 'quiet "1";' > chroot/etc/apt/apt.conf.d/03quiet
   vyatta_chroot_local-packages || return 1
-  lh_chroot_sources install --force || return 1
-
   lh_chroot_linux-image install || return 1
   
   test -r live.conf/${LH_DISTRIBUTION} && \
