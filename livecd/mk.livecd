@@ -114,10 +114,10 @@ mkdir -p cache/vyatta-deb-mirror
 mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
 touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
 #rsync \
-    --archive \
-    --delete \
-    ${VYATTA_POOL/pool/dists}/ \
-    cache/vyatta-dists-mirror || true
+#    --archive \
+#    --delete \
+#    ${VYATTA_POOL/pool/dists}/ \
+#    cache/vyatta-dists-mirror || true
 
 declare -a pkgs_in_vyatta_deb_mirror=($( \
     printf "%s\n" cache/vyatta-deb-mirror/*.deb | \
