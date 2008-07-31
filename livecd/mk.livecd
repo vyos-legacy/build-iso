@@ -327,7 +327,12 @@ check_for_entropy()
 	[ $entropy -ge $1 ] && break
 	if [ ! "$find_started" ]
 	then
-		find / -name asdfasdfasdfasdfasd &
+		if [ `id -u` = 0 ]
+		then
+			fsck -n /
+		else
+			find / -name asdfasdfasdfasdfasd
+		fi &
 		find_started=yes
 	fi
 	sleep 2
