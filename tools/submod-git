@@ -173,19 +173,29 @@ git_fetch ()
     fi
     )
 
+#set -x
     branch=`guess_branch`
     upstream=origin/"$branch"
-    git-branch -a|grep "$upstream" >/dev/null || upstream=origin/master
+    git-cat-file -e "$upstream" || upstream=origin/master
 
     diffs=`git-diff "$upstream"|head -1`
+    in_repo_local=
+    in_repo=
     if [ "$diffs" ]
     then 
-	in_repo=`git-log -1 --name-status "$upstream".."$branch"`
-	[ "$in_repo" ] && echo A local commit is not in the shared repo.
+	in_repo_local=`git-log -1 --name-status "$upstream".."$branch" 2>/dev/null`
+	[ "$in_repo_local" ] && echo A local commit is not in the shared repo.
 
-	in_repo=`git-log -1 --name-status "$branch".."$upstream"`
+	in_repo=`git-log -1 --name-status "$branch".."$upstream" 2>/dev/null`
 	[ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
    fi
+
+   git-branch -a -v|sed 's/..//'|grep -v '^origin/'|awk '{print $2}'|sort -u>/tmp/$$-branchlist
+   git-branch -a -v|sed 's/..//'|grep    '^origin/'|awk '{print $2}'|sort -u>/tmp/$$-originlist
+   local_only=`comm -23 /tmp/$$-{branchlist,originlist}`
+   rm -rf /tmp/$$-{branchlist,originlist}
+   [ "$local_only" -a ! "$in_repo_local" -a ! "$in_repo" ] && echo "The shared repo is missing a commit from a non-checked-out local branch (or no branch is checked out at all)."
+#set +x
 }
 
 git_diff-cached ()
