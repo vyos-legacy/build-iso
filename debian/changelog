@@ -1,3 +1,201 @@
+build-iso (0.13) unstable; urgency=low
+
+	  3.1.2
+  [ Mark O'Brien ]
+
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update cfg-qos index
+
+  [ Stig Thormodsrud ]
+  * update index for bug 3300
+
+  [ Rick Balocca ]
+  * Update index
+  * Update index
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-dhcp3-client
+
+  [ Stephen Hemminger ]
+  * update indexx
+  * update index
+  * Update index to pickup quagga stuff
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg
+
+  [ Stephen Hemminger ]
+  * Update Qos and quagga indices
+
+  [ Stig Thormodsrud ]
+  * update-index
+
+  [ Justin Fletcher ]
+  * update submodule vyatta-serial
+  * update submodule ppp
+
+  [ An-Cheng Huang ]
+  * vyatta-idp-snort: fix for bug 3464
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * vyatta-ravpn: fix for bug 3469
+
+  [ Stig Thormodsrud ]
+  * update index
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg-vpn: fix for bug 3044
+  * update vyatta-cfg-quagga
+  * vyatta-op: fix for bug 3451
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-quagga
+
+  [ An-Cheng Huang ]
+  * auto-generate config version string in default config file.
+
+  [ rbalocca ]
+  * Update index
+  * Distinguish between changes that have been "git-add"ed and those
+    that have not
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-vpn
+
+  [ rbalocca ]
+  * Remove unneeded gcc-4.2-base package
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg-vpn: fix for bugs 3044, 3047, and 3048
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Mark O'Brien ]
+  * Update index
+
+  [ rbalocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * Update indices
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3166
+  * Update index
+
+  [ An-Cheng Huang ]
+  * vyatta-config-migrate: fix for bug 2361
+  * vyatta-nat: fix for bug 3289
+  * vyatta-ravpn: partial fix for bug 3044
+  * vyatta-op-vpn: partial fix for bugs 3044, 3047, and 3048. fix for
+    bug 3440.
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * index update for cfg-system
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ Stephen Hemminger ]
+  * Update index of vyatta-op
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-dhcp-server
+  * update sub-module vyatta-op
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 3323
+
+  [ Robert Bays ]
+  * update submodule vyatta-cfg-system for bug 3095
+
+  [ rbalocca ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * Update index for quagga
+  * update index
+
+  [ An-Cheng Huang ]
+  * vyatta-base, vyatta-cfg-system: fix for bug 3417
+
+  [ Michael Larson ]
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-op: fix for bug 3414
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-serial
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg-op-pppoe
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 3403
+  * update vyatta-cfg
+  * re-add accidentally deleted submodule
+  * vyatta-config-migrate: fix for bug 3397
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Wed, 23 Jul 2008 21:36:37 -0700
+
 build-iso (0.12) unstable; urgency=low
 
 	  3.1.1
