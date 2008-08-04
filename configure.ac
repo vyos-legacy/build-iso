@@ -279,15 +279,15 @@ gutsy | hardy )
             LH_PACKAGES+="python-xen-3.2 python-dev python python2.5-dev python2.5 libsqlite3-0 "
         fi
 
-	#LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-dev"
-	#LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-dev"
-	#LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
-	#LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
+	LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-dev"
+	LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-dev"
+	LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
+	LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
 
-	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org/"
+	#LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
+	#LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
+	#LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
+	#LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org/"
 
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
