@@ -242,8 +242,7 @@ gutsy | hardy )
 * )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
 
-	EXCLUDE_PKGS+=gcc-4.2-base,
-	EXCLUDE_PKGS+=binutils
+	EXCLUDE_PKGS+=gcc-4.2-base
 
 	INCLUDE_PKGS+=grub-pc,
 	INCLUDE_PKGS+=openssl,
