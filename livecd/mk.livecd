@@ -39,7 +39,7 @@ declare -a xdebs debs pkgs depends
 : ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
 : ${BUILDID:=$(git log -1 --pretty=format:%h)}
-: ${CDLABEL:=$TIMESTAMP$BUILDID}
+: ${CDLABEL:=$TIMESTAMP-$BUILDID}
 : ${ORGANIZATION:=vyatta.com}
 : ${LANGUAGE:=${LH_LANGUAGE:-en}}
 : ${LC_ALL:=C}
@@ -113,11 +113,6 @@ echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
 mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
 touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
-#rsync \
-#    --archive \
-#    --delete \
-#    ${VYATTA_POOL/pool/dists}/ \
-#    cache/vyatta-dists-mirror || true
 
 declare -a pkgs_in_vyatta_deb_mirror=($( \
     printf "%s\n" cache/vyatta-deb-mirror/*.deb | \
@@ -161,7 +156,6 @@ for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
     fi
 done
 
-# create the buildid file
 mk_version_package ()
 {
     local savedir="$PWD"
@@ -195,7 +189,7 @@ mk_version_package ()
 	EOF
 
     # backwards compatible symlink
-    ln -s iso-build.txt $vf/build.txt
+    ln -nsf iso-build.txt $vf/build.txt
     echo "$CDLABEL">$savedir/iso-label
 
     echo I: generating package list
@@ -522,6 +516,8 @@ if ! lh_binary ; then
   echo E: binary build failed
   exit 1
 fi
+
+ln -nsf binary.iso livecd-"$CDLABEL".iso
 
 # this is the wrong version package
 rm -f ./cache/packages_local-packageslists/vyatta-version_*.deb
