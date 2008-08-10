@@ -216,7 +216,7 @@ mk_version_package ()
     (
 	echo "Package: vyatta-version"
 	echo "Version: ${VVERSION}"
-	echo "Architecture: i386"
+	echo "Architecture: all"
 	echo "Maintainer: Vyatta <debs@vyatta.com>"
 	echo "Essential: no"
 	echo "Section: base"
@@ -373,7 +373,7 @@ build_chroot ()
   lh_chroot_linux-image install || return 1
   
   test -r live.conf/${LH_DISTRIBUTION} && \
-      cp -lf live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
+      cp -f live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
 
   echo I: customizing chroot
   lh_chroot_preseed || return 1

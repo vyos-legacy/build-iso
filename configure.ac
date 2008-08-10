@@ -162,15 +162,6 @@ else
    use_xen=false
 fi
 
-AC_ARG_WITH(virt,
-[AS_HELP_STRING([--with-virt], [Use the vyatta-virt kernel])])
-
-if test X$with_virt = Xyes ; then
-   use_virt=true
-else
-   use_virt=false
-fi
-
 AC_ARG_WITH(xendomzero,
 [AS_HELP_STRING([--with-xendomzero], [Xen Dom0 target])])
 
@@ -194,9 +185,53 @@ if test "X$with_webgui" = Xno ; then
   VYATTA_INCLUDE_WEBGUI=no
 fi
 
-# FIXME! fetch version from source
-VYATTA_LINUX_PKG=linux-image-2.6.24-1-486-vyatta
+# build arch
+BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
+
+# default flavor for i386 and amd64
 LH_LINUX_FLAVOURS="486-vyatta"
+if test X$BARCH = Xamd64; then
+  LH_LINUX_FLAVOURS="vyatta-virt"
+fi
+
+# user-specified flavor
+AC_ARG_WITH(with-kernel-flavor,
+[AS_HELP_STRING([--with-kernel-flavor], [Build specified kernel flavor])])
+
+if test X$with_kernel_flavor != X ; then
+  LH_LINUX_FLAVOURS=$with_kernel_flavor
+fi
+
+KERN_SUBMOD_DIR=$(pwd)/pkgs/linux-image
+KERN_DEB_ARCHDEF_DIR=$KERN_SUBMOD_DIR/debian/arch
+KERN_DEB_ARCH_DIR=$KERN_DEB_ARCHDEF_DIR/$BARCH
+
+# only do these if we are building the kernel locally
+if test -d $KERN_SUBMOD_DIR/debian; then
+  if test ! -d $KERN_DEB_ARCH_DIR; then
+    echo "Cannot build $BARCH kernel."
+    exit 1
+  fi
+
+  if test ! -f $KERN_DEB_ARCH_DIR/defines.$LH_LINUX_FLAVOURS; then
+    echo "Cannot build $BARCH-$LH_LINUX_FLAVOURS kernel."
+    exit 1
+  else
+    cp -f $KERN_DEB_ARCH_DIR/defines.$LH_LINUX_FLAVOURS \
+      $KERN_DEB_ARCH_DIR/defines
+  fi
+
+  # generate control file
+  (
+    cd $KERN_SUBMOD_DIR
+    rm debian/{control,control.md5sum}
+    make -f debian/rules debian/control || true
+  )>&/dev/null
+fi
+
+# FIXME! fetch version from source
+VYATTA_LINUX_VER="linux-image-2.6.24-1"
+VYATTA_LINUX_PKG="$VYATTA_LINUX_VER-$LH_LINUX_FLAVOURS"
 LH_LINUX_PACKAGES=none
 BUILD_PKGS=
 FETCH_PKGS=
@@ -254,9 +289,6 @@ gutsy | hardy )
 	INCLUDE_PKGS+=nano,
 	INCLUDE_PKGS+=ssh
 
-	if eval "$use_virt" ; then
-	    LH_LINUX_FLAVOURS=vyatta-virt
-	fi
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
@@ -283,10 +315,17 @@ gutsy | hardy )
 	#LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
 	#LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
 
-	LH_MIRROR_BINARY="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BOOTSTRAP="http://sydney.vyatta.com/debian/"
-	LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org/"
+        if test X$BARCH = Xamd64; then
+          LH_MIRROR_BINARY="http://ftp.us.debian.org/debian"
+          LH_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
+          LH_MIRROR_BINARY_SECURITY="http://security.debian.org"
+          LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org"
+        else
+          LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
+          LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
+          LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
+          LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
+        fi
 
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
