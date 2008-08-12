@@ -389,7 +389,6 @@ build_chroot ()
   lh_chroot_hooks || return 1
   lh_chroot_local-hooks || return 1
   lh_chroot_symlinks || return 1
-  check_for_entropy 2048
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
 
