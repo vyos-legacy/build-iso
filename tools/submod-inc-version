@@ -92,7 +92,7 @@ get_tag()
 
 get_branch()
 {
-	git-branch|grep '^\* '|sed 's/^\* //'
+	git-branch|awk '/^\*/ {print $2}'
 }
 
 mod_changelog()

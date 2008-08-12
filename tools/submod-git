@@ -173,7 +173,6 @@ git_fetch ()
     fi
     )
 
-#set -x
     branch=`guess_branch`
     upstream=origin/"$branch"
     git-cat-file -e "$upstream" || upstream=origin/master
@@ -195,7 +194,6 @@ git_fetch ()
    local_only=`comm -23 /tmp/$$-{branchlist,originlist}`
    rm -rf /tmp/$$-{branchlist,originlist}
    [ "$local_only" -a ! "$in_repo_local" -a ! "$in_repo" ] && echo "The shared repo is missing a commit from a non-checked-out local branch (or no branch is checked out at all)."
-#set +x
 }
 
 git_diff-cached ()
