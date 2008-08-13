@@ -48,6 +48,7 @@ then
     BUILDID=`git log -1 --pretty=format:%h 2>/dev/null` || true
     BUILDID=`date -u +%y%m%d%H%M`-${BUILDID}
 fi
+
 LH_ISO_VOLUME+=" -- $BUILDID"
 
 mkdir -p cache
@@ -93,7 +94,7 @@ clean_mounts()
 trap "clean_mounts; exit 0" EXIT
 
 clean_mounts
-rm -rf binary binary.iso chroot config
+rm -rf binary binary.iso chroot config livecd-*.iso
 
 echo I: fetching vyatta binary packages
 mkdir -p cache/vyatta-deb-mirror
@@ -257,7 +258,7 @@ cp config/chroot_local-includes/vyatta-pubkey.gpg config/binary_local-includes/
 
 if [ ${#deb_sources[@]} -gt 0 ]; then
     echo I: set up custom source repos
-    cp ${deb_sources[@]} config/chroot_sources/
+    cp -lf ${deb_sources[@]} config/chroot_sources/
 fi
  
 # include xen Dom0 repo
@@ -311,10 +312,10 @@ vyatta_chroot_local-packages ()
   mkdir -p $pool
 
   if [ ${#vyatta_linux_debs[@]} -gt 0 ] ;then
-      cp ${vyatta_linux_debs[@]} $pool/.
+      cp -lf ${vyatta_linux_debs[@]} $pool/.
   fi
 
-  cp config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
+  cp -lf config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
      config/chroot_local-packages/*_all.deb \
       $pool/.
 
@@ -372,7 +373,7 @@ build_chroot ()
   lh_chroot_linux-image install || return 1
   
   test -r live.conf/${LH_DISTRIBUTION} && \
-      cp live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
+      cp -lf live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
 
   echo I: customizing chroot
   lh_chroot_preseed || return 1
@@ -473,7 +474,7 @@ var/log/dpkg.log
 EOF
 
 ## restore apt/preferences for binary build
-cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
+cp -lf chroot_local-includes/etc/apt/preferences chroot/etc/apt
 
 echo I: building binary
 if ! lh_binary ; then
@@ -481,7 +482,6 @@ if ! lh_binary ; then
   exit 1
 fi
 
-rm -rf livecd-*.iso
 ln -nsf binary.iso livecd-"$BUILDID".iso
 
 # this is the wrong version package
