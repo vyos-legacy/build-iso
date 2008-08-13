@@ -206,7 +206,7 @@ mk_version_package ()
 
     ( cd "$savedir"/.. ; git-submodule status 2>/dev/null ) \
          > $vf/iso-submodules.txt
-    [ -s $vf/iso-submodules.txt ] || cp iso-submodules.txt $vf/. 2>/dev/null
+    [ -s $vf/iso-submodules.txt ] || cp "$savedir"/iso-submodules.txt $vf/. 2>/dev/null
 
     echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
 
