@@ -9,6 +9,14 @@ trace=
 noclean="-nc"
 build="debuild -i -b -uc -us"
 
+# check to see if the version #'s will be incremented nicely
+found=`grep 'DEBCHANGE_AUTO_NMU.*=.*no' $HOME/.devscripts /etc/devscripts.conf 2>/dev/null`
+if [ ! "$found" ]
+then
+	echo "Please set DEBCHANGE_AUTO_NMU=no in ~/.devscripts or /etc/devscripts.conf"
+	exit 1
+fi
+
 declare -a cloned=( */debian )
 declare -a submodule=( ${cloned[@]%/*} )
 
@@ -90,9 +98,10 @@ get_branch()
 mod_changelog()
 {(
 
-	[ "$RELEASENAME" = UNRELEASED ] || $rel=--release
+	[ "$RELEASENAME" = UNRELEASED ] || rel=--release
 
 	branch=`get_branch`
+	[ ! -f debian/control ] && echo "Maintainer: eng@vyatta.com">debian/control
 	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
 	then
 		true		# actually cannot use this yet because the git-dch changelog parser has bugs
@@ -103,7 +112,7 @@ mod_changelog()
 	[ "$RELEASENAME" = UNRELEASED ] && return 0
 
 	sed -e 's/^  \* UNRELEASED$//' -e '3i \
-  '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
+	  '"$RELEASENAME" /tmp/changelog$$ >debian/changelog
 	rm /tmp/changelog$$
 	return 0
 )}
@@ -114,19 +123,31 @@ do_inc_version()
 	eval $info P: "$1"
 	repo="$1"
 (
-	cd "$repo" || exit
+	cd "$repo" || return
+
+	branch=`get_branch`
+
 	if [ "$INCVNUM" ]
 	then
-		branch=`get_branch`
 		echo "$RELEASENAME for $branch">STATUS
 		git-add STATUS
 		git-commit -m `cat STATUS`
 	fi
 
+	tag_sha=`get_tag`
+	tag_sha=`git-cat-file -p debian/"$tag_sha"|head -1|sed 's,.* ,,'`
+	head_sha=`cat .git/refs/heads/"$branch"`
+	diffs=`[ "$tag_sha" -a "$tag_sha" != "$head_sha" ] && git-diff "$tag_sha" "$head_sha"|head -1`
+	if [ ! "$diffs" ]
+	then
+		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
+		return
+	fi
+
 	case "$repo" in
 	linux-image* )
 		$trace mod_changelog "$RELEASENAME"
-		debuild -i -b -us -uc >/dev/null 2>/dev/null # we need to check-in some derived files for the build to work
+		#debuild -i -b -us -uc >/dev/null 2>/dev/null # we need to check-in some derived files for the build to work
 		;;
 	* )
 		$trace mod_changelog "$RELEASENAME"
@@ -138,8 +159,9 @@ do_inc_version()
 		#git-commit -a -m "Setting changelog to UNRELEASED" >/dev/null
 		true
 	else
-		git-tag -a -m "$RELEASENAME" debian/`get_tag` HEAD 2>/dev/null
 		git-commit -a -m "$RELEASENAME" >/dev/null
+		git-tag -a -m "$RELEASENAME" debian/`get_tag` 2>/dev/null
+		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
 	fi
 )
 }
@@ -150,5 +172,4 @@ do
 done
 
 echo "$RELEASENAME">../livecd/version
-$trace mod_changelog "$RELEASENAME"
 do_inc_version ..
