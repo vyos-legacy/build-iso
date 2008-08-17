@@ -1,20 +1,435 @@
-build-iso (0.6) unstable; urgency=low
+build-iso (0.7) UNRELEASED; urgency=low
 
-  VC4.0.2
+  888
   [ Mark O'Brien ]
 
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * Update index
+  * Update index
+  * Merge from holliwood
+  * Update index
+  * Update index
+  * Merge from glendale
+  * Update index
+  * Update indicex
+  * Update index
+  * Update indices
+  * Update indices
+  * Update index
+  * Update index
+  * Update index
+  * Update indices
 
   [ An-Cheng Huang ]
-  * vyatta-cfg-firewall: fix for bug 3167
-  * update vyatta-cfg-quagga
+  * update vyatta-idp-snort
+
+  [ rbalocca ]
+  * Put config.boot.default in the correct location
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
 
   [ Robert Bays ]
-  * bug 3177: update sub-module vyatta-cfg
-  * update sub-module vyatta-cfg
+  * add xendomzero configuration hook
 
-  [ Mark O'Brien ]
+  [ rbalocca ]
+  * Support install-system again
+  * Turn on set -x in lh_binary_debian-iinstaller to aid logging of
+    problems
 
- -- Mark O'Brien <mobrien@vyatta.com>  Sat, 19 Apr 2008 11:56:36 -0700
+  [ An-Cheng Huang ]
+  * update vyatta-idp-snort
+
+  [ rbalocca ]
+  * Update create-version-package
+  * Remove debug line in mk.livecd
+  * Update index
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort and vyatta-idp-snort
+
+  [ rbalocca ]
+  * config.boot.default is now set correctly for community and supported
+    releases
+  * Update index
+  * Update index
+  * Update indices and changelog
+  * Update indices
+  * Update index
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * add vyatta-idp-snort to the build
+
+  [ rbalocca ]
+  * Revert "Revert "Rename package to match kernel version 2.6.24""
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system - bug 3172
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server - Bug 2639 dhcp exclude ip
+    not properly stored
+
+  [ Tom Grennan ]
+  * select VYATTA_LINUX_PKG from rsynced mirror
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system-Fix Bug 3164
+
+  [ rbalocca ]
+  * Revert "Rename package to match kernel version 2.6.24"
+
+  [ Tom Grennan ]
+  * Unless otherwise configured, use the sid version of the installer
+
+  [ rbalocca ]
+  * Fix hollywood build.  Each build now downloads debian
+  * Update indices
+  * Remove the .dummy file.  This tricks git into removing the linux-
+    image-2.6.23* dir,
+  * Add .dummy file to the linux-image-2.6.23* dir
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-serial - placed tag: as the first line of
+    node.def to prevent set failed message
+  * update sub-module vyatta-cfg-quagga - Fix Bug 2849 "disable-split-
+    horizon" needs to be implemented
+
+  [ rbalocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Rename package to match kernel version 2.6.24
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server bug fix 2303 Reserved
+    static address is allocated in DHCP pool
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * add some more packages needed to build snort
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-quagga - help strings standardized
+
+  [ rbalocca ]
+  * Update index
+  * Remove set -x debugging from lh_binary_debian-installer
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-serial - help strings standardized
+  * update sub-module vyatta-cfg - help strings standardized
+  * update sub-module vyatta-cfg-system - help strings standardized
+  * update sub-module vyatta-op-quagga - help strings standardized
+  * update sub-module vyatta-op - help strings standardized
+
+  [ rbalocca ]
+  * Update indices
+  * Update indices
+  * Simplify the ISO creation scripts
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
+  * update vyatta-snort
+  * vyatta-cfg: partial fix for bug 2181
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-nat - help strings standardized
+  * update sub-module vyatta-cluster - help strings standardized
+  * update sub-module vyatta-cfg-vpn - help strings standardized
+  * update sub-module vyatta-cfg-system - help strings standardized
+  * update sub-module vyatta-cfg-quagga - help strings standardized
+
+  [ rbalocca ]
+  * Remove debug from mk.livecd
+  * Update index
+  * Fix hollywood build.
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
+
+  [ rbalocca ]
+  * Further work-arounds for wget bug
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-qos - help strings standardized
+  * update sub-module vyatta-cfg-op-pppoe - help strings standardized
+
+  [ Tom Grennan ]
+  * configure INCLUDEd and EXCLUDEd packages
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg - help strings standardized
+
+  [ Tom Grennan ]
+  * exclude mail transport
+  * donot exclude linux-headers but exclude linux-source-2.6.23
+
+  [ rbalocca ]
+  * Work around for a wget bug
+
+  [ Tom Grennan ]
+  * configure package lists through config/chroot_local-packageslists
+    instead of lh_config parameter
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall - help strings standardized
+  * update sub-module vyatta-op - arp help strings rectified
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-firewall
+
+  [ rbalocca ]
+  * save-package-report now in vyatta-base package
+
+  [ Mohit Mehta ]
+  * Update indices
+
+  [ rbalocca ]
+  * Exclude linux-libc-dev package
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-vpn - help strings standardized
+  * update sub-module vyatta-op-quagga - help strings standardized
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg-firewall: fix for bug 3127
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-op-quagga - help strings standardized in
+    vyatta-op-quagga
+
+  [ Tom Grennan ]
+  * fix installer by reworking package lists
+  * fix locale warnings
+  * move target removal to mk.livecd script after umount of previous
+    chroot dirs
+  * latest installer requires SID Release and Packages files
+  * fix typo in package list sed command
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall - help strings standardized
+  * update sub-module SUBMODULE
+  * update sub-module vyatta-cfg-dhcp-server - help strings standardized
+    for vyatta-cfg-dhcp-server
+
+  [ rbalocca ]
+  * Update index
+  * Add mk_version_package function to mk.livecd
+
+  [ Mohit Mehta ]
+  * update sub-module help strings standardized for vyatta-op-dhcp-
+    server
+  * update sub-module standardize help strings in vyatta-op
+
+  [ rbalocca ]
+  * Update indices
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op to integrate tshark as a command in
+    Vyatta CLI
+  * update sub-module vyatta-cfg-system to add tshark to sudoers list
+
+  [ rbalocca ]
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module help strings standardized in vyatta-cfg-dhcp-
+    server
+  * update sub-module vyatta-cfg-dhcp-server for fix bug 3066
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 2689
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ rbalocca ]
+  * Update indices
+  * Update index
+
+  [ An-Cheng Huang ]
+  * hollywood nightly autobuild is now on firebolt
+
+  [ Tom Grennan ]
+  * install busybox alternatives
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+
+  [ Stig Thormodsrud ]
+  * update index for bug 3062
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Tom Grennan ]
+  * update build tool package lists with trailing backslash
+
+  [ An-Cheng Huang ]
+  * handle multiple packages from vyatta-snort
+  * add vyatta-snort submodule to hollywood build
+
+  [ Mohit Mehta ]
+  * Fix Bug 3071 stop ip can be less than start ip for dhcp-server
+    configuration - stop dhcp lease ip lesser than the start dhcp lease
+    ip produces a commit fail error
+  * Fix Bug 3031 Ambiguous error message when committing dhcp subnet
+    start node without stop node - ambiguous error message removed. if
+    stop node not defined for a start node, commit fails
+
+  [ rbalocca ]
+  * Update index
+
+  [ Tom Grennan ]
+  * update submodule index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Tom Grennan ]
+  * update submodule index
+  * update submodule index
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ Tom Grennan ]
+  * update submodule index
+  * update submodule index
+  * fix bug 2589
+
+  [ rbalocca ]
+  * Update README for hollywood
+  * Update index
+  * Update indices
+  * Update index
+
+  [ Tom Grennan ]
+  * update submodule index
+  * integrate proc/sys flag settings from rl-system.init
+
+  [ rbalocca ]
+  * Update indices
+  * Add the vyatta boot help texts back into hollywood
+  * Update index
+  * Update indices
+
+  [ Tom Grennan ]
+  * add the vyatta public key to the live image and installed target
+  * replace iso splash with graphic that includes the registered
+    trademark
+  * move splash reference to displayed boot.txt
+  * donot configure LH_SYSLINUX_CFG
+
+  [ rbalocca ]
+  * Update indices
+  * Update index
+
+  [ Tom Grennan ]
+  * override lh_chroot_local-packages to force install of
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Tom Grennan ]
+  * add "tcpdump" and "snmp" to vyatta package list
+  * have to remove livecd/.permissions outside of fakeroot
+  * remove unused help files
+
+  [ Marat Nepomnyashy ]
+  * submodule vyatta-op-dhcp-server:  Do not use 'sudo' for 'show dhcp'
+    commands.  Bug 2897 fix.
+
+  [ Tom Grennan ]
+  * use vyatta gtk theme with gui install
+  * add vyatta gtk theme pattern after Clearlooks-DarkOrange
+  * patch fails silently within fakeroot
+  * append local-includes to installer initrd
+  * copy install-gtk_local-includes to config
+  * add vyatta logo overlay of GTK install screen
+  * show each patch being applied to better identify failure
+  * remove hack workaround of vyatta-dev server upgrade
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Tom Grennan ]
+  * selectively include Packages from vyatta mirror
+  * Eliminate the "live-gui" option since the graphics framebuffer
+    drivers
+  * add vyatta grub graphic theme
+  * Since the framebuffer console and associated drivers are configured
+    as
+  * update Vyatta graphic
+  * start with clean iso, config and temp files
+  * filter vyatta package mirror
+  * changed default pool from "glendale" to "hollywood"
+  * comment Vyatta GUI theme challenge
+  * fix gui install
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Tom Grennan ]
+  * busybox find/cpio doesnot have -print0/--null
+  * implement config.boot save
+  * preseed openswan and dhcp3-relay parameters
+
+  [ rbalocca ]
+  * Add -i option to tools/submod-inc-version to force package
+    incrementation
+
+  [ Tom Grennan ]
+  * cache fetched package list, debs, and udebs
+  * fix path to local debs
+  * import lh_binary_debian-installer from live-helper_1.0~a37-2
+  * comment work around
+
+  [ rbalocca ]
+  * An an UNRELEASED feature to submod-inc-version
+  * Update indices; cherry-pick a change to tools/submod-git script
+    (from hollywood)
+
+  [ Tom Grennan ]
+  * re-integrate live and install images
+
+  [ rbalocca ]
+  * Update indices
+  * Update index
+
+  [  ]
+
+ --  <rbalocca@firebolt.vyatta.com>  Sun, 17 Aug 2008 12:59:49 -0700
 
 build-iso (0.5) unstable; urgency=low
 
