@@ -58,7 +58,7 @@ EOF
 	    INCVNUM=yes
 	    RELEASENAME="Start of development"
 	    shift;;
-	-m )
+	-m|-v )
 	    shift
 	    RELEASENAME="$1"
 	    [ "$RELEASENAME" ] || RELEASENAME=UNRELEASED
