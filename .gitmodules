@@ -118,3 +118,6 @@
 [submodule "pkgs/linux-image-2.6.25-1-486-vyatta"]
 	path = pkgs/linux-image-2.6.25-1-486-vyatta
 	url = http://git.vyatta.com/linux-vyatta.git
+[submodule "pkgs/vyatta-grub"]
+	path = pkgs/vyatta-grub
+	url = http://git.vyatta.com/vyatta-grub.git
