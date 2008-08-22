@@ -115,9 +115,9 @@
 [submodule "pkgs/vyatta-quagga"]
 	path = pkgs/vyatta-quagga
 	url = http://git.vyatta.com/vyatta-quagga.git
-[submodule "pkgs/linux-image-2.6.25-1-486-vyatta"]
-	path = pkgs/linux-image-2.6.25-1-486-vyatta
-	url = http://git.vyatta.com/linux-vyatta.git
 [submodule "pkgs/vyatta-grub"]
 	path = pkgs/vyatta-grub
 	url = http://git.vyatta.com/vyatta-grub.git
+[submodule "pkgs/linux-image"]
+	path = pkgs/linux-image
+	url = http://git.vyatta.com/linux-vyatta.git
