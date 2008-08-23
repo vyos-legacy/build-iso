@@ -5,8 +5,8 @@ export MAKEFLAGS
 
 include mk.conf
 
-PACKAGE_DEBS := $(shell sh -c "echo pkgs/*/.git|sed 's,/\.git,,'g")
-PACKAGE_GITS := $(shell echo pkgs/*/.git)
+PACKAGE_DEBS := $(shell sh -c "echo pkgs/*/debian|sed 's,/\debian,,'g")
+PACKAGES := $(shell echo pkgs/*/debian)
 
 UID := $(shell id -u)
 ifneq ($(UID),0)
@@ -128,7 +128,7 @@ endef
 
 endif
 
-all : rick
+all : package_debuilds
 	$(mk_iso)
 
 .PHONY : udebs
@@ -173,12 +173,12 @@ distclean :
 	@$(MAKE) clean
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
 
-.PHONY: rick
-rick: $(PACKAGE_GITS)
+.PHONY: package_debuilds
+package_debuilds: $(PACKAGES)
 	echo DONE
 
-.PHONY: $(PACKAGE_GITS)
-$(PACKAGE_GITS):
+.PHONY: $(PACKAGES)
+$(PACKAGES):
 	case "$@" in pkgs/installer*|pkgs/linux-kernel-di* ) echo !!!!!$@!!!!!!!;; *) cd $@/..;debuild -i -b -uc -us;; esac
 
 #$(PACKAGE_DEBS):
