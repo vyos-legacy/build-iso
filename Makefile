@@ -5,6 +5,9 @@ export MAKEFLAGS
 
 include mk.conf
 
+PACKAGE_DEBS := $(shell sh -c "echo pkgs/*/.git|sed 's,/\.git,,'g")
+PACKAGE_GITS := $(shell echo pkgs/*/.git)
+
 UID := $(shell id -u)
 ifneq ($(UID),0)
 FAKEROOT = fakeroot
@@ -125,8 +128,7 @@ endef
 
 endif
 
-all :
-	tools/submod-mk
+all : rick
 	$(mk_iso)
 
 .PHONY : udebs
@@ -170,3 +172,14 @@ clean-installer :
 distclean :
 	@$(MAKE) clean
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
+
+.PHONY: rick
+rick: $(PACKAGE_GITS)
+	echo DONE
+
+.PHONY: $(PACKAGE_GITS)
+$(PACKAGE_GITS):
+	case "$@" in pkgs/installer*|pkgs/linux-kernel-di* ) echo !!!!!$@!!!!!!!;; *) cd $@/..;debuild -i -b -uc -us;; esac
+
+#$(PACKAGE_DEBS):
+#	echo $(PACKAGE_DEBS)
