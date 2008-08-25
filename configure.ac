@@ -305,15 +305,13 @@ gutsy | hardy )
 		FETCH_PKGS+=" squashfs-tools"
 	fi
         if eval "$use_xendomzero" ; then
-            LH_PACKAGES="linux-image-2.6.24-16-xen xen-hypervisor-3.2 xen-utils-3.2 "
-            LH_PACKAGES+="libc6-xen libc6 libsdl1.2debian libsdl1.2debian-alsa "
-            LH_PACKAGES+="python-xen-3.2 python-dev python python2.5-dev python2.5 libsqlite3-0 "
+	    INCLUDE_PKGS+=xen-docs-3.2,
+	    INCLUDE_PKGS+=xen-hypervisor-3.2-1-amd64,
+	    INCLUDE_PKGS+=xen-shell,
+	    INCLUDE_PKGS+=xen-tools,
+	    INCLUDE_PKGS+=xen-utils-3.2-1,
+	    INCLUDE_PKGS+=xen-utils-common,
         fi
-
-	#LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-dev"
-	#LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-dev"
-	#LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
-	#LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-dev"
 
         if test X$BARCH = Xamd64; then
           LH_MIRROR_BINARY="http://ftp.us.debian.org/debian"

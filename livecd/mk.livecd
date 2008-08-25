@@ -261,11 +261,6 @@ if [ ${#deb_sources[@]} -gt 0 ]; then
     cp -lf ${deb_sources[@]} config/chroot_sources/
 fi
  
-# include xen Dom0 repo
-if eval "$use_xendomzero" ; then
-    cat deb_sources/xen-vyatta.bootstrap >> config/chroot_sources/${LH_DISTRIBUTION}-vyatta.bootstrap
-fi
-
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
 # is cached, so the bootstrap step only restores the cached stage.
@@ -284,10 +279,7 @@ if [ -d cache/lists ] ; then
 	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
 fi
 
-if eval "$use_xen" || eval "$use_xendomzero" ; then
-    echo I: Disabling TLS
-    mv chroot/lib/tls chroot/lib/tls.disabled
-else
+if ! eval "$use_xen" && ! eval "$use_xendomzero" ; then
     rm -f config/chroot_local-hooks/*xen*
 fi
 
@@ -410,6 +402,25 @@ build_chroot ()
   lh_chroot_sysfs remove || return 1
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
+
+  DOM0_PKGS_URL=http://packages.vyatta.com/vyatta-dev/tmp
+  DOM0_KERNEL_PKG=linux-image-2.6.24-19-xen_2.6.24-19.36_amd64.deb
+  DOM0_MODULES_PKG=linux-ubuntu-modules-2.6.24-19-xen_2.6.24-19.28_amd64.deb
+  if eval "$use_xendomzero" ; then
+    # xen dom0 kernel
+    (
+      cd chroot/root
+      rm -f linux-*.deb
+      wget $DOM0_PKGS_URL/$DOM0_KERNEL_PKG
+      wget $DOM0_PKGS_URL/$DOM0_MODULES_PKG
+    )
+    chroot chroot dpkg -i /root/$DOM0_KERNEL_PKG /root/$DOM0_MODULES_PKG
+    rm -f chroot/root/linux-*.deb
+
+    # fix debian xen setup
+    chroot chroot ln -sf ../lib/xen-common/bin/xen-utils-wrapper \
+      /usr/sbin/tapdisk
+  fi
 
   local kernelname=`cd chroot/lib/modules;echo *`
   if [ "$kernelname" ]
