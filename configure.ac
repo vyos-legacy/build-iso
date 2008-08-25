@@ -305,12 +305,18 @@ gutsy | hardy )
 		FETCH_PKGS+=" squashfs-tools"
 	fi
         if eval "$use_xendomzero" ; then
+            # xen packages
 	    INCLUDE_PKGS+=xen-docs-3.2,
 	    INCLUDE_PKGS+=xen-hypervisor-3.2-1-amd64,
 	    INCLUDE_PKGS+=xen-shell,
 	    INCLUDE_PKGS+=xen-tools,
 	    INCLUDE_PKGS+=xen-utils-3.2-1,
 	    INCLUDE_PKGS+=xen-utils-common,
+            
+            # libvirt packages
+	    INCLUDE_PKGS+=libvirt-bin,
+	    INCLUDE_PKGS+=libvirt0,
+	    INCLUDE_PKGS+=python-libvirt,
         fi
 
         if test X$BARCH = Xamd64; then
