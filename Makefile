@@ -128,8 +128,7 @@ endef
 
 endif
 
-all : package_debuilds
-	$(mk_iso)
+all : iso
 
 .PHONY : udebs
 udebs :
@@ -140,7 +139,7 @@ installer :
 	$(mk_installer)
 
 .PHONY : iso
-iso :
+iso : package_debuilds
 	$(mk_iso)
 
 .PHONY : mostlyclean
@@ -179,7 +178,7 @@ package_debuilds: $(PACKAGES)
 
 .PHONY: $(PACKAGES)
 $(PACKAGES):
-	case "$@" in pkgs/installer*|pkgs/linux-kernel-di* ) echo !!!!!$@!!!!!!!;; *) cd $@/..;debuild -i -b -uc -us;; esac
+	case "$@" in pkgs/installer*|pkgs/linux-kernel-di* ) echo !!!!!$@!!!!!!!;; *) cd $@/..;debuild -i -b -uc -us -nc;; esac
 
 #$(PACKAGE_DEBS):
 #	echo $(PACKAGE_DEBS)
