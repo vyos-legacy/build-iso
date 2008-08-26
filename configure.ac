@@ -319,17 +319,10 @@ gutsy | hardy )
 	    INCLUDE_PKGS+=python-libvirt,
         fi
 
-        if test X$BARCH = Xamd64; then
-          LH_MIRROR_BINARY="http://ftp.us.debian.org/debian"
-          LH_MIRROR_BOOTSTRAP="http://ftp.us.debian.org/debian"
-          LH_MIRROR_BINARY_SECURITY="http://security.debian.org"
-          LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org"
-        else
-          LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
-          LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
-          LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
-          LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
-        fi
+        LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
+        LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
+        LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
+        LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
 
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
