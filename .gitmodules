@@ -121,3 +121,6 @@
 [submodule "pkgs/linux-image"]
 	path = pkgs/linux-image
 	url = http://git.vyatta.com/linux-vyatta.git
+[submodule "pkgs/vyatta-webproxy"]
+	path = pkgs/vyatta-webproxy
+	url = http://git.vyatta.com/vyatta-webproxy.git
