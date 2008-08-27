@@ -123,4 +123,4 @@
 	url = http://git.vyatta.com/linux-vyatta.git
 [submodule "vyatta-webproxy"]
 	path = vyatta-webproxy
-	url = /home/stig/git/islavista-squid/pkgs/vyatta-webproxy/.git
+	url = http://git.vyatta.com/vyatta-webproxy/.git
