@@ -1,3 +1,51 @@
+build-iso (0.14) unstable; urgency=low
+
+	  3.1.3
+  [ Mark O'Brien ]
+
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+
+  [ Rick Balocca ]
+  * Update index
+  * Update index
+  * Update index
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-firewall
+
+  [ Rick Balocca ]
+  * Update index
+  * Update index
+  * Update indices
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Update index
+
+  [ Mark O'Brien ]
+  * 3.1.2
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 19 Aug 2008 17:49:22 -0700
+
 build-iso (0.13) unstable; urgency=low
 
 	  3.1.2

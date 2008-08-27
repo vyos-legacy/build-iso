@@ -128,8 +128,7 @@ endef
 
 endif
 
-all : package_debuilds
-	$(mk_iso)
+all : package_debuilds iso
 
 .PHONY : udebs
 udebs :
@@ -173,13 +172,15 @@ distclean :
 	@$(MAKE) clean
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
 
+pkgs/wanpipe: pkgs/linux-image
+
 .PHONY: package_debuilds
 package_debuilds: $(PACKAGES)
 	echo DONE
 
 .PHONY: $(PACKAGES)
 $(PACKAGES):
-	case "$@" in pkgs/installer*|pkgs/linux-kernel-di* ) echo !!!!!$@!!!!!!!;; *) cd $@/..;debuild -i -b -uc -us;; esac
+	case "$@" in pkgs/installer*|pkgs/linux-kernel-di* ) echo !!!!!$@!!!!!!!;; *) cd $@/..;debuild -i -b -uc -us -nc;; esac
 
 #$(PACKAGE_DEBS):
 #	echo $(PACKAGE_DEBS)

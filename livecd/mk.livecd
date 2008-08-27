@@ -569,14 +569,14 @@ done
 
 # exclude more files
 cat <<EOF >> chroot/tmp/mksquashfs.exclude
-etc/apt/preferences
 etc/resolv.conf
 var/log/bootstrap.log
 var/log/dpkg.log
 EOF
 
 ## restore apt/preferences for binary build
-cp -lf chroot_local-includes/etc/apt/preferences chroot/etc/apt
+cp -f chroot_local-includes/etc/apt/preferences chroot/etc/apt
+sed -i 's/ 50/ 1000/' chroot/etc/apt/preferences
 
 # build the XenSource partition image
 if eval "$create_xensourcevm"; then
