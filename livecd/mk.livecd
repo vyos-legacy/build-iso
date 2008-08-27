@@ -319,6 +319,7 @@ vyatta_chroot_local-packages ()
   (
     echo "deb file:///root local main"
     echo "deb http://firebolt.vyatta.com/vyatta-dev islavista main"
+    echo deb "$LH_MIRROR_CHROOT_SECURITY" lenny/updates main
     cat chroot/etc/apt/sources.list.bak
   )>chroot/etc/apt/sources.list
 
