@@ -171,6 +171,14 @@ else
    use_xendomzero=false
 fi
 
+AC_ARG_WITH(xensourcevm,
+[AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
+
+if test X$with_xensourcevm = Xyes ; then
+   create_xensourcevm=true
+else
+   create_xensourcevm=false
+fi
 
 AC_ARG_WITH(deb-install,
 [AS_HELP_STRING([--with-deb-install],
@@ -386,6 +394,7 @@ AC_SUBST(LH_VERBOSE)
 
 AC_SUBST(use_xen)
 AC_SUBST(use_xendomzero)
+AC_SUBST(create_xensourcevm)
 
 AC_SUBST(VYATTA_POOL)
 AC_SUBST(VYATTA_LINUX_PKG)

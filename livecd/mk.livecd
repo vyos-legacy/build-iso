@@ -347,6 +347,96 @@ vyatta_chroot_local-packages ()
   mk_version_package	# make a partially formed version package
 }
 
+# Create the Vyatta domU partition image
+vyatta-xensource-partition-image ()
+{
+  echo I: creating XenSource partition image
+  rm -rf xensource
+  mkdir -p xensource/pimage
+
+  # using VVERSION throughout though I am not sure it is the right var
+
+  # preallocated image
+  # dd if=/dev/zero of=xensource/vyatta-$VVERSION.img bs=1024k count=4000
+  # sparse image
+  dd if=/dev/zero of=xensource/vyatta-$VVERSION.img bs=1k seek=4096k count=1
+
+  # allocate loop device for file
+  loop=$(losetup -f)
+  losetup $loop xensource/vyatta-$VVERSION.img || echo E: unable to allocate loop device
+
+  # create filesystem
+  mke2fs -j /dev/loop0
+
+  # mount loop device and copy root image
+  echo I: mounting image file
+  mount $loop xensource/pimage
+  echo I: copying root to image partition
+  cp -aR chroot/* xensource/pimage/
+
+  # stage the chroot
+  # need to edit the inittab get rid of t0 and add h0
+  # setup config.boot if neccessary
+
+  # we need a stripped verison of the kernel for pygrub 
+  echo I: fixing partition image kernel
+  kversion=$(egrep "Package: linux-image.+-vyatta-virt" ../pkgs/linux-image/debian/control | sed -e 's/Package: linux-image-\|-vyatta-virt//g')
+  strip ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux
+  gzip -c ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux \
+    > xensource/pimage/boot/vmlinux-$kversion-vyatta-virt
+
+  # create the default domU configuration file
+  cat <<-EOF > xensource/vyatta-xen-$VVERSION.cfg
+	name='vyatta-xen-$VVERSION'
+	bootloader='/usr/lib/xen-3.2-1/bin/pygrub'
+	on_reboot='restart'
+	on_shutdown='destroy'
+	on_crash='destroy'
+	image_name='vyatta-xen-$VVERSION'
+	disk=['tap:aio:/var/xen/vyatta-$VVERSION.img,xvda1,w']
+	vcpus=1
+	memory=256
+	EOF
+
+  xen_kernel_version=$(ls xensource/pimage/boot/vmlinu[xz]-* | sed 's:xensource/pimage/boot/::g' | sort )
+
+  (
+      # stage the grub menu.lst for pygrub.
+      echo -e "timeout\t5"
+      echo
+      for version in $xen_kernel_version; do
+          echo -e "title\t$version"
+          echo -e "root\t(hd0,0)"
+          echo -e "kernel\t/boot/$version root=/dev/xvda1 ro console=hvc0"
+          iversion=$(echo $version | sed 's/vmlinu[xz]-//g')
+          echo -e "initrd\t/boot/initrd.img-$iversion"
+          echo
+      done
+  ) >"xensource/pimage/boot/grub/menu.lst"
+
+  # clean up the inittab
+  # remove T0 so it doesn't respawn needlessly
+  sed -i -e 's/T0/#T0/' xensource/pimage/etc/inittab
+  # add the xen pv console
+  echo -e "# xen console \nh0:12345:respawn:/sbin/getty 38400 hvc0" >> xensource/pimage/etc/inittab
+
+  # set /etc/hostname
+  rm -f xensource/pimage/etc/hostname
+  echo vyatta > xensource/pimage/etc/hostname
+  # set /etc/hosts
+  rm -f xensource/pimage/etc/hosts
+  echo 127.0.0.1 localhost vyatta > xensource/pimage/etc/hosts
+
+  # clean up the mounts
+  echo I: unmounting the image file
+  umount xensource/pimage
+  echo I: releasing loop device $loop
+  losetup -d $loop
+
+  echo I: compressing XenSource partition image file
+  gzip xensource/vyatta-$VVERSION.img
+}
+
 # do the steps in lh_chroot
 build_chroot ()
 {
@@ -479,14 +569,19 @@ done
 
 # exclude more files
 cat <<EOF >> chroot/tmp/mksquashfs.exclude
-etc/apt/preferences
 etc/resolv.conf
 var/log/bootstrap.log
 var/log/dpkg.log
 EOF
 
 ## restore apt/preferences for binary build
-cp -lf chroot_local-includes/etc/apt/preferences chroot/etc/apt
+cp -f chroot_local-includes/etc/apt/preferences chroot/etc/apt
+sed -i 's/ 50/ 1000/' chroot/etc/apt/preferences
+
+# build the XenSource partition image
+if eval "$create_xensourcevm"; then
+  vyatta-xensource-partition-image || return 1
+fi
 
 echo I: building binary
 if ! lh_binary ; then
