@@ -172,6 +172,8 @@ distclean :
 	@$(MAKE) clean
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
 
+pkgs/wanpipe: pkgs/linux-image
+
 .PHONY: package_debuilds
 package_debuilds: $(PACKAGES)
 	echo DONE
