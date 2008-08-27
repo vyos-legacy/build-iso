@@ -128,7 +128,7 @@ endef
 
 endif
 
-all : iso
+all : package_debuilds iso
 
 .PHONY : udebs
 udebs :
@@ -139,7 +139,7 @@ installer :
 	$(mk_installer)
 
 .PHONY : iso
-iso : package_debuilds
+iso :
 	$(mk_iso)
 
 .PHONY : mostlyclean
