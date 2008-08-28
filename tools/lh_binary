@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# lh_binary(1) - build binary images
+# Copyright (C) 2006-2008 Daniel Baumann <daniel@debian.org>
+#
+# live-helper comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
+# This is free software, and you are welcome to redistribute it
+# under certain conditions; see COPYING for details.
+
+set -e
+
+# Including common functions
+LH_BASE="${LH_BASE:-/usr/share/live-helper}"
+
+for FUNCTION in "${LH_BASE}"/functions/*.sh
+do
+	. "${FUNCTION}"
+done
+
+# Setting static variables
+DESCRIPTION="build binary images"
+HELP=""
+USAGE="${PROGRAM} [--force]"
+
+Arguments "${@}"
+
+# Reading configuration files
+Read_conffile config/all config/common config/bootstrap config/chroot config/binary config/source
+Set_defaults
+
+# Preparing root filesystem
+lh_binary_chroot ${*}
+
+if [ "${LH_CHROOT_BUILD}" = "enabled" ]
+then
+	# Configuring chroot
+	lh_chroot_devpts install ${*}
+	lh_chroot_proc install ${*}
+	lh_chroot_sysfs install ${*}
+	lh_chroot_hosts install ${*}
+	lh_chroot_resolv install ${*}
+	lh_chroot_hostname install ${*}
+	lh_chroot_sources install ${*}
+fi
+
+# Building root filesystem
+lh_binary_rootfs ${*}
+lh_binary_manifest ${*}
+lh_binary_encryption ${*}
+
+# Prepare images
+lh_binary_local-packageslists ${*}
+lh_binary_linux-image ${*}
+lh_binary_debian-installer ${*}
+lh_binary_memtest ${*}
+lh_binary_grub ${*}
+lh_binary_syslinux ${*}
+lh_binary_yaboot ${*}
+lh_binary_silo ${*}
+lh_binary_disk ${*}
+lh_binary_includes ${*}
+lh_binary_local-includes ${*}
+lh_binary_local-hooks ${*}
+lh_binary_md5sum ${*}
+
+if [ "${LH_CHROOT_BUILD}" != "enabled" ]
+then
+	lh_chroot_devpts install ${*}
+	lh_chroot_proc install ${*}
+	lh_chroot_sysfs install ${*}
+fi
+
+# Building images
+lh_binary_iso ${*}
+lh_binary_net ${*}
+lh_binary_tar ${*}
+lh_binary_usb-hdd ${*}
+
+if [ "${LH_CHROOT_BUILD}" = "enabled" ]
+then
+	# Deconfiguring chroot
+	rm -f .stage/chroot_sources
+	lh_chroot_hostname remove ${*}
+	lh_chroot_resolv remove ${*}
+	lh_chroot_hosts remove ${*}
+fi
+
+lh_chroot_sysfs remove ${*}
+lh_chroot_proc remove ${*}
+lh_chroot_devpts remove ${*}
