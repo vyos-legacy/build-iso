@@ -392,12 +392,12 @@ vyatta-xensource-partition-image ()
 
   # create the default domU configuration file
   cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
-	name='vyatta-xen-$VVERSION'
+	name='vyatta-xensource-$VVERSION'
 	bootloader='/usr/lib/xen-3.2-1/bin/pygrub'
 	on_reboot='restart'
 	on_shutdown='destroy'
 	on_crash='destroy'
-	image_name='vyatta-xen-$VVERSION'
+	image_name='vyatta-xensource-$VVERSION'
 	disk=['tap:aio:/var/xen/vyatta-xensource-$VVERSION.img,xvda1,w']
 	vcpus=1
 	memory=256
