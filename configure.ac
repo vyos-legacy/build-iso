@@ -101,7 +101,7 @@ AC_ARG_WITH(exclude,
 if test "X$with_exclude" = "X" ; then
    EXCLUDE_PKGS=''
 else
-   EXCLUDE_PKGS=$with_exclude,
+   EXCLUDE_PKGS=$with_exclude
 fi
 
 AC_ARG_WITH(include,
@@ -111,7 +111,7 @@ AC_ARG_WITH(include,
 if test "X$with_include" = "X" ; then
    INCLUDE_PKGS=''
 else
-   INCLUDE_PKGS=$with_include,
+   INCLUDE_PKGS=$with_include
 fi
 
 AC_ARG_WITH(target-dist,
@@ -256,46 +256,57 @@ gutsy | hardy )
 	# LH_DISTRIBUTION-updates
 	LH_SECURITY="disabled"
 	LH_SECTIONS="main restricted universe multiverse"
-	EXCLUDE_PKGS+=mailx,
-	EXCLUDE_PKGS+=dash,
-	EXCLUDE_PKGS+=openhpid,
+	test "$EXCLUDE_PKGS" && EXCLUDE_PKGS+=,
+	EXCLUDE_PKGS+=mailx
+	EXCLUDE_PKGS+=,dash
+	EXCLUDE_PKGS+=,openhpid
 	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
-# FIXME! can no longer exlude exim like this...
-#	EXCLUDE_PKGS+=exim4-daemon-light,exim4-config,exim4-base,exim4,ubuntu-minimal,
+# FIXME! can no longer exclude exim like this...
+#	EXCLUDE_PKGS+=,exim4-daemon-light,exim4-config,exim4-base,exim4,ubuntu-minimal
 	if eval "$use_xen" ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
 	    LH_LINUX_FLAVOURS="xen"
 	    LH_BOOTSTRAP_INCLUDE+=",libc6-xen"
-	    EXCLUDE_PKGS+=alsa-base,
-	    EXCLUDE_PKGS+=alsa-utils,
-	    EXCLUDE_PKGS+=console-setup,
-	    EXCLUDE_PKGS+=console-terminus,
-	    EXCLUDE_PKGS+=console-tools,
-	    EXCLUDE_PKGS+=pciutils,
-	    EXCLUDE_PKGS+=pcmciautils,
-	    EXCLUDE_PKGS+=wireless-tools,
-	    EXCLUDE_PKGS+=wpasupplicant,
+	    EXCLUDE_PKGS+=,alsa-base
+	    EXCLUDE_PKGS+=,alsa-utils
+	    EXCLUDE_PKGS+=,console-setup
+	    EXCLUDE_PKGS+=,console-terminus
+	    EXCLUDE_PKGS+=,console-tools
+	    EXCLUDE_PKGS+=,pciutils
+	    EXCLUDE_PKGS+=,pcmciautils
+	    EXCLUDE_PKGS+=,wireless-tools
+	    EXCLUDE_PKGS+=,wpasupplicant
 	elif test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
 	    LH_LINUX_PACKAGES=linux-image
 	    LH_LINUX_FLAVOURS="server"
 	fi
+	if test "$VYATTA_LINUX_PKG"
+	then
+	    test "$INCLUDE_PKGS" && INCLUDE_PKGS+=,
+	    INCLUDE_PKGS+="$VYATTA_LINUX_PKG"
+	fi
 	;;
 * )
 	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
 
+	test "$EXCLUDE_PKGS" && EXCLUDE_PKGS+=,
 	EXCLUDE_PKGS+=gcc-4.2-base
 
-	INCLUDE_PKGS+=grub-pc,
-	INCLUDE_PKGS+=openssl,
-	INCLUDE_PKGS+=openswan,
-	INCLUDE_PKGS+=openssh-server,
-	INCLUDE_PKGS+=vim-common,
-	INCLUDE_PKGS+=vim-tiny,
-	INCLUDE_PKGS+=man-db,
-	INCLUDE_PKGS+=nano,
-	INCLUDE_PKGS+=ssh
+	test "$INCLUDE_PKGS" && INCLUDE_PKGS+=,
+	INCLUDE_PKGS+=grub-pc
+	INCLUDE_PKGS+=,openssl
+	INCLUDE_PKGS+=,openswan
+	INCLUDE_PKGS+=,openssh-server
+	INCLUDE_PKGS+=,vim-common
+	INCLUDE_PKGS+=,vim-tiny
+	INCLUDE_PKGS+=,man-db
+	INCLUDE_PKGS+=,nano
+	INCLUDE_PKGS+=,apt-utils
+	INCLUDE_PKGS+=,live-initramfs
+	INCLUDE_PKGS+=,ssh
+	#INCLUDE_PKGS+=,iproute
 
 	if test X$with_kernel = Xno ; then
 	    VYATTA_LINUX_PKG=""
@@ -312,19 +323,20 @@ gutsy | hardy )
 	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
 		FETCH_PKGS+=" squashfs-tools"
 	fi
+	test "$VYATTA_LINUX_PKG" && INCLUDE_PKGS+=,"$VYATTA_LINUX_PKG"
         if eval "$use_xendomzero" ; then
             # xen packages
-	    INCLUDE_PKGS+=xen-docs-3.2,
-	    INCLUDE_PKGS+=xen-hypervisor-3.2-1-amd64,
-	    INCLUDE_PKGS+=xen-shell,
-	    INCLUDE_PKGS+=xen-tools,
-	    INCLUDE_PKGS+=xen-utils-3.2-1,
-	    INCLUDE_PKGS+=xen-utils-common,
+	    INCLUDE_PKGS+=,xen-docs-3.2
+	    INCLUDE_PKGS+=,xen-hypervisor-3.2-1-amd64
+	    INCLUDE_PKGS+=,xen-shell
+	    INCLUDE_PKGS+=,xen-tools
+	    INCLUDE_PKGS+=,xen-utils-3.2-1
+	    INCLUDE_PKGS+=,xen-utils-common
             
             # libvirt packages
-	    INCLUDE_PKGS+=libvirt-bin,
-	    INCLUDE_PKGS+=libvirt0,
-	    INCLUDE_PKGS+=python-libvirt,
+	    INCLUDE_PKGS+=,libvirt-bin
+	    INCLUDE_PKGS+=,libvirt0
+	    INCLUDE_PKGS+=,python-libvirt
         fi
 
         LH_MIRROR_BINARY="http://packages.vyatta.com/debian"

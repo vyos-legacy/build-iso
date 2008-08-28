@@ -338,11 +338,6 @@ EOF
 	"?name(vyatta)" \
 	"?name(-dev)"_ \
 	"?name(cpp-)"_ \
-	"$VYATTA_LINUX_PKG" \
-	openssh-server \
-	openswan \
-	apt-utils \
-	live-initramfs \
 	|| exit $?
   sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
   sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
