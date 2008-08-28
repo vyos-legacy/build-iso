@@ -391,7 +391,7 @@ vyatta-xensource-partition-image ()
     > xensource/pimage/boot/vmlinux-$kversion-vyatta-virt
 
   # create the default domU configuration file
-  cat <<-EOF > xensource/vyatta-xen-$VVERSION.cfg
+  cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
 	name='vyatta-xen-$VVERSION'
 	bootloader='/usr/lib/xen-3.2-1/bin/pygrub'
 	on_reboot='restart'
