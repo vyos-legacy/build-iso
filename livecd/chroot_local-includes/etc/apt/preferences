@@ -1,6 +1,6 @@
 Explanation: BEGIN VYATTA ENTRY
 Package: *
 Pin: release l=Vyatta
-Pin-Priority: 50
+Pin-Priority: 999
 Explanation: END VYATTA ENTRY
 

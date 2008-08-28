@@ -315,6 +315,11 @@ vyatta_chroot_local-packages ()
 
   cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
   sed -i 's/^Label: Vyatta/Label: Local/' $dist
+  cat <<EOF >> chroot/etc/apt/preferences
+Package: *
+Pin: release l=Local
+Pin-Priority: 1000
+EOF
   cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
   (
     echo "deb file:///root local main"
@@ -576,7 +581,7 @@ EOF
 
 ## restore apt/preferences for binary build
 cp -f chroot_local-includes/etc/apt/preferences chroot/etc/apt
-sed -i 's/ 50/ 1000/' chroot/etc/apt/preferences
+sed -i 's/ 999/ 1000/' chroot/etc/apt/preferences
 
 # build the XenSource partition image
 if eval "$create_xensourcevm"; then
