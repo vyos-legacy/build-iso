@@ -465,7 +465,7 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
 
-  lh_chroot_local-packageslists || return 1
+  # don't do lh_chroot_local-packageslists || return 1
 
   lh_chroot_localization || return 1
   lh_chroot_local-includes || return 1
