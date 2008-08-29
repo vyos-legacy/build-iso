@@ -56,7 +56,7 @@ lh_binary_memtest ${*}
 lh_binary_grub ${*}
 lh_binary_syslinux ${*}
 lh_binary_yaboot ${*}
-lh_binary_silo ${*}
+# don't do lh_binary_silo ${*}
 lh_binary_disk ${*}
 lh_binary_includes ${*}
 lh_binary_local-includes ${*}
