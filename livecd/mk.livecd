@@ -330,7 +330,7 @@ EOF
 
   chroot chroot apt-get update
   chroot chroot apt-get -y -f install
-  chroot chroot apt-get -y -f install aptitude
+  chroot chroot apt-get -y --force-yes -f install aptitude
   chroot chroot aptitude --allow-untrusted -R -y -f install
 
   chroot chroot aptitude --allow-untrusted -R -y install \
