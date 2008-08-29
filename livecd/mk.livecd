@@ -328,6 +328,9 @@ EOF
     cat chroot/etc/apt/sources.list.bak
   )>chroot/etc/apt/sources.list
 
+  cp config/chroot_local-includes/vyatta-pubkey.gpg chroot/root
+  chroot chroot apt-key add /root/vyatta-pubkey.gpg
+
   chroot chroot apt-get update
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y -f install aptitude
@@ -464,8 +467,6 @@ build_chroot ()
   lh_chroot_tasks || return 1
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
-
-  lh_chroot_local-packageslists || return 1
 
   lh_chroot_localization || return 1
   lh_chroot_local-includes || return 1
