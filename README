@@ -73,7 +73,8 @@ Build Host Setup
 	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
 	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
 	lynx libcap-dev libclamav-dev libpopt-dev build-essential \
-        libsnmp-dev
+        libsnmp-dev libperl-dev python-all-dev python-setup-tools \
+	automake1.9 cdbs
 
 
 Getting Source
