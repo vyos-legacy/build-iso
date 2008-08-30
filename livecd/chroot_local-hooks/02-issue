@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo I: Rewriting /etc/issue and /etc/issue.net
 cat <<EOF > etc/issue

@@ -324,7 +324,7 @@ EOF
   (
     echo "deb file:///root local main"
     echo "deb http://firebolt.vyatta.com/vyatta-dev islavista main"
-    echo deb "$LH_MIRROR_CHROOT_SECURITY" lenny/updates main
+    echo deb "$LH_MIRROR_CHROOT_SECURITY" "$LH_DISTRIBUTION"/updates main
     cat chroot/etc/apt/sources.list.bak
   )>chroot/etc/apt/sources.list
 
@@ -335,6 +335,10 @@ EOF
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y --force-yes -f install aptitude
   chroot chroot aptitude --allow-untrusted -R -y -f install
+
+  chroot chroot aptitude --allow-untrusted -R -y install \
+	live-initramfs
+  cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
 
   chroot chroot aptitude --allow-untrusted -R -y install \
        `cat cache/vyatta-pkgs` \
