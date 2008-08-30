@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ ! -r etc/default/locale ] ; then
     echo I: Set default locale
