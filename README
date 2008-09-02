@@ -72,10 +72,12 @@ Build Host Setup
 	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
 	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
 	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
-	lynx libcap-dev libclamav-dev libpopt-dev build-essential \
+	lynx libcap-dev libcap-bin libclamav-dev libpopt-dev build-essential \
         libsnmp-dev libperl-dev python-all-dev python-setup-tools \
 	automake1.9 cdbs quilt ruby liblzo2-dev unifont help2man \
-        libnet0-dev
+        libnet0-dev libsensors-dev comerr-dev libkadm55 libkrb5-dev \
+	libmysqlclient15-dev libmysqlclient15off libnet1 libnet1-dev \
+	libpq-dev libpq5 mysql-common
 
 
 Getting Source
