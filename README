@@ -59,7 +59,7 @@ Build Host Setup
 
     Here are the list of packages (don't forget to run "apt-get update" first):
 
-	apt-get install automake autoconf bzip2 curl debhelper devscripts dpatch \
+    apt-get install automake autoconf bzip2 curl debhelper devscripts dpatch \
 	fakeroot fakechroot genisoimage git core sysv-rc-conf \
 	live-helper lsb-release rsync sudo
 
@@ -67,7 +67,7 @@ Build Host Setup
     dependencies. However, to save some iteration, install these
     packages,
 
-	apt-get install bison flex docbook-utils gcc g++ git buildpackage groff gs \
+    apt-get install bison flex docbook-utils gcc g++ git buildpackage groff gs \
 	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
  	libpcap0.8-dev libpcre3-dev libprelude-dev \
 	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
