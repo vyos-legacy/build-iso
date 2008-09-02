@@ -1,6 +1,6 @@
-Vyatta VC4 (Glendale) ISO Build Procedures
+Vyatta VC4 ISO Build Procedures
 
-    This document describes how to build a Vyatta VC4 (Glendale) ISO image.
+    This document describes how to build a Vyatta VC4 ISO image.
     The most recent version of this document is the top-level README file of
     the "islavista" branch of the "build-iso" source tree.
 
@@ -18,7 +18,9 @@ Build Host Setup
     To set up a build environment (e.g., system or VM), we recommend
     installing Debian "lenny" (i.e. "testing") with either business-card
     or net-install image.  You can also use the Vyatta livecd ISO for a
-    build host.
+    build host. (If you do want to start from the Vyatta system, you will
+    have to unistall libsnmp15--which will uninstall most of the Vyatta
+    specific features.)
 
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-netinst.iso
@@ -36,9 +38,8 @@ Build Host Setup
 
     To install the Vyatta repository GPG key,
 
-	$ wget -O vyatta-pubkey.gpg \
-	    http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
-	$ sudo apt-key add vyatta-pubkey.gpg
+	wget -O vyatta-pubkey.gpg http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
+	sudo apt-key add vyatta-pubkey.gpg
 
     To build an ISO with all pre-built binary, packages, you need to install
     certain tools on the build host.
@@ -58,41 +59,47 @@ Build Host Setup
 
     Here are the list of packages (don't forget to run "apt-get update" first):
 
-	automake autoconf bzip2 curl debhelper devscripts dpatch \
-	fakeroot fakechroot genisoimage git-core sysv-rc-conf \
+    apt-get install automake autoconf bzip2 curl debhelper devscripts dpatch \
+	fakeroot fakechroot genisoimage git core sysv-rc-conf \
 	live-helper lsb-release rsync sudo
 
     To build submodules, each package should list all build
     dependencies. However, to save some iteration, install these
     packages,
 
-	bison flex docbook-utils gcc g++ git-buildpackage groff gs \
+    apt-get install build-essential \
+        bison flex docbook-utils gcc-4.2 git buildpackage groff gs \
 	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
  	libpcap0.8-dev libpcre3-dev libprelude-dev \
 	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
 	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
 	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
-	lynx libcap-dev libcap-bin libclamav-dev libpopt-dev build-essential \
-        libsnmp-dev libperl-dev python-all-dev python-setup-tools \
+	lynx libcap-dev libclamav-dev libpopt-dev \
+	libsnmp-dev libperl-dev python-all-dev python-setuptools \
 	automake1.9 cdbs quilt ruby liblzo2-dev unifont help2man \
         libnet0-dev libsensors-dev comerr-dev libkadm55 libkrb5-dev \
 	libmysqlclient15-dev libmysqlclient15off libnet1 libnet1-dev \
-	libpq-dev libpq5 mysql-common
+	libpq-dev libpq5 mysql-common \
+	libwrap0-dev libnetfilter-queue-dev
 
 
 Getting Source
 
     The Vyatta ISO builder consists of scripts and config files
     maintained as a GIT super-module named, "build-iso" that
-    references several submodules within its "pkgs/" sub-directory. To
-    clone the super-module,
+    references several submodules within its "pkgs/" sub-directory.
+    Note that the super-module and submodules each have multiple
+    branches available.  To build successfully, all modules must
+    have the same branch checked out.
+    To clone the super-module:
 
-	$ git-clone http://git.vyatta.com/build-iso.git
+	git clone http://git.vyatta.com/build-iso.git
 
-    To create and checkout a working islavista branch,
+    Create and checkout a working master branch.  (master is the
+    default branch for git.)
 
-	$ cd build-iso
-	build-iso$ git checkout --track -b islavista origin/islavista
+	cd build-iso
+	git checkout
 
     If you don't want to build any submodules and just want to build an
     ISO with all pre-built packages, you can skip the following submodule
@@ -100,46 +107,46 @@ Getting Source
 
     To register the submodules in the cloned repository config,
 
-	build-iso$ git-submodule init
+	git submodule init
 
     It's most efficient to selectively clone only the submodules
     needing for review or modifcation. The ISO build downloads the
     Vyatta pre-built, binary packages of any non-cloned sub-module. To
     clone a specific sub-module,
 
-	build-iso$ git-submodule update pkgs/SUBMODULE
+	git submodule update pkgs/SUBMODULE
 
     This command clones the SUBMODULE repository in the "pkgs/SUBMODULE"
-    directory, and you need to create and checkout a islavista tracking
-    branch,
+    directory and checks out the master branch.  If you wish to checkout a
+    different branch, use:
 
-	build-iso$ cd pkgs/SUBMODULE
-	build-iso/pkgs/SUBMODULE$ git checkout --track -b islavista origin/islavista
+	cd pkgs/SUBMODULE
+	git checkout --track -b BRANCHNAME origin/BRANCHNAME
 
     To clone all sub-modules for full verification build,
 
-	build-iso$ git-submodule update
+	git submodule update
 
-    Remember to create and checkout a islavista tracking branch for each
-    updated submodule.
-    
+    Remember to create and checkout the same working branch for all
+    submodules.
+
 Configuration
 
     The Vyatta ISO builder has GNU autotool configuration,
 
-	build-iso$ autoreconf -i
-	build-iso$ ./configure --with-target-dist=lenny
+	autoreconf -i
+	./configure --with-target-dist=lenny
 
     To see all configure options,
 
-	build-iso$ ./configure --help
+	./configure --help
 
 Build ISO
 
-    To build an ISO,
-    
-	build-iso$ PATH=/sbin:/usr/sbin:$PATH
-	build-iso$ make
+    To build an ISO:
+
+	PATH=/sbin:/usr/sbin:$PATH
+	sudo make
 
     The end results is the following livecd,
 
@@ -150,13 +157,13 @@ Clean
     The Vyatta ISO builder has these standard automake targets to
     clean files generated:
 
-	mostlyclean 	during ISO build (excludes package built files)
-	clean 		during package builds along with ISO files
-	distclean 	by autoreconf and configure plus all of the above
+	make mostlyclean 	# during ISO build (excludes package built files)
+	make clean 		# during package builds along with ISO files
+	make distclean 		# by autoreconf and configure plus all of the above
 
     For example, to clean the ISO build files,
 
-	build-iso$ make mostlyclean
+	make mostlyclean
 
 Build submodules
 
@@ -166,31 +173,31 @@ Build submodules
 
     To build binary packages for cloned submodule(s),
 
-	build-iso$ tools/submod-mk { --all | SUBMODULE... }
+	tools/submod-mk { --all | SUBMODULE... }
 
     To build binary and source packages for submodule(s),
 
-	build-iso$ tools/submod-mk --source { --all | SUBMODULE... }
+	tools/submod-mk --source { --all | SUBMODULE... }
 
     To build signed binary and source packages for submodule(s),
 
-	build-iso$ tools/submod-mk --signed-source { --all | SUBMODULE... }
+	tools/submod-mk --signed-source { --all | SUBMODULE... }
 
     To clean files generated during submodule build,
 
-	build-iso$ tools/submod-clean SUBMODULE...
+	tools/submod-clean SUBMODULE...
 
     To clean files generated during all submodule builds,
 
-	build-iso# tools/submod-clean
+	tools/submod-clean
 
     To also clean the submodule build stage(s),
 
-	build-iso# tools/submod-clean -d [ SUBMODULE... ]
+	tools/submod-clean -d [ SUBMODULE... ]
 
     To clean the source tree of submodules to skip subsequent builds,
 
-	build-iso# tools/submod-clean -g [ SUBMODULE... ]
+	tools/submod-clean -g [ SUBMODULE... ]
 
     This retains the local bare git repository for quicker updates.
 
@@ -199,37 +206,42 @@ Changes
     After making, testing, and commiting your changes to your local
     repos, publish them to the shared repos with,
 
-	build-iso/pkgs/SUBMODULE$ git-push suva.vyatta.com:/git/SUBMODULE.git
+	git push suva.vyatta.com:/git/SUBMODULE.git
 
+    This will, of course, require an account on suva.vyatta.com, which
+    is only available to authorized vyatta developers.
     Then update and publish the super-module index to include the
-    submodule(s) changes,
+    submodule changes,
 
-	build-iso/pkgs/SUBMODULE$ cd ../..
-	build-iso$ git-update-index pkgs/SUBMODULE
-	build-iso$ git-commit -m 'update sub-module SUBMODULE'
-	build-iso$ git-push suva:/git/build-iso.git
+	cd ../..
+	git update-index pkgs/SUBMODULE
+	git commit -m 'update sub-module SUBMODULE'
+	git push suva.vyatta.com:/git/build-iso.git
 
-Updates
+Updates using git
 
-    Update the super-module with,
+    Update the super-module.
 
-    build-iso$ git-pull
-    or for the paranoid,
-    build-iso$ git-fetch origin
-    build-iso$ git-whatchanged HEAD..origin/islavista
-    build-iso$ git-merge origin/islavista
+	git pull
+	git submodule init
 
-    If new submodules were added, include these in the config,
+    To update all modules, you can use:
 
-    build-iso$ git-submodule init
+	tools/submod-git pull
+
+    Or for the paranoid
+
+	tools/submod-git fetch
+	git whatchanged HEAD..origin/master
+	git merge
 
     To see which checked-out submodules have upstream modifications,
 
-    build-iso$ git-status		# search for changes in pkgs/
+	git status		# search for changes in pkgs/
 
-    Get the "from" and "to" SHAs with,
+    Get the "from" and "to" commit ids (SHAs) with,
 
-    build-iso$ git-diff pkgs/SUBMODULE
+	git diff pkgs/SUBMODULE
 
     This will produce output something like,
 
@@ -243,16 +255,14 @@ Updates
 
     To review what changed between these SHAs,
 
-    build-iso$ git --git-dir=pkgs/SUBMODULE/.git fetch
-    build-iso$ git --git-dir=pkgs/SUBMODULE/.git whatchanged FROM_SHA TO_SHA
+	cd pkgs/SUBMODULE
+	git whatchanged FROM_SHA TO_SHA
 
     To merge these submodule changes,
 
-    build-iso$ cd pkgs/SUBMODULE
-    build-iso/pkgs/SUBMODULE$ git checkout islavista
-    build-iso/pkgs/SUBMODULE$ git merge origin/islavista
-    build-iso/pkgs/SUBMODULE$ debuild -i -b -us -uc
-    build-iso/pkgs/SUBMODULE$ cd ../..
+	git merge
+	cd ../..
+	git submodule update
 
-    The "git-status" for pkgs/SUBMODULE should now be clean. Iterate
-    through the other updated submodules, then rebuild the iso.
+    The "git status" for this submodule should now be clean. Iterate
+    through the other updated submodules, then rebuild the ISO.
