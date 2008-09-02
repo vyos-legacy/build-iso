@@ -120,16 +120,6 @@ get_branch()
     get_branch_info|awk '{ print $2 }'
 }
 
-guess_branch()
-{
-    local branch
-
-    branch=`get_branch`
-    [ "$branch" = NOBRANCH -o ! "$branch" ] && branch="$SUPERBRANCH"
-    [ "$branch" = NOBRANCH ] && branch=master
-    echo "$branch"
-}
-
 get_sha()
 {
     get_branch_info|awk '{ print $3 }'
@@ -145,55 +135,7 @@ git_checkout()
 
 git_fetch ()
 {
-    local modulename=`basename "$PWD"`
-
-    git-fetch -q 2>/dev/null
-    if git-status|grep '^# Changes to be committed:' >/dev/null
-    then
-	echo There are uncommited changes.
-    fi
-
-    if git-status|grep '^# Changed but not updated:' >/dev/null
-    then
-	echo There are changes not yet added.
-    fi
-
-    if (git-status|grep '^# Untracked files:' >/dev/null) ; then
-	echo There are untracked files.
-    fi
-
-    (
-    if cd ../../.git 2>/dev/null
-    then
-	parent=`cd .. && git-submodule status pkgs/"$modulename"|sed 's/\(.\).*/\1/'`;
-	case "$parent" in
-	    '+' ) echo This submodule has a commit not in the parent.;;
-	    '-' ) echo This submodule is not up to date.;;
-	esac
-    fi
-    )
-
-    branch=`guess_branch`
-    upstream=origin/"$branch"
-    git-cat-file -e "$upstream" || upstream=origin/master
-
-    diffs=`git-diff "$upstream"|head -1`
-    in_repo_local=
-    in_repo=
-    if [ "$diffs" ]
-    then 
-	in_repo_local=`git-log -1 --name-status "$upstream".."$branch" 2>/dev/null`
-	[ "$in_repo_local" ] && echo A local commit is not in the shared repo.
-
-	in_repo=`git-log -1 --name-status "$branch".."$upstream" 2>/dev/null`
-	[ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
-   fi
-
-   git-branch -a -v|sed 's/..//'|grep -v '^origin/'|awk '{print $2}'|sort -u>/tmp/$$-branchlist
-   git-branch -a -v|sed 's/..//'|grep    '^origin/'|awk '{print $2}'|sort -u>/tmp/$$-originlist
-   local_only=`comm -23 /tmp/$$-{branchlist,originlist}`
-   rm -rf /tmp/$$-{branchlist,originlist}
-   [ "$local_only" -a ! "$in_repo_local" -a ! "$in_repo" ] && echo "The shared repo is missing a commit from a non-checked-out local branch (or no branch is checked out at all)."
+    tools/fetch-with-status
 }
 
 git_diff-cached ()
