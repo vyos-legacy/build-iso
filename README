@@ -124,7 +124,7 @@ Build Host Setup
     dependencies. However, to save some iteration, install these
     packages,
 
-    apt-get install build-essential \
+	apt-get install build-essential \
         bison flex docbook-utils gcc-4.2 git buildpackage groff gs \
 	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
  	libpcap0.8-dev libpcre3-dev libprelude-dev \
