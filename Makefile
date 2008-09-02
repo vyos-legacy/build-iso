@@ -5,7 +5,7 @@ export MAKEFLAGS
 
 include mk.conf
 
-PACKAGE_DEBS := $(shell sh -c "set -x;export DEBS=`echo pkgs/*/debian|sed 's,/\debian,,g'`; [ \"$$DEBS\" = 'pkgs/*' ] || echo $$DEBS")
+PACKAGE_DEBS := $(subst pkgs/*,,$(subst /debian,,$(shell echo pkgs/*/debian)))
 
 UID := $(shell id -u)
 ifneq ($(UID),0)
@@ -177,8 +177,8 @@ pkgs/wanpipe: pkgs/linux-image
 package_debuilds: $(PACKAGE_DEBS)
 	@echo DONE
 
-.PHONY: $(PACKAGES_DEBS)
-$(PACKAGES_DEBS):
+.PHONY: $(PACKAGE_DEBS)
+$(PACKAGE_DEBS):
 	@case "$@" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$@!!!!!!!;; *) cd $@; debuild -i -b -uc -us -nc;; esac
 
 #$(PACKAGE_DEBS):
