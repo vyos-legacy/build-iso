@@ -5,7 +5,7 @@ export MAKEFLAGS
 
 include mk.conf
 
-PACKAGE_DEBS := $(subst pkgs/*,,$(subst /debian,,$(shell echo pkgs/*/debian)))
+PACKAGE_DEBS := $(subst /debian,,$(wildcard pkgs/*/debian))
 
 UID := $(shell id -u)
 ifneq ($(UID),0)
