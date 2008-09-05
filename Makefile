@@ -127,7 +127,8 @@ endef
 
 endif
 
-all : package_debuilds iso
+all : package_debuilds
+	$(mk_iso)
 
 .PHONY : udebs
 udebs :
@@ -172,6 +173,8 @@ distclean :
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
 
 pkgs/wanpipe: pkgs/linux-image
+
+pkgs/iptables: pkgs/linux-image
 
 .PHONY: package_debuilds
 package_debuilds: $(PACKAGE_DEBS)
