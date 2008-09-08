@@ -155,8 +155,6 @@ mostlyclean :
 clean :
 	@$(MAKE) mostlyclean
 	@tools/submod-clean
-	@$(clean_udebs)
-	@$(clean_installer)
 	@rm -rf livecd/cache/stage*
 
 .PHONY : clean-udebs
