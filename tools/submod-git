@@ -2,6 +2,38 @@
 
 progname=${0##*/}
 shopt -s nullglob
+
+path_to()
+{
+	MYPATH="$1"
+	chmod +x "$MYPATH" 2>/dev/null
+	if which "$MYPATH"  >/dev/null
+	then
+		# path is OK
+		MYPATH=`which "$MYPATH"`
+		MYPATH=`dirname "$MYPATH"`
+		MYPATH=`cd "$MYPATH";echo "$PWD"`
+		return 0
+	fi
+
+	chmod +x "$0" 2>/dev/null
+	MYPATH=`which "$0"`
+	MYPATH=`dirname "$MYPATH"`/"$1"
+	chmod +x "$MYPATH" 2>/dev/null
+	if which "$MYPATH"  >/dev/null
+	then
+		MYPATH=`dirname "$MYPATH"`
+		MYPATH=`cd "$MYPATH";echo "$PWD"`
+		PATH="$PATH":"$MYPATH"
+		return 0
+	fi
+
+	echo Cannot find "$1"
+	exit 1
+}
+
+path_to fetch-with-status
+
 cd pkgs 2>/dev/null
 
 info=echo
@@ -10,6 +42,7 @@ git="git_status"
 
 declare -a cloned=( */.git pkgs/*/.git )
 declare -a submodule=( ${cloned[@]%/*} )
+
 
 while [ $# -gt 0 ] ; do
     case "$1" in
@@ -37,7 +70,7 @@ COMMAND:
   update-mods	Update index for all modified files
 
 SUBMODULE:
-  If no submodule given, perform git-COMMAND on all checked-out submodules
+  If no submodule given, perform git COMMAND on all checked-out submodules
 
 EOF
 	    exit 0;;
@@ -72,47 +105,47 @@ done
 
 git_pull ()
 {
-    git-pull
+    git pull
 }
 
 git_push ()
 {
-    git-push
+    git push
 }
 
 git_push-with-tags ()
 {
-    git-push --tags
+    git push --tags
 }
 
 git_diff ()
 {
-    git-diff
+    git diff
 }
 
 git_branch ()
 {
-    git-branch
+    git branch
 }
 
 git_branch-av ()
 {
-    git-branch -a -v
+    git branch -a -v
 }
 
 git_clean-n ()
 {
-    git-clean -n
+    git clean -n
 }
 
 git_lsmods ()
 {
-    git-ls-files -m
+    git ls-files -m
 }
 
 get_branch_info()
 {
-    git-branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'
+    git branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'
 }
 
 get_branch()
@@ -127,7 +160,7 @@ get_sha()
 
 git_checkout()
 {
-	if ! git-checkout "$SUPERBRANCH" 2>/dev/null
+	if ! git checkout "$SUPERBRANCH" 2>/dev/null
 	then
 		echo No branch "$branch"
 	fi
@@ -135,22 +168,22 @@ git_checkout()
 
 git_fetch ()
 {
-    tools/fetch-with-status
+    fetch-with-status
 }
 
 git_diff-cached ()
 {
-    git-diff --cached
+    git diff --cached
 }
 
 git_update-mods ()
 {
-    git-ls-files -m | git-update-index --stdin
+    git ls-files -m | git update-index --stdin
 }
 
 git_status()
 {
-	git-status|grep -v -e '^nothing to commit' -e '^# On branch '
+	git status|grep -v -e '^nothing to commit' -e '^# On branch '
 }
 
 SUPERBRANCH=`get_branch`
