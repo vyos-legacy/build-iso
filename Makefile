@@ -16,7 +16,7 @@ endif
 
 define mk_iso
 @rm -rf livecd/.lock livecd/.permissions
-cd livecd && $(FAKEROOT) $(FAKEPERMISSIONS) $(FAKECHROOT) ./mk.livecd
+cd livecd && $(FAKEROOT) $(FAKECHROOT) ./mk.livecd
 endef
 
 have_linux_kernel_di := $(shell test -e pkgs/linux-kernel-di-i386-2.6/debian/rules && echo -n true)

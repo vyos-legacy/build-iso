@@ -283,12 +283,14 @@ if ! eval "$use_xen" && ! eval "$use_xendomzero" ; then
     rm -f config/chroot_local-hooks/*xen*
 fi
 
-rm -rf chroot/dev/null chroot/dev/zero chroot/dev/random chroot/dev/urandom chroot/dev/ram1
-mknod -m 666 chroot/dev/null c 1 3
-mknod -m 666 chroot/dev/zero c 1 5
-mknod -m 666 chroot/dev/random c 1 9	# fake out /dev/random to be /dev/urandom
-mknod -m 666 chroot/dev/urandom c 1 9
-mknod -m 666 chroot/dev/ram1 c 1 1
+(
+    rm -rf chroot/dev/null chroot/dev/zero chroot/dev/random chroot/dev/urandom chroot/dev/ram1
+    mknod -m 666 chroot/dev/null c 1 3
+    mknod -m 666 chroot/dev/zero c 1 5
+    mknod -m 666 chroot/dev/random c 1 9 # fake out /dev/random to be /dev/urandom
+    mknod -m 666 chroot/dev/urandom c 1 9
+    mknod -m 666 chroot/dev/ram1 c 1 1
+) || true
 
 # set up random seed
 openssl rand -out chroot/root/.rnd 4096
@@ -530,8 +532,8 @@ build_chroot ()
   fi
 
   # restore /dev/random
-  rm -rf chroot/dev/random
-  mknod -m 666 chroot/dev/random c 1 8
+  rm -rf chroot/dev/random &&
+  mknod -m 666 chroot/dev/random c 1 8 || true
 }
 
 echo I: building chroot
