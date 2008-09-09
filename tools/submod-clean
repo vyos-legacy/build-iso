@@ -62,11 +62,17 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
 	linux-* )
 	    targets=( linux-*.{build,changes,deb,tar.gz,udeb} );;
 	vyatta-dhcp3-client )
-	    targets=( vyatta-dhcp3-*.{build,changes,deb,tar.gz,udeb} );;
-	wanpipe )
-	    targets=( wanpipe*.{build,changes,deb,tar.gz,udeb} );;
+	    targets=( vyatta-dhcp3*.{build,changes,deb,tar.gz,udeb} );;
 	vyatta-snort )
 	    targets=( vyatta-snort*.{build,changes,deb,tar.gz,udeb} );;
+	vyatta-grub )
+	    targets=( grub*.{build,changes,deb,tar.gz,udeb} );;
+	wanpipe | iproute | iptables )
+	    targets=( ${submodule[i]}*.{build,changes,deb,tar.gz,udeb} );;
+	net-snmp )
+	    targets=( *snmp*.{build,changes,deb,tar.gz,udeb} tkmib*.deb );;
+	ppp )
+	    targets=( vyatta-ppp*.{build,changes,deb,tar.gz,udeb} );;
 	* )
 	    targets=( ${submodule[i]}_*.{build,changes,deb,tar.gz,udeb} );;
     esac
