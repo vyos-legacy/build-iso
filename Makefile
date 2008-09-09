@@ -6,6 +6,7 @@ export MAKEFLAGS
 include mk.conf
 
 PACKAGE_DEBS := $(subst /debian,,$(wildcard pkgs/*/debian))
+CLEAN_DEBS := $(subst pkgs/,clean-pkgs/,$(PACKAGE_DEBS))
 
 UID := $(shell id -u)
 ifneq ($(UID),0)
@@ -178,9 +179,17 @@ pkgs/iptables: pkgs/linux-image
 package_debuilds: $(PACKAGE_DEBS)
 	@echo DONE
 
+.PHONY: clean_debuilds
+clean_debuilds: $(CLEAN_DEBS)
+	@echo DONE
+
 .PHONY: $(PACKAGE_DEBS)
 $(PACKAGE_DEBS):
 	@case "$@" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$@!!!!!!!;; *) cd $@; debuild -i -b -uc -us -nc;; esac
+
+.PHONY: $(CLEAN_DEBS)
+$(CLEAN_DEBS):
+	@d=$$(echo $@ | sed 's/^clean-//'); case "$$d" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$$d!!!!!!!;; *) cd $$d; debuild clean;; esac
 
 #$(PACKAGE_DEBS):
 #	echo $(PACKAGE_DEBS)
