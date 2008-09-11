@@ -143,6 +143,12 @@ for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
     fi
 done
 
+get_branch()
+{
+	VBRANCH=`cat branch 2>/dev/null` || true
+	[ "$VBRANCH" ] || VBRANCH=`git-branch|awk '/^\*/ {print $2}'`
+}
+
 mk_version_package ()
 {
     local savedir="$PWD"
@@ -157,8 +163,7 @@ mk_version_package ()
 		config_src=supported
 		;;
     "" )
-	        VBRANCH=`cat branch 2>/dev/null` || true
-		[ "$VBRANCH" ] || VBRANCH=`git-branch|awk '/^\*/ {print $2}'`
+		get_branch
 		VVERSION=0."$VBRANCH"
 		;;
     esac
@@ -323,10 +328,11 @@ Pin: release l=Local
 Pin-Priority: 1000
 EOF
   cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
+  get_branch
   (
     echo "deb file:///root local main"
-    echo "deb http://firebolt.vyatta.com/vyatta-dev islavista main"
-    echo deb "$LH_MIRROR_CHROOT_SECURITY" "$LH_DISTRIBUTION"/updates main
+    echo "deb $VYATTA_ARCHIVE $VBRANCH main"
+    echo "deb $LH_MIRROR_CHROOT_SECURITY $LH_DISTRIBUTION"/updates main
     cat chroot/etc/apt/sources.list.bak
   )>chroot/etc/apt/sources.list
 

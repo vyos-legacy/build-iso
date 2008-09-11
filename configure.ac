@@ -89,9 +89,9 @@ AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
 test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
 AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
 
-test "X$VYATTA_POOL" = "X" && \
-     VYATTA_POOL="rsync://firebolt.vyatta.com/vyatta-dev/pool/hollywood/main"
-AC_ARG_VAR(VYATTA_POOL, [default: Vyatta nightly build])
+test "X$VYATTA_ARCHIVE" = "X" && \
+     VYATTA_ARCHIVE="http://firebolt.vyatta.com/vyatta-dev/"
+AC_ARG_VAR(VYATTA_ARCHIVE, [default: Vyatta nightly build])
 
 # process --with[out] arguments
 AC_ARG_WITH(exclude,
@@ -408,7 +408,7 @@ AC_SUBST(use_xen)
 AC_SUBST(use_xendomzero)
 AC_SUBST(create_xensourcevm)
 
-AC_SUBST(VYATTA_POOL)
+AC_SUBST(VYATTA_ARCHIVE)
 AC_SUBST(VYATTA_LINUX_PKG)
 AC_SUBST(VYATTA_INCLUDE_WEBGUI)
 
