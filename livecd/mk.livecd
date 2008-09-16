@@ -49,7 +49,7 @@ then
     BUILDID=`date -u +%y%m%d%H%M`-${BUILDID}
 fi
 
-LH_ISO_VOLUME+=" -- $BUILDID"
+LH_ISO_VOLUME+="$BUILDID"
 
 mkdir -p cache
 

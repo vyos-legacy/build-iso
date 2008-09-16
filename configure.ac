@@ -55,7 +55,7 @@ AC_ARG_VAR(LH_ISO_APPLICATION, [default: Vyatta OFR])
 test "X$LH_ISO_PUBLISHER" = "X" && LH_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
 AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
 
-test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR'
+test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta '
 AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta OFR])
 
 test "X$LH_LANGUANGE" = "X" && LH_LANGUAGE=en
