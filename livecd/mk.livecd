@@ -164,7 +164,7 @@ mk_version_package ()
 		;;
     "" )
 		get_branch
-		VVERSION=0."$VBRANCH"
+		VVERSION=VC888."$VBRANCH"
 		;;
     esac
 
