@@ -339,10 +339,18 @@ gutsy | hardy )
 	    INCLUDE_PKGS+=,python-libvirt
         fi
 
+if false
+then
         LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
         LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
         LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
         LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
+else
+        LH_MIRROR_BINARY="$VYATTA_ARCHIVE"
+        LH_MIRROR_BOOTSTRAP="$VYATTA_ARCHIVE"
+        LH_MIRROR_BINARY_SECURITY="$VYATTA_ARCHIVE"
+        LH_MIRROR_BOOTSTRAP_SECURITY="$VYATTA_ARCHIVE"
+fi
 
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
@@ -413,4 +421,3 @@ AC_SUBST(VYATTA_LINUX_PKG)
 AC_SUBST(VYATTA_INCLUDE_WEBGUI)
 
 AC_OUTPUT
-
