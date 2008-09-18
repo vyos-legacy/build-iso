@@ -346,10 +346,10 @@ then
         LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
         LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
 else
-        LH_MIRROR_BINARY="$VYATTA_ARCHIVE"
-        LH_MIRROR_BOOTSTRAP="$VYATTA_ARCHIVE"
-        LH_MIRROR_BINARY_SECURITY="$VYATTA_ARCHIVE"
-        LH_MIRROR_BOOTSTRAP_SECURITY="$VYATTA_ARCHIVE"
+        LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-islavista-peg"
+        LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-islavista-peg"
+        LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
+        LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
 fi
 
 	LH_SECURITY="enabled"
