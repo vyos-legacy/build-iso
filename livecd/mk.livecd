@@ -111,6 +111,7 @@ rsync \
     --archive \
     --delete \
     --filter='- vyatta-version_*' \
+    --filter='- linux-header*' \
     --filter='+ *vyatta*' \
     --filter='+ squashfs-tools_*' \
     --filter='+ ntp_*' \
@@ -336,7 +337,7 @@ vyatta_chroot_local-packages ()
 
   chroot chroot apt-get update
   chroot chroot apt-get -f install
-  chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
+  chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|grep -v 'linux-header.*'|sed "s,.* ,,">$pool/list
   chroot chroot apt-get -y install \
 	openssl \
 	openswan \
