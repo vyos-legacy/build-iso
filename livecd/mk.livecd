@@ -441,6 +441,9 @@ vyatta-xensource-partition-image ()
   # set /etc/hosts
   rm -f xensource/pimage/etc/hosts
   echo 127.0.0.1 localhost vyatta > xensource/pimage/etc/hosts
+  # set /etc/fstab
+  rm -f xensource/pimage/etc/fstab
+  echo -e "/dev/xvda1\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
 
   # clean up the mounts
   echo I: unmounting the image file
