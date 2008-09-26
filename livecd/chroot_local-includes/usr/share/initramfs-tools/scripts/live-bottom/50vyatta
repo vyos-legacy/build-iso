@@ -31,9 +31,9 @@ grep -q ext2 /proc/filesystems || modprobe -q ext2 2>/dev/null
 grep -q vfat /proc/filesystems || modprobe -q vfat 2>/dev/null
 if grep -q fd /proc/devices
 then
-    mkdir -p /root/media/floppy
-    mount -t ext2 /dev/fd0 /root/media/floppy -o sync 2>/dev/null
-    test $? -eq 32 && mount -t vfat /dev/fd0 /root/media/floppy 2>/dev/null
+    mkdir -p /media/floppy
+    mount -t ext2 /dev/fd0 /media/floppy -o sync 2>/dev/null
+    test $? -eq 32 && mount -t vfat /dev/fd0 /media/floppy 2>/dev/null
 fi
 
 # bind the vyatta config directory with the following precedence
@@ -52,12 +52,27 @@ then
     elif [ -d /root/media/floppy/config ]
     then
 	log_begin_msg "Using /media/floppy/config..."
-	mount -o bind /root/media/floppy/config /root/opt/vyatta/etc/config
+	mount -o bind /media/floppy/config /root/opt/vyatta/etc/config
 	log_end_msg
     else
 	log_begin_msg "Creating /live/cow/config..."
 	cp -a /root/opt/vyatta/etc/config /root/live/cow
 	mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
+	log_end_msg
+    fi
+fi
+
+if [ -d /opt/vyatta/etc/config ]
+then
+    if [ -d /live/cow/config ]
+    then
+	log_begin_msg "Using /live/cow/config..."
+	mount -o bind /live/cow/config /opt/vyatta/etc/config
+	log_end_msg
+    elif [ -d /media/floppy/config ]
+    then
+	log_begin_msg "Using /media/floppy/config..."
+	mount -o bind /media/floppy/config /opt/vyatta/etc/config
 	log_end_msg
     fi
 fi
