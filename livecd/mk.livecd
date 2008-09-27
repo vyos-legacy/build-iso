@@ -381,7 +381,7 @@ vyatta-xensource-partition-image ()
   losetup $loop xensource/vyatta-xensource-$VVERSION.img || echo E: unable to allocate loop device
 
   # create filesystem
-  mke2fs -j /dev/loop0
+  mke2fs -j $loop
 
   # mount loop device and copy root image
   echo I: mounting image file
