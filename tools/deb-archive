@@ -233,11 +233,13 @@ EOF
 
   mv /tmp/$$-Release Release
   rm -f Release.gpg
-  if [ X`id -n -u` = Xautobuild ]
+  if [ X`id -n -u` != Xautobuild ]
   then
-    #gpg --use-agent --output Release.gpg --detach-sig Release
-    gpg --output Release.gpg --detach-sig Release
+    echo "WARNING: not using autobuild's key to sign Release file"
   fi
+
+  #gpg --use-agent --output Release.gpg --detach-sig Release
+  gpg --output Release.gpg --detach-sig Release
 
   rmdir lock
   cd $HOME

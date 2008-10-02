@@ -305,7 +305,7 @@ openssl rand -out chroot/root/.rnd 4096
 vyatta_chroot_local-packages ()
 {
   local pool=chroot/root/pool/local/main
-  local dist=chroot/root/dists/local/Release
+  local dist=/root/dists/local/Release
   declare -a vyatta_linux_debs=( config/chroot_local-packages/linux-*-vyatta*_${LH_ARCHITECTURE}.deb )
 
   mkdir -p $pool
@@ -321,7 +321,7 @@ vyatta_chroot_local-packages ()
   ../tools/deb-archive -r local -d $pool/../../..
 
   cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
-  sed -i 's/^Label: Vyatta/Label: Local/' $dist
+  sed -i 's/^Label: Vyatta/Label: Local/' chroot/$dist
   cat <<EOF >> chroot/etc/apt/preferences
 Package: *
 Pin: release l=Local
@@ -336,19 +336,37 @@ EOF
     cat chroot/etc/apt/sources.list.bak
   )>chroot/etc/apt/sources.list
 
-  cp config/chroot_local-includes/vyatta-pubkey.gpg chroot/root
-  chroot chroot apt-key add /root/vyatta-pubkey.gpg
+  cp -a ~/.gnupg config/chroot_local-includes/vyatta-pubkey.gpg chroot/root/.
+  cat >chroot/tmp/$$-key <<-EOF
+	Key-Type: DSA
+	Key-Length: 1024
+	Subkey-Type: ELG-E
+	Subkey-Length: 1024
+	Name-Real: root
+	Name-Comment: vyatta build user
+	Name-Email: root@vyatta.com
+	Expire-Date: 1
+	%commit
+	EOF
 
+  chroot chroot gpg --batch --gen-key /tmp/$$-key
+  chroot chroot apt-key add /root/vyatta-pubkey.gpg
+  chroot chroot apt-key add /root/.gnupg/pubring.gpg
+  rm -f chroot/tmp/$$-key chroot/$dist.gpg
+  chroot chroot gpg --output $dist.gpg --detach-sig $dist
   chroot chroot apt-get update
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y --force-yes -f install aptitude
-  chroot chroot aptitude --allow-untrusted -R -y -f install
+  #chroot chroot aptitude --allow-untrusted -R -y -f install
+  chroot chroot aptitude -R -y -f install
 
-  chroot chroot aptitude --allow-untrusted -R -y install \
-	live-initramfs
+#  chroot chroot aptitude --allow-untrusted -R -y install \
+#	live-initramfs
+  chroot chroot aptitude -R -y install live-initramfs
   cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
 
-  chroot chroot aptitude --allow-untrusted -R -y install \
+  # chroot chroot aptitude --allow-untrusted -R -y install
+  chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \
 	"?name(vyatta)" \
 	"?name(-dev)"_ \
@@ -356,7 +374,8 @@ EOF
 	|| exit $?
   sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
   sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
-  chroot chroot aptitude --allow-untrusted -R -f -y install
+  # chroot chroot aptitude --allow-untrusted -R -f -y install
+  chroot chroot aptitude -R -f -y install
 
   # force our current version package
   mk_version_package	# make a partially formed version package
@@ -494,7 +513,8 @@ build_chroot ()
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
 
-  rm -rf chroot/root/*
+  # rm -rf chroot/root/*
+  echo rm -rf chroot/root/*
 
   # remove resolv.conf.orig so it doesn't get restored
   rm -f chroot/etc/resolv.conf.orig
@@ -532,13 +552,16 @@ build_chroot ()
   fi
 
   local kernelname=`cd chroot/lib/modules;echo *`
-  if [ "$kernelname" ]
+  if [  "$kernelname" = '*' ]
   then
-     chroot chroot depmod -a `cd chroot/lib/modules;echo *`
-  else
      echo "Missing kernel module"
      return 1
   fi
+
+  for i in $kernelname
+  do
+     chroot chroot depmod -a $i
+  done
 
   # restore /dev/random
   rm -rf chroot/dev/random &&
