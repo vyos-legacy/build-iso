@@ -2,7 +2,7 @@
 
 set -e
 
-export DEBIAN_FRONTEND=noninteractive
+export HOME=/root DEBIAN_FRONTEND=noninteractive
 #exort ftp_proxy= http_proxy= DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_NOWARNINGS=yes XORG_CONFIG=custom
 
 if [[ "$PATH" != */sbin* ]] ; then
@@ -53,15 +53,8 @@ LH_ISO_VOLUME+="$BUILDID"
 
 mkdir -p cache
 
-echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/_\\n}- | \
+echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/_\\n}- |
     sort > cache/vyatta-pkgs
-
-chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}\|linux-headers\*\|linux-source\*\|\*-dev
-if [ "$VYATTA_INCLUDE_WEBGUI" != "yes" ]; then
-  chroot_exclude_pattern+='|vyatta-webgui'
-fi
-binary_exclude_pattern=$chroot_exclude_pattern
-binary_exclude_pattern+='|live-initramfs'
 
 shopt -s extglob
 shopt -s nullglob
@@ -94,54 +87,10 @@ clean_mounts()
 trap "clean_mounts; exit 0" EXIT
 
 clean_mounts
-rm -rf binary binary.iso chroot config livecd-*.iso
+rm -rf binary binary.iso chroot config livecd-*.iso config/chroot_local-packages/*.deb
 
-echo I: fetching vyatta binary packages
-mkdir -p cache/vyatta-deb-mirror
-mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
-touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
-
-declare -a pkgs_in_vyatta_deb_mirror=($( \
-    printf "%s\n" cache/vyatta-deb-mirror/*.deb | \
-    sed -e 's,.*/,,; s,_.*,,' | \
-    sort -u ))
-
-declare -a selected_debs_from_vyatta_deb_mirror
-for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
-    deb=$( sed -n "/^Filename: .*\/${pkg}_/ { s,.*/,,g; s,%3a,:,g; p }" \
-	cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages )
-    if [[ $pkg =~ linux-image-.* ]] ; then
-	if [ $pkg = $VYATTA_LINUX_PKG ] ; then
-	    selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
-	fi
-    elif [ -n "$deb" ] ; then
-	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
-    fi
-done
-
-rm -f config/chroot_local-packages/*.deb
 mkdir -p config/chroot_local-packages
-
-for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    
-    if grep -q "^${pkg}-\$" cache/vyatta-pkgs ; then
-	continue
-    fi
-
-    if [[ "$pkg" == @($chroot_exclude_pattern) ]] ; then
-	continue
-    fi
-
-    file=`echo config/chroot_local-packages/${pkg}_*.deb`
-    if [[ $xdeb == ../pkgs* ]] ; then
-	cp -lf ../pkgs/$deb config/chroot_local-packages/$deb
-    elif [[ ! "$file" ]]; then
-	cp -lf ../../cache/vyatta-deb-mirror/$deb \
-	    config/chroot_local-packages/$deb
-    fi
-done
+cp -lf ../pkgs/*.deb config/chroot_local-packages/.
 
 get_branch()
 {
@@ -249,13 +198,7 @@ lh_config
 
 cp cache/vyatta-pkgs config/chroot_local-packageslists
 
-find \
-    binary_local-includes \
-    chroot_local-hooks \
-    chroot_local-includes \
-    install-gtk_local-includes \
-    \! -name \*~ \! -name .\*.swp -print0 | \
-    cpio --null --quiet -dump config
+cp -alf binary_local-includes chroot_local-hooks chroot_local-includes install-gtk_local-includes config/.
 
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
@@ -277,11 +220,13 @@ if ! lh_bootstrap; then
   exit 1
 fi
 
-if [ -d cache/lists ] ; then
+if [ -d cache/lists ]
+then
+(
     echo I: Restore cached package lists
-    ( cd cache && \
-	find lists -print0 | \
-	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
+    cd cache &&
+    cp -alf lists ../chroot/var/lib/apt/.
+)
 fi
 
 if ! eval "$use_xen" && ! eval "$use_xendomzero" ; then
@@ -317,6 +262,8 @@ vyatta_chroot_local-packages ()
   cp -lf config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
      config/chroot_local-packages/*_all.deb \
       $pool/.
+
+  rm -f $pool/linux-header*
 
   ../tools/deb-archive -r local -d $pool/../../..
 
@@ -492,7 +439,7 @@ build_chroot ()
   vyatta_chroot_local-packages || return 1
   lh_chroot_linux-image install || return 1
   
-  test -r live.conf/${LH_DISTRIBUTION} && \
+  test -r live.conf/${LH_DISTRIBUTION} &&
       cp -f live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
 
   echo I: customizing chroot
@@ -513,8 +460,7 @@ build_chroot ()
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
 
-  # rm -rf chroot/root/*
-  echo rm -rf chroot/root/*
+  rm -rf chroot/root/*
 
   # remove resolv.conf.orig so it doesn't get restored
   rm -f chroot/etc/resolv.conf.orig
@@ -595,10 +541,11 @@ if [ -f chroot/sbin/ldconfig.REAL ]; then
     mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
 fi
 
-echo I: Cache Package files
-( cd chroot/var/lib/apt && \
-    find lists -print0 | \
-    cpio --null --quiet -pdmu ../../../../cache )
+(
+    echo I: Cache Package files
+    cd chroot/var/lib/apt &&
+    cp -alf lists ../../../../cache
+)
 
 >chroot/tmp/mksquashfs.exclude
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
