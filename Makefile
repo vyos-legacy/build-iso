@@ -2,6 +2,7 @@
 ## Top level Makefile for Vyatta System Build
 
 export MAKEFLAGS
+export NETSNMP_DONT_CHECK_VERSION=1
 
 include mk.conf
 
