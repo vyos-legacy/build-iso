@@ -269,11 +269,11 @@ vyatta_chroot_local-packages ()
 
   cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
   sed -i 's/^Label: Vyatta/Label: Local/' chroot/$dist
-  cat <<EOF >> chroot/etc/apt/preferences
-Package: *
-Pin: release l=Local
-Pin-Priority: 1000
-EOF
+  cat <<-EOF >> chroot/etc/apt/preferences
+	Package: *
+	Pin: release l=Local
+	Pin-Priority: 1000
+	EOF
   cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
   get_branch
   (
@@ -289,9 +289,9 @@ EOF
 	Key-Length: 1024
 	Subkey-Type: ELG-E
 	Subkey-Length: 1024
-	Name-Real: root
+	Name-Real: $BUILTBY
 	Name-Comment: vyatta build user
-	Name-Email: root@vyatta.com
+	Name-Email: $BUILTBY
 	Expire-Date: 1
 	%commit
 	EOF
@@ -304,15 +304,11 @@ EOF
   chroot chroot apt-get update
   chroot chroot apt-get -y -f install
   chroot chroot apt-get -y --force-yes -f install aptitude
-  #chroot chroot aptitude --allow-untrusted -R -y -f install
   chroot chroot aptitude -R -y -f install
 
-#  chroot chroot aptitude --allow-untrusted -R -y install \
-#	live-initramfs
   chroot chroot aptitude -R -y install live-initramfs
   cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
 
-  # chroot chroot aptitude --allow-untrusted -R -y install
   chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \
 	"?name(vyatta)" \
@@ -321,7 +317,6 @@ EOF
 	|| exit $?
   sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
   sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
-  # chroot chroot aptitude --allow-untrusted -R -f -y install
   chroot chroot aptitude -R -f -y install
 
   # force our current version package
