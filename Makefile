@@ -185,7 +185,7 @@ clean_debuilds: $(CLEAN_DEBS)
 
 .PHONY: $(PACKAGE_DEBS)
 $(PACKAGE_DEBS):
-	@case "$@" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$@!!!!!!!;; *) cd $@; debuild -i -b -uc -us -nc;; esac
+	@case "$@" in pkgs/installer*|pkgs/linux-kernel-di*|"" )  true;; *) echo !!!!!$@!!!!!!!; cd $@; debuild -i -b -uc -us -nc;; esac
 
 .PHONY: $(CLEAN_DEBS)
 $(CLEAN_DEBS):
