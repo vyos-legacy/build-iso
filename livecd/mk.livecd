@@ -49,6 +49,25 @@ then
     BUILDID=`date -u +%y%m%d%H%M`-${BUILDID}
 fi
 
+BUILTBY=`cat buildby 2>/dev/null` || true
+if [ -z "$BUILTBY" ]
+then
+    if [ "$GIT_COMMITTER_EMAIL" ] ; then
+	    BUILTBY=$GIT_COMMITTER_EMAIL
+    elif [ "$GIT_AUTHOR_EMAIL" ] ; then
+	    BUILTBY=$GIT_AUTHOR_EMAIL
+    else
+	    user_email=`git config user.email 2>/dev/null` || true
+	    if [ "$user_email" ] ; then
+	        BUILTBY=$user_email
+	    elif [ "$SUDO_USER" ] ; then
+	        BUILTBY=$SUDO_USER@$ORGANIZATION
+	    else
+	        BUILTBY=$USER@$ORGANIZATION
+	    fi
+    fi
+fi
+
 LH_ISO_VOLUME+="$BUILDID"
 
 mkdir -p cache
@@ -117,24 +136,6 @@ mk_version_package ()
 		;;
     esac
 
-    BUILTBY=`cat buildby 2>/dev/null` || true
-    if [ -z "$BUILTBY" ]
-    then
-        if [ "$GIT_COMMITTER_EMAIL" ] ; then
-    	    BUILTBY=$GIT_COMMITTER_EMAIL
-        elif [ "$GIT_AUTHOR_EMAIL" ] ; then
-    	    BUILTBY=$GIT_AUTHOR_EMAIL
-        else
-    	    user_email=`git config user.email 2>/dev/null` || true
-    	    if [ "$user_email" ] ; then
-    	        BUILTBY=$user_email
-    	    elif [ "$SUDO_USER" ] ; then
-    	        BUILTBY=$SUDO_USER@$ORGANIZATION
-    	    else
-    	        BUILTBY=$USER@$ORGANIZATION
-    	    fi
-        fi
-    fi
 
     mkdir -p $vf/config
 
