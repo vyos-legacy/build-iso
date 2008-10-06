@@ -260,11 +260,11 @@ vyatta_chroot_local-packages ()
       cp -lf ${vyatta_linux_debs[@]} $pool/.
   fi
 
+  rm -f config/chroot_local-packages/linux-headers-*
+
   cp -lf config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
      config/chroot_local-packages/*_all.deb \
       $pool/.
-
-  rm -f $pool/linux-header*
 
   ../tools/deb-archive -r local -d $pool/../../..
 
