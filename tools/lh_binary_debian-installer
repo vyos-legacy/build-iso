@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # lh_binary_debian-installer(1) - install debian-installer into binary
 # Copyright (C) 2006-2007 Daniel Baumann <daniel@debian.org>
