@@ -308,7 +308,9 @@ vyatta_chroot_local-packages ()
   chroot chroot aptitude -R -y -f install
 
   chroot chroot aptitude -R -y install live-initramfs
+  cp -a initramfs-tools chroot/usr/share/.
   cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
+  echo "#FSTAB">chroot/etc/fstab
 
   chroot chroot aptitude -R -y install \
        `cat cache/vyatta-pkgs` \

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # lh_binary(1) - build binary images
 # Copyright (C) 2006-2008 Daniel Baumann <daniel@debian.org>
