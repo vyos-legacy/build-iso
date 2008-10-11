@@ -275,6 +275,7 @@ vyatta_chroot_local-packages ()
 	Pin: release l=Local
 	Pin-Priority: 1000
 	EOF
+
   cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
   get_branch
   (
@@ -308,7 +309,7 @@ vyatta_chroot_local-packages ()
   chroot chroot aptitude -R -y -f install
 
   chroot chroot aptitude -R -y install live-initramfs
-  cp -a initramfs-tools chroot/usr/share/.
+  #cp -a initramfs-tools chroot/usr/share/.
   cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
   echo "#FSTAB">chroot/etc/fstab
 
