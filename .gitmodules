@@ -127,3 +127,6 @@
 [submodule "pkgs/iptables"]
 	path = pkgs/iptables
 	url = http://git.vyatta.com/iptables.git
+[submodule "pkgs/live-initramfs"]
+	path = pkgs/live-initramfs
+	url = http://git.vyatta.com/live-initramfs.git
