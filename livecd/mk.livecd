@@ -309,7 +309,7 @@ vyatta_chroot_local-packages ()
   chroot chroot aptitude -R -y -f install
 
   chroot chroot aptitude -R -y install live-initramfs
-  #cp -a initramfs-tools chroot/usr/share/.
+  (cd chroot/usr/share;patch -p0 <../../../init.patch)
   cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
   echo "#FSTAB">chroot/etc/fstab
 
