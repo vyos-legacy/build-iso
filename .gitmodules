@@ -124,3 +124,9 @@
 [submodule "pkgs/vyatta-webproxy"]
 	path = pkgs/vyatta-webproxy
 	url = http://git.vyatta.com/vyatta-webproxy.git
+[submodule "pkgs/iptables"]
+	path = pkgs/iptables
+	url = http://git.vyatta.com/iptables.git
+[submodule "pkgs/live-initramfs"]
+	path = pkgs/live-initramfs
+	url = http://git.vyatta.com/live-initramfs.git

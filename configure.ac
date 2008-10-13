@@ -55,7 +55,7 @@ AC_ARG_VAR(LH_ISO_APPLICATION, [default: Vyatta OFR])
 test "X$LH_ISO_PUBLISHER" = "X" && LH_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
 AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
 
-test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta OFR'
+test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta '
 AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta OFR])
 
 test "X$LH_LANGUANGE" = "X" && LH_LANGUAGE=en
@@ -89,9 +89,9 @@ AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
 test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
 AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
 
-test "X$VYATTA_POOL" = "X" && \
-     VYATTA_POOL="rsync://firebolt.vyatta.com/vyatta-dev/pool/hollywood/main"
-AC_ARG_VAR(VYATTA_POOL, [default: Vyatta nightly build])
+test "X$VYATTA_ARCHIVE" = "X" && \
+     VYATTA_ARCHIVE="http://firebolt.vyatta.com/vyatta-dev/"
+AC_ARG_VAR(VYATTA_ARCHIVE, [default: Vyatta nightly build])
 
 # process --with[out] arguments
 AC_ARG_WITH(exclude,
@@ -238,7 +238,7 @@ if test -d $KERN_SUBMOD_DIR/debian; then
 fi
 
 # FIXME! fetch version from source
-VYATTA_LINUX_VER="linux-image-2.6.24-1"
+VYATTA_LINUX_VER="linux-image-2.6.26-1"
 VYATTA_LINUX_PKG="$VYATTA_LINUX_VER-$LH_LINUX_FLAVOURS"
 LH_LINUX_PACKAGES=none
 BUILD_PKGS=
@@ -339,10 +339,18 @@ gutsy | hardy )
 	    INCLUDE_PKGS+=,python-libvirt
         fi
 
+if false
+then
         LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
         LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
         LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
         LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
+else
+        LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-islavista-peg"
+        LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-islavista-peg"
+        LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
+        LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
+fi
 
 	LH_SECURITY="enabled"
 	LH_SECTIONS="main"
@@ -408,9 +416,8 @@ AC_SUBST(use_xen)
 AC_SUBST(use_xendomzero)
 AC_SUBST(create_xensourcevm)
 
-AC_SUBST(VYATTA_POOL)
+AC_SUBST(VYATTA_ARCHIVE)
 AC_SUBST(VYATTA_LINUX_PKG)
 AC_SUBST(VYATTA_INCLUDE_WEBGUI)
 
 AC_OUTPUT
-

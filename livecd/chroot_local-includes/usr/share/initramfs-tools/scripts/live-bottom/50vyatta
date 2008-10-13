@@ -32,9 +32,10 @@ grep -q vfat /proc/filesystems || modprobe -q vfat 2>/dev/null
 if grep -q fd /proc/devices
 then
     mkdir -p /root/media/floppy
-    mount -t ext2 /dev/fd0 /root/media/floppy -o sync 2>/dev/null
-    test $? -eq 32 && mount -t vfat /dev/fd0 /root/media/floppy 2>/dev/null
-fi
+    mount /dev/fd0 /root/media/floppy -o sync ||
+      mount -t ext2 /dev/fd0 /root/media/floppy -o sync ||
+      mount -t vfat /dev/fd0 /root/media/floppy
+fi 2>/dev/null
 
 # bind the vyatta config directory with the following precedence
 #	1) backing store if present
@@ -51,7 +52,7 @@ then
 	log_end_msg
     elif [ -d /root/media/floppy/config ]
     then
-	log_begin_msg "Using /media/floppy/config..."
+	log_begin_msg "Using /root/media/floppy/config..."
 	mount -o bind /root/media/floppy/config /root/opt/vyatta/etc/config
 	log_end_msg
     else
