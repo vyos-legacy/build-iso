@@ -20,6 +20,11 @@ guess_branch()
     echo "$branch"
 }
 
+does_contain()
+{
+	git-log -1 --pretty=oneline "$1".."$2" 2>/dev/null
+}
+
     modulename=`basename "$PWD"`
 
     git-fetch -q 2>/dev/null
@@ -57,15 +62,33 @@ guess_branch()
     in_repo=
     if [ "$diffs" ]
     then 
-	in_repo_local=`git-log -1 --name-status "$upstream".."$branch" 2>/dev/null`
+	in_repo_local=`does_contain "$upstream" "$branch"`
 	[ "$in_repo_local" ] && echo A local commit is not in the shared repo.
 
-	in_repo=`git-log -1 --name-status "$branch".."$upstream" 2>/dev/null`
+	in_repo=`does_contain "$branch" "$upstream"`
 	[ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
    fi
 
-   git-branch -a -v|sed 's/..//'|grep -v '^origin/'|awk '{print $2}'|sort -u>/tmp/$$-branchlist
-   git-branch -a -v|sed 's/..//'|grep    '^origin/'|awk '{print $2}'|sort -u>/tmp/$$-originlist
+   git-branch -a -v|sed -e '/^  origin/d' -e 's/..//'|awk '{print $2}'|sort -u>/tmp/$$-branchlist
+   git-branch -a -v|awk '/^  origin/ {print $2}'|sort -u>/tmp/$$-originlist
    local_only=`comm -23 /tmp/$$-{branchlist,originlist}`
+   for i in $local_only
+   do
+      for j in `cat /tmp/$$-originlist`
+      do
+         other_branch_in_repo+=`does_contain "$i" "$j"`
+      done
+      [ "$other_branch_in_repo" ] || (echo -n "Commit not in shared repo: $i" && echo)
+      other_branch_in_repo=
+   done
+
+   for i in $local_only
+   do
+      for j in `cat /tmp/$$-originlist`
+      do
+         other_branch_in_repo+=`does_contain "$j" "$i"`
+      done
+      [ "$other_branch_in_repo" ] || (echo -n "Local branch is missing this commit: $i" && echo)
+      other_branch_in_repo=
+   done
    rm -rf /tmp/$$-{branchlist,originlist}
-   [ "$local_only" -a ! "$in_repo_local" -a ! "$in_repo" ] && echo "The shared repo is missing a commit from a non-checked-out local branch (or no branch is checked out at all)."
