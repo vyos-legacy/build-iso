@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # hack live script that tries to mount ext[23] floppies as root
 

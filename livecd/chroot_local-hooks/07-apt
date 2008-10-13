@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ -e /cdrom/vyatta-pubkey.gpg ] ; then
     apt-key add /cdrom/vyatta-pubkey.gpg
