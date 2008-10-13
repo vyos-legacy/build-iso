@@ -28,7 +28,7 @@ does_contain()
 # TODO: the calls to print_branch do not handle branches with delimiters in them
 print_branch()
 {
-	git-branch -a -v|grep "$1"|sed 's/..//'|awk '{print $1}'
+	echo `git-branch -a -v|grep "$1"|sed 's/..//'|awk '{print $1}'`
 }
 
     modulename=`basename "$PWD"`
