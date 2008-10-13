@@ -1,0 +1,40 @@
+*** /tmp/init	2008-10-12 14:38:40.000000000 -0700
+--- initramfs-tools/init	2008-10-12 14:37:25.000000000 -0700
+***************
+*** 180,187 ****
+  [ "$quiet" != "y" ] && log_end_msg
+  
+  # Move virtual filesystems over to the real filesystem
+! mount -n -o move /sys ${rootmnt}/sys
+! mount -n -o move /proc ${rootmnt}/proc
+  
+  # Check init bootarg
+  if [ -n "${init}" ] && [ ! -x "${rootmnt}${init}" ]; then
+--- 180,187 ----
+  [ "$quiet" != "y" ] && log_end_msg
+  
+  # Move virtual filesystems over to the real filesystem
+! mount -n -o move -t sysfs /sys ${rootmnt}/sys
+! mount -n -o move -t proc /proc ${rootmnt}/proc
+  
+  # Check init bootarg
+  if [ -n "${init}" ] && [ ! -x "${rootmnt}${init}" ]; then
+*** /tmp/init-bottom/udev	2008-10-12 15:36:15.000000000 -0700
+--- initramfs-tools/scripts/init-bottom/udev	2008-10-09 16:42:46.000000000 -0700
+***************
+*** 18,24 ****
+  done
+  
+  # move the /dev tmpfs to the rootfs
+! mount -n -o move /dev $rootmnt/dev
+  
+  # create a temporary symlink to the final /dev for other initramfs scripts
+  nuke /dev
+--- 18,24 ----
+  done
+  
+  # move the /dev tmpfs to the rootfs
+! mount -n -o move /dev $rootmnt/dev 2>/dev/null
+  
+  # create a temporary symlink to the final /dev for other initramfs scripts
+  nuke /dev
