@@ -565,6 +565,9 @@ EOF
 cp -f chroot_local-includes/etc/apt/preferences chroot/etc/apt
 sed -i 's/ 999/ 1000/' chroot/etc/apt/preferences
 
+## Clean up ssh keys.  System should regen keys locally
+rm -f chroot/etc/ssh/ssh_host*
+
 # build the XenSource partition image
 if eval "$create_xensourcevm"; then
   vyatta-xensource-partition-image || return 1
