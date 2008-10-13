@@ -25,6 +25,12 @@ does_contain()
 	git-log -1 --pretty=oneline "$1".."$2" 2>/dev/null
 }
 
+# TODO: the calls to print_branch do not handle branches with delimiters in them
+print_branch()
+{
+	git-branch -a -v|grep "$1"|sed 's/..//'|awk '{print $1}'
+}
+
     modulename=`basename "$PWD"`
 
     git-fetch -q 2>/dev/null
@@ -63,32 +69,48 @@ does_contain()
     if [ "$diffs" ]
     then 
 	in_repo_local=`does_contain "$upstream" "$branch"`
-	[ "$in_repo_local" ] && echo A local commit is not in the shared repo.
+	[ "$in_repo_local" ] && echo "A local commit is not in the remote repo: `print_branch $branch`."
 
 	in_repo=`does_contain "$branch" "$upstream"`
-	[ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
+	[ "$in_repo" ] && echo "Local branch does not have a commit from the remote repo: `print_branch $upstream`."
    fi
 
    git-branch -a -v|sed -e '/^  origin/d' -e 's/..//'|awk '{print $2}'|sort -u>/tmp/$$-branchlist
    git-branch -a -v|awk '/^  origin/ {print $2}'|sort -u>/tmp/$$-originlist
    local_only=`comm -23 /tmp/$$-{branchlist,originlist}`
-   for i in $local_only
-   do
-      for j in `cat /tmp/$$-originlist`
-      do
-         other_branch_in_repo+=`does_contain "$i" "$j"`
-      done
-      [ "$other_branch_in_repo" ] || (echo -n "Commit not in shared repo: $i" && echo)
-      other_branch_in_repo=
-   done
+
+   # [ ! "$local_only" ] || [ "$in_repo_local" ] || [ "$in_repo" ] ||
+	# echo "The remote repo is missing a commit from a non-checked-out local branch (or no branch is checked out at all)."
 
    for i in $local_only
    do
+      # TODO: this match is overly general
+      case `print_branch $i` in
+      *"$branch"* )
+		continue
+		;;
+      esac
+
       for j in `cat /tmp/$$-originlist`
       do
-         other_branch_in_repo+=`does_contain "$j" "$i"`
+         branch_in_repo+=`does_contain "$i" "$j"`
       done
-      [ "$other_branch_in_repo" ] || (echo -n "Local branch is missing this commit: $i" && echo)
-      other_branch_in_repo=
+      [ "$branch_in_repo" ] || (echo -n "Commit not in remote repo: `print_branch $i`" && echo)
+
+      for j in `cat /tmp/$$-originlist`
+      do
+         repo_in_branch+=`does_contain "$j" "$i"`
+      done
+      if [ ! "$repo_in_branch" ]
+      then
+	echo -n "Local branch is missing this commit: `print_branch $i`"
+	echo
+      else
+        [ "$branch_in_repo" ] &&
+	echo "The HEAD of a local branch is not current with any remote branch: `print_branch $i`"
+      fi
+      repo_in_branch=
+      branch_in_repo=
    done
+
    rm -rf /tmp/$$-{branchlist,originlist}
