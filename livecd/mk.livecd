@@ -459,7 +459,7 @@ build_chroot ()
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
 
-  rm -rf chroot/root/*
+  (cd chroot/root; rm -rf * .rnd .gnupg .aptitude .debtags)
 
   # remove resolv.conf.orig so it doesn't get restored
   rm -f chroot/etc/resolv.conf.orig
@@ -519,8 +519,6 @@ if ! build_chroot; then
   exit 1
 fi
 
-mk_version_package
-
 # add config version string to default config file
 chroot chroot sh -c \
   '/opt/vyatta/sbin/vyatta_current_conf_ver.pl \
@@ -572,6 +570,10 @@ rm -f chroot/etc/ssh/ssh_host*
 if eval "$create_xensourcevm"; then
   vyatta-xensource-partition-image || return 1
 fi
+
+chroot chroot apt-get -f -y remove apt-utils
+
+mk_version_package
 
 echo I: building binary
 if ! lh_binary ; then
