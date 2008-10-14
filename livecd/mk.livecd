@@ -478,6 +478,9 @@ EOF
 ## restore apt/preferences for binary build
 cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
 
+## Clean up ssh keys.  System should regen keys locally
+rm -f chroot/etc/ssh/ssh_host*
+
 echo I: building binary
 if ! lh_binary ; then
   echo E: binary build failed
