@@ -1,3 +1,25 @@
+build-iso (0.15) unstable; urgency=low
+
+	  3.1.4
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+  * fix ssh keygen at startup
+  * update vyatta-cfg-system
+  * update vyatta-cfg-system
+  * update vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Update index
+  * Fix hollywood build: the linux headers, which are now in the debian
+    archive, should not be installed onto the livecd
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 14 Oct 2008 17:30:22 -0700
+
 build-iso (0.14) unstable; urgency=low
 
 	  3.1.3
