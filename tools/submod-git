@@ -106,6 +106,7 @@ done
 git_pull ()
 {
     git pull
+    git fetch --tags
 }
 
 git_push ()

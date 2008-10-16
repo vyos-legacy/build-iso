@@ -34,6 +34,7 @@ print_branch()
     modulename=`basename "$PWD"`
 
     git-fetch -q 2>/dev/null
+    git-fetch --tags
     if git-status|grep '^# Changes to be committed:' >/dev/null
     then
 	echo There are uncommited changes.
