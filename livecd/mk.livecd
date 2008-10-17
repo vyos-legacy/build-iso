@@ -583,8 +583,11 @@ fi
 
 ln -nsf binary.iso livecd-"$BUILDID".iso
 
-# this is the wrong version package
-rm -f ./cache/packages_local-packageslists/vyatta-version_*.deb
+(
+    # remove the wrong version package and extra linux-header packages
+    cd cache
+    rm -f packages_local-packageslists/vyatta-version_*.deb packages_linux-image/linux-headers*.deb
+)
 
 echo I: Done
 
