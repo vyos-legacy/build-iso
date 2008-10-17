@@ -107,7 +107,7 @@ mkdir -p cache/vyatta-deb-mirror
 # FIXME! hack around convoluted hollywood repository that is currently
 #	 both a debian mirror and vyatta content repos; we only want the
 #	 new content and the prior version of squashfs-tools, ntp, and ntpdate
-rsync \
+rsync -v -v -v \
     --archive \
     --delete \
     --filter='- vyatta-version_*' \
@@ -121,7 +121,7 @@ rsync \
 
 mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
 touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
-rsync \
+rsync -v -v -v \
     --archive \
     --delete \
     ${VYATTA_POOL/pool/dists}/ \
@@ -272,6 +272,8 @@ EOF
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
 cp config/chroot_local-includes/vyatta-pubkey.gpg config/binary_local-includes/
+mkdir chroot
+cp config/chroot_local-includes/vyatta-pubkey.gpg chroot/.
 
 if [ ${#deb_sources[@]} -gt 0 ]; then
     echo I: set up custom source repos
@@ -370,6 +372,9 @@ build_chroot ()
   lh_chroot_hostname install || return 1
   lh_chroot_apt install || return 1
   echo 'quiet "1";' > chroot/etc/apt/apt.conf.d/03quiet
+  cp config/chroot_local-includes/vyatta-pubkey.gpg chroot/root/.
+  chroot chroot apt-key add /root/vyatta-pubkey.gpg
+  chroot chroot apt-get -y -f --force-yes install apt-utils
   lh_chroot_sources install || return 1
 
   lh_chroot_linux-image install || return 1
