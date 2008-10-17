@@ -13,6 +13,63 @@ Prerequisites
     submodules that each build one or more self named Debian
     packages. The submodule feature was added to GIT v1.5.2.
 
+Getting Source
+
+    The Vyatta ISO builder consists of scripts and config files
+    maintained as a GIT super-module named, "build-iso" that
+    references several submodules within its "pkgs/" sub-directory.
+    Note that the super-module and submodules each have multiple
+    branches available.  To build successfully, all modules must
+    have the same branch checked out.
+    To clone the super-module, if you haven't do so, install git:
+
+	apt-get install git-core
+
+    Then:
+
+	git clone http://git.vyatta.com/build-iso.git
+
+    This will create a tree in the directory ./build-iso .
+    (At this point, you might want to switch to reading
+    ./build-iso/README, which is the most recent version
+    of the file which you are reading now:-)
+
+    Our git repositories have branches, the most stable of which
+    is the default git branch ("master"). If you are
+    interested in another branch (let's call it BRANCH), then:
+
+	cd build-iso
+	git checkout --track -b BRANCH origin/BRANCH
+
+    If you don't want to build any submodules and just want to build an
+    ISO with all pre-built packages, you can skip the following submodule
+    instructions and go to the next section "Configuration".
+
+    To register the submodules in the cloned repository config,
+
+	git submodule init
+
+    It's most efficient to selectively clone only the submodules
+    needing for review or modifcation. The ISO build downloads the
+    Vyatta pre-built, binary packages of any non-cloned sub-module. To
+    clone a specific sub-module,
+
+	git submodule update pkgs/SUBMODULE
+
+    This command clones the SUBMODULE repository in the "pkgs/SUBMODULE"
+    directory and checks out the master branch.  If you wish to checkout a
+    different branch, use:
+
+	cd pkgs/SUBMODULE
+	git checkout --track -b BRANCHNAME origin/BRANCHNAME
+
+    To clone all sub-modules for full verification build,
+
+	git submodule update
+
+    Remember to create and checkout the same working branch for all
+    submodules.
+
 Build Host Setup
 
     To set up a build environment (e.g., system or VM), we recommend
@@ -24,7 +81,7 @@ Build Host Setup
 
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-netinst.iso
-	http://packages.vyatta.com/iso/livecd-vc4.0.0.iso
+	http://packages.vyatta.com/iso/testing/*.iso
 
     The respective installation prompts for distribution mirror. Any debian "lenny"
     mirror will do.  To include Vyatta's Debian miror, add this to /etc/apt/sources.list:
@@ -59,73 +116,29 @@ Build Host Setup
 
     Here are the list of packages (don't forget to run "apt-get update" first):
 
-	apt-get install automake autoconf bzip2 curl debhelper devscripts dpatch \
-	fakeroot fakechroot genisoimage git core sysv-rc-conf \
+	apt-get install automake autoconf bzip2 curl debhelper devscripts \
+	dpatch fakeroot fakechroot genisoimage git-core sysv-rc-conf \
 	live-helper lsb-release rsync sudo
 
     To build submodules, each package should list all build
     dependencies. However, to save some iteration, install these
     packages,
 
-	apt-get install bison flex docbook-utils gcc g++ git buildpackage groff gs \
+	apt-get install asciidoc build-essential \
+        bison flex docbook-utils gcc-4.2 git buildpackage groff gs \
 	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
  	libpcap0.8-dev libpcre3-dev libprelude-dev \
 	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
 	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
 	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
-	lynx libcap-dev libclamav-dev libpopt-dev build-essential \
-	libsnmp-dev libperl-dev python-all-dev python-setup-tools \
+	lynx libcap-dev libclamav-dev libpopt-dev \
+	libsnmp-dev libperl-dev python-all-dev python-setuptools \
 	automake1.9 cdbs quilt ruby liblzo2-dev unifont help2man \
-	gcc-4.2 libwrap0-dev python-setuptools libsensors-dev \
-	libnetfilter-queue-dev
+        libnet0-dev libsensors-dev comerr-dev libkadm55 libkrb5-dev \
+	libmysqlclient15-dev libmysqlclient15off libnet1 libnet1-dev \
+	libpq-dev libpq5 mysql-common \
+	libwrap0-dev libnetfilter-queue-dev
 
-
-Getting Source
-
-    The Vyatta ISO builder consists of scripts and config files
-    maintained as a GIT super-module named, "build-iso" that
-    references several submodules within its "pkgs/" sub-directory.
-    Note that the super-module and submodules each have multiple
-    branches available.  To build successfully, all modules must
-    have the same branch checked out.
-    To clone the super-module:
-
-	git clone http://git.vyatta.com/build-iso.git
-
-    Create and checkout a working master branch.  (master is the
-    default branch for git.)
-
-	cd build-iso
-	git checkout
-
-    If you don't want to build any submodules and just want to build an
-    ISO with all pre-built packages, you can skip the following submodule
-    instructions and go to the next section "Configuration".
-
-    To register the submodules in the cloned repository config,
-
-	git submodule init
-
-    It's most efficient to selectively clone only the submodules
-    needing for review or modifcation. The ISO build downloads the
-    Vyatta pre-built, binary packages of any non-cloned sub-module. To
-    clone a specific sub-module,
-
-	git submodule update pkgs/SUBMODULE
-
-    This command clones the SUBMODULE repository in the "pkgs/SUBMODULE"
-    directory and checks out the master branch.  If you wish to checkout a
-    different branch, use:
-
-	cd pkgs/SUBMODULE
-	git checkout --track -b BRANCHNAME origin/BRANCHNAME
-
-    To clone all sub-modules for full verification build,
-
-	git submodule update
-
-    Remember to create and checkout the same working branch for all
-    submodules.
 
 Configuration
 

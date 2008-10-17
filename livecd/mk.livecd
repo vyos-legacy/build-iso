@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export DEBIAN_FRONTEND=noninteractive
+set -e
+
+export HOME=/root DEBIAN_FRONTEND=noninteractive
 #exort ftp_proxy= http_proxy= DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_NOWARNINGS=yes XORG_CONFIG=custom
 
 if [[ "$PATH" != */sbin* ]] ; then
@@ -34,29 +36,44 @@ done
 
 declare -a xdebs debs pkgs depends
 
-: ${TIMESTAMP:=$(date -u +%y%m%d%H%M)}
 : ${HUMANTIME:=$(date -u)}
-: ${BUILDID:=$(git log -1 --pretty=format:%h)}
-: ${CDLABEL:=$TIMESTAMP$BUILDID}
 : ${ORGANIZATION:=vyatta.com}
 : ${LANGUAGE:=${LH_LANGUAGE:-en}}
 : ${LC_ALL:=C}
 export LANGUAGE LC_ALL
 
-LH_ISO_VOLUME+=" -- $CDLABEL"
+BUILDID=`cat buildid 2>/dev/null` || true
+if [ ! "$BUILDID" ]
+then
+    BUILDID=`git log -1 --pretty=format:%h 2>/dev/null` || true
+    BUILDID=`date -u +%y%m%d%H%M`-${BUILDID}
+fi
+
+BUILTBY=`cat buildby 2>/dev/null` || true
+if [ -z "$BUILTBY" ]
+then
+    if [ "$GIT_COMMITTER_EMAIL" ] ; then
+	    BUILTBY=$GIT_COMMITTER_EMAIL
+    elif [ "$GIT_AUTHOR_EMAIL" ] ; then
+	    BUILTBY=$GIT_AUTHOR_EMAIL
+    else
+	    user_email=`git config user.email 2>/dev/null` || true
+	    if [ "$user_email" ] ; then
+	        BUILTBY=$user_email
+	    elif [ "$SUDO_USER" ] ; then
+	        BUILTBY=$SUDO_USER@$ORGANIZATION
+	    else
+	        BUILTBY=$USER@$ORGANIZATION
+	    fi
+    fi
+fi
+
+LH_ISO_VOLUME+="$BUILDID"
 
 mkdir -p cache
 
-echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/-\\n}- | \
+echo -e ${INCLUDE_PKGS//,/\\n}\\n ${EXCLUDE_PKGS//,/_\\n}- |
     sort > cache/vyatta-pkgs
-
-chroot_exclude_pattern=${EXCLUDE_PKGS//,/\|}\|linux-headers\*\|linux-source\*\|\*-dev
-if [ "$VYATTA_INCLUDE_WEBGUI" != "yes" ]; then
-  chroot_exclude_pattern+='|vyatta-webgui'
-fi
-binary_exclude_pattern=$chroot_exclude_pattern
-binary_exclude_pattern+='|squashfs-tools'
-binary_exclude_pattern+='|live-initramfs'
 
 shopt -s extglob
 shopt -s nullglob
@@ -71,105 +88,35 @@ set_conf_var ()
   sed -i 's#^\('"$var"'\).*#\1="'"$val"'"#' config/$conf
 }
 
-if [ -z "$BUILTBY" ] ; then
-    if [ -n "$GIT_COMMITTER_EMAIL" ] ; then
-	BUILTBY=$GIT_COMMITTER_EMAIL
-    elif [ -n "$GIT_AUTHOR_EMAIL" ] ; then
-	BUILTBY=$GIT_AUTHOR_EMAIL
-    else
-	user_email=`git config user.email`
-	if [ -n "$user_email" ] ; then
-	    BUILTBY=$user_email
-	elif test -n "$SUDO_USER" ; then
-	    BUILTBY=$SUDO_USER@$ORGANIZATION
-	else
-	    BUILTBY=$USER@$ORGANIZATION
-	fi
-    fi
-fi
-
 if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
     export LH_USE_FAKEROOT=enabled
 fi
 
 echo I: cleaning earlier build
-for m in proc-live sysfs-live devpts-live ; do
-    if grep -q $m /proc/mounts ; then
-	echo I: unmounting $m
-	umount $m
-    fi
-done
-rm -rf binary binary.iso chroot config
+clean_mounts()
+{
+    for m in proc-live sysfs-live devpts-live ; do
+        if grep -q $m /proc/mounts ; then
+    	    echo I: unmounting $m
+    	    umount $m || true
+        fi
+    done
+}
 
-echo I: fetching vyatta binary packages
-mkdir -p cache/vyatta-deb-mirror
+trap "clean_mounts; exit 0" EXIT
 
-# FIXME! hack around convoluted hollywood repository that is currently
-#	 both a debian mirror and vyatta content repos; we only want the
-#	 new content and the prior version of squashfs-tools, ntp, and ntpdate
-rsync -v -v -v \
-    --archive \
-    --delete \
-    --filter='- vyatta-version_*' \
-    --filter='+ *vyatta*' \
-    --filter='+ squashfs-tools_*' \
-    --filter='+ ntp_*' \
-    --filter='+ ntpdate_*' \
-    --filter='- *' \
-    ${VYATTA_POOL}/ \
-    cache/vyatta-deb-mirror/ || true
+clean_mounts
+rm -rf binary binary.iso chroot config livecd-*.iso config/chroot_local-packages/*.deb
 
-mkdir -p cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}
-touch cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages
-rsync -v -v -v \
-    --archive \
-    --delete \
-    ${VYATTA_POOL/pool/dists}/ \
-    cache/vyatta-dists-mirror || true
-
-declare -a pkgs_in_vyatta_deb_mirror=($( \
-    printf "%s\n" cache/vyatta-deb-mirror/*.deb | \
-    sed -e 's,.*/,,; s,_.*,,' | \
-    sort -u ))
-
-declare -a selected_debs_from_vyatta_deb_mirror
-for pkg in ${pkgs_in_vyatta_deb_mirror[@]} ; do
-    deb=$( sed -n "/^Filename: .*\/${pkg}_/ { s,.*/,,g; s,%3a,:,g; p }" \
-	cache/vyatta-dists-mirror/binary-${LH_ARCHITECTURE}/Packages )
-    if [[ $pkg =~ linux-image-.* ]] ; then
-	if [ $pkg = $VYATTA_LINUX_PKG ] ; then
-	    selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
-	fi
-    elif [ -n "$deb" ] ; then
-	selected_debs_from_vyatta_deb_mirror+=( cache/vyatta-deb-mirror/$deb )
-    fi
-done
-
-rm -f config/chroot_local-packages/*.deb
 mkdir -p config/chroot_local-packages
+cp -lf ../pkgs/*.deb config/chroot_local-packages/.
 
-for xdeb in ../pkgs/*.deb ${selected_debs_from_vyatta_deb_mirror[@]} ; do
-    deb=${xdeb##*/}
-    pkg=${deb%%_*}
-    
-    if grep -q "^${pkg}-\$" cache/vyatta-pkgs ; then
-	continue
-    fi
+get_branch()
+{
+	VBRANCH=`cat branch 2>/dev/null` || true
+	[ "$VBRANCH" ] || VBRANCH=`git-branch|awk '/^\*/ {print $2}'`
+}
 
-    if [[ "$pkg" == @($chroot_exclude_pattern) ]] ; then
-	continue
-    fi
-
-    file=`echo config/chroot_local-packages/${pkg}_*.deb`
-    if [[ $xdeb == ../pkgs* ]] ; then
-	ln -sf ../../../pkgs/$deb config/chroot_local-packages/$deb
-    elif [[ ! "$file" ]]; then
-	ln -sf ../../cache/vyatta-deb-mirror/$deb \
-	    config/chroot_local-packages/$deb
-    fi
-done
-
-# create the buildid file
 mk_version_package ()
 {
     local savedir="$PWD"
@@ -178,16 +125,17 @@ mk_version_package ()
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
 
-    VVERSION=`cat version`
+    VVERSION=`cat version 2>/dev/null` || true
     case "$VVERSION" in
     [0-9]*)
 		config_src=supported
 		;;
     "" )
-		#VVERSION=z"$TIMESTAMP"
-		VVERSION=0
+		get_branch
+		VVERSION=VC888."$VBRANCH"
 		;;
     esac
+
 
     mkdir -p $vf/config
 
@@ -200,21 +148,20 @@ mk_version_package ()
     cat <<-EOF > $vf/iso-build.txt
 	Built by :    $BUILTBY
 	Built on :    $HUMANTIME
-	Build ID :    $CDLABEL
+	Build ID :    $BUILDID
 	EOF
 
     # backwards compatible symlink
-    ln -s iso-build.txt $vf/build.txt
-    echo "$CDLABEL">$savedir/iso-label
+    ln -nsf iso-build.txt $vf/build.txt
+    #echo "$BUILDID">$savedir/iso-label	# is this needed?
 
     echo I: generating package list
-    (
-	cd "$savedir"
-	chroot chroot /opt/vyatta/bin/save-package-report
-	mv $etcdir/deb-versions.txt $vf/.
-	cd ..
-	git-submodule status > $vf/iso-submodules.txt
-    )
+    chroot "$savedir"/chroot /opt/vyatta/bin/save-package-report
+    mv $etcdir/deb-versions.txt $vf/.
+
+    ( cd "$savedir"/.. ; git-submodule status 2>/dev/null ) \
+         > $vf/iso-submodules.txt
+    [ -s $vf/iso-submodules.txt ] || cp "$savedir"/iso-submodules.txt $vf/. 2>/dev/null
 
     echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
 
@@ -224,7 +171,7 @@ mk_version_package ()
     (
 	echo "Package: vyatta-version"
 	echo "Version: ${VVERSION}"
-	echo "Architecture: i386"
+	echo "Architecture: all"
 	echo "Maintainer: Vyatta <debs@vyatta.com>"
 	echo "Essential: no"
 	echo "Section: base"
@@ -252,39 +199,17 @@ lh_config
 
 cp cache/vyatta-pkgs config/chroot_local-packageslists
 
-find \
-    binary_local-includes \
-    chroot_local-hooks \
-    chroot_local-includes \
-    install-gtk_local-includes \
-    \! -name \*~ \! -name .\*.swp -print0 | \
-    cpio --null --quiet -pdmu config
-
-cat <<EOF > config/chroot_local-includes/iso-build.txt
-Built by:    $BUILTBY
-Built on:    $HUMANTIME
-Build ID:    $CDLABEL
-EOF
-
-( cd .. ; git-submodule status ) \
-    > config/chroot_local-includes/iso-submodules.txt
+cp -alf binary_local-includes chroot_local-hooks chroot_local-includes install-gtk_local-includes config/.
 
 ## NOTE: the 07-apt hook adds this key during live image build, and
 ## 	binary install respectively
 cp config/chroot_local-includes/vyatta-pubkey.gpg config/binary_local-includes/
-mkdir chroot
-cp config/chroot_local-includes/vyatta-pubkey.gpg chroot/.
 
 if [ ${#deb_sources[@]} -gt 0 ]; then
     echo I: set up custom source repos
-    cp ${deb_sources[@]} config/chroot_sources/
+    cp -lf ${deb_sources[@]} config/chroot_sources/
 fi
  
-# include xen Dom0 repo
-if eval "$use_xendomzero" ; then
-    cat deb_sources/xen-vyatta.bootstrap >> config/chroot_sources/${LH_DISTRIBUTION}-vyatta.bootstrap
-fi
-
 # clear .stage
 # note: this causes all steps to be re-executed. however, the bootstrap stage
 # is cached, so the bootstrap step only restores the cached stage.
@@ -296,65 +221,203 @@ if ! lh_bootstrap; then
   exit 1
 fi
 
-if [ -d cache/lists ] ; then
+if [ -d cache/lists ]
+then
+(
     echo I: Restore cached package lists
-    ( cd cache && \
-	find lists -print0 | \
-	cpio --null --quiet -pdmu ../chroot/var/lib/apt )
+    cd cache &&
+    cp -alf lists ../chroot/var/lib/apt/.
+)
 fi
 
-if eval "$use_xen" || eval "$use_xendomzero" ; then
-    echo I: Disabling TLS
-    mv chroot/lib/tls chroot/lib/tls.disabled
-else
+if ! eval "$use_xen" && ! eval "$use_xendomzero" ; then
     rm -f config/chroot_local-hooks/*xen*
 fi
+
+(
+    rm -rf chroot/dev/null chroot/dev/zero chroot/dev/random chroot/dev/urandom chroot/dev/ram1
+    mknod -m 666 chroot/dev/null c 1 3
+    mknod -m 666 chroot/dev/zero c 1 5
+    mknod -m 666 chroot/dev/random c 1 9 # fake out /dev/random to be /dev/urandom
+    mknod -m 666 chroot/dev/urandom c 1 9
+    mknod -m 666 chroot/dev/ram1 c 1 1
+) || true
+
+# set up random seed
+openssl rand -out chroot/root/.rnd 4096
 
 # mimic lh_chroot_local-packages but install selected vyatta linux package before
 # any other local packages
 vyatta_chroot_local-packages ()
 {
   local pool=chroot/root/pool/local/main
-  local dist=chroot/root/dists/local/Release
+  local dist=/root/dists/local/Release
   declare -a vyatta_linux_debs=( config/chroot_local-packages/linux-*-vyatta*_${LH_ARCHITECTURE}.deb )
 
   mkdir -p $pool
 
   if [ ${#vyatta_linux_debs[@]} -gt 0 ] ;then
-      cp ${vyatta_linux_debs[@]} $pool/.
+      cp -lf ${vyatta_linux_debs[@]} $pool/.
   fi
 
-  cp config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
+  rm -f config/chroot_local-packages/linux-headers-*
+
+  cp -lf config/chroot_local-packages/!(linux-*vyatta*)_${LH_ARCHITECTURE}.deb \
      config/chroot_local-packages/*_all.deb \
       $pool/.
 
   ../tools/deb-archive -r local -d $pool/../../..
 
   cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
-  sed -i 's/^Label: Vyatta/Label: Local/' $dist
-  cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
-  echo "deb file:///root local main" >chroot/etc/apt/sources.list
-  cat chroot/etc/apt/sources.list.bak >>chroot/etc/apt/sources.list
+  sed -i 's/^Label: Vyatta/Label: Local/' chroot/$dist
+  cat <<-EOF >> chroot/etc/apt/preferences
+	Package: *
+	Pin: release l=Local
+	Pin-Priority: 1000
+	EOF
 
+  cp chroot/etc/apt/sources.list chroot/etc/apt/sources.list.bak
+  get_branch
+  (
+    echo "deb file:///root local main"
+    echo "deb $VYATTA_ARCHIVE $VBRANCH main"
+    echo "deb $LH_MIRROR_CHROOT_SECURITY $LH_DISTRIBUTION"/updates main
+    cat chroot/etc/apt/sources.list.bak
+  )>chroot/etc/apt/sources.list
+
+  cp -a ~/.gnupg config/chroot_local-includes/vyatta-pubkey.gpg chroot/root/.
+  cat >chroot/tmp/$$-key <<-EOF
+	Key-Type: DSA
+	Key-Length: 1024
+	Subkey-Type: ELG-E
+	Subkey-Length: 1024
+	Name-Real: $BUILTBY
+	Name-Comment: vyatta build user
+	Name-Email: $BUILTBY
+	Expire-Date: 1
+	%commit
+	EOF
+
+  chroot chroot gpg --batch --gen-key /tmp/$$-key
+  chroot chroot apt-key add /root/vyatta-pubkey.gpg
+  chroot chroot apt-key add /root/.gnupg/pubring.gpg
+  rm -f chroot/tmp/$$-key chroot/$dist.gpg
+  chroot chroot gpg --output $dist.gpg --detach-sig $dist
   chroot chroot apt-get update
-  chroot chroot apt-get -f install
-  chroot chroot apt-cache dumpavail|grep '^Pack.*vyatta'|sed "s,.* ,,">$pool/list
-  chroot chroot apt-get -y install \
-	openssl \
-	openswan \
-	squashfs-tools \
-	openssh-server \
-	vim-common \
-	vim-tiny \
-	grub-pc \
-	man-db \
-	nano \
-	ssh \
-	`cat $pool/list`
-  chroot chroot apt-get install -f --yes
+  chroot chroot apt-get -y -f install
+  chroot chroot apt-get -y --force-yes -f install aptitude
+  chroot chroot aptitude -R -y -f install
+
+  chroot chroot aptitude -R -y install live-initramfs
+  (cd chroot/usr/share;patch -p0 <../../../init.patch)
+  cp live.conf/"$LH_DISTRIBUTION" chroot/etc/live.conf
+  echo "#FSTAB">chroot/etc/fstab
+
+  chroot chroot aptitude -R -y install \
+       `cat cache/vyatta-pkgs` \
+	"?name(vyatta)" \
+	"?name(-dev)"_ \
+	"?name(cpp-)"_ \
+	|| exit $?
+  sed 's/_/-/' -i cache/vyatta-pkgs	# other tools use apt-get, which doesn't understand _
+  sed 's/_/-/' -i config/chroot_local-packageslists/vyatta-pkgs
+  chroot chroot aptitude -R -f -y install
 
   # force our current version package
   mk_version_package	# make a partially formed version package
+}
+
+# Create the Vyatta domU partition image
+vyatta-xensource-partition-image ()
+{
+  echo I: creating XenSource partition image
+  rm -rf xensource
+  mkdir -p xensource/pimage
+
+  # using VVERSION throughout though I am not sure it is the right var
+
+  # preallocated image
+  # dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION.img bs=1024k count=4000
+  # sparse image
+  dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION.img bs=1k seek=4096k count=1
+
+  # allocate loop device for file
+  loop=$(losetup -f)
+  losetup $loop xensource/vyatta-xensource-$VVERSION.img || echo E: unable to allocate loop device
+
+  # create filesystem
+  mke2fs -j $loop
+
+  # mount loop device and copy root image
+  echo I: mounting image file
+  mount $loop xensource/pimage
+  echo I: copying root to image partition
+  cp -aR chroot/* xensource/pimage/
+
+  # stage the chroot
+  # need to edit the inittab get rid of t0 and add h0
+  # setup config.boot if neccessary
+
+  # we need a stripped verison of the kernel for pygrub 
+  echo I: fixing partition image kernel
+  kversion=$(egrep "Package: linux-image.+-vyatta-virt" ../pkgs/linux-image/debian/control | sed -e 's/Package: linux-image-\|-vyatta-virt//g')
+  strip ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux
+  gzip -c ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux \
+    > xensource/pimage/boot/vmlinux-$kversion-vyatta-virt
+
+  # create the default domU configuration file
+  cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
+	name='vyatta-xensource-$VVERSION'
+	bootloader='/usr/lib/xen-3.2-1/bin/pygrub'
+	on_reboot='restart'
+	on_shutdown='destroy'
+	on_crash='destroy'
+	image_name='vyatta-xensource-$VVERSION'
+	disk=['tap:aio:/var/xen/vyatta-xensource-$VVERSION.img,xvda1,w']
+	vcpus=1
+	memory=512
+	EOF
+
+  xen_kernel_version=$(ls xensource/pimage/boot/vmlinu[xz]-* | sed 's:xensource/pimage/boot/::g' | sort )
+
+  (
+      # stage the grub menu.lst for pygrub.
+      echo -e "timeout\t5"
+      echo
+      for version in $xen_kernel_version; do
+          echo -e "title\t$version"
+          echo -e "root\t(hd0,0)"
+          echo -e "kernel\t/boot/$version root=/dev/xvda1 ro console=hvc0"
+          iversion=$(echo $version | sed 's/vmlinu[xz]-//g')
+          echo -e "initrd\t/boot/initrd.img-$iversion"
+          echo
+      done
+  ) >"xensource/pimage/boot/grub/menu.lst"
+
+  # clean up the inittab
+  # remove T0 so it doesn't respawn needlessly
+  sed -i -e 's/T0/#T0/' xensource/pimage/etc/inittab
+  # add the xen pv console
+  echo -e "# xen console \nh0:12345:respawn:/sbin/getty 38400 hvc0" >> xensource/pimage/etc/inittab
+
+  # set /etc/hostname
+  rm -f xensource/pimage/etc/hostname
+  echo vyatta > xensource/pimage/etc/hostname
+  # set /etc/hosts
+  rm -f xensource/pimage/etc/hosts
+  echo 127.0.0.1 localhost vyatta > xensource/pimage/etc/hosts
+  # set /etc/fstab
+  rm -f xensource/pimage/etc/fstab
+  echo -e "/dev/xvda1\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
+
+  # clean up the mounts
+  echo I: unmounting the image file
+  umount xensource/pimage
+  echo I: releasing loop device $loop
+  losetup -d $loop
+
+  echo I: compressing XenSource partition image file
+  gzip xensource/vyatta-xensource-$VVERSION.img
 }
 
 # do the steps in lh_chroot
@@ -372,15 +435,11 @@ build_chroot ()
   lh_chroot_hostname install || return 1
   lh_chroot_apt install || return 1
   echo 'quiet "1";' > chroot/etc/apt/apt.conf.d/03quiet
-  cp config/chroot_local-includes/vyatta-pubkey.gpg chroot/root/.
-  chroot chroot apt-key add /root/vyatta-pubkey.gpg
-  chroot chroot apt-get -y -f --force-yes install apt-utils
-  lh_chroot_sources install || return 1
-
+  vyatta_chroot_local-packages || return 1
   lh_chroot_linux-image install || return 1
   
-  test -r live.conf/${LH_DISTRIBUTION} && \
-      cp live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
+  test -r live.conf/${LH_DISTRIBUTION} &&
+      cp -f live.conf/${LH_DISTRIBUTION} chroot/etc/live.conf
 
   echo I: customizing chroot
   lh_chroot_preseed || return 1
@@ -389,8 +448,7 @@ build_chroot ()
   lh_chroot_packageslists || return 1
   lh_chroot_packages || return 1
 
-  vyatta_chroot_local-packages || return 1
-  lh_chroot_local-packageslists || return 1
+  # don't do lh_chroot_local-packageslists || return 1
 
   lh_chroot_localization || return 1
   lh_chroot_local-includes || return 1
@@ -401,14 +459,13 @@ build_chroot ()
   lh_chroot_hacks || return 1
   lh_chroot_interactive || return 1
 
-  rm -rf chroot/root/*
+  (cd chroot/root; rm -rf * .rnd .gnupg .aptitude .debtags)
 
   # remove resolv.conf.orig so it doesn't get restored
   rm -f chroot/etc/resolv.conf.orig
 
   echo I: deconfiguring chroot
   lh_chroot_linux-image remove || return 1
-  lh_chroot_sources remove || return 1
   lh_chroot_apt remove || return 1
   lh_chroot_hostname remove || return 1
   lh_chroot_resolv remove || return 1
@@ -420,14 +477,40 @@ build_chroot ()
   lh_chroot_proc remove || return 1
   lh_chroot_cache save || return 1
 
+  DOM0_PKGS_URL=http://packages.vyatta.com/vyatta-dev/tmp
+  DOM0_KERNEL_PKG=linux-image-2.6.24-19-xen_2.6.24-19.36_amd64.deb
+  DOM0_MODULES_PKG=linux-ubuntu-modules-2.6.24-19-xen_2.6.24-19.28_amd64.deb
+  if eval "$use_xendomzero" ; then
+    # xen dom0 kernel
+    (
+      cd chroot/root
+      rm -f linux-*.deb
+      wget $DOM0_PKGS_URL/$DOM0_KERNEL_PKG
+      wget $DOM0_PKGS_URL/$DOM0_MODULES_PKG
+    )
+    chroot chroot dpkg -i /root/$DOM0_KERNEL_PKG /root/$DOM0_MODULES_PKG
+    rm -f chroot/root/linux-*.deb
+
+    # fix debian xen setup
+    chroot chroot ln -sf ../lib/xen-common/bin/xen-utils-wrapper \
+      /usr/sbin/tapdisk
+  fi
+
   local kernelname=`cd chroot/lib/modules;echo *`
-  if [ "$kernelname" ]
+  if [  "$kernelname" = '*' ]
   then
-     chroot chroot depmod -a `cd chroot/lib/modules;echo *`
-  else
      echo "Missing kernel module"
      return 1
   fi
+
+  for i in $kernelname
+  do
+     chroot chroot depmod -a $i
+  done
+
+  # restore /dev/random
+  rm -rf chroot/dev/random &&
+  mknod -m 666 chroot/dev/random c 1 8 || true
 }
 
 echo I: building chroot
@@ -435,8 +518,6 @@ if ! build_chroot; then
   echo E: chroot build failed
   exit 1
 fi
-
-mk_version_package
 
 # add config version string to default config file
 chroot chroot sh -c \
@@ -457,12 +538,12 @@ if [ -f chroot/sbin/ldconfig.REAL ]; then
     mv chroot/sbin/ldconfig.REAL chroot/sbin/ldconfig
 fi
 
-echo I: Cache Package files
-( cd chroot/var/lib/apt && \
-    find lists -print0 | \
-    cpio --null --quiet -pdmu ../../../../cache )
+(
+    echo I: Cache Package files
+    cd chroot/var/lib/apt &&
+    cp -alf lists ../../../../cache
+)
 
-declare -x MKSQUASHFS_OPTIONS="-no-progress -ef tmp/mksquashfs.exclude"
 >chroot/tmp/mksquashfs.exclude
 for b in chroot/var/lib/apt/lists/*_dists_* ; do
     echo ${b#chroot/}	>> chroot/tmp/mksquashfs.exclude
@@ -473,14 +554,26 @@ done
 
 # exclude more files
 cat <<EOF >> chroot/tmp/mksquashfs.exclude
-etc/apt/preferences
 etc/resolv.conf
 var/log/bootstrap.log
 var/log/dpkg.log
 EOF
 
 ## restore apt/preferences for binary build
-cp chroot_local-includes/etc/apt/preferences chroot/etc/apt
+cp -f chroot_local-includes/etc/apt/preferences chroot/etc/apt
+sed -i 's/ 999/ 1000/' chroot/etc/apt/preferences
+
+## Clean up ssh keys.  System should regen keys locally
+rm -f chroot/etc/ssh/ssh_host*
+
+# build the XenSource partition image
+if eval "$create_xensourcevm"; then
+  vyatta-xensource-partition-image || return 1
+fi
+
+chroot chroot apt-get -f -y remove apt-utils
+
+mk_version_package
 
 echo I: building binary
 if ! lh_binary ; then
@@ -488,8 +581,10 @@ if ! lh_binary ; then
   exit 1
 fi
 
+ln -nsf binary.iso livecd-"$BUILDID".iso
+
 # this is the wrong version package
-rm ./cache/packages_local-packageslists/vyatta-version_*.deb
+rm -f ./cache/packages_local-packageslists/vyatta-version_*.deb
 
 echo I: Done
 

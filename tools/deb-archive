@@ -31,6 +31,9 @@ help() {
   echo -e "\t-h\tThis help text"
 }
 
+# target arch
+BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
+
 case X`id -n -u` in
  Xautobuild | Xroot )
 	;;
@@ -185,15 +188,15 @@ do
     cd $REPO_ROOT
 
     echo -e "\tChecking $version/$repository"
-    mkdir -p dists/$version/$repository/binary-i386
+    mkdir -p dists/$version/$repository/binary-$BARCH
 
     # Create the Packages and Packages.gz files
     dir=`set_pool "$version"/"$repository"`
 
     rename_files "$dir"
     dpkg-scanpackages "$dir" 2>/dev/null |
-    tee dists/$version/$repository/binary-i386/Packages |
-    gzip >dists/$version/$repository/binary-i386/Packages.gz
+    tee dists/$version/$repository/binary-$BARCH/Packages |
+    gzip >dists/$version/$repository/binary-$BARCH/Packages.gz
   done
 
   [ "$CODENAME" ] || CODENAME="$version"
@@ -230,11 +233,13 @@ EOF
 
   mv /tmp/$$-Release Release
   rm -f Release.gpg
-  if [ X`id -n -u` = Xautobuild ]
+  if [ X`id -n -u` != Xautobuild ]
   then
-    #gpg --use-agent --output Release.gpg --detach-sig Release
-    gpg --output Release.gpg --detach-sig Release
+    echo "WARNING: not using autobuild's key to sign Release file"
   fi
+
+  #gpg --use-agent --output Release.gpg --detach-sig Release
+  gpg --output Release.gpg --detach-sig Release
 
   rmdir lock
   cd $HOME

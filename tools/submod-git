@@ -2,6 +2,38 @@
 
 progname=${0##*/}
 shopt -s nullglob
+
+path_to()
+{
+	MYPATH="$1"
+	chmod +x "$MYPATH" 2>/dev/null
+	if which "$MYPATH"  >/dev/null
+	then
+		# path is OK
+		MYPATH=`which "$MYPATH"`
+		MYPATH=`dirname "$MYPATH"`
+		MYPATH=`cd "$MYPATH";echo "$PWD"`
+		return 0
+	fi
+
+	chmod +x "$0" 2>/dev/null
+	MYPATH=`which "$0"`
+	MYPATH=`dirname "$MYPATH"`/"$1"
+	chmod +x "$MYPATH" 2>/dev/null
+	if which "$MYPATH"  >/dev/null
+	then
+		MYPATH=`dirname "$MYPATH"`
+		MYPATH=`cd "$MYPATH";echo "$PWD"`
+		PATH="$PATH":"$MYPATH"
+		return 0
+	fi
+
+	echo Cannot find "$1"
+	exit 1
+}
+
+path_to fetch-with-status
+
 cd pkgs 2>/dev/null
 
 info=echo
@@ -10,6 +42,7 @@ git="git_status"
 
 declare -a cloned=( */.git pkgs/*/.git )
 declare -a submodule=( ${cloned[@]%/*} )
+
 
 while [ $# -gt 0 ] ; do
     case "$1" in
@@ -37,7 +70,7 @@ COMMAND:
   update-mods	Update index for all modified files
 
 SUBMODULE:
-  If no submodule given, perform git-COMMAND on all checked-out submodules
+  If no submodule given, perform git COMMAND on all checked-out submodules
 
 EOF
 	    exit 0;;
@@ -72,62 +105,53 @@ done
 
 git_pull ()
 {
-    git-pull
+    git pull
+    git fetch --tags
 }
 
 git_push ()
 {
-    git-push
+    git push
 }
 
 git_push-with-tags ()
 {
-    git-push --tags
+    git push --tags
 }
 
 git_diff ()
 {
-    git-diff
+    git diff
 }
 
 git_branch ()
 {
-    git-branch
+    git branch
 }
 
 git_branch-av ()
 {
-    git-branch -a -v
+    git branch -a -v
 }
 
 git_clean-n ()
 {
-    git-clean -n
+    git clean -n
 }
 
 git_lsmods ()
 {
-    git-ls-files -m
+    git ls-files -m
 }
 
 get_branch_info()
 {
-    git-branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'
+    git branch|grep '^\* '|sed 's/(no branch)/NOBRANCH/'
 }
 
 get_branch()
 {
     get_branch_info|awk '{ print $2 }'
-}
-
-guess_branch()
-{
-    local branch
-
-    branch=`get_branch`
-    [ "$branch" = NOBRANCH -o ! "$branch" ] && branch="$SUPERBRANCH"
-    [ "$branch" = NOBRANCH ] && branch=master
-    echo "$branch"
 }
 
 get_sha()
@@ -137,7 +161,7 @@ get_sha()
 
 git_checkout()
 {
-	if ! git-checkout "$SUPERBRANCH" 2>/dev/null
+	if ! git checkout "$SUPERBRANCH" 2>/dev/null
 	then
 		echo No branch "$branch"
 	fi
@@ -145,64 +169,26 @@ git_checkout()
 
 git_fetch ()
 {
-    local modulename=`basename "$PWD"`
-
-    git-fetch -q 2>/dev/null
-    if git-status|grep '^# Changes to be committed:' >/dev/null
-    then
-	echo There are uncommited changes.
-    fi
-
-    if git-status|grep '^# Changed but not updated:' >/dev/null
-    then
-	echo There are changes not yet added.
-    fi
-
-    if (git-status|grep '^# Untracked files:' >/dev/null) ; then
-	echo There are untracked files.
-    fi
-
-    (
-    if cd ../../.git 2>/dev/null
-    then
-	parent=`cd .. && git-submodule status pkgs/"$modulename"|sed 's/\(.\).*/\1/'`;
-	case "$parent" in
-	    '+' ) echo This submodule has a commit not in the parent.;;
-	    '-' ) echo This submodule is not up to date.;;
-	esac
-    fi
-    )
-
-    branch=`guess_branch`
-    upstream=origin/"$branch"
-    git-branch -a|grep "$upstream" >/dev/null || upstream=origin/master
-
-    diffs=`git-diff "$branch" "$upstream"|head -1`
-    if [ "$diffs" ]
-    then 
-	in_repo=`git-log -1 --name-status "$upstream".."$branch"`
-	[ "$in_repo" ] && echo A local commit is not in the shared repo.
-
-	in_repo=`git-log -1 --name-status "$branch".."$upstream"`
-	[ "$in_repo" ] && echo Local branch does not have a commit from the shared repo.
-   fi
+    fetch-with-status
 }
 
 git_diff-cached ()
 {
-    git-diff --cached
+    git diff --cached
 }
 
 git_update-mods ()
 {
-    git-ls-files -m | git-update-index --stdin
+    git ls-files -m | git update-index --stdin
 }
 
 git_status()
 {
-	git-status|grep -v -e '^nothing to commit' -e '^# On branch '
+	git status|grep -v -e '^nothing to commit' -e '^# On branch '
 }
 
+pwd
+(cd ..;eval $trace git-submodule init)
 SUPERBRANCH=`get_branch`
 eval $info ========= . =========
 eval $trace $git

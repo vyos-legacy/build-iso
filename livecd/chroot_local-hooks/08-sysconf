@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 for conf in motd.tail syslog.conf; do
   cp -f /opt/vyatta/etc/$conf /etc/$conf

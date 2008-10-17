@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 grep -q '\(^[^#]*\)\(\.\|source\) /etc/bash_completion' root/.bashrc || \
     cat <<-EOF >> root/.bashrc

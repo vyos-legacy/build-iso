@@ -23,6 +23,11 @@
 /livecd/iso-label
 /livecd/mk.livecd.conf
 /livecd/version
+/livecd/branch
+/livecd/xensource
+/livecd/buildid
+/livecd/builtby
+/livecd/iso-submodules.txt
 
 /mk.conf
 
@@ -40,3 +45,5 @@
 debian/control
 
 *.iso
+
+

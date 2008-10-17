@@ -2,8 +2,12 @@
 ## Top level Makefile for Vyatta System Build
 
 export MAKEFLAGS
+export NETSNMP_DONT_CHECK_VERSION=1
 
 include mk.conf
+
+PACKAGE_DEBS := $(subst /debian,,$(wildcard pkgs/*/debian))
+CLEAN_DEBS := $(subst pkgs/,clean-pkgs/,$(PACKAGE_DEBS))
 
 UID := $(shell id -u)
 ifneq ($(UID),0)
@@ -14,7 +18,7 @@ endif
 
 define mk_iso
 @rm -rf livecd/.lock livecd/.permissions
-cd livecd && $(FAKEROOT) $(FAKEPERMISSIONS) $(FAKECHROOT) ./mk.livecd
+cd livecd && $(FAKEROOT) $(FAKECHROOT) ./mk.livecd
 endef
 
 have_linux_kernel_di := $(shell test -e pkgs/linux-kernel-di-i386-2.6/debian/rules && echo -n true)
@@ -125,8 +129,7 @@ endef
 
 endif
 
-all :
-	tools/submod-mk
+all : package_debuilds
 	$(mk_iso)
 
 .PHONY : udebs
@@ -154,8 +157,6 @@ mostlyclean :
 clean :
 	@$(MAKE) mostlyclean
 	@tools/submod-clean
-	@$(clean_udebs)
-	@$(clean_installer)
 	@rm -rf livecd/cache/stage*
 
 .PHONY : clean-udebs
@@ -170,3 +171,26 @@ clean-installer :
 distclean :
 	@$(MAKE) clean
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
+
+pkgs/wanpipe: pkgs/linux-image
+
+pkgs/iptables: pkgs/linux-image
+
+.PHONY: package_debuilds
+package_debuilds: $(PACKAGE_DEBS)
+	@echo DONE
+
+.PHONY: clean_debuilds
+clean_debuilds: $(CLEAN_DEBS)
+	@echo DONE
+
+.PHONY: $(PACKAGE_DEBS)
+$(PACKAGE_DEBS):
+	@case "$@" in pkgs/installer*|pkgs/linux-kernel-di*|"" )  true;; *) echo !!!!!$@!!!!!!!; cd $@; debuild -i -b -uc -us -nc;; esac
+
+.PHONY: $(CLEAN_DEBS)
+$(CLEAN_DEBS):
+	@d=$$(echo $@ | sed 's/^clean-//'); case "$$d" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$$d!!!!!!!;; *) cd $$d; debuild clean;; esac
+
+#$(PACKAGE_DEBS):
+#	echo $(PACKAGE_DEBS)
