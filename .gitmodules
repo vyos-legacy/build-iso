@@ -130,3 +130,6 @@
 [submodule "pkgs/live-initramfs"]
 	path = pkgs/live-initramfs
 	url = http://git.vyatta.com/live-initramfs.git
+[submodule "pkgs/vyatta-wirelessmodem"]
+	path = pkgs/vyatta-wirelessmodem
+	url = http://suva.vyatta.com/vyatta-wirelessmodem.git
