@@ -109,7 +109,7 @@ print_branch()
       done
       if [ ! "$repo_in_branch" ]
       then
-	echo -n "Local branch is missing this commit: `print_branch $i`"
+	echo -n "Local branch is missing a commit: `print_branch $i`"
 	echo
       else
         [ "$branch_in_repo" ] &&
