@@ -339,15 +339,13 @@ gutsy | hardy )
 	    INCLUDE_PKGS+=,python-libvirt
         fi
 
-if false
+if true
 then
         LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
         LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
         LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
         LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
 else
-        LH_MIRROR_BINARY="http://firebolt.vyatta.com/vyatta-islavista-peg"
-        LH_MIRROR_BOOTSTRAP="http://firebolt.vyatta.com/vyatta-islavista-peg"
         LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
         LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
 fi
