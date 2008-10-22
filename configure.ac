@@ -238,7 +238,7 @@ if test -d $KERN_SUBMOD_DIR/debian; then
 fi
 
 # FIXME! fetch version from source
-VYATTA_LINUX_VER="linux-image-2.6.26-1"
+VYATTA_LINUX_VER="linux-image-2.6.27-1"
 VYATTA_LINUX_PKG="$VYATTA_LINUX_VER-$LH_LINUX_FLAVOURS"
 LH_LINUX_PACKAGES=none
 BUILD_PKGS=
