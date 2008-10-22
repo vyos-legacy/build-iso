@@ -125,7 +125,7 @@ Build Host Setup
     packages,
 
 	apt-get install asciidoc build-essential \
-        bison flex docbook-utils gcc-4.2 git buildpackage groff gs \
+        bison flex docbook-utils gcc-4.2 git-buildpackage groff gs \
 	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
  	libpcap0.8-dev libpcre3-dev libprelude-dev \
 	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
