@@ -306,6 +306,7 @@ gutsy | hardy )
 	INCLUDE_PKGS+=,apt-utils
 	INCLUDE_PKGS+=,live-initramfs
 	INCLUDE_PKGS+=,ssh
+	INCLUDE_PKGS+=,open-vm-tools
 	#INCLUDE_PKGS+=,iproute
 
 	if test X$with_kernel = Xno ; then
