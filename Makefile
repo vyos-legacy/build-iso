@@ -176,6 +176,8 @@ pkgs/wanpipe: pkgs/linux-image
 
 pkgs/iptables: pkgs/linux-image
 
+pkgs/open-vm-tools: pkgs/linux-image
+
 .PHONY: package_debuilds
 package_debuilds: $(PACKAGE_DEBS)
 	@echo DONE
