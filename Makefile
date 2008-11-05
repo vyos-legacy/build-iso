@@ -172,11 +172,12 @@ distclean :
 	@$(MAKE) clean
 	@rm -rf livecd/{cache,deb-install,deb-install.tar}
 
-pkgs/wanpipe: pkgs/linux-image
+pkgs/wanpipe: pkgs/linux-image/debian/stamps/build-base
+pkgs/iptables: pkgs/linux-image/debian/stamps/build-base
+pkgs/open-vm-tools: pkgs/linux-image/debian/stamps/build-base
+pkgs/net-snmp: pkgs/linux-image/debian/stamps/build-base
 
-pkgs/iptables: pkgs/linux-image
-
-pkgs/open-vm-tools: pkgs/linux-image
+pkgs/linux-image/debian/stamps/build-base: pkgs/linux-image
 
 .PHONY: package_debuilds
 package_debuilds: $(PACKAGE_DEBS)
