@@ -139,3 +139,6 @@
 [submodule "pkgs/initramfs-tools"]
 	path = pkgs/initramfs-tools
 	url = http://git.vyatta.com/initramfs-tools.git
+[submodule "pkgs/netplug"]
+	path = pkgs/netplug
+	url = http://git.vyatta.com/netplug.git
