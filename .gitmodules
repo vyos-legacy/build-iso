@@ -142,3 +142,6 @@
 [submodule "pkgs/netplug"]
 	path = pkgs/netplug
 	url = http://git.vyatta.com/netplug.git
+[submodule "pkgs/pam-tacplus"]
+	path = pkgs/pam-tacplus
+	url = http://git.vyatta.com/pam-tacplus.git
