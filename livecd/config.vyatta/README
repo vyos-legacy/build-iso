@@ -1,0 +1,32 @@
+This directory contains files that are used by live-helper during the build
+process.
+
+binary_local-includes:
+  Files in this sub-directory are copied into the binary directory during the
+  binary step (before the image is built).
+
+chroot_apt:
+  The "preferences" file is used by apt during the chroot step.
+
+chroot_local-hooks:
+  The scripts in this sub-directory are executed (chrooted) during the chroot
+  step (after packages are installed).
+
+chroot_local-includes:
+  Files in this sub-directory are copied into the chroot directory during the
+  chroot step (after packages are installed).
+
+chroot_local-packageslists:
+  This sub-directory contains package lists that specify what packages should
+  be installed. The lists that should be used are specified using the
+  LH_PACKAGES_LISTS variable.
+
+chroot_local-patches:
+  This sub-directory contains patches that are applied during the chroot
+  step (after packages are installed).
+
+chroot_sources:
+  The files in this sub-directory specify the package repositories that should
+  be added to sources.list during the chroot step. The ".gpg" files are the
+  keys corresponding to the repositories.
+

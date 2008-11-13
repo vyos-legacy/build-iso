@@ -14,8 +14,8 @@ AC_PROG_LN_S
 test "X$LH_ARCHITECTURE" = "X" && LH_ARCHITECTURE=`dpkg --print-architecture`
 AC_ARG_VAR(LH_ARCHITECTURE, [default: dpkg --print-architecture])
 
-test "X$LH_APT" = "X" && LH_APT=apt
-AC_ARG_VAR(LH_APT, [default: apt])
+test "X$LH_APT" = "X" && LH_APT=aptitude
+AC_ARG_VAR(LH_APT, [default: aptitude])
 
 test ! "$LH_BOOTAPPEND_LIVE" && LH_BOOTAPPEND_LIVE=""
 AC_ARG_VAR(LH_BOOTAPPEND_LIVE,
@@ -36,12 +36,6 @@ AC_ARG_VAR(LH_BOOTSTRAP_FLAVOUR, [default: minimal])
 
 test "X$LH_CHROOT_FILESYSTEM" = "X" && LH_CHROOT_FILESYSTEM=squashfs
 AC_ARG_VAR(LH_CHROOT_FILESYSTEM, [default: squashfs])
-
-test "X$LH_DEBIAN_INSTALLER" = "X" && LH_DEBIAN_INSTALLER=disabled
-AC_ARG_VAR(LH_DEBIAN_INSTALLER, [default: disabled; use cdrom to enable])
-
-test "X$LH_DEBIAN_INSTALLER_DAILY" = "X" && LH_DEBIAN_INSTALLER_DAILY=disabled
-AC_ARG_VAR(LH_DEBIAN_INSTALLER_DAILY, [default: disabled])
 
 test "X$LH_HOSTNAME" = "X" && LH_HOSTNAME=vyatta
 AC_ARG_VAR(LH_HOSTNAME, [default: vyatta])
@@ -67,22 +61,19 @@ AC_ARG_VAR(LH_MEMTEST, [default: disabled])
 test "X$LH_PACKAGES" = "X" && LH_PACKAGES=none
 AC_ARG_VAR(LH_PACKAGES, [default: none])
 
-test "X$LH_PACKAGES_LISTS" = "X" && LH_PACKAGES_LISTS=none
-AC_ARG_VAR(LH_PACKAGES_LISTS, [default: none])
-
 test "X$LH_QUIET" = "X" && LH_QUIET=enabled
 AC_ARG_VAR(LH_QUIET, [default: enabled])
 
 test "X$LH_VERBOSE" = "X" && LH_VERBOSE=disabled
 AC_ARG_VAR(LH_VERBOSE, [default: disabled])
 
-test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=isolinux.cfg
+test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=templates/isolinux.cfg
 AC_ARG_VAR(LH_SYSLINUX_CFG, [default: isolinux.cfg])
 
-test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disable
-AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disable])
+test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disabled
+AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disabled])
 
-test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=
+test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=none
 AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
 	[default: none, overridden with binary_local-includes])
 
@@ -94,26 +85,6 @@ test "X$VYATTA_ARCHIVE" = "X" && \
 AC_ARG_VAR(VYATTA_ARCHIVE, [default: Vyatta nightly build])
 
 # process --with[out] arguments
-AC_ARG_WITH(exclude,
-[AS_HELP_STRING([--with-exclude],
-  [comma separated package list to exclude from iso])])
-
-if test "X$with_exclude" = "X" ; then
-   EXCLUDE_PKGS=''
-else
-   EXCLUDE_PKGS=$with_exclude
-fi
-
-AC_ARG_WITH(include,
-[AS_HELP_STRING([--with-include],
-  [comma separated package list to include with iso])])
-
-if test "X$with_include" = "X" ; then
-   INCLUDE_PKGS=''
-else
-   INCLUDE_PKGS=$with_include
-fi
-
 AC_ARG_WITH(target-dist,
 	[AS_HELP_STRING([--with-target-dist=<dist>],
 	  [Target distribution (e.g., "lenny"), default to the host distribution])],
@@ -136,41 +107,6 @@ else
 	LH_UNION_FILESYSTEM=unionfs
 fi
 
-AC_ARG_WITH(exposed-root,
-[AS_HELP_STRING([--with-exposed-root], [enable livecd exposed root feature])])
-
-if test X$with_exposed_root = Xyes ; then
-   LH_EXPOSED_ROOT=enabled
-else
-   LH_EXPOSED_ROOT=disabled
-fi
-
-AC_ARG_WITH(kernel,
-[AS_HELP_STRING([--with-kernel],
-  [ fetch (default) or vyatta kernel])]
-[AS_HELP_STRING([--without-kernel],
-  [do not fetch appropriate distro kernel])],
-[],
-[with_kernel=fetch])
-
-AC_ARG_WITH(xen,
-[AS_HELP_STRING([--with-xen], [Xen DomU target])])
-
-if test X$with_xen = Xyes ; then
-   use_xen=true
-else
-   use_xen=false
-fi
-
-AC_ARG_WITH(xendomzero,
-[AS_HELP_STRING([--with-xendomzero], [Xen Dom0 target])])
-
-if test X$with_xendomzero = Xyes ; then
-   use_xendomzero=true
-else
-   use_xendomzero=false
-fi
-
 AC_ARG_WITH(xensourcevm,
 [AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
 
@@ -178,19 +114,6 @@ if test X$with_xensourcevm = Xyes ; then
    create_xensourcevm=true
 else
    create_xensourcevm=false
-fi
-
-AC_ARG_WITH(deb-install,
-[AS_HELP_STRING([--with-deb-install],
-[build Debian installer CD])])
-
-AC_ARG_WITH(webgui,
-[AS_HELP_STRING([--without-webgui],
-  [exclude Web GUI from the ISO])])
-
-VYATTA_INCLUDE_WEBGUI=yes
-if test "X$with_webgui" = Xno ; then
-  VYATTA_INCLUDE_WEBGUI=no
 fi
 
 # build arch
@@ -241,123 +164,14 @@ fi
 VYATTA_LINUX_VER="linux-image-2.6.27-1"
 VYATTA_LINUX_PKG="$VYATTA_LINUX_VER-$LH_LINUX_FLAVOURS"
 LH_LINUX_PACKAGES=none
-BUILD_PKGS=
-FETCH_PKGS=
 
-case "$LH_DISTRIBUTION" in
-gutsy | hardy )
-	LH_BOOTSTRAP_INCLUDE="less,gnupg,rsync"
-	LH_MIRROR_BINARY="http://us.archive.ubuntu.com/ubuntu"
-	LH_MIRROR_BINARY_SECURITY="http://security.ubuntu.com/ubuntu"
-	LH_MIRROR_BOOTSTRAP="http://us.archive.ubuntu.com/ubuntu"
-	LH_MIRROR_BOOTSTRAP_SECURITY="http://security.ubuntu.com/ubuntu"
-	# FIXME! /usr/bin/lh_chroot_sources currently uses
-	# LH_DISTRIBUTION/updates but the ubuntu archive is
-	# LH_DISTRIBUTION-updates
-	LH_SECURITY="disabled"
-	LH_SECTIONS="main restricted universe multiverse"
-	test "$EXCLUDE_PKGS" && EXCLUDE_PKGS+=,
-	EXCLUDE_PKGS+=mailx
-	EXCLUDE_PKGS+=,dash
-	EXCLUDE_PKGS+=,openhpid
-	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
-# FIXME! can no longer exclude exim like this...
-#	EXCLUDE_PKGS+=,exim4-daemon-light,exim4-config,exim4-base,exim4,ubuntu-minimal
-	if eval "$use_xen" ; then
-	    VYATTA_LINUX_PKG=""
-	    LH_LINUX_PACKAGES=linux-image
-	    LH_LINUX_FLAVOURS="xen"
-	    LH_BOOTSTRAP_INCLUDE+=",libc6-xen"
-	    EXCLUDE_PKGS+=,alsa-base
-	    EXCLUDE_PKGS+=,alsa-utils
-	    EXCLUDE_PKGS+=,console-setup
-	    EXCLUDE_PKGS+=,console-terminus
-	    EXCLUDE_PKGS+=,console-tools
-	    EXCLUDE_PKGS+=,pciutils
-	    EXCLUDE_PKGS+=,pcmciautils
-	    EXCLUDE_PKGS+=,wireless-tools
-	    EXCLUDE_PKGS+=,wpasupplicant
-	elif test X$with_kernel = Xno ; then
-	    VYATTA_LINUX_PKG=""
-	    LH_LINUX_PACKAGES=linux-image
-	    LH_LINUX_FLAVOURS="server"
-	fi
-	if test "$VYATTA_LINUX_PKG"
-	then
-	    test "$INCLUDE_PKGS" && INCLUDE_PKGS+=,
-	    INCLUDE_PKGS+="$VYATTA_LINUX_PKG"
-	fi
-	;;
-* )
-	LH_BOOTSTRAP_INCLUDE="locales,less,initramfs-tools,libmagic1,rsync"
+LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
+LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
+LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
+LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
 
-	test "$EXCLUDE_PKGS" && EXCLUDE_PKGS+=,
-	EXCLUDE_PKGS+=gcc-4.2-base
-
-	test "$INCLUDE_PKGS" && INCLUDE_PKGS+=,
-	INCLUDE_PKGS+=grub-pc
-	INCLUDE_PKGS+=,openssl
-	INCLUDE_PKGS+=,openswan
-	INCLUDE_PKGS+=,openssh-server
-	INCLUDE_PKGS+=,vim-common
-	INCLUDE_PKGS+=,vim-tiny
-	INCLUDE_PKGS+=,man-db
-	INCLUDE_PKGS+=,nano
-	INCLUDE_PKGS+=,apt-utils
-	INCLUDE_PKGS+=,live-initramfs
-	INCLUDE_PKGS+=,ssh
-	INCLUDE_PKGS+=,open-vm-tools
-	#INCLUDE_PKGS+=,iproute
-
-	if test X$with_kernel = Xno ; then
-	    VYATTA_LINUX_PKG=""
-	    LH_LINUX_PACKAGES=linux-image
-	    LH_LINUX_FLAVOURS=
-	    # 486 686 686-bigmem amd64
-	    for f in 686 ; do
-		LH_LINUX_FLAVOURS+=" $f"
-		test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
-		    FETCH_PKGS+=" squashfs-modules-2.6-$f"
-		test X$LH_UNION_FILESYSTEM = Xaufs && \
-		    FETCH_PKGS+=" aufs-modules-2.6-$f"
-	    done
-	    test X$LH_CHROOT_FILESYSTEM = Xsquashfs && \
-		FETCH_PKGS+=" squashfs-tools"
-	fi
-	test "$VYATTA_LINUX_PKG" && INCLUDE_PKGS+=,"$VYATTA_LINUX_PKG"
-        if eval "$use_xendomzero" ; then
-            # xen packages
-	    INCLUDE_PKGS+=,xen-docs-3.2
-	    INCLUDE_PKGS+=,xen-hypervisor-3.2-1-amd64
-	    INCLUDE_PKGS+=,xen-shell
-	    INCLUDE_PKGS+=,xen-tools
-	    INCLUDE_PKGS+=,xen-utils-3.2-1
-	    INCLUDE_PKGS+=,xen-utils-common
-            
-            # libvirt packages
-	    INCLUDE_PKGS+=,libvirt-bin
-	    INCLUDE_PKGS+=,libvirt0
-	    INCLUDE_PKGS+=,python-libvirt
-        fi
-
-if true
-then
-        LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
-        LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
-        LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
-        LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
-else
-        LH_MIRROR_BINARY_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
-        LH_MIRROR_BOOTSTRAP_SECURITY="http://firebolt.vyatta.com/vyatta-islavista-peg"
-fi
-
-	LH_SECURITY="enabled"
-	LH_SECTIONS="main"
-	LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
-	;;
-esac
-EXCLUDE_PKGS=${EXCLUDE_PKGS/,$/}
-INCLUDE_PKGS=${INCLUDE_PKGS/,$/}
+LH_SECURITY="enabled"
+LH_SECTIONS="main"
 
 AC_CONFIG_FILES([mk.conf livecd/mk.livecd.conf])
 
@@ -369,21 +183,14 @@ AC_SUBST(MACHINE_CFLAG)
 AC_SUBST(MACHINE_PREFIX)
 AC_SUBST(NOSTRIP)
 
-AC_SUBST(EXCLUDE_PKGS)
-AC_SUBST(INCLUDE_PKGS)
-
 AC_SUBST(LH_APT)
 AC_SUBST(LH_ARCHITECTURE)
 AC_SUBST(LH_BOOTAPPEND_LIVE)
 AC_SUBST(LH_BOOTAPPEND_INSTALL)
 AC_SUBST(LH_BOOTLOADER)
 AC_SUBST(LH_BOOTSTRAP)
-AC_SUBST(LH_BOOTSTRAP_EXCLUDE)
 AC_SUBST(LH_BOOTSTRAP_FLAVOUR)
-AC_SUBST(LH_BOOTSTRAP_INCLUDE)
 AC_SUBST(LH_CHROOT_FILESYSTEM)
-AC_SUBST(LH_DEBIAN_INSTALLER)
-AC_SUBST(LH_DEBIAN_INSTALLER_DAILY)
 AC_SUBST(LH_DISTRIBUTION)
 AC_SUBST(LH_EXPOSED_ROOT)
 AC_SUBST(LH_HOSTNAME)
@@ -400,7 +207,6 @@ AC_SUBST(LH_MIRROR_BINARY_SECURITY)
 AC_SUBST(LH_MIRROR_BOOTSTRAP)
 AC_SUBST(LH_MIRROR_BOOTSTRAP_SECURITY)
 AC_SUBST(LH_PACKAGES)
-AC_SUBST(LH_PACKAGES_LISTS)
 AC_SUBST(LH_QUIET)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_SECURITY)
@@ -411,12 +217,9 @@ AC_SUBST(LH_SYSLINUX_TIMEOUT)
 AC_SUBST(LH_UNION_FILESYSTEM)
 AC_SUBST(LH_VERBOSE)
 
-AC_SUBST(use_xen)
-AC_SUBST(use_xendomzero)
 AC_SUBST(create_xensourcevm)
 
 AC_SUBST(VYATTA_ARCHIVE)
 AC_SUBST(VYATTA_LINUX_PKG)
-AC_SUBST(VYATTA_INCLUDE_WEBGUI)
 
 AC_OUTPUT

@@ -1,0 +1,188 @@
+# functions for mk.livecd
+
+clean_mounts() 
+{               
+  for m in proc-live sysfs-live devpts-live ; do
+    if grep -q $m /proc/mounts ; then
+      echo I: unmounting $m
+      umount $m || true
+    fi
+  done
+}
+
+get_branch()
+{
+  VBRANCH=`cat branch 2>/dev/null` || true
+  [ "$VBRANCH" ] || VBRANCH=`git-branch|awk '/^\*/ {print $2}'`
+}
+
+mk_version_package ()
+{
+    local savedir="$PWD"
+    local etcdir="$savedir"/chroot/opt/vyatta/etc
+    local config_src=community
+    local tmpdir=/tmp/$$-version
+    local vf=$tmpdir/opt/vyatta/etc
+
+    VVERSION=`cat version 2>/dev/null` || true
+    case "$VVERSION" in
+    [0-9]*)
+                config_src=supported
+                ;;
+    "" )
+                get_branch
+                VVERSION=VC888."$VBRANCH"
+                ;;
+    esac
+
+
+    mkdir -p $vf/config
+
+    cp templates/$config_src/config.boot.default $vf/.
+
+    cd $tmpdir
+    mkdir DEBIAN
+
+    echo I: generating build record
+    cat <<-EOF > $vf/iso-build.txt
+Built by :    $BUILTBY
+Built on :    $HUMANTIME
+Build ID :    $BUILDID
+EOF
+
+    # backwards compatible symlink
+    ln -nsf iso-build.txt $vf/build.txt
+    #echo "$BUILDID">$savedir/iso-label # is this needed?
+
+    echo I: generating package list
+    chroot "$savedir"/chroot /opt/vyatta/bin/save-package-report
+    mv $etcdir/deb-versions.txt $vf/.
+
+    ( cd "$savedir"/.. ; git-submodule status 2>/dev/null ) \
+         > $vf/iso-submodules.txt
+    [ -s $vf/iso-submodules.txt ] || cp "$savedir"/iso-submodules.txt $vf/. 2>/dev/null
+
+    echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
+
+    echo "Version  :    ${VVERSION}">$vf/version
+    echo "Copyright:    2006-2008 Vyatta, Inc.">>$vf/version
+
+    (
+        echo "Package: vyatta-version"
+        echo "Version: ${VVERSION}"
+        echo "Architecture: all"
+        echo "Maintainer: Vyatta <debs@vyatta.com>"
+        echo "Essential: no"
+        echo "Section: base"
+        echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
+        echo -n Suggests: 
+        <$vf/deb-versions.txt sed -e 's/ *\([^ ]*\)$/(>=\1),/' -e 's/^/ /'
+        echo " nano"
+        echo Description: "$prefix version file"
+        echo " This package sets up the version file and a file containing"
+        echo " the list of recommended packages (with the recommended versions)"
+    ) >DEBIAN/control
+
+    mkdir ../$$-deb
+    dpkg --build . "../$$-deb/vyatta-version_${VVERSION}_all.deb" >/dev/null
+
+    rm -rf $tmpdir
+    cd $savedir
+    mv /tmp/$$-deb/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
+    dpkg -i --root=chroot config/chroot_local-packages/vyatta-version_${VVERSION}_all.deb
+    rm -rf /tmp/$$-deb
+}
+
+# Create the Vyatta domU partition image
+vyatta-xensource-partition-image ()
+{
+  echo I: creating XenSource partition image
+  rm -rf xensource
+  mkdir -p xensource/pimage
+
+  # using VVERSION throughout though I am not sure it is the right var
+
+  # preallocated image
+  # dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION.img bs=1024k count=4000
+  # sparse image
+  dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION.img bs=1k seek=4096k count=1
+
+  # allocate loop device for file
+  loop=$(losetup -f)
+  losetup $loop xensource/vyatta-xensource-$VVERSION.img || echo E: unable to allocate loop device
+
+  # create filesystem
+  mke2fs -j $loop
+
+  # mount loop device and copy root image
+  echo I: mounting image file
+  mount $loop xensource/pimage
+  echo I: copying root to image partition
+  cp -aR chroot/* xensource/pimage/
+
+  # stage the chroot
+  # need to edit the inittab get rid of t0 and add h0
+  # setup config.boot if neccessary
+
+  # we need a stripped verison of the kernel for pygrub 
+  echo I: fixing partition image kernel
+  kversion=$(egrep "Package: linux-image.+-vyatta-virt" ../pkgs/linux-image/debian/control | sed -e 's/Package: linux-image-\|-vyatta-virt//g')
+  strip ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux
+  gzip -c ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux \
+    > xensource/pimage/boot/vmlinux-$kversion-vyatta-virt
+
+  # create the default domU configuration file
+  cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
+	name='vyatta-xensource-$VVERSION'
+	bootloader='/usr/lib/xen-3.2-1/bin/pygrub'
+	on_reboot='restart'
+	on_shutdown='destroy'
+	on_crash='destroy'
+	image_name='vyatta-xensource-$VVERSION'
+	disk=['tap:aio:/var/xen/vyatta-xensource-$VVERSION.img,xvda1,w']
+	vcpus=1
+	memory=512
+	EOF
+
+  xen_kernel_version=$(ls xensource/pimage/boot/vmlinu[xz]-* | sed 's:xensource/pimage/boot/::g' | sort )
+
+  (
+      # stage the grub menu.lst for pygrub.
+      echo -e "timeout\t5"
+      echo
+      for version in $xen_kernel_version; do
+          echo -e "title\t$version"
+          echo -e "root\t(hd0,0)"
+          echo -e "kernel\t/boot/$version root=/dev/xvda1 ro console=hvc0"
+          iversion=$(echo $version | sed 's/vmlinu[xz]-//g')
+          echo -e "initrd\t/boot/initrd.img-$iversion"
+          echo
+      done
+  ) >"xensource/pimage/boot/grub/menu.lst"
+
+  # clean up the inittab
+  # remove T0 so it doesn't respawn needlessly
+  sed -i -e 's/T0/#T0/' xensource/pimage/etc/inittab
+  # add the xen pv console
+  echo -e "# xen console \nh0:12345:respawn:/sbin/getty 38400 hvc0" >> xensource/pimage/etc/inittab
+
+  # set /etc/hostname
+  rm -f xensource/pimage/etc/hostname
+  echo vyatta > xensource/pimage/etc/hostname
+  # set /etc/hosts
+  rm -f xensource/pimage/etc/hosts
+  echo 127.0.0.1 localhost vyatta > xensource/pimage/etc/hosts
+  # set /etc/fstab
+  rm -f xensource/pimage/etc/fstab
+  echo -e "/dev/xvda1\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
+
+  # clean up the mounts
+  echo I: unmounting the image file
+  umount xensource/pimage
+  echo I: releasing loop device $loop
+  losetup -d $loop
+
+  echo I: compressing XenSource partition image file
+  gzip xensource/vyatta-xensource-$VVERSION.img
+}
+

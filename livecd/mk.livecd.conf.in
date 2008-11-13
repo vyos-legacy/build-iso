@@ -1,23 +1,16 @@
 #!/bin/bash
 
-# configured environment variables for mk.livecd/live-helper scripts
+# environment variables for mk.livecd/live-helper scripts
 
-declare -x EXCLUDE_PKGS="@EXCLUDE_PKGS@"
-declare -x INCLUDE_PKGS="@INCLUDE_PKGS@"
 declare -x LH_APT="@LH_APT@"
 declare -x LH_ARCHITECTURE="@LH_ARCHITECTURE@"
 declare -x LH_BOOTAPPEND_LIVE="@LH_BOOTAPPEND_LIVE@"
 declare -x LH_BOOTAPPEND_INSTALL="@LH_BOOTAPPEND_INSTALL@"
 declare -x LH_BOOTLOADER="@LH_BOOTLOADER@"
 declare -x LH_BOOTSTRAP="@LH_BOOTSTRAP@"
-declare -x LH_BOOTSTRAP_EXCLUDE="@LH_BOOTSTRAP_EXCLUDE@"
 declare -x LH_BOOTSTRAP_FLAVOUR="@LH_BOOTSTRAP_FLAVOUR@"
-declare -x LH_BOOTSTRAP_INCLUDE="@LH_BOOTSTRAP_INCLUDE@"
 declare -x LH_CHROOT_FILESYSTEM="@LH_CHROOT_FILESYSTEM@"
-declare -x LH_DEBIAN_INSTALLER="@LH_DEBIAN_INSTALLER@"
-declare -x LH_DEBIAN_INSTALLER_DAILY="@LH_DEBIAN_INSTALLER_DAILY@"
 declare -x LH_DISTRIBUTION="@LH_DISTRIBUTION@"
-declare -x LH_EXPOSED_ROOT="@LH_EXPOSED_ROOT@"
 declare -x LH_HOSTNAME="@LH_HOSTNAME@"
 declare -x LH_INITRAMFS="@LH_INITRAMFS@"
 declare -x LH_ISO_APPLICATION="@LH_ISO_APPLICATION@"
@@ -33,7 +26,6 @@ declare -x LH_MIRROR_BOOTSTRAP="@LH_MIRROR_BOOTSTRAP@"
 declare -x LH_MIRROR_BOOTSTRAP_SECURITY="@LH_MIRROR_BOOTSTRAP_SECURITY@"
 declare -x LH_MIRROR_CHROOT_SECURITY="@LH_MIRROR_BOOTSTRAP_SECURITY@"
 declare -x LH_PACKAGES="@LH_PACKAGES@"
-declare -x LH_PACKAGES_LISTS="@LH_PACKAGES_LISTS@"
 declare -x LH_QUIET="@LH_QUIET@"
 declare -x LH_SECTIONS="@LH_SECTIONS@"
 declare -x LH_SECURITY="@LH_SECURITY@"
@@ -43,9 +35,67 @@ declare -x LH_SYSLINUX_SPLASH="@LH_SYSLINUX_SPLASH@"
 declare -x LH_SYSLINUX_TIMEOUT="@LH_SYSLINUX_TIMEOUT@"
 declare -x LH_UNION_FILESYSTEM="@LH_UNION_FILESYSTEM@"
 declare -x LH_VERBOSE="@LH_VERBOSE@"
-declare -x use_xen="@use_xen@"
-declare -x use_xendomzero="@use_xendomzero@"
 declare -x create_xensourcevm="@create_xensourcevm@"
 declare -x VYATTA_ARCHIVE="@VYATTA_ARCHIVE@"
 declare -x VYATTA_LINUX_PKG="@VYATTA_LINUX_PKG@"
-declare -x VYATTA_INCLUDE_WEBGUI="@VYATTA_INCLUDE_WEBGUI@"
+
+## packages needed for the chroot step
+LH_BOOTSTRAP_INCLUDE="locales"
+LH_BOOTSTRAP_INCLUDE+=",apt-utils,aptitude" # apt
+LH_BOOTSTRAP_INCLUDE+=",patch"              # for chroot_local-patches
+LH_BOOTSTRAP_INCLUDE+=",initramfs-tools"    # for update-initramfs.conf
+export LH_BOOTSTRAP_INCLUDE
+
+## packages not needed in bootstrap
+declare -x LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
+
+# package lists to include
+declare -x LH_PACKAGES_LISTS="vyatta-full vyatta-extra"
+
+declare -x LH_APT_RECOMMENDS="disabled"
+declare -x LH_CHROOT_BUILD="disabled"
+declare -x LH_CACHE_INDICES="enabled"
+declare -x DEBIAN_FRONTEND="noninteractive"
+
+if [[ "$PATH" != */sbin* ]] ; then
+  PATH+=:/usr/local/sbin:/usr/sbin:/sbin
+  export PATH
+fi
+
+: ${HUMANTIME:=$(date -u)}
+: ${ORGANIZATION:=vyatta.com}
+: ${LANGUAGE:=${LH_LANGUAGE:-en}}
+: ${LC_ALL:=C}
+export LANGUAGE
+export LC_ALL
+
+BUILDID=`cat buildid 2>/dev/null` || true
+if [ ! "$BUILDID" ]; then
+  BUILDID=`git log -1 --pretty=format:%h 2>/dev/null` || true
+  BUILDID=`date -u +%y%m%d%H%M`-${BUILDID}
+fi
+
+BUILTBY=`cat buildby 2>/dev/null` || true
+if [ -z "$BUILTBY" ]; then
+  if [ "$GIT_COMMITTER_EMAIL" ] ; then
+    BUILTBY=$GIT_COMMITTER_EMAIL
+  elif [ "$GIT_AUTHOR_EMAIL" ] ; then
+    BUILTBY=$GIT_AUTHOR_EMAIL
+  else
+    user_email=`git config user.email 2>/dev/null` || true
+    if [ "$user_email" ] ; then
+      BUILTBY=$user_email
+    elif [ "$SUDO_USER" ] ; then
+      BUILTBY=$SUDO_USER@$ORGANIZATION
+    else
+      BUILTBY=$USER@$ORGANIZATION
+    fi
+  fi
+fi
+
+LH_ISO_VOLUME+="$BUILDID"
+export LH_ISO_VOLUME
+
+if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
+  export LH_USE_FAKEROOT=enabled 
+fi
