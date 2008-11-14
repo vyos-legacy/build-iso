@@ -100,16 +100,23 @@ vyatta-xensource-partition-image ()
   rm -rf xensource
   mkdir -p xensource/pimage
 
+  arch=$(apt-config dump | grep Architecture | sed 's/\(.*\)"\(.*\)"\(.*\)/\2/')
+  if [ ! -f "../pkgs/linux-image/debian/control" ]; then
+    echo E: unable to find kernel control file
+    exit 1
+  fi
+  kversion=$(egrep "Package: linux-image.+-vyatta-virt" ../pkgs/linux-image/debian/control | sed -e 's/Package: linux-image-\|-vyatta-virt//g')
+
   # using VVERSION throughout though I am not sure it is the right var
 
   # preallocated image
-  # dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION.img bs=1024k count=4000
+  # dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION-$arch.img bs=1024k count=4000
   # sparse image
-  dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION.img bs=1k seek=4096k count=1
+  dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION-$arch.img bs=1k seek=4096k count=1
 
   # allocate loop device for file
   loop=$(losetup -f)
-  losetup $loop xensource/vyatta-xensource-$VVERSION.img || echo E: unable to allocate loop device
+  losetup $loop xensource/vyatta-xensource-$VVERSION-$arch.img || echo E: unable to allocate loop device
 
   # create filesystem
   mke2fs -j $loop
@@ -126,20 +133,23 @@ vyatta-xensource-partition-image ()
 
   # we need a stripped verison of the kernel for pygrub 
   echo I: fixing partition image kernel
-  kversion=$(egrep "Package: linux-image.+-vyatta-virt" ../pkgs/linux-image/debian/control | sed -e 's/Package: linux-image-\|-vyatta-virt//g')
-  strip ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux
-  gzip -c ../pkgs/linux-image/debian/build/build-i386-none-vyatta-virt/vmlinux \
+  if [ ! -f "../pkgs/linux-image/debian/build/build-$arch-none-vyatta-virt/vmlinux" ]; then
+    echo E: unable to find kernel image.  Please build kernel first.
+    exit 1
+  fi
+  strip ../pkgs/linux-image/debian/build/build-$arch-none-vyatta-virt/vmlinux
+  gzip -c ../pkgs/linux-image/debian/build/build-$arch-none-vyatta-virt/vmlinux \
     > xensource/pimage/boot/vmlinux-$kversion-vyatta-virt
 
   # create the default domU configuration file
   cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
-	name='vyatta-xensource-$VVERSION'
-	bootloader='/usr/lib/xen-3.2-1/bin/pygrub'
+	name='vyatta-$VVERSION'
+	bootloader='/usr/bin/pygrub'
 	on_reboot='restart'
 	on_shutdown='destroy'
 	on_crash='destroy'
-	image_name='vyatta-xensource-$VVERSION'
-	disk=['tap:aio:/var/xen/vyatta-xensource-$VVERSION.img,xvda1,w']
+	image_name='vyatta-$VVERSION'
+	disk=['tap:aio:/var/xen/vyatta-xensource-$VVERSION-$arch.img,xvda1,w']
 	vcpus=1
 	memory=512
 	EOF
@@ -183,6 +193,6 @@ vyatta-xensource-partition-image ()
   losetup -d $loop
 
   echo I: compressing XenSource partition image file
-  gzip xensource/vyatta-xensource-$VVERSION.img
+  gzip xensource/vyatta-xensource-$VVERSION-$arch.img
 }
 
