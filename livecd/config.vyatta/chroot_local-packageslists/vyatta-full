@@ -1,4 +1,6 @@
+grub-common
 grub-pc
+initramfs-tools
 iproute
 iptables
 libsnmp-base
@@ -6,7 +8,9 @@ libsnmp-perl
 libsnmp15
 linux-image-2.6.27-1-486-vyatta
 live-initramfs
+netplug
 open-vm-tools
+pam-tacplus
 snmp
 snmpd
 vyatta-antivirus
