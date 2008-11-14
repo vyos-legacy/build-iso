@@ -16,18 +16,12 @@ echo I: cleaning earlier build
 trap "clean_mounts; exit 0" EXIT
 clean_mounts
 rm -rf binary binary.iso chroot config livecd-*.iso .stage
+# remove cached Packages/Release files from previous run
+# (cache only valid within the same run)
+rm -rf cache/indices_bootstrap
 
 echo I: configuring build
 lh_config
-
-echo I: building bootstrap
-if ! lh_bootstrap; then
-  echo E: bootstrap build failed
-  exit 1
-fi
-
-# copy the locally-built packages for installation
-cp -lf ../pkgs/*.deb config/chroot_local-packages/. 2>/dev/null || true
 
 # prepare the config files for live helper
 (
@@ -37,6 +31,29 @@ cp -lf ../pkgs/*.deb config/chroot_local-packages/. 2>/dev/null || true
     chroot_local-patches \
     ../config/
 )
+
+# copy the locally-built packages for installation
+# (but only those on one of the lists)
+for p in ../pkgs/*.deb; do
+  found=false
+  pp=${p%%_*}
+  pkg=${pp#../pkgs/}
+  for l in $LH_PACKAGES_LISTS; do
+    if egrep -q -e "^$pkg$" config/chroot_local-packageslists/$l; then
+      found=true
+      break
+    fi
+  done
+  if eval "$found"; then
+    cp -lf $p config/chroot_local-packages/
+  fi
+done
+
+echo I: building bootstrap
+if ! lh_bootstrap; then
+  echo E: bootstrap build failed
+  exit 1
+fi
 
 # fake out /dev/random to be /dev/urandom for chroot step
 (rm -f chroot/dev/random && mknod -m 666 chroot/dev/random c 1 9) || true
