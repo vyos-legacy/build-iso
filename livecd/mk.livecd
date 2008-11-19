@@ -92,7 +92,7 @@ rm -rf chroot/root/{.rnd,.gnupg,.aptitude,.debtags}
 
 # this is only needed if menu is enabled (default disabled)
 mkdir -p chroot/usr/lib/syslinux/
-cp -p /usr/lib/syslinux/vesamenu.c32 chroot/usr/lib/syslinux/
+cp -p /usr/lib/syslinux/vesamenu.c32 chroot/usr/lib/syslinux/ 2>/dev/null || true
 
 ## restore apt/preferences for binary build
 cp -f config.vyatta/chroot_apt/preferences chroot/etc/apt
