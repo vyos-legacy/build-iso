@@ -174,6 +174,7 @@ distclean :
 
 pkgs/wanpipe: pkgs/linux-image/debian/stamps/build-base
 pkgs/iptables: pkgs/linux-image/debian/stamps/build-base
+pkgs/iproute: pkgs/linux-image/debian/stamps/build-base
 pkgs/open-vm-tools: pkgs/linux-image/debian/stamps/build-base
 pkgs/net-snmp: pkgs/linux-image/debian/stamps/build-base
 
