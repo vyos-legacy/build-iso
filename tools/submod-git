@@ -94,6 +94,7 @@ EOF
 	      | status \
 	      | checkout \
 	      | push-with-tags \
+	      | pull-all \
 	      | update-mods )
 	      git=git_$1
 	      shift;;
@@ -108,6 +109,21 @@ git_pull ()
     git pull
     git fetch --tags
 }
+
+git_pull-all()
+{
+	local mybranch=`get_branch`
+
+	git-pull
+	for i in `git branch -a -v|sed -e '/^  origin/d' -e 's/..//'|awk '{print $1}'`
+	do
+		[ "$mybranch" = "$i" ] && continue
+		git-checkout $i
+		git-pull
+	done
+	git-checkout "$mybranch"
+}
+
 
 git_push ()
 {
