@@ -1,0 +1,15 @@
+aptitude update
+aptitude -f -y install asciidoc build-essential \
+        bison flex docbook-utils gcc-4.2 git-buildpackage groff gs \
+	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
+ 	libpcap0.8-dev libpcre3-dev libprelude-dev \
+	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
+	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
+	libatm1-dev libdb-dev linuxdoc-tools kernel-package \
+	lynx libcap-dev libclamav-dev libpopt-dev \
+	libsnmp-dev libperl-dev python-all-dev python-setuptools \
+	automake1.9 cdbs quilt ruby liblzo2-dev unifont help2man \
+        libnet0-dev libsensors-dev comerr-dev libkadm55 libkrb5-dev \
+	libmysqlclient15-dev libmysqlclient15off libnet1 libnet1-dev \
+	libpq-dev libpq5 mysql-common git2cl \
+	libwrap0-dev libnetfilter-queue-dev
