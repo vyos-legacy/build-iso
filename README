@@ -101,44 +101,16 @@ Build Host Setup
     To build an ISO with all pre-built binary, packages, you need to install
     certain tools on the build host.
 
-    Note that the latest versions of the "fakechroot" and "live-helper"
-    packages are currently incompatible with this livecd build. As a
-    work-around, "pin" these packages' versions by adding the following
-    to the build host's /etc/apt/preferences file,
+    This script will setup the build environment for an ISO build:
 
-	Package: fakechroot
-	Pin: version 2.5*
-	Pin-Priority: 1001
+	setup-build-env
 
-	Package: live-helper
-	Pin: version 1.0~a37-2
-	Pin-Priority: 1001
+    In order to build the individual vyatta packages, you need to install additional
+    debian packages.  Note that each vyatta package build will check if the required
+    debian packages are installed.  It will "complain" if they are not.  In order to
+    save some iteration, run this script to download and install these packages:
 
-    Here are the list of packages (don't forget to run "apt-get update" first):
-
-	apt-get install automake autoconf bzip2 curl debhelper devscripts \
-	dpatch fakeroot fakechroot genisoimage git-core sysv-rc-conf \
-	live-helper lsb-release rsync sudo
-
-    To build submodules, each package should list all build
-    dependencies. However, to save some iteration, install these
-    packages,
-
-	apt-get install asciidoc build-essential \
-        bison flex docbook-utils gcc-4.2 git-buildpackage groff gs \
-	gs-gpl groff imagemagick iptables-dev libnet0-dev libpam0g-dev \
- 	libpcap0.8-dev libpcre3-dev libprelude-dev \
-	libreadline-dev libsablot0-dev libtool lintian manpages-dev \
-	tetex-bin texi2html texinfo transfig xmlto zlib1g-dev \
-	libatm1-dev libdb-dev linuxdoc-tools git2cl kernel-package \
-	lynx libcap-dev libclamav-dev libpopt-dev \
-	libsnmp-dev libperl-dev python-all-dev python-setuptools \
-	automake1.9 cdbs quilt ruby liblzo2-dev unifont help2man \
-        libnet0-dev libsensors-dev comerr-dev libkadm55 libkrb5-dev \
-	libmysqlclient15-dev libmysqlclient15off libnet1 libnet1-dev \
-	libpq-dev libpq5 mysql-common \
-	libwrap0-dev libnetfilter-queue-dev
-
+	setup-pkg-env
 
 Configuration
 
