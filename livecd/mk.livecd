@@ -109,7 +109,7 @@ clean_mounts
 rm -rf binary binary.iso chroot config livecd-*.iso config/chroot_local-packages/*.deb
 
 mkdir -p config/chroot_local-packages
-cp -lf ../pkgs/*.deb config/chroot_local-packages/.
+cp -lf ../pkgs/*.deb config/chroot_local-packages/. 2>/dev/null || true
 
 get_branch()
 {
