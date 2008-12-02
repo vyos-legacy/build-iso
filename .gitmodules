@@ -132,10 +132,10 @@
 	url = http://git.vyatta.com/live-initramfs.git
 [submodule "pkgs/vyatta-wirelessmodem"]
 	path = pkgs/vyatta-wirelessmodem
-	url = http://suva.vyatta.com/vyatta-wirelessmodem.git
+	url = http://git.vyatta.com/vyatta-wirelessmodem.git
 [submodule "pkgs/open-vm-tools"]
 	path = pkgs/open-vm-tools
-	url = http://suva.vyatta.com/open-vm-tools.git
+	url = http://git.vyatta.com/open-vm-tools.git
 [submodule "pkgs/initramfs-tools"]
 	path = pkgs/initramfs-tools
 	url = http://git.vyatta.com/initramfs-tools.git
