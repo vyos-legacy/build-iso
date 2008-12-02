@@ -30,6 +30,11 @@ lh_config
     chroot_local-includes chroot_sources chroot_local-packageslists \
     chroot_local-patches \
     ../config/
+ 
+  # the dev repo is only for development build
+  if ! eval "$VYATTA_DEV_BUILD"; then
+    rm -f ../config/chroot_sources/vyatta.chroot* 
+  fi
 )
 
 # copy the locally-built packages for installation

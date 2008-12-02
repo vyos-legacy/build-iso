@@ -107,6 +107,20 @@ else
 	LH_UNION_FILESYSTEM=unionfs
 fi
 
+AC_ARG_WITH(devbuild,
+	[AS_HELP_STRING([--without-devbuild],
+	  [disable development build])],
+	[],
+	[with_devbuild=yes])
+
+if test "X$with_devbuild" = Xyes ; then
+  touch pkgs/.VYATTA_DEV_BUILD
+  VYATTA_DEV_BUILD=true
+else
+  rm -f pkgs/.VYATTA_DEV_BUILD
+  VYATTA_DEV_BUILD=false
+fi
+
 AC_ARG_WITH(xensourcevm,
 [AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
 
@@ -221,5 +235,6 @@ AC_SUBST(create_xensourcevm)
 
 AC_SUBST(VYATTA_ARCHIVE)
 AC_SUBST(VYATTA_LINUX_PKG)
+AC_SUBST(VYATTA_DEV_BUILD)
 
 AC_OUTPUT
