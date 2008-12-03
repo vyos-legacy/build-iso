@@ -55,7 +55,7 @@ declare -x LH_PACKAGES_LISTS="vyatta-full vyatta-extra"
 
 declare -x LH_APT_RECOMMENDS="disabled"
 declare -x LH_CHROOT_BUILD="disabled"
-declare -x LH_CACHE_INDICES="enabled"
+declare -x LH_CACHE_INDICES="disabled"
 declare -x DEBIAN_FRONTEND="noninteractive"
 
 if [[ "$PATH" != */sbin* ]] ; then
