@@ -1,3 +1,1213 @@
+build-iso (0.16) unstable; urgency=low
+
+	  3.2.0
+  [ Mark O'Brien ]
+
+
+  [ Rick Balocca ]
+  * Update index
+  * Update indices
+  * Update index
+  * Update index
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg: fix for bug 3922
+
+  [ Robert Bays ]
+  * update submod open-vm-tools
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-ravpn
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-ravpn
+
+  [ Rick Balocca ]
+  * Update index
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-vpn
+  * update sub-module vyatta-op
+  * update sub-module vyatta-wirelessmodem
+  * update sub-module vyatta-op
+  * update sub-module vyatta-wirelessmodem
+
+  [ An-Cheng Huang ]
+  * really removing vyatta-webgui
+  * removing vyatta-webgui from the build
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-wirelessmodem
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-wirelessmodem
+  * update sub-module vyatta-serial
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Robert Bays ]
+  * update submodule open-vm-tools
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+  * vyatta-cfg-system: fix for bug 2313
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-ppp
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-wirelessmodem
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-wirelessmodem
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Add dependencies on the linux-image stamp file
+
+  [ Robert Bays ]
+  * bug 3791: update submodule vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-nat, vyatta-config-migrate: fix for bug 3717.
+
+  [ Robert Bays ]
+  * fix for bugs 3824 and 3868; update submodule vyatta-wirelessmodem
+  * bug 1587: update submodule vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * vyatta-openvpn: fix for bug 3865
+
+  [ Robert Bays ]
+  * update module open-vm-tools
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-openvpn
+  * update sub-module vyatta-cfg-dhcp-server
+  * update sub-module vyatta-cfg
+
+  [ An-Cheng Huang ]
+  * vyatta-antivirus: fix for bug 3688
+  * vyatta-openvpn: fix for bug 3780
+  * vyatta-nat: fix for bug 3858
+  * * vyatta-nat: fix for bug 3636.
+
+  [ Stephen Hemminger ]
+  * update index
+  * update index for bug 250 et al
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+
+  [ Robert Bays ]
+  * update index for open-vm-tools
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Robert Bays ]
+  * make open-vm-tools parallel build compatible
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update index
+
+  [ Stephen Hemminger ]
+  * update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Update index
+  * Update index
+  * Update indices
+  * Update indices
+
+  [ Robert Bays ]
+  * fix gitmodules for open-vm-tools
+  * add vmware tools to default build
+
+  [ Stephen Hemminger ]
+  * update kernel index
+
+  [ Robert Bays ]
+  * update submodule open-vm-tools
+
+  [ Stig Thormodsrud ]
+  * update webproxy index
+
+  [ Mohit Mehta ]
+  * update sub-module for bug fix 3566 vyatta-cfg-system
+  * update sub-module vyatta-cfg-dhcp-server
+
+  [ Stig Thormodsrud ]
+  * update webproxy index
+
+  [ rbalocca ]
+  * Fix a package name
+  * Update index
+  * Update indices
+
+  [ Rick Balocca ]
+  * Remove more linux-header packages from the livecd dir
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+  * vyatta-openvpn: fix for bug 3810
+  * update linux-image
+
+  [ Rick Balocca ]
+  * Update index
+  * Improve one status message
+
+  [ Robert Bays ]
+  * update index v-wirelessmodem
+  * update indices for v-op and v-wirelessmodem
+
+  [ Rick Balocca ]
+  * Indicate when a repo is not on any branch
+  * Update indices
+
+  [ Robert Bays ]
+  * add submodule vyatta-wirelessmodem
+
+  [ Rick Balocca ]
+  * Remove extra linux-header packages
+  * Update indices
+  * Merge from hollywood
+  * Get tags whenever we are doing a pull or a fetch
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+  * Get rid of unwanted package; also unwanted sub-dirs of /root .
+
+  [ Stephen Hemminger ]
+  * Document need for asciidoc
+
+  [ Stig Thormodsrud ]
+  * update-index
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+  * update vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Index again
+  * Update index
+  * Update index
+  * Improve message formatting
+  * Update index
+  * Give more precise status messages
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Update index
+  * Give more precise information about branch contents
+
+  [ Stig Thormodsrud ]
+  * update index
+  * update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Add a "git-submodule init" just in case a new submodule was added
+  * Update indices
+
+  [ Robert Bays ]
+  * fix ssh keygen at startup
+  * update sub-module vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+  * Remove local copies of live-initramfs files, as we are now building
+  * Use the package files for live-initramfs, not the local files
+  * Update index
+  * Add live-initramfs package to build
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-openvpn: fix for bugs 3510, 3513, 3543, and 3585.
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * remove debug output
+
+  [ rbalocca ]
+  * Update indices
+  * Update index
+  * Partial fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3537
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+
+  [ Stig Thormodsrud ]
+  * update-index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-vpn
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+  * Partial fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3537
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+  * update vyatta-cfg-system
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ rbalocca ]
+  * Remove more linux-headers
+  * Remove debug output
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ rbalocca ]
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module SUBMODULE
+
+  [ rbalocca ]
+  * Set BUILTBY earlier (we are using it for the gpg key)
+  * Ignore net-snmp library "mismatches"
+  * Update index
+  * Use BUILTBY for the owner of the keyring
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-quagga
+
+  [ Rick Balocca ]
+  * Note the packages that are build
+
+  [ rbalocca ]
+  * Update index
+  * Remove unused code; simplify the script; make sure that HOME is set
+    correctly
+  * Instead of relying on --allow-untrusted (which does not work
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-quagga
+  * update sub-module SUBMODULE
+
+  [ rbalocca ]
+  * Update index
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-quagga
+  * update sub-module vyatta-cfg-dhcp-server
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+  * update vyatta-webgui
+
+  [ rbalocca ]
+  * Update index
+  * Update indices ( http://bugzilla.vyatta.com/show_bug.cgi?id=3712 )
+  * Update indices
+  * Update indices
+
+  [ Stig Thormodsrud ]
+  * update index
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * minor fix for xen vm build
+
+  [ rbalocca ]
+  * More simplifications to live-helper hook
+  * Update index
+  * Port script changes to live-helper hook
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-nat
+  * update vyatta-ravpn
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-config-migrate
+  * update sub-module vyatta-cfg-dhcp-server
+  * update sub-module vyatta-config-migrate
+
+  [ Stephen Hemminger ]
+  * Update index for system/qos
+  * Update kernel index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server
+
+  [ An-Cheng Huang ]
+  * generate fstab in xen vm image
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-dhcp-server
+  * update sub-module vyatta-cfg-dhcp-server
+
+  [ rbalocca ]
+  * Each branch now has a unique "pegged" debian archive
+    (/var/www/vyatta--peg)
+
+  [ Robert Bays ]
+  * update sub-module vyatta-cfg-system
+  * update submodule vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * domU memory default to 512M
+
+  [ rbalocca ]
+  * If no version file is found, assume community
+
+  [ Robert Bays ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Peg the debian packages
+  * Ignore some more derived files
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Update indices
+  * Volume label was too long, preventing ISO creation (!?!)
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * update linux-image
+  * update linux-image
+  * update vyatta-webproxy
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ An-Cheng Huang ]
+  * vyatta-ravpn: fix for bug 3624
+
+  [ Stephen Hemminger ]
+  * Update to 2.6.26 kernel configure and index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * update linux-image
+
+  [ rbalocca ]
+  * Update index
+  * Parameterize (via configure) the URL for the vyatta debian archive.
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Robert Bays ]
+  * update sub-module to fix xen hypervisor and device.map
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * add more exceptions to submod-clean
+  * add individual package clean targets
+
+  [ Rick Balocca ]
+  * Update indices
+  * Enable non-root build (requires the host be current with regard to
+    lenny)
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update indices
+  * Change deprecated git-* commands
+
+  [ An-Cheng Huang ]
+  * remove unused clean actions
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * fix dependencies for parallel make
+  * update submodules
+
+  [ Stephen Hemminger ]
+  * Pick up latest stuf
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ Robert Bays ]
+  * update isolinux.cfg to remove persistence
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * simplify Makefile
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op
+
+  [ An-Cheng Huang ]
+  * fix typos
+  * add iptables submodule to the build
+
+  [ rbalocca ]
+  * Move one more dir up before running debuild
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ rbalocca ]
+  * Move fetch script to it's own file so that it is easy to run it over
+    just one git repo
+  * Deal with the case when no submodules are checkout out; remove an
+    unused macro.
+  * Rearrange the sections to improve the "narrative"
+  * Reorder the sections to make more sense
+
+  [ Stephen Hemminger ]
+  * More build-dependencies for snort
+  * Change indentation of command lines
+
+  [ rbalocca ]
+  * Update the build-iso README
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Stephen Hemminger ]
+  * One more dependency
+  * Update build-requirements
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Busybox depends on quilt
+  * Update list of packages required
+  * Update index
+  * QoS index update
+
+  [ rbalocca ]
+  * Add vyatta key to chroot
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * make build work with latest live-helper
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * remove apt error
+
+  [ rbalocca ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * suppress command output
+  * remove lh_binary_silo from lh_binary
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * remove lh_chroot_sources from lh_binary
+
+  [ rbalocca ]
+  * Update indices
+  * Handle the case of include or exclude on the command line
+  * Update index
+
+  [ Robert Bays ]
+  * add xensource to the vm image name
+  * add xensource to config file name
+  * add xensource tag to filename
+
+  [ An-Cheng Huang ]
+  * import lh_binary from live-helper 1.0~a48-1
+  * give Local high priority during build
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update .gitignore
+
+  [ Rick Balocca ]
+  * Update index
+  * Update index
+
+  [ rbalocca ]
+  * Update index
+  * Add in security updates during aptitude run
+  * Finish creating vyatta-webproxy package
+  * Remove dummy file
+  * move vyatta-webproxy
+  * Make iso does not depend on the package debuilds
+
+  [ Robert Bays ]
+  * someday I'll stop mistyping partition
+
+  [ An-Cheng Huang ]
+  * * make vyatta repo higher priority.
+
+  [ Robert Bays ]
+  * changes to build XenSource vm
+
+  [ Stig Thormodsrud ]
+  * Fix typo.
+  * Fix url in .gitmodule
+
+  [ An-Cheng Huang ]
+  * update linux-image
+
+  [ Stig Thormodsrud ]
+  * Add vyatta-webproxy submodule.
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+  * Merge from "hollywood"
+  * Update index
+  * Add wanpipe dependency on linux-image
+  * Update indices
+  * Use the -nc option in debuild
+
+  [ An-Cheng Huang ]
+  * update linux-image
+  * use our amd64 debian mirror
+  * update vyatta-nat
+  * add libvirt packages for dom0 build
+  * add xen dom0 build support
+  * update vyatta-quagga
+
+  [ rbalocca ]
+  * Use debian dir to find all the packages that need to be "debuild"ed
+  * Update index
+  * Allow parallel builds (make -j)
+
+  [ An-Cheng Huang ]
+  * update linux-image
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+
+  [ rbalocca ]
+  * Update indices
+  * These scripts work with /bin/sh
+  * Install live.conf in the correct place
+  * /etc/live.conf needs UNIONTYPE when we are using unionfs
+
+  [ An-Cheng Huang ]
+  * * support multi-arch build.
+  * update linux-image
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op
+
+  [ An-Cheng Huang ]
+  * update vyatta-wanloadbalance
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * Re-add linux image submodule
+  * Get rid of theridiculousness of having to rename the sub-module dir
+    every time we change kernel versions).
+
+  [ An-Cheng Huang ]
+  * vyatta-nat, vyatta-cfg-firewall: fix for bug 3622
+
+  [ rbalocca ]
+  * Add vyatta-grub package
+
+  [ Rick Balocca ]
+  * Update index
+  * "Update" the index
+
+  [ An-Cheng Huang ]
+  * vyatta-cfg-firewall: fix for bug 3604
+  * vyatta-cfg: fix for bug 3280
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Add vyatta-grub
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-dhcp3-client
+
+  [ Rick Balocca ]
+  * Update index
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ Rick Balocca ]
+  * Add -v option
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-dhcp3-client
+
+  [ Stig Thormodsrud ]
+  * Update build dependencies.
+
+  [ rbalocca ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update index for wanpipe
+  * Change to 2.6.25 kernel
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * Build was stopping on an error that should have been ignored
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Speed up this script
+  * Update indices
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * Get pkgs/vyatta-quagga back into shape
+  * Get rid of old package
+
+  [ An-Cheng Huang ]
+  * remove unused line
+
+  [ rbalocca ]
+  * Update index
+  * Minor clean-up
+  * Use /dev/urandom instead of /dev/random; don't rely on git to
+    provide various items for the version pkg
+
+  [ Stephen Hemminger ]
+  * Move quagga back to vyatta-quagga
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * fix debian installer package names
+  * update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Update indices for vyatta-vtysh removal
+  * Update index
+  * Update quagga index
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+
+  [ Rick Balocca ]
+  * Push back an index
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * vyatta-cluster: fix for bug 3560
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Rick Balocca ]
+  * Add back missing definition
+
+  [ rbalocca ]
+  * Minor cleanup
+  * Part of fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3555
+  * Update index
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-firewall
+  * update linux-image-2.6.24-1-486-vyatta
+  * update vyatta-webgui
+  * update vyatta-webgui
+  * update vyatta-webgui
+
+  [ Stig Thormodsrud ]
+  * update index
+  * update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * vyatta-openvpn: fix for bug 3544
+
+  [ Stephen Hemminger ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Merge from islavista
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ Stig Thormodsrud ]
+  * update-index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ rbalocca ]
+  * Don't bother excluding binutils, because it's not installed
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+  * Revert "Freeze packages for now--hoping this will allow the build to
+    finish"
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Change branch in README
+
+  [ rbalocca ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Freeze packages for now--hoping this will allow the build to finish
+  * Update indices
+  * Update index
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ rbalocca ]
+  * Update index
+  * Update indices
+
+  [ Rick Balocca ]
+  * Update index
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+  * Update indices
+  * Don't use symlinks for packages that should end up in the chroot
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Rename vyatta-quagga package to quagga
+  * update index
+  * update index
+  * Fix package mapping
+  * Update index for iproute
+  * Move vyattai-iproute to iproute
+
+  [ Rick Balocca ]
+  * Update index
+  * If we are running as root, then use fsck instead of find to generate
+    entropy
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * fix typo
+
+  [ rbalocca ]
+  * Get packages from islavista
+  * Update index
+  * Update indices
+  * Deal with build issues, live-helper bugs, entropy problems.  Speed
+    up the build.
+  * Update index
+
+  [ Rick Balocca ]
+  * Update index
+  * Update index
+
+  [ Stig Thormodsrud ]
+  * update-index
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Stig Thormodsrud ]
+  * update-index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Stig Thormodsrud ]
+  * update-index
+  * update-index
+  * update-index
+  * update-index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-dhcp3-client bug fix 3524
+  * update sub-module vyatta-cfg bug fix 3524
+
+  [ rbalocca ]
+  * Changes for the latest live-helper package
+  * Update indices
+  * Update indices
+  * Fix boot failure
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg
+
+  [ Rick Balocca ]
+  * Package install of openssh-server is a special (entropy) case
+  * Deal with build machines with low entropy
+  * Update index
+  * Make sure that spurious dev files are removed
+  * Update indices
+  * Add needed devices to chroot
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ rbalocca ]
+  * Use aptitude in more places
+  * Do not load recommended packages
+  * Use aptitude rather than apt-get
+  * Exclude binutils
+  * Update index
+  * Un-pin squashfs-tools
+  * Clean up mounts after failed build;
+  * Don't fail if branch file is missing
+  * Don't fail if version file not present
+  * mk.livecd wasn't stopping on most build errors
+
+  [ Rick Balocca ]
+  * submod-git fetch no longer complains when no branch is checked out
+  * Go back to using http: instead of the buggy git: (git-daemon)
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+
+  [ rbalocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-op
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+
+  [ rbalocca ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+  * update vyatta-openvpn
+  * vyatta-cfg-system: fix for bug 3459
+  * add vyatta-openvpn to the build
+  * include Web GUI by default
+
+  [ rbalocca ]
+  * Remove spurious complaint at end of build
+
+  [ Rick Balocca ]
+  * Open up islavista to latest lenny packages
+  * Ignore branch file
+  * Add branch name to build version for dev builds
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 25 Nov 2008 19:14:09 -0800
+
 build-iso (0.15) unstable; urgency=low
 
 	  3.1.4
