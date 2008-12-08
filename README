@@ -1,8 +1,8 @@
-Vyatta VC4 ISO Build Procedures
+Vyatta VC5 ISO Build Procedures
 
     This document describes how to build a Vyatta VC4 ISO image.
     The most recent version of this document is the top-level README file of
-    the "islavista" branch of the "build-iso" source tree.
+    the "jenner" branch of the "build-IMO" source tree.
 
 Prerequisites
 
@@ -50,7 +50,7 @@ Getting Source
 	git submodule init
 
     It's most efficient to selectively clone only the submodules
-    needing for review or modifcation. The ISO build downloads the
+    needing for review or modification. The ISO build downloads the
     Vyatta pre-built, binary packages of any non-cloned sub-module. To
     clone a specific sub-module,
 
@@ -76,7 +76,7 @@ Build Host Setup
     installing Debian "lenny" (i.e. "testing") with either business-card
     or net-install image.  You can also use the Vyatta livecd ISO for a
     build host. (If you do want to start from the Vyatta system, you will
-    have to unistall libsnmp15--which will uninstall most of the Vyatta
+    have to uninstall libsnmp15--which will uninstall most of the Vyatta
     specific features.)
 
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
@@ -84,7 +84,7 @@ Build Host Setup
 	http://packages.vyatta.com/iso/testing/*.iso
 
     The respective installation prompts for distribution mirror. Any debian "lenny"
-    mirror will do.  To include Vyatta's Debian miror, add this to /etc/apt/sources.list:
+    mirror will do.  To include Vyatta's Debian mirror, add this to /etc/apt/sources.list:
 
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
@@ -110,7 +110,7 @@ Build Host Setup
     debian packages are installed.  It will "complain" if they are not.  In order to
     save some iteration, run this script to download and install these packages:
 
-	setup-pkg-env
+	setup-pkg-build
 
 Configuration
 
@@ -185,8 +185,8 @@ Build submodules
 
 Changes
 
-    After making, testing, and commiting your changes to your local
-    repos, publish them to the shared repos with,
+    After making, testing, and committing your changes to your local
+    repositories, publish them to the shared repository with,
 
 	git push suva.vyatta.com:/git/SUBMODULE.git
 
