@@ -1,0 +1,70 @@
+#!/bin/bash
+
+usage () {
+  cat<<EOF
+Usage: pkg-release [-i] [-n] <version>
+
+  This script is run inside a debianized git source repository to make a new
+  "release". It adds and commits an entry for <version> in debian/changelong
+  on the current branch, creates a git tag "debian/<version>", and pushes the
+  new changelog and tag to the origin.
+
+  The following options are available:
+
+    -i: Edit the changelog interactively.
+
+    -n: Do not push the changes.
+
+EOF
+  exit 1
+}
+
+if [ ! -f debian/changelog ]; then
+  usage
+fi
+
+edit=false
+dopush=true
+while getopts in opt
+do
+  case $opt in
+    i) edit=true
+       ;;
+    n) dopush=false
+       ;;
+    *) usage
+       ;;
+  esac
+done
+
+ver=${@:$OPTIND:1}
+if [ -z "$ver" ]; then
+  usage
+fi
+
+if [ -z "$DEBFULLNAME" ]; then
+  DEBFULLNAME=$(git config user.name)
+fi
+if [ -z "$DEBEMAIL" ]; then
+  DEBEMAIL=$(git config user.email)
+fi
+export DEBFULLNAME
+export DEBEMAIL
+
+branch=$(git branch | sed -n '/^\* /s/^\* //p')
+export EDITOR=true
+if eval "$edit"; then
+  export EDITOR=vi
+fi
+if ! (git dch --debian-branch="$branch" --release --new-version="$ver" \
+      && git commit -m "$ver" debian/changelog \
+      && git tag -a -m "$ver" "debian/$ver"); then
+  usage
+fi
+
+if eval "$dopush"; then
+  # push may return failure if, e.g., it can't push "master"
+  git push || true
+  git push --tags || true
+fi
+
