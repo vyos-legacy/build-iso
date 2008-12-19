@@ -1,6 +1,6 @@
 apt-get update
 apt-get -y -f install automake autoconf bzip2 curl debhelper devscripts \
 	dpatch fakeroot fakechroot genisoimage git-core sysv-rc-conf \
-	live-helper lsb-release rsync sudo aptitude
+	live-helper lsb-release rsync sudo aptitude squashfs-tools
 autoreconf -i
 ./configure
