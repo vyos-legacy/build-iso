@@ -67,7 +67,7 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
 	    targets=( vyatta-snort*.{build,changes,deb,tar.gz,udeb} );;
 	vyatta-grub )
 	    targets=( grub*.{build,changes,deb,tar.gz,udeb} );;
-	wanpipe | iproute | iptables )
+	wanpipe | iproute | iptables | open-vm-tools )
 	    targets=( ${submodule[i]}*.{build,changes,deb,tar.gz,udeb} );;
 	net-snmp )
 	    targets=( *snmp*.{build,changes,deb,tar.gz,udeb} tkmib*.deb );;
