@@ -39,6 +39,8 @@ declare -x create_xensourcevm="@create_xensourcevm@"
 declare -x VYATTA_ARCHIVE="@VYATTA_ARCHIVE@"
 declare -x VYATTA_LINUX_PKG="@VYATTA_LINUX_PKG@"
 declare -x VYATTA_DEV_BUILD="@VYATTA_DEV_BUILD@"
+declare -x VYATTA_COMMUNITY_BUILD="@VYATTA_COMMUNITY_BUILD@"
+declare -x VYATTA_SUPPORTED_BUILD="@VYATTA_SUPPORTED_BUILD@"
 
 ## packages needed for the chroot step
 LH_BOOTSTRAP_INCLUDE="locales"

@@ -114,11 +114,39 @@ AC_ARG_WITH(devbuild,
 	[with_devbuild=yes])
 
 if test "X$with_devbuild" = Xyes ; then
-  touch pkgs/.VYATTA_DEV_BUILD
   VYATTA_DEV_BUILD=true
 else
-  rm -f pkgs/.VYATTA_DEV_BUILD
   VYATTA_DEV_BUILD=false
+fi
+
+AC_ARG_WITH(community-build,
+	[AS_HELP_STRING([--with-community-build],
+	  [enable community build])],
+	[],
+	[with_community_build=no])
+if test "X$with_community_build" = Xyes ; then
+  VYATTA_COMMUNITY_BUILD=true
+  VYATTA_DEV_BUILD=false
+else
+  VYATTA_COMMUNITY_BUILD=false
+fi
+
+AC_ARG_WITH(supported-build,
+	[AS_HELP_STRING([--with-supported-build],
+	  [enable supported build])],
+	[],
+	[with_supported_build=no])
+if test "X$with_supported_build" = Xyes ; then
+  VYATTA_SUPPORTED_BUILD=true
+  VYATTA_DEV_BUILD=false
+else
+  VYATTA_SUPPORTED_BUILD=false
+fi
+
+if eval "$VYATTA_DEV_BUILD"; then
+  touch pkgs/.VYATTA_DEV_BUILD
+else
+  rm -f pkgs/.VYATTA_DEV_BUILD
 fi
 
 AC_ARG_WITH(xensourcevm,
@@ -236,5 +264,7 @@ AC_SUBST(create_xensourcevm)
 AC_SUBST(VYATTA_ARCHIVE)
 AC_SUBST(VYATTA_LINUX_PKG)
 AC_SUBST(VYATTA_DEV_BUILD)
+AC_SUBST(VYATTA_COMMUNITY_BUILD)
+AC_SUBST(VYATTA_SUPPORTED_BUILD)
 
 AC_OUTPUT

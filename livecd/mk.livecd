@@ -32,19 +32,33 @@ lh_config
     ../config/
  
   if ! eval "$VYATTA_DEV_BUILD"; then
-    # not dev build => remove unstable, use testing
+    # not dev build => remove unstable
     rm -f ../config/chroot_sources/vyatta.chroot*
-    if [ -f ../config/chroot_sources/vyatta-testing.chroot ]; then
+
+    if eval "$VYATTA_COMMUNITY_BUILD" || eval "$VYATTA_SUPPORTED_BUILD"; then
+      # release build. use testing.
       mv -f ../config/chroot_sources/vyatta-testing.chroot \
         ../config/chroot_sources/vyatta.chroot
       mv -f ../config/chroot_sources/vyatta-testing.chroot.gpg \
         ../config/chroot_sources/vyatta.chroot.gpg
+    else
+      # legacy autobuild. remove testing.
+      rm -f ../config/chroot_sources/vyatta-testing.chroot*
     fi
   else
     # dev build => remove testing, use unstable
     rm -f ../config/chroot_sources/vyatta-testing.chroot*
   fi
 )
+
+# set up version template
+if eval "$VYATTA_COMMUNITY_BUILD"; then
+  # community build
+  cp -f templates/community/version .
+elif eval "$VYATTA_SUPPORTED_BUILD"; then
+  # supported build
+  cp -f templates/supported/version .
+fi
 
 # copy the locally-built packages for installation
 # (but only those on one of the lists)
