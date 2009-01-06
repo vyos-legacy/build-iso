@@ -35,15 +35,18 @@ lh_config
     # not dev build => remove unstable
     rm -f ../config/chroot_sources/vyatta.chroot*
 
-    if eval "$VYATTA_COMMUNITY_BUILD" || eval "$VYATTA_SUPPORTED_BUILD"; then
-      # release build. use testing.
-      mv -f ../config/chroot_sources/vyatta-testing.chroot \
+    # release build. use testing.
+    mv -f ../config/chroot_sources/vyatta-testing.chroot \
+      ../config/chroot_sources/vyatta.chroot
+    mv -f ../config/chroot_sources/vyatta-testing.chroot.gpg \
+      ../config/chroot_sources/vyatta.chroot.gpg
+    if ! eval "$VYATTA_COMMUNITY_BUILD" \
+       && ! eval "$VYATTA_SUPPORTED_BUILD"; then
+      # legacy autobuild. don't actually add the repo.
+      sed -i 's/firebolt/packages/;
+              s/jenner/lenny/;
+              s/vyatta-dev/debian-jenner/' \
         ../config/chroot_sources/vyatta.chroot
-      mv -f ../config/chroot_sources/vyatta-testing.chroot.gpg \
-        ../config/chroot_sources/vyatta.chroot.gpg
-    else
-      # legacy autobuild. remove testing.
-      rm -f ../config/chroot_sources/vyatta-testing.chroot*
     fi
   else
     # dev build => remove testing, use unstable

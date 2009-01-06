@@ -207,12 +207,10 @@ VYATTA_LINUX_VER="linux-image-2.6.27-1"
 VYATTA_LINUX_PKG="$VYATTA_LINUX_VER-$LH_LINUX_FLAVOURS"
 LH_LINUX_PACKAGES=none
 
-LH_MIRROR_BINARY="http://packages.vyatta.com/debian"
-LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian"
-LH_MIRROR_BINARY_SECURITY="http://packages.vyatta.com/debian-security"
-LH_MIRROR_BOOTSTRAP_SECURITY="http://packages.vyatta.com/debian-security"
+LH_MIRROR_BINARY="http://packages.vyatta.com/debian-jenner"
+LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-jenner"
 
-LH_SECURITY="enabled"
+LH_SECURITY="disabled"
 LH_SECTIONS="main"
 
 AC_CONFIG_FILES([mk.conf livecd/mk.livecd.conf])
