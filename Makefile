@@ -197,5 +197,15 @@ $(PACKAGE_DEBS):
 $(CLEAN_DEBS):
 	@d=$$(echo $@ | sed 's/^clean-//'); case "$$d" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$$d!!!!!!!;; *) cd $$d; debuild clean;; esac
 
+.PHONY: show_unreleased
+show_unreleased:
+	@cd pkgs; \
+	for r in */.git; do (cd $${r%%/.git}; \
+		if ! git diff --quiet HEAD \
+						$$(git describe --tags --abbrev=0 --match 'debian/*'); then \
+			echo ====== $${r%%/.git} ======; git log --max-count=1; echo; \
+		fi); \
+	done
+
 #$(PACKAGE_DEBS):
 #	echo $(PACKAGE_DEBS)
