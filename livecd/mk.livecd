@@ -88,12 +88,6 @@ fi
 # fake out /dev/random to be /dev/urandom for chroot step
 (rm -f chroot/dev/random && mknod -m 666 chroot/dev/random c 1 9) || true
 
-# disable initramfs update for now
-# (this is re-enabled in chroot_local-hooks/12-initrd, which also does the
-# final update)
-sed -i 's/^update_initramfs=.*$/update_initramfs=no/' \
-  chroot/etc/initramfs-tools/update-initramfs.conf
-
 echo I: building chroot
 if ! lh_chroot; then
   echo E: chroot build failed

@@ -1,7 +1,0 @@
-#!/bin/sh
-
-sed -i 's/^update_initramfs=.*$/update_initramfs=yes/' \
-  /etc/initramfs-tools/update-initramfs.conf
-
-update-initramfs -u
-

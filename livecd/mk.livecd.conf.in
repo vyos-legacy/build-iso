@@ -46,7 +46,6 @@ declare -x VYATTA_SUPPORTED_BUILD="@VYATTA_SUPPORTED_BUILD@"
 LH_BOOTSTRAP_INCLUDE="locales"
 LH_BOOTSTRAP_INCLUDE+=",apt-utils,aptitude" # apt
 LH_BOOTSTRAP_INCLUDE+=",patch"              # for chroot_local-patches
-LH_BOOTSTRAP_INCLUDE+=",initramfs-tools"    # for update-initramfs.conf
 export LH_BOOTSTRAP_INCLUDE
 
 ## packages not needed in bootstrap
