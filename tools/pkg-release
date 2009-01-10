@@ -2,7 +2,7 @@
 
 usage () {
   cat<<EOF
-Usage: pkg-release [-i] [-n] [-h] [<version>]
+Usage: pkg-release [-i] [-n] [-p] [-h] [<version>]
 
   This script is run inside a debianized git source repository to make a new
   "release". It adds and commits an entry for <version> in debian/changelong
@@ -19,6 +19,8 @@ Usage: pkg-release [-i] [-n] [-h] [<version>]
 
     -n: Do not push the changes.
 
+    -p: Push the changes without confirmation.
+
     -h: Show this help text.
 
 EOF
@@ -31,12 +33,15 @@ fi
 
 edit=false
 dopush=true
-while getopts inh opt
+confirm=true
+while getopts inph opt
 do
   case $opt in
     i) edit=true
        ;;
     n) dopush=false
+       ;;
+    p) confirm=false
        ;;
     *) usage
        ;;
@@ -61,15 +66,17 @@ if [ -z "$ver" ]; then
 else
   echo "  Use version string \"$ver\""
 fi
-echo -n "Proceed? (y/N) "
-read resp
-case "$resp" in
-  y* )
-    ;;
-  * )
-    exit 1
-    ;;
-esac
+if eval "$confirm"; then
+  echo -n "Proceed? (y/N) "
+  read resp
+  case "$resp" in
+    y* )
+      ;;
+    * )
+      exit 1
+      ;;
+  esac
+fi
 
 if [ -z "$DEBFULLNAME" ]; then
   DEBFULLNAME=$(git config user.name)
