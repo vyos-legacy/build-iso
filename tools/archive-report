@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # This scripts starts from a virgin debian install;
-# it adds all packages needed to build a OFR .iso;
+# it adds all packages needed to build a Vyatta .iso;
 # it then "git-clone"s the remote repositories
 # and actually builds the .iso .
 # It requires root priveleges

@@ -219,7 +219,7 @@ EOF
     done
     echo ""
 
-    echo "Description: Vyatta OFR $version"
+    echo "Description: Vyatta $version"
 
     apt-ftparchive release .
   ) >/tmp/$$-Release
