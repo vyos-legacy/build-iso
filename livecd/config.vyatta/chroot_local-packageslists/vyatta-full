@@ -13,7 +13,6 @@ open-vm-tools-2.6.27-1-486-vyatta
 pam-tacplus
 snmp
 snmpd
-vyatta-antivirus
 vyatta-base
 vyatta-bash
 vyatta-busybox
