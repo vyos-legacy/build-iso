@@ -115,7 +115,7 @@ fi
 
 if eval "$dopush"; then
   # push may return failure if, e.g., it can't push "master"
-  git push || true
   git push --tags || true
+  git push || true
 fi
 
