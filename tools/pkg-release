@@ -27,9 +27,13 @@ EOF
   exit 1
 }
 
-if [ ! -f debian/changelog ]; then
+if [ ! -f debian/changelog ] || [ ! -f .git/config ]; then
   usage
 fi
+
+url=$(git-config remote.origin.url \
+      | sed "s@http://\(\(git\|suva\)[^/]\+\)/@\1:/git/@; \
+             s@http://\(phuket[^/]\+\)/@\1:/usr/local/git/@")
 
 edit=false
 dopush=true
@@ -58,6 +62,7 @@ else
 fi
 if eval "$dopush"; then
   echo "  Changes WILL be pushed to origin repo automatically"
+  echo "    (origin is \"$url\")"
 else
   echo "  Changes will NOT be pushed to origin repo"
 fi
@@ -115,7 +120,7 @@ fi
 
 if eval "$dopush"; then
   # push may return failure if, e.g., it can't push "master"
-  git push --tags || true
-  git push || true
+  git push --tags $url || true
+  git push $url || true
 fi
 
