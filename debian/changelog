@@ -1,3 +1,52 @@
+build-iso (0.17) unstable; urgency=low
+
+	  3.2.1
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * update vyatta-cfg
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Rick Balocca ]
+  * Up the copyright date for "show version"
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-snort
+
+  [ Rick Balocca ]
+  * Update indices
+  * Remove all references to OFR from the build tools
+
+  [ An-Cheng Huang ]
+  * really remove vyatta-antivirus
+  * removing vyatta-antivirus from the build
+
+  [ Rick Balocca ]
+  * Update index
+  * Update indices
+
+  [ Robert Bays ]
+  * update submodule open-vm-tools
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 13 Jan 2009 13:03:37 -0800
+
 build-iso (0.16) unstable; urgency=low
 
 	  3.2.0
