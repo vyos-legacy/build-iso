@@ -8,6 +8,9 @@ include mk.conf
 
 PACKAGE_DEBS := $(subst /debian,,$(wildcard pkgs/*/debian))
 CLEAN_DEBS := $(subst pkgs/,clean-pkgs/,$(PACKAGE_DEBS))
+BUILD_PKGS := $(subst pkgs/,,$(PACKAGE_DEBS))
+CLEAN_PKGS := $(subst pkgs/,clean-,$(PACKAGE_DEBS))
+RELEASE_PKGS := $(subst pkgs/,release-,$(PACKAGE_DEBS))
 
 UID := $(shell id -u)
 ifneq ($(UID),0)
@@ -197,6 +200,18 @@ $(PACKAGE_DEBS):
 $(CLEAN_DEBS):
 	@d=$$(echo $@ | sed 's/^clean-//'); case "$$d" in pkgs/installer*|pkgs/linux-kernel-di*|"" ) echo !!!!!$$d!!!!!!!;; *) cd $$d; debuild clean;; esac
 
+.PHONY: $(BUILD_PKGS)
+$(BUILD_PKGS):
+	@cd pkgs/$@; debuild -i -b -uc -us -nc
+
+.PHONY: $(CLEAN_PKGS)
+$(CLEAN_PKGS):
+	@d=$$(echo $@ | sed 's/^clean-//'); cd pkgs/$$d; debuild clean
+
+.PHONY: $(RELEASE_PKGS)
+$(RELEASE_PKGS):
+	@d=$$(echo $@ | sed 's/^release-//'); cd pkgs/$$d; ../../tools/pkg-release -p
+
 .PHONY: show_unreleased
 show_unreleased:
 	@cd pkgs; \
@@ -207,5 +222,3 @@ show_unreleased:
 		fi); \
 	done
 
-#$(PACKAGE_DEBS):
-#	echo $(PACKAGE_DEBS)

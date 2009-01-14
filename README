@@ -153,35 +153,59 @@ Build submodules
     for all cloned submodules and include them in the ISO. If you want to
     work with specific submodules, you can use the commands listed below.
 
-    To build binary packages for cloned submodule(s),
+    Using make targets
 
-	tools/submod-mk { --all | SUBMODULE... }
+      There are a number of top-level make targets for working with
+      submodules. The commands below use submodule "vyatta-cfg" as an
+      example.
 
-    To build binary and source packages for submodule(s),
+      To build ".deb" packages for the vyatta-cfg submodule (equivalent to
+      "debuild -i -b -uc -us -nc"):
 
-	tools/submod-mk --source { --all | SUBMODULE... }
+        make vyatta-cfg
 
-    To build signed binary and source packages for submodule(s),
+      To clean the build for the vyatta-cfg submodule (equivalent to
+      "debuild clean"):
 
-	tools/submod-mk --signed-source { --all | SUBMODULE... }
+        make clean-vyatta-cfg
 
-    To clean files generated during submodule build,
+      To do a "release" for the vyatta-cfg submodule (equivalent to
+      "pkg-release -p", i.e., auto-generate everything and no confirmation):
 
-	tools/submod-clean SUBMODULE...
+        make release-vyatta-cfg
 
-    To clean files generated during all submodule builds,
+    Using submod-mk script
 
-	tools/submod-clean
+      The submod-mk script in tools/ can also be used to work with submodules.
+      To build binary packages for cloned submodule(s),
 
-    To also clean the submodule build stage(s),
+        tools/submod-mk { --all | SUBMODULE... }
 
-	tools/submod-clean -d [ SUBMODULE... ]
+      To build binary and source packages for submodule(s),
 
-    To clean the source tree of submodules to skip subsequent builds,
+        tools/submod-mk --source { --all | SUBMODULE... }
 
-	tools/submod-clean -g [ SUBMODULE... ]
+      To build signed binary and source packages for submodule(s),
 
-    This retains the local bare git repository for quicker updates.
+        tools/submod-mk --signed-source { --all | SUBMODULE... }
+
+      To clean files generated during submodule build,
+
+        tools/submod-clean SUBMODULE...
+
+      To clean files generated during all submodule builds,
+
+        tools/submod-clean
+
+      To also clean the submodule build stage(s),
+
+        tools/submod-clean -d [ SUBMODULE... ]
+
+      To clean the source tree of submodules to skip subsequent builds,
+
+        tools/submod-clean -g [ SUBMODULE... ]
+
+      This retains the local bare git repository for quicker updates.
 
 Changes
 

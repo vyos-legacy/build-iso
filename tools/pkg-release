@@ -98,6 +98,12 @@ if eval "$edit"; then
   export EDITOR=vi
 fi
 
+# pull before doing anything
+if ! git pull; then
+  echo git-pull failed
+  exit 1
+fi
+
 if [ -z "$ver" ]; then
   # no version specified. use git-dch directly.
   if ! git dch --debian-branch="$branch" --release; then
