@@ -65,7 +65,7 @@ EOF
     echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
 
     echo "Version  :    ${VVERSION}">$vf/version
-    echo "Copyright:    2006-2008 Vyatta, Inc.">>$vf/version
+    echo "Copyright:    2006-2009 Vyatta, Inc.">>$vf/version
 
     (
         echo "Package: vyatta-version"
