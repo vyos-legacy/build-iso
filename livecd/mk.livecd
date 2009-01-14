@@ -43,7 +43,7 @@ lh_config
     if ! eval "$VYATTA_COMMUNITY_BUILD" \
        && ! eval "$VYATTA_SUPPORTED_BUILD"; then
       # legacy autobuild. don't actually add the repo.
-      sed -i 's/vyatta-dev\/jenner\/unstable/debian-jenner/;
+      sed -i 's/vyatta-dev\/jenner\/testing/debian-jenner/;
               s/ jenner / lenny /;' \
         ../config/chroot_sources/vyatta.chroot
     fi
