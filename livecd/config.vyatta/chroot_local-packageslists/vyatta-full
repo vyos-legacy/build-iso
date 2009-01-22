@@ -6,10 +6,8 @@ iptables
 libsnmp-base
 libsnmp-perl
 libsnmp15
-linux-image-2.6.27-1-486-vyatta
 live-initramfs
 netplug
-open-vm-tools-2.6.27-1-486-vyatta
 pam-tacplus
 snmp
 snmpd
@@ -45,7 +43,6 @@ vyatta-openvpn
 vyatta-ppp
 vyatta-quagga
 vyatta-ravpn
-vyatta-serial
 vyatta-snort
 vyatta-snort-common
 vyatta-snort-common-libraries
@@ -54,5 +51,3 @@ vyatta-wanloadbalance
 vyatta-webgui
 vyatta-webproxy
 vyatta-wirelessmodem
-wanpipe
-wanpipe-modules-2.6.27-1-486-vyatta

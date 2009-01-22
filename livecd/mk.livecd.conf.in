@@ -36,8 +36,6 @@ declare -x LH_SYSLINUX_TIMEOUT="@LH_SYSLINUX_TIMEOUT@"
 declare -x LH_UNION_FILESYSTEM="@LH_UNION_FILESYSTEM@"
 declare -x LH_VERBOSE="@LH_VERBOSE@"
 declare -x create_xensourcevm="@create_xensourcevm@"
-declare -x VYATTA_ARCHIVE="@VYATTA_ARCHIVE@"
-declare -x VYATTA_LINUX_PKG="@VYATTA_LINUX_PKG@"
 declare -x VYATTA_DEV_BUILD="@VYATTA_DEV_BUILD@"
 declare -x VYATTA_COMMUNITY_BUILD="@VYATTA_COMMUNITY_BUILD@"
 declare -x VYATTA_SUPPORTED_BUILD="@VYATTA_SUPPORTED_BUILD@"
@@ -52,7 +50,7 @@ export LH_BOOTSTRAP_INCLUDE
 declare -x LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 
 # package lists to include
-declare -x LH_PACKAGES_LISTS="vyatta-full vyatta-extra"
+declare -x LH_PACKAGES_LISTS="vyatta-full vyatta-extra vyatta-kernel"
 
 declare -x LH_APT_RECOMMENDS="disabled"
 declare -x LH_CHROOT_BUILD="disabled"

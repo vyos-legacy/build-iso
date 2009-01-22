@@ -53,6 +53,13 @@ lh_config
   fi
 )
 
+# set up "vyatta-kernel" packages list according to flavor
+kplist="config/chroot_local-packageslists/vyatta-kernel.$LH_LINUX_FLAVOURS"
+if [ -f "$kplist" ]; then
+  # list exists. set it up.
+  mv -f $kplist config/chroot_local-packageslists/vyatta-kernel
+fi
+
 # set up version template
 if eval "$VYATTA_COMMUNITY_BUILD"; then
   # community build

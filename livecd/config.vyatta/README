@@ -19,7 +19,17 @@ chroot_local-includes:
 chroot_local-packageslists:
   This sub-directory contains package lists that specify what packages should
   be installed. The lists that should be used are specified using the
-  LH_PACKAGES_LISTS variable.
+  LH_PACKAGES_LISTS variable in "mk.livecd.conf".
+
+  Note that the "vyatta-kernel.*" lists correspond to the various kernel
+  flavors. For example, the packages in "vyatta-kernel.486-vyatta" will be
+  included if the "486-vyatta" kernel flavor is specified for the build
+  (through top-level configure). For now, all packages that directly *or*
+  indirectly depend on the specific kernel flavor must be included in the
+  flavor-specific list and *not* in one of the generic lists. For example,
+  "wanpipe" depends on the 486-vyatta wanpipe-modules package, which depends
+  on the 486-vyatta kernel, and therefore "wanpipe" is listed in
+  "vyatta-kernel.486-vyatta" and not in "vyatta-full".
 
 chroot_local-patches:
   This sub-directory contains patches that are applied during the chroot

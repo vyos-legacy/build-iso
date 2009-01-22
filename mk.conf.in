@@ -1,3 +1,0 @@
-# configured Make variables included by top level Makefile
-
-VYATTA_LINUX_PKG = @VYATTA_LINUX_PKG@

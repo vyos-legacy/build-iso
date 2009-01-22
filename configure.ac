@@ -80,10 +80,6 @@ AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
 test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
 AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
 
-test "X$VYATTA_ARCHIVE" = "X" && \
-     VYATTA_ARCHIVE="http://firebolt.vyatta.com/vyatta-dev/"
-AC_ARG_VAR(VYATTA_ARCHIVE, [default: Vyatta nightly build])
-
 # process --with[out] arguments
 AC_ARG_WITH(target-dist,
 	[AS_HELP_STRING([--with-target-dist=<dist>],
@@ -149,15 +145,6 @@ else
   rm -f pkgs/.VYATTA_DEV_BUILD
 fi
 
-AC_ARG_WITH(xensourcevm,
-[AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
-
-if test X$with_xensourcevm = Xyes ; then
-   create_xensourcevm=true
-else
-   create_xensourcevm=false
-fi
-
 # build arch
 BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
@@ -173,6 +160,17 @@ AC_ARG_WITH(with-kernel-flavor,
 
 if test X$with_kernel_flavor != X ; then
   LH_LINUX_FLAVOURS=$with_kernel_flavor
+fi
+
+AC_ARG_WITH(xensourcevm,
+[AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
+
+if test X$with_xensourcevm = Xyes ; then
+  # use vyatta-virt flavor for xensourcevm build
+  LH_LINUX_FLAVOURS=vyatta-virt
+  create_xensourcevm=true
+else
+  create_xensourcevm=false
 fi
 
 KERN_SUBMOD_DIR=$(pwd)/pkgs/linux-image
@@ -202,9 +200,6 @@ if test -d $KERN_SUBMOD_DIR/debian; then
   )>&/dev/null
 fi
 
-# FIXME! fetch version from source
-VYATTA_LINUX_VER="linux-image-2.6.27-1"
-VYATTA_LINUX_PKG="$VYATTA_LINUX_VER-$LH_LINUX_FLAVOURS"
 LH_LINUX_PACKAGES=none
 
 LH_MIRROR_BINARY="http://packages.vyatta.com/debian-jenner"
@@ -213,7 +208,7 @@ LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-jenner"
 LH_SECURITY="disabled"
 LH_SECTIONS="main"
 
-AC_CONFIG_FILES([mk.conf livecd/mk.livecd.conf])
+AC_CONFIG_FILES([livecd/mk.livecd.conf])
 
 AC_SUBST(ARCH)
 AC_SUBST(CONFIG_BUILD)
@@ -259,8 +254,6 @@ AC_SUBST(LH_VERBOSE)
 
 AC_SUBST(create_xensourcevm)
 
-AC_SUBST(VYATTA_ARCHIVE)
-AC_SUBST(VYATTA_LINUX_PKG)
 AC_SUBST(VYATTA_DEV_BUILD)
 AC_SUBST(VYATTA_COMMUNITY_BUILD)
 AC_SUBST(VYATTA_SUPPORTED_BUILD)
