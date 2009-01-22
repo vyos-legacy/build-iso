@@ -31,12 +31,45 @@ if [ ! -f debian/changelog ] || [ ! -f .git/config ]; then
   usage
 fi
 
+# pull before doing anything
+if ! git pull; then
+  echo git-pull failed
+  exit 1
+fi
+
+if [ -z "$DEBFULLNAME" ]; then
+  DEBFULLNAME=$(git config user.name)
+fi
+if [ -z "$DEBFULLNAME" ]; then
+  DEBFULLNAME=$GIT_COMMITTER_NAME
+fi
+if [ -z "$DEBEMAIL" ]; then
+  DEBEMAIL=$(git config user.email)
+fi
+if [ -z "$DEBEMAIL" ]; then
+  DEBEMAIL=$GIT_COMMITTER_EMAIL
+fi
+export DEBFULLNAME
+export DEBEMAIL
+user=${DEBEMAIL%%@*}
 url=$(git-config remote.origin.url \
       | sed "s@http://\(\(git\|suva\)[^/]\+\)/@\1:/git/@; \
              s@http://\(phuket[^/]\+\)/@\1:/usr/local/git/@")
+if [ -z "$user" ] || [[ $url == http://* ]]; then
+  cat <<EOF
+URL "$url" cannot be used for git-push.
+Please push manually using the following commands after this script finishes:
+  git push <url>
+  git push --tags <url>
+
+EOF
+  dopush=false
+else
+  dopush=true
+fi
+url="$user@$url"
 
 edit=false
-dopush=true
 confirm=true
 while getopts inph opt
 do
@@ -62,7 +95,7 @@ else
 fi
 if eval "$dopush"; then
   echo "  Changes WILL be pushed to origin repo automatically"
-  echo "    (origin is \"$url\")"
+  echo "    (origin URL is \"$url\")"
 else
   echo "  Changes will NOT be pushed to origin repo"
 fi
@@ -83,25 +116,10 @@ if eval "$confirm"; then
   esac
 fi
 
-if [ -z "$DEBFULLNAME" ]; then
-  DEBFULLNAME=$(git config user.name)
-fi
-if [ -z "$DEBEMAIL" ]; then
-  DEBEMAIL=$(git config user.email)
-fi
-export DEBFULLNAME
-export DEBEMAIL
-
 branch=$(git branch | sed -n '/^\* /s/^\* //p')
 export EDITOR=true
 if eval "$edit"; then
   export EDITOR=vi
-fi
-
-# pull before doing anything
-if ! git pull; then
-  echo git-pull failed
-  exit 1
 fi
 
 if [ -z "$ver" ]; then
