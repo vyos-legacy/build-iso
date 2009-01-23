@@ -88,11 +88,9 @@ $(RELEASE_PKGS):
 
 .PHONY: show_unreleased
 show_unreleased:
-	@cd pkgs; \
-	for r in */.git; do (cd $${r%%/.git}; \
-		if ! git diff --quiet HEAD \
-						$$(git describe --tags --abbrev=0 --match 'debian/*'); then \
-			echo ====== $${r%%/.git} ======; git log --max-count=1; echo; \
-		fi); \
-	done
+	@./tools/show-unreleased
+
+.PHONY: show_unreleased_all
+show_unreleased_all:
+	@./tools/show-unreleased -a
 

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# this script shows the unreleased changes in submodules.
+
+show_all=no
+while getopts a opt
+do
+  case "$opt" in
+    a )
+      # show all unreleased changes
+      show_all=yes
+      ;;
+  esac
+done
+
+(
+  cd pkgs
+  for r in */.git; do
+    (
+      cd ${r%%/.git}
+      tag=$(git describe --tags --abbrev=0 --match 'debian/*')
+      if ! git diff --quiet HEAD $tag; then
+        echo "====== ${r%%/.git} ======"
+        if [ "$show_all" == yes ]; then
+          git log HEAD ^$tag
+        else
+          git log --max-count=1
+        fi
+        echo
+      fi
+    )
+  done
+)
+
