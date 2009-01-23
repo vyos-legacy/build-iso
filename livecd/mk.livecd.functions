@@ -100,12 +100,7 @@ vyatta-xensource-partition-image ()
   rm -rf xensource
   mkdir -p xensource/pimage
 
-  arch=$(apt-config dump | grep Architecture | sed 's/\(.*\)"\(.*\)"\(.*\)/\2/')
-  if [ ! -f "../pkgs/linux-image/debian/control" ]; then
-    echo E: unable to find kernel control file
-    exit 1
-  fi
-  kversion=$(egrep "Package: linux-image.+-vyatta-virt" ../pkgs/linux-image/debian/control | sed -e 's/Package: linux-image-\|-vyatta-virt//g')
+  arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
   # using VVERSION throughout though I am not sure it is the right var
 
@@ -130,16 +125,33 @@ vyatta-xensource-partition-image ()
   # stage the chroot
   # need to edit the inittab get rid of t0 and add h0
   # setup config.boot if neccessary
-
-  # we need a stripped verison of the kernel for pygrub 
+  
+  # we need an "unwrapped" verison of the kernel image for pygrub 
   echo I: fixing partition image kernel
-  if [ ! -f "../pkgs/linux-image/debian/build/build-$arch-none-vyatta-virt/vmlinux" ]; then
-    echo E: unable to find kernel image.  Please build kernel first.
+  oimg=$(find xensource/pimage/boot/ -maxdepth 1 \
+          -name 'vmlinuz-*-vyatta-virt' | head -1)
+  if [ -z "$oimg" ]; then
+    echo E: Cannot find vyatta-virt kernel in chroot
     exit 1
   fi
-  strip ../pkgs/linux-image/debian/build/build-$arch-none-vyatta-virt/vmlinux
-  gzip -c ../pkgs/linux-image/debian/build/build-$arch-none-vyatta-virt/vmlinux \
-    > xensource/pimage/boot/vmlinux-$kversion-vyatta-virt
+  nimg=${oimg/vmlinuz/vmlinux}
+  gzoff=$(../tools/find-string-index.pl '\x1f\x8b\x08\x00' $oimg)
+  if [ -z "$gzoff" ]; then
+    echo E: Cannot unwrap $oimg
+    exit 1
+  fi
+  dd if=$oimg of=$nimg.gz bs=1 skip=$gzoff
+  if ! file $nimg.gz | grep -q 'gzip compressed data'; then
+    echo E: Cannot unwrap $oimg
+    exit 1
+  fi
+  zcat $nimg.gz > $nimg.0
+  if ! file $nimg.0 | grep -q 'ELF 32-bit LSB.*, stripped'; then
+    echo E: Cannot unwrap $oimg
+    exit 1
+  fi
+  gzip -c $nimg.0 > $nimg
+  rm -f $nimg.gz $nimg.0
 
   # create the default domU configuration file
   cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
