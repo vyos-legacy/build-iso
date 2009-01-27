@@ -55,6 +55,10 @@ user=${DEBEMAIL%%@*}
 url=$(git-config remote.origin.url \
       | sed "s@http://\(\(git\|suva\)[^/]\+\)/@\1:/git/@; \
              s@http://\(phuket[^/]\+\)/@\1:/usr/local/git/@")
+if [[ $url == *@* ]]; then
+  user=${url%%@*}
+  url=${url##*@}
+fi
 if [ -z "$user" ] || [[ $url == http://* ]]; then
   cat <<EOF
 URL "$url" cannot be used for git-push.
