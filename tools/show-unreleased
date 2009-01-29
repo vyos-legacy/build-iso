@@ -22,9 +22,9 @@ done
       if ! git diff --quiet HEAD $tag; then
         echo "====== ${r%%/.git} ======"
         if [ "$show_all" == yes ]; then
-          git log HEAD ^$tag
+          git log --no-merges HEAD ^$tag
         else
-          git log --max-count=1
+          git log --no-merges --max-count=1
         fi
         echo
       fi
