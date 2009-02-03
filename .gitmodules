@@ -106,9 +106,6 @@
 [submodule "pkgs/net-snmp"]
 	path = pkgs/net-snmp
 	url = http://git.vyatta.com/net-snmp.git
-[submodule "pkgs/vyatta-webgui"]
-	path = pkgs/vyatta-webgui
-	url = http://git.vyatta.com/vyatta-webgui.git
 [submodule "pkgs/vyatta-openvpn"]
 	path = pkgs/vyatta-openvpn
 	url = http://git.vyatta.com/vyatta-openvpn.git
