@@ -20,7 +20,7 @@ done
       cd ${r%%/.git}
       tag=$(git describe --tags --abbrev=0 --match 'debian/*')
       if ! git diff --quiet HEAD $tag; then
-        echo "====== ${r%%/.git} ======"
+        echo "====== Unreleased change(s) in ${r%%/.git} ======"
         if [ "$show_all" == yes ]; then
           git log --no-merges HEAD ^$tag
         else
