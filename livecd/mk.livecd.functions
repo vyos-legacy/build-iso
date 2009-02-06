@@ -23,6 +23,7 @@ mk_version_package ()
     local config_src=community
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
+    local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
     VVERSION=`cat version 2>/dev/null` || true
     case "$VVERSION" in
@@ -70,7 +71,7 @@ EOF
     (
         echo "Package: vyatta-version"
         echo "Version: ${VVERSION}"
-        echo "Architecture: all"
+        echo "Architecture: ${arch}"
         echo "Maintainer: Vyatta <debs@vyatta.com>"
         echo "Essential: no"
         echo "Section: base"
@@ -83,13 +84,14 @@ EOF
         echo " the list of recommended packages (with the recommended versions)"
     ) >DEBIAN/control
 
+    vpkgname="vyatta-version_${VVERSION}_${arch}.deb"
     mkdir ../$$-deb
-    dpkg --build . "../$$-deb/vyatta-version_${VVERSION}_all.deb" >/dev/null
+    dpkg --build . "../$$-deb/$vpkgname" >/dev/null
 
     rm -rf $tmpdir
     cd $savedir
-    mv /tmp/$$-deb/vyatta-version_${VVERSION}_all.deb config/chroot_local-packages/.
-    dpkg -i --root=chroot config/chroot_local-packages/vyatta-version_${VVERSION}_all.deb
+    mv /tmp/$$-deb/$vpkgname config/chroot_local-packages/.
+    dpkg -i --root=chroot config/chroot_local-packages/$vpkgname
     rm -rf /tmp/$$-deb
 }
 
