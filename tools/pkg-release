@@ -91,7 +91,7 @@ done
 
 ver=${@:$OPTIND:1}
 
-if ! echo $ver | grep -q '^[0-9]'; then
+if [ -n "$ver" ] && ! echo $ver | grep -q '^[0-9]'; then
   echo "Version string should start with a number."
   exit 1
 fi
