@@ -1,12 +1,12 @@
 Explanation: BEGIN SHADOW ENTRY
 Package: *
 Pin: release v=jenner
-Pin-Priority: 1001
+Pin-Priority: 1000
 Explanation: END SHADOW ENTRY
 
 Explanation: BEGIN VYATTA ENTRY
 Package: *
 Pin: release l=Vyatta
-Pin-Priority: 1000
+Pin-Priority: 999
 Explanation: END VYATTA ENTRY
 
