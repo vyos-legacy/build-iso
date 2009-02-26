@@ -114,6 +114,7 @@ rm -rf chroot/root/{.rnd,.gnupg,.aptitude,.debtags}
 
 ## restore apt/preferences for binary build
 cp -f config.vyatta/chroot_apt/preferences chroot/etc/apt
+sed -i '/BEGIN SHADOW ENTRY/,/END SHADOW ENTRY/{d}' chroot/etc/apt/preferences
 
 # build the XenSource partition image
 if eval "$create_xensourcevm"; then
