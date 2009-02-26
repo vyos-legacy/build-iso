@@ -1,3 +1,33 @@
+build-iso (0.18) unstable; urgency=low
+
+	  3.3.1
+  [ Mark O'Brien ]
+
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+
+  [ Justin Fletcher ]
+  * update submodule vyatta-webgui
+  * update submodule vyatta-webgui
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update index
+  * Add vyatta-webgui
+  * First remove unused reference to web gui
+  * Make all references to git modules consistent. Use git.vyatta.com
+    everywhere
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Wed, 25 Feb 2009 18:25:41 -0800
+
 build-iso (0.17) unstable; urgency=low
 
 	  3.2.1
