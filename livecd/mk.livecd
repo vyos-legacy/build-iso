@@ -32,14 +32,8 @@ lh_config
     ../config/
  
   if ! eval "$VYATTA_DEV_BUILD"; then
-    # not dev build => remove unstable
-    rm -f ../config/chroot_sources/vyatta.chroot*
-
-    # release build. use testing.
-    mv -f ../config/chroot_sources/vyatta-testing.chroot \
-      ../config/chroot_sources/vyatta.chroot
-    mv -f ../config/chroot_sources/vyatta-testing.chroot.gpg \
-      ../config/chroot_sources/vyatta.chroot.gpg
+    # not dev build => use testing.
+    sed -i 's/\/unstable /\/testing /' ../config/chroot_sources/vyatta.chroot
     if ! eval "$VYATTA_COMMUNITY_BUILD" \
        && ! eval "$VYATTA_SUPPORTED_BUILD"; then
       # legacy autobuild. don't actually add the repo.
@@ -47,9 +41,6 @@ lh_config
               s/ jenner / lenny /;' \
         ../config/chroot_sources/vyatta.chroot
     fi
-  else
-    # dev build => remove testing, use unstable
-    rm -f ../config/chroot_sources/vyatta-testing.chroot*
   fi
 )
 

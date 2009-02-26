@@ -47,7 +47,7 @@ clean :
 .PHONY : distclean
 distclean :
 	@$(MAKE) clean
-	@rm -rf livecd/cache
+	@rm -rf livecd/{cache,version}
 
 # building kernel modules depends on kernel
 pkgs/wanpipe: pkgs/linux-image/debian/stamps/build-base
