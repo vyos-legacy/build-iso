@@ -95,6 +95,15 @@ EOF
     rm -rf /tmp/$$-deb
 }
 
+clean_up_xensource ()
+{
+  # clean up the mounts
+  echo I: unmounting the image file
+  umount xensource/pimage
+  echo I: releasing loop device $loop
+  losetup -d $loop
+}
+
 # Create the Vyatta domU partition image
 vyatta-xensource-partition-image ()
 {
@@ -134,23 +143,27 @@ vyatta-xensource-partition-image ()
           -name 'vmlinuz-*-vyatta-virt' | head -1)
   if [ -z "$oimg" ]; then
     echo E: Cannot find vyatta-virt kernel in chroot
-    exit 1
+    clean_up_xensource
+    return 1
   fi
   nimg=${oimg/vmlinuz/vmlinux}
   gzoff=$(../tools/find-string-index.pl '\x1f\x8b\x08\x00' $oimg)
   if [ -z "$gzoff" ]; then
     echo E: Cannot unwrap $oimg
-    exit 1
+    clean_up_xensource
+    return 1
   fi
   dd if=$oimg of=$nimg.gz bs=1 skip=$gzoff
   if ! file $nimg.gz | grep -q 'gzip compressed data'; then
     echo E: Cannot unwrap $oimg
-    exit 1
+    clean_up_xensource
+    return 1
   fi
   zcat $nimg.gz > $nimg.0
-  if ! file $nimg.0 | grep -q 'ELF 32-bit LSB.*, stripped'; then
+  if ! file $nimg.0 | grep -q 'ELF ..-bit LSB.*, stripped'; then
     echo E: Cannot unwrap $oimg
-    exit 1
+    clean_up_xensource
+    return 1
   fi
   gzip -c $nimg.0 > $nimg
   rm -f $nimg.gz $nimg.0
@@ -200,11 +213,7 @@ vyatta-xensource-partition-image ()
   rm -f xensource/pimage/etc/fstab
   echo -e "/dev/xvda1\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
 
-  # clean up the mounts
-  echo I: unmounting the image file
-  umount xensource/pimage
-  echo I: releasing loop device $loop
-  losetup -d $loop
+  clean_up_xensource
 
   echo I: compressing XenSource partition image file
   gzip xensource/vyatta-xensource-$VVERSION-$arch.img
