@@ -118,7 +118,8 @@ sed -i '/BEGIN SHADOW ENTRY/,/END SHADOW ENTRY/{d}' chroot/etc/apt/preferences
 
 # build the XenSource partition image
 if eval "$create_xensourcevm"; then
-  vyatta-xensource-partition-image || return 1
+  vyatta-xensource-partition-image || exit 1
+  exit 0
 fi
 
 echo I: building binary
