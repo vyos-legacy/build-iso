@@ -32,7 +32,11 @@ mk_version_package ()
                 ;;
     "" )
                 get_branch
-                VVERSION=VC888."$VBRANCH"
+                # note: this is used as the debian package version string, so
+                # avoid problematic chars.
+                # use a string starting with a numeric character for
+                # full-upgrade compatibility.
+                VVERSION=$(echo -n 999."$VBRANCH" | tr -d '_+-')
                 ;;
     esac
 
