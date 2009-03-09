@@ -145,3 +145,6 @@
 [submodule "pkgs/pam-tacplus"]
 	path = pkgs/pam-tacplus
 	url = http://git.vyatta.com/pam-tacplus.git
+[submodule "pkgs/ntp"]
+	path = pkgs/ntp
+	url = http://git.vyatta.com/ntp.git
