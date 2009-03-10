@@ -8,6 +8,8 @@ libsnmp-perl
 libsnmp15
 live-initramfs
 netplug
+ntp
+ntpdate
 pam-tacplus
 snmp
 snmpd
