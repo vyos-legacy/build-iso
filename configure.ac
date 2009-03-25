@@ -149,7 +149,7 @@ fi
 BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
 # default flavor for i386 and amd64
-LH_LINUX_FLAVOURS="486-vyatta"
+LH_LINUX_FLAVOURS="586-vyatta"
 if test X$BARCH = Xamd64; then
   LH_LINUX_FLAVOURS="amd64-vyatta"
 fi
