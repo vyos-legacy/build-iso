@@ -88,12 +88,11 @@ fi
 
 if [ -z "$quiet" ]; then
   echo "The following options are selected:"
-  if [ -z "$edit" ]; then
-    echo "  Use automatically generated changelog"
-  else
+  if eval "$edit"; then
     echo "  Edit changelog interactively"
+  else
+    echo "  Use automatically generated changelog"
   fi
-  
   if [ -z "$ver" ]; then
     echo "  Use automatically generated version string"
   else
