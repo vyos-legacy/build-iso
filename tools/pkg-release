@@ -16,11 +16,9 @@ Usage: pkg-release [-i] [-n] [-p] [-h] [<version>]
   The following options are available:
 
     -i: Edit the changelog interactively.
-
     -n: Do not push the changes.
-
     -p: Push the changes without confirmation.
-
+    -q: Quiet don't show actions
     -h: Show this help text.
 
 EOF
@@ -29,12 +27,6 @@ EOF
 
 if [ ! -f debian/changelog ] || [ ! -f .git/config ]; then
   usage
-fi
-
-# pull before doing anything
-if ! git pull; then
-  echo git-pull failed
-  exit 1
 fi
 
 if [ -z "$DEBFULLNAME" ]; then
@@ -75,17 +67,15 @@ url="$user@$url"
 
 edit=false
 confirm=true
-while getopts inph opt
+quiet=
+while getopts inphq opt
 do
   case $opt in
-    i) edit=true
-       ;;
-    n) dopush=false
-       ;;
-    p) confirm=false
-       ;;
-    *) usage
-       ;;
+    i) edit=true    ;;
+    n) dopush=false ;;
+    p) confirm=false;;
+    q) quiet="-q"   ;;
+    *) usage        ;;
   esac
 done
 
@@ -96,39 +86,45 @@ if [ -n "$ver" ] && ! echo $ver | grep -q '^[0-9]'; then
   exit 1
 fi
 
-echo "The following options are selected:"
-if eval "$edit"; then
-  echo "  Edit changelog interactively"
-else
-  echo "  Use automatically generated changelog"
-fi
-if eval "$dopush"; then
-  echo "  Changes WILL be pushed to origin repo automatically"
-  echo "    (origin URL is \"$url\")"
-else
-  echo "  Changes will NOT be pushed to origin repo"
-fi
-if [ -z "$ver" ]; then
-  echo "  Use automatically generated version string"
-else
-  echo "  Use version string \"$ver\""
-fi
-if eval "$confirm"; then
-  echo -n "Proceed? (y/N) "
-  read resp
-  case "$resp" in
-    y* )
-      ;;
-    * )
-      exit 1
-      ;;
-  esac
+if [ -z "$quiet" ]; then
+  echo "The following options are selected:"
+  if eval "$edit"; then
+    echo "  Edit changelog interactively"
+  else
+    echo "  Use automatically generated changelog"
+  fi
+  if [ -z "$ver" ]; then
+    echo "  Use automatically generated version string"
+  else
+    echo "  Use version string \"$ver\""
+  fi
+  if eval "$dopush"; then
+    echo "  Changes WILL be pushed to origin repo automatically"
+    echo "    (origin URL is \"$url\")"
+    if eval "$confirm"; then
+      echo -n "Proceed? (y/N) "
+      read resp
+      case "$resp" in
+      y* ) ;;
+      * ) exit 1 ;;
+      esac
+    fi
+  else
+    echo "  Changes will NOT be pushed to origin repo"
+  fi
 fi
 
+# pull before doing anything
+if ! git pull $quiet ; then
+  echo git-pull failed
+  exit 1
+fi
 branch=$(git branch | sed -n '/^\* /s/^\* //p')
-export EDITOR=true
-if eval "$edit"; then
-  export EDITOR=vi
+
+# turn off editor called from git-dch
+if ! eval $edit; then 
+    export VISUAL=
+    export EDITOR=true
 fi
 
 if [ -z "$ver" ]; then
@@ -146,8 +142,8 @@ else
   fi
 fi
 
-if ! (git commit -m "$ver" debian/changelog \
-      && git tag -a -m "$ver" "debian/$ver"); then
+if ! (git commit $quiet -m "$ver" debian/changelog \
+      && git tag $quiet -a -m "$ver" "debian/$ver"); then
   usage
 fi
 
