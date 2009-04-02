@@ -89,10 +89,6 @@ Build Host Setup
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
 
-    You also need to add the Vyatta buildtools repository to sources.list,
-
-	deb http://packages.vyatta.com/vyatta-dev/ buildtools main
-
     To install the Vyatta repository GPG key,
 
 	wget -O vyatta-pubkey.gpg http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
@@ -104,6 +100,17 @@ Build Host Setup
     This script will setup the build environment for an ISO build:
 
 	setup-build-env
+
+    You will also need to download and install the squashfs-tools package:
+
+        wget http://packages.vyatta.com/vyatta-dev/jenner/unstable/pool/main/squashfs-tools_4.0+vyatta-2_i386.deb
+        dpkg -i squashfs-tools_4.0+vyatta-2_i386.deb
+
+    and put the following in /etc/apt/preferences to "pin" its version:
+
+        Package: squashfs-tools
+        Pin: version 4.*
+        Pin-Priority: 1001 
 
     In order to build the individual vyatta packages, you need to install additional
     debian packages.  Note that each vyatta package build will check if the required
