@@ -1,6 +1,6 @@
 Vyatta VC5 ISO Build Procedures
 
-    This document describes how to build a Vyatta VC4 ISO image.
+    This document describes how to build a Vyatta VC5 ISO image.
     The most recent version of this document is the top-level README file of
     the "jenner" branch of the "build-IMO" source tree.
 
@@ -81,7 +81,7 @@ Build Host Setup
 
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-netinst.iso
-	http://packages.vyatta.com/iso/testing/*.iso
+	http://packages.vyatta.com/vyatta/iso/testing/*.iso
 
     The respective installation prompts for distribution mirror. Any debian "lenny"
     mirror will do.  To include Vyatta's Debian mirror, add this to /etc/apt/sources.list:
