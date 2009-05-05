@@ -1,6 +1,6 @@
 Vyatta VC5 ISO Build Procedures
 
-    This document describes how to build a Vyatta VC4 ISO image.
+    This document describes how to build a Vyatta VC5 ISO image.
     The most recent version of this document is the top-level README file of
     the "jenner" branch of the "build-IMO" source tree.
 
@@ -81,17 +81,13 @@ Build Host Setup
 
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
 	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-netinst.iso
-	http://packages.vyatta.com/iso/testing/*.iso
+	http://packages.vyatta.com/vyatta/iso/testing/*.iso
 
     The respective installation prompts for distribution mirror. Any debian "lenny"
     mirror will do.  To include Vyatta's Debian mirror, add this to /etc/apt/sources.list:
 
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
-
-    You also need to add the Vyatta buildtools repository to sources.list,
-
-	deb http://packages.vyatta.com/vyatta-dev/ buildtools main
 
     To install the Vyatta repository GPG key,
 
@@ -104,6 +100,17 @@ Build Host Setup
     This script will setup the build environment for an ISO build:
 
 	setup-build-env
+
+    You will also need to download and install the squashfs-tools package:
+
+        wget http://packages.vyatta.com/vyatta-dev/jenner/unstable/pool/main/squashfs-tools_4.0+vyatta-2_i386.deb
+        dpkg -i squashfs-tools_4.0+vyatta-2_i386.deb
+
+    and put the following in /etc/apt/preferences to "pin" its version:
+
+        Package: squashfs-tools
+        Pin: version 4.*
+        Pin-Priority: 1001 
 
     In order to build the individual vyatta packages, you need to install additional
     debian packages.  Note that each vyatta package build will check if the required
