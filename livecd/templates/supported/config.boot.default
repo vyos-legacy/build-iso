@@ -19,6 +19,16 @@ system {
             url: "http://packages.vyatta.com/vyatta-supported"
         }
     }
+    syslog {
+        global {
+            facility all {
+                level notice
+            }
+            facility protocols {
+                level debug
+            }
+        }
+    }
 }
 
 interfaces {
