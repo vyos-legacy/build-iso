@@ -1,5 +1,5 @@
 system {
-    ntp-server "69.59.150.135"
+    ntp-server "0.vyatta.pool.ntp.org"
     login {
         user root {
             authentication {
