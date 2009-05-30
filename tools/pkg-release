@@ -63,7 +63,9 @@ EOF
 else
   dopush=true
 fi
-url="$user@$url"
+if [[ $url != /* ]]; then
+  url="$user@$url"
+fi
 
 edit=false
 confirm=true
