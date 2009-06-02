@@ -10,7 +10,6 @@ live-initramfs
 netplug
 ntp
 ntpdate
-tacplus
 snmp
 snmpd
 vyatta-base
