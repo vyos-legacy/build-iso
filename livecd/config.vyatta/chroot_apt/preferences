@@ -1,6 +1,6 @@
 Explanation: BEGIN SHADOW ENTRY
 Package: *
-Pin: release v=jenner
+Pin: release v=kenwood
 Pin-Priority: 1000
 Explanation: END SHADOW ENTRY
 

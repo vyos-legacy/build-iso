@@ -202,8 +202,8 @@ fi
 
 LH_LINUX_PACKAGES=none
 
-LH_MIRROR_BINARY="http://packages.vyatta.com/debian-jenner"
-LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-jenner"
+LH_MIRROR_BINARY="http://packages.vyatta.com/debian-kenwood"
+LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-kenwood"
 
 LH_SECURITY="disabled"
 LH_SECTIONS="main"
