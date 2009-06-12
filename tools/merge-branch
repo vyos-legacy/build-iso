@@ -1,0 +1,91 @@
+#!/bin/bash
+
+usage () {
+  cat<<EOF
+Usage: merge-branch [-n] [-h] <src_branch> <current_branch>
+
+  This script is run inside a debianized git source repository to merge
+  changes from another branch (the "source" branch) into the current branch.
+  
+  This sciript should be used instead of a simple "git merge" since the
+  version namespace "diverges" when a new branch is created, and as a result
+  the debian/changelog will be changed in parallel on each branch, causing a
+  simple merge to fail.
+
+  Instead of mergeing all changes from the source branch, the script will
+  discover the set of "real" changes (i.e., those that do not involve
+  "debian/changelog") in the source branch that are not yet cherry-picked
+  into the current branch. Then it will automatically cherry-pick only those
+  changes into the current branch.
+
+  Available options:
+    -n: Dry-run.
+    -h: Show this help text.
+EOF
+  exit 1
+}
+
+if [ ! -f debian/changelog ] || [ ! -f .git/config ]; then
+  usage
+fi
+
+dryrun=
+while getopts nh opt
+do
+  case $opt in
+    n)
+      dryrun=yes
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+SBRANCH=$1
+CBRANCH=$2
+if ! (git branch -a | grep -q " $SBRANCH\$"); then
+  echo -e "\"$SBRANCH\" is not a valid branch\n"
+  usage
+fi
+if ! (git branch -a | grep -q "^* $CBRANCH\$"); then
+  echo -e "\"$CBRANCH\" is not the current branch\n"
+  usage
+fi
+
+changes=($(git-rev-list --reverse --left-right --cherry-pick \
+              $SBRANCH...$CBRANCH | grep '^<'))
+for change in "${changes[@]}"; do
+  sha1=${change##<}
+  if ! (git whatchanged --max-count=1 --pretty=oneline $sha1 \
+        | grep -q '^:.*debian/changelog$'); then
+    # real change
+    echo -n "cherry-pick $sha1"
+    if [ "$dryrun" == "yes" ]; then
+      echo " (dry-run)"
+    else
+      echo
+      if ! git cherry-pick -x $sha1; then
+        cat <<EOF
+
+git cherry-pick failed.
+Fix the conflicts and commit before continuing the merge.
+EOF
+        exit 1
+      fi
+    fi
+  else
+    count=$(git whatchanged --max-count=1 --pretty=oneline $sha1 \
+            | grep '^:' | wc -l)
+    ssha1=$(git-rev-parse --short $sha1)
+    if (( count == 1 )); then
+      echo "    skip $ssha1 (only debian/changelog)"
+    else
+      echo "WARNING: skip $ssha1 (debian/changelog)"
+    fi
+  fi
+done
+
+exit 0
+
