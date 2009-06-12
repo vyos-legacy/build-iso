@@ -54,7 +54,7 @@ if ! (git branch -a | grep -q "^* $CBRANCH\$"); then
   usage
 fi
 
-changes=($(git-rev-list --reverse --left-right --cherry-pick \
+changes=($(git-rev-list --no-merges --reverse --left-right --cherry-pick \
               $SBRANCH...$CBRANCH | grep '^<'))
 for change in "${changes[@]}"; do
   sha1=${change##<}
