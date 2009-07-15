@@ -12,7 +12,6 @@ ntp
 ntpdate
 snmp
 snmpd
-ssmtp
 vyatta-base
 vyatta-bash
 vyatta-busybox
