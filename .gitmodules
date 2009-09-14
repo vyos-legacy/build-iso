@@ -139,3 +139,6 @@
 [submodule "pkgs/ntp"]
 	path = pkgs/ntp
 	url = http://git.vyatta.com/ntp.git
+[submodule "pkgs/ipset"]
+	path = pkgs/ipset
+	url = http://git.vyatta.com/ipset.git
