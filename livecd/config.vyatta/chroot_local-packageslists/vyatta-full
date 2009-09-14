@@ -2,6 +2,7 @@ grub-common
 grub-pc
 initramfs-tools
 iproute
+ipset
 iptables
 libsnmp-base
 libsnmp-perl
