@@ -142,3 +142,6 @@
 [submodule "pkgs/ipset"]
 	path = pkgs/ipset
 	url = http://git.vyatta.com/ipset.git
+[submodule "pkgs/vyatta-ipv6-rtradv"]
+	path = pkgs/vyatta-ipv6-rtradv
+	url = url
