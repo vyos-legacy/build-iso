@@ -145,3 +145,6 @@
 [submodule "pkgs/vyatta-ipv6-rtradv"]
 	path = pkgs/vyatta-ipv6-rtradv
 	url = url
+[submodule "pkgs/vyatta-netflow"]
+	path = pkgs/vyatta-netflow
+	url = http://git.vyatta.com/vyatta-netflow.git
