@@ -151,3 +151,6 @@
 [submodule "pkgs/pmacct"]
 	path = pkgs/pmacct
 	url = http://git.vyatta.com/pmacct.git
+[submodule "pkgs/vyatta-wireless"]
+	path = pkgs/vyatta-wireless
+	url = http://git.vyatta.com/vyatta-wireless.git
