@@ -32,6 +32,7 @@ vyatta-dhcp3-common
 vyatta-dhcp3-relay
 vyatta-dhcp3-server
 vyatta-idp-snort
+vyatta-ipv6-rtradv
 vyatta-keepalived
 vyatta-nat
 vyatta-op
