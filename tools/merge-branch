@@ -22,6 +22,10 @@ Usage: merge-branch [-n] [-h] <src_branch> <current_branch>
   MERGE_BRANCH_EXCLUDE environment variable can be set to specify the
   commits, e.g., "export MERGE_BRANCH_EXCLUDE='<commit1> <commit2> ...'"
 
+  Alternatively, create a file named ".merge-branch-exclude" in the repo
+  directory to include all commits that should be excluded (each commit is
+  listed on a separate line).
+
   Available options:
     -n: Dry-run.
     -h: Show this help text.
@@ -58,6 +62,11 @@ if ! (git branch -a | grep -q "^* $CBRANCH\$"); then
   usage
 fi
 
+FILE_EXCLUDE=''
+if [ -r .merge-branch-exclude ]; then
+  FILE_EXCLUDE=$(cat .merge-branch-exclude)
+fi
+
 changes=($(git-rev-list --no-merges --reverse --left-right --cherry-pick \
               $SBRANCH...$CBRANCH | grep '^<'))
 for change in "${changes[@]}"; do
@@ -67,6 +76,10 @@ for change in "${changes[@]}"; do
     # real change
     if [[ $MERGE_BRANCH_EXCLUDE == *$sha1* ]]; then
       echo "    skip $sha1 (MERGE_BRANCH_EXCLUDE)"
+      continue
+    fi
+    if [[ $FILE_EXCLUDE == *$sha1* ]]; then
+      echo "    skip $sha1 (.merge-branch-exclude)"
       continue
     fi
     echo -n "cherry-pick $sha1"
