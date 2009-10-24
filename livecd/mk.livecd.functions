@@ -10,10 +10,20 @@ clean_mounts()
   done
 }
 
-get_branch()
-{
-  VBRANCH=`cat branch 2>/dev/null` || true
-  [ "$VBRANCH" ] || VBRANCH=`git-branch|awk '/^\*/ {print $2}'`
+get_rel_version () {
+  if [ -f version ]; then
+    cat version
+  fi
+}
+
+get_dev_version () {
+  local cur_time=$(date +%m%d%H%M)
+  local branch=$(git-branch | awk '/^\*/ {print $2}')
+  # note: this is used as the debian package version string, so
+  # avoid problematic chars.
+  # use a string starting with a numeric character for
+  # full-upgrade compatibility.
+  echo -n "999.$branch.$cur_time" | tr -d '_+-'
 }
 
 mk_version_package ()
@@ -25,18 +35,13 @@ mk_version_package ()
     local vf=$tmpdir/opt/vyatta/etc
     local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
-    VVERSION=`cat version 2>/dev/null` || true
+    VVERSION=$(get_rel_version)
     case "$VVERSION" in
     [0-9]*)
                 config_src=supported
                 ;;
     "" )
-                get_branch
-                # note: this is used as the debian package version string, so
-                # avoid problematic chars.
-                # use a string starting with a numeric character for
-                # full-upgrade compatibility.
-                VVERSION=$(echo -n 999."$VBRANCH" | tr -d '_+-')
+                VVERSION=$VYATTA_DEV_VERSION
                 ;;
     esac
 

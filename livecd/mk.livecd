@@ -60,6 +60,9 @@ elif eval "$VYATTA_SUPPORTED_BUILD"; then
   cp -f templates/supported/version .
 fi
 
+# set up dev build version string
+export VYATTA_DEV_VERSION=$(get_dev_version)
+
 # copy the locally-built packages for installation
 # (but only those on one of the lists)
 for p in ../pkgs/*.deb; do
