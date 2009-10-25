@@ -154,3 +154,6 @@
 [submodule "pkgs/vyatta-wireless"]
 	path = pkgs/vyatta-wireless
 	url = http://git.vyatta.com/vyatta-wireless.git
+[submodule "pkgs/squidguard"]
+	path = pkgs/squidguard
+	url = http://git.vyatta.com/squidguard.git
