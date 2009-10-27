@@ -139,3 +139,6 @@
 [submodule "pkgs/ntp"]
 	path = pkgs/ntp
 	url = http://git.vyatta.com/ntp.git
+[submodule "pkgs/openswan"]
+	path = pkgs/openswan
+	url = http://git.vyatta.com/openswan.git
