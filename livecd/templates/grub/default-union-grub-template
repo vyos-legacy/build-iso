@@ -1,0 +1,20 @@
+menuentry "Vyatta $RVER$ linux-$KVER$ (KVM console)" {
+        linux /boot/$RVER$/vmlinuz-$KVER$ boot=live live-media-path=/boot/$RVER$ persistent-path=/boot/$RVER$ quiet persistent noautologin nonetworking nouser hostname=vyatta console=ttyS0,9600 console=tty0
+        initrd /boot/$RVER$/initrd.img-$KVER$
+}
+
+menuentry "Vyatta $RVER$ linux-$KVER$ (Serial console)" {
+        linux /boot/$RVER$/vmlinuz-$KVER$ boot=live live-media-path=/boot/$RVER$ persistent-path=/boot/$RVER$ quiet persistent noautologin nonetworking nouser hostname=vyatta console=tty0 console=ttyS0,9600
+        initrd /boot/$RVER$/initrd.img-$KVER$
+}
+
+menuentry "Lost password change $RVER$ (KVM console)" {
+        linux /boot/$RVER$/vmlinuz boot=live live-media-path=/boot/$RVER$ persistent-path=/boot/$RVER$ quiet persistent noautologin nonetworking nouser hostname=vyatta  console=ttyS0,9600 console=tty0 init=/opt/vyatta/sbin/standalone_root_pw_reset
+        initrd /boot/$RVER$/initrd.img
+}
+
+menuentry "Lost password change $RVER$ (Serial console)" {
+        linux /boot/$RVER$/vmlinuz boot=live live-media-path=/boot/$RVER$ persistent-path=/boot/$RVER$ quiet persistent noautologin nonetworking nouser hostname=vyatta console=tty0 console=ttyS0,9600 init=/opt/vyatta/sbin/standalone_root_pw_reset
+        initrd /boot/$RVER$/initrd.img
+}
+

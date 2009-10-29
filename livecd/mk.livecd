@@ -119,6 +119,9 @@ rm -rf chroot/root/{.rnd,.gnupg,.aptitude,.debtags}
 cp -f config.vyatta/chroot_apt/preferences chroot/etc/apt
 sed -i '/BEGIN SHADOW ENTRY/,/END SHADOW ENTRY/{d}' chroot/etc/apt/preferences
 
+echo 'I: creating default grub config'
+create_default_grub_config
+
 # build the XenSource partition image
 if eval "$create_xensourcevm"; then
   vyatta-xensource-partition-image || exit 1

@@ -243,3 +243,25 @@ vyatta-xensource-partition-image ()
   gzip xensource/vyatta-xensource-$VVERSION-$arch.img
 }
 
+get_chroot_kernel_version ()
+{
+  local kfile=$(find chroot/boot -type f -name 'vmlinuz-*' \
+                | head -1 2>/dev/null)
+  echo -n ${kfile##chroot/boot/vmlinuz-}
+}
+
+create_default_grub_config ()
+{
+  local gdir=chroot/opt/vyatta/etc/grub
+  local gfile=$gdir/default-union-grub-entry
+  local tmpl=templates/grub/default-union-grub-template
+  local kver=$(get_chroot_kernel_version)
+  if [ -z "$kver" ]; then
+    echo 'E: Cannot find kernel in chroot.'
+    echo 'E: Default grub config not created.'
+    return
+  fi
+  mkdir -p $gdir
+  sed "s/\\\$RVER\\\$/$VVERSION/g;s/\\\$KVER\\\$/$kver/g" $tmpl > $gfile
+}
+
