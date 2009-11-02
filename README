@@ -119,6 +119,14 @@ Build Host Setup
 
 	setup-pkg-build
 
+    If you want to build the iproute package, you will also need to install the
+    iptables packages from the kenwood branch, which uses a newer iptables than
+    what is available from Debian lenny:
+    
+        wget http://packages.vyatta.com/vyatta-dev/kenwood/unstable/pool/main/iptables-dev_1.4.4-2+vyatta+3_i386.deb
+        wget http://packages.vyatta.com/vyatta-dev/kenwood/unstable/pool/main/iptables_1.4.4-2+vyatta+3_i386.deb
+        dpkg -i iptables-dev_1.4.4-2+vyatta+3_i386.deb iptables_1.4.4-2+vyatta+3_i386.deb
+
 Configuration
 
     The Vyatta ISO builder has GNU autotool configuration,
