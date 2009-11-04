@@ -142,3 +142,9 @@
 [submodule "pkgs/openswan"]
 	path = pkgs/openswan
 	url = http://git.vyatta.com/openswan.git
+[submodule "pkgs/vyatta-wireless"]
+	path = pkgs/vyatta-wireless
+	url = http://suva.vyatta.com/vyatta-wireless.git
+[submodule "pkgs/ipset"]
+	path = pkgs/ipset
+	url = http://suva.vyatta.com/ipset.git
