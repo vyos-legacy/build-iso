@@ -50,7 +50,6 @@ distclean :
 	@rm -rf livecd/{cache,version}
 
 # building kernel modules depends on kernel
-pkgs/wanpipe: pkgs/linux-image/debian/stamps/build-base
 pkgs/open-vm-tools: pkgs/linux-image/debian/stamps/build-base
 
 # mysterious dependency
