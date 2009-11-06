@@ -11,6 +11,7 @@ live-initramfs
 netplug
 ntp
 ntpdate
+openswan
 snmp
 snmpd
 vyatta-base

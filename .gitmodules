@@ -151,3 +151,6 @@
 [submodule "pkgs/squidguard"]
 	path = pkgs/squidguard
 	url = http://git.vyatta.com/squidguard.git
+[submodule "pkgs/openswan"]
+	path = pkgs/openswan
+	url = http://git.vyatta.com/openswan.git
