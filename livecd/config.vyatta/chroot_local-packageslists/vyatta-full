@@ -54,6 +54,7 @@ vyatta-snort-rules-default
 vyatta-wanloadbalance
 vyatta-webgui
 vyatta-webproxy
+vyatta-wireless
 vyatta-wirelessmodem
 vyatta-netflow
 pmacct
