@@ -265,3 +265,102 @@ create_default_grub_config ()
   sed "s/\\\$RVER\\\$/$VVERSION/g;s/\\\$KVER\\\$/$kver/g" $tmpl > $gfile
 }
 
+set_up_lh_config ()
+{
+  if [ -z "$VYATTA_BUILD_BRANCH" ]; then
+    echo E: Build branch is not set
+    exit 1
+  fi
+  local branch=$VYATTA_BUILD_BRANCH
+
+  # get the branch/repo related parameters if any
+  if [ -f config.vyatta/vbuild.conf ]; then
+    source config.vyatta/vbuild.conf
+  fi
+
+  # set up the debian repo
+  LH_MIRROR_BINARY="http://packages.vyatta.com/debian-$branch"
+  LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-$branch"
+  export LH_MIRROR_BINARY LH_MIRROR_BOOTSTRAP
+
+  local dev_repo_root=http://packages.vyatta.com/vyatta-dev
+  local repo_dir=unstable
+  if ! eval "$VYATTA_DEV_BUILD"; then
+    # not dev build => use testing.
+    # NOT doing the replacement. use unstable for now.
+    : repo_dir=testing
+  fi
+
+  # prepare the config files for live helper
+  lh_config
+  (
+    cd config.vyatta
+    cp -af binary_local-includes chroot_apt chroot_local-hooks \
+      chroot_local-includes chroot_sources chroot_local-packageslists \
+      chroot_local-patches \
+      ../config/
+
+    # set up chroot_sources
+    cd ../config/chroot_sources
+    ## "this" branch
+    if [ ! -f vyatta.chroot ]; then
+      echo "deb $dev_repo_root/$branch/$repo_dir $branch main" >vyatta.chroot
+    fi
+    ## "base" and "extra" branches for overlay
+    for branch in "$VBUILD_BASE_BRANCH" "${VBUILD_EXTRA_BRANCHES[@]}"; do
+      if [ -z "$branch" ] || [ -f "vyatta-$branch.chroot" ]; then
+        continue
+      fi
+      echo "deb $dev_repo_root/$branch/$repo_dir $branch main" \
+        >"vyatta-$branch.chroot"
+      cp vyatta.chroot.gpg "vyatta-$branch.chroot.gpg"
+    done
+
+    # set up apt preferences
+    cd ../chroot_apt
+    for val in "$VYATTA_BUILD_BRANCH" "$VBUILD_BASE_BRANCH" \
+                  "${VBUILD_EXTRA_PKGS[@]}"; do
+      if [ -z "$val" ]; then
+        continue
+      fi
+      local label=EXTRA
+      local prio=999
+      local pkg='*'
+      if [ "$val" == "$VYATTA_BUILD_BRANCH" ]; then
+        # "this" branch
+        label=OVERLAY
+        prio=1000
+        branch=$val
+      elif [ "$val" == "$VBUILD_BASE_BRANCH" ]; then
+        # "base" branch
+        label=BASE
+        prio=998
+        branch=$val
+      else
+        # extra package
+        branch=${val%%_*}
+        pkg=${val##*_}
+      fi
+      cat <<EOF >>preferences
+
+Explanation: BEGIN $label ENTRY
+Package: $pkg
+Pin: release v=$branch
+Pin-Priority: $prio
+Explanation: END $label ENTRY
+EOF
+    done
+  )
+
+  if ! eval "$create_xendomzero"; then
+    rm -f config/chroot_local-hooks/*xen*
+  fi
+
+  # set up "vyatta-kernel" packages list according to flavor
+  kplist="config/chroot_local-packageslists/vyatta-kernel.$LH_LINUX_FLAVOURS"
+  if [ -f "$kplist" ]; then
+    # list exists. set it up.
+    mv -f $kplist config/chroot_local-packageslists/vyatta-kernel
+  fi
+}
+

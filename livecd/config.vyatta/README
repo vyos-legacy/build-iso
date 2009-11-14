@@ -1,12 +1,19 @@
-This directory contains files that are used by live-helper during the build
-process.
+This directory contains configuration files that are used by live-helper
+during the build process.
 
+vbuild.conf:
+  This file contains branch/repo related parameters for the Vyatta build.
+ 
 binary_local-includes:
   Files in this sub-directory are copied into the binary directory during the
   binary step (before the image is built).
 
 chroot_apt:
-  The "preferences" file is used by apt during the chroot step.
+  The "preferences" file is used by apt during the chroot step. Note that
+  normally this file is empty as the content is generated automatically
+  according to "vbuild.conf" (see mk.livecd.functions). However, if a branch
+  has special requirements that cannot be specified in vbuild.conf, they can
+  be placed directly in this file.
 
 chroot_local-hooks:
   The scripts in this sub-directory are executed (chrooted) during the chroot
@@ -50,5 +57,9 @@ chroot_local-patches:
 chroot_sources:
   The files in this sub-directory specify the package repositories that should
   be added to sources.list during the chroot step. The ".gpg" files are the
-  keys corresponding to the repositories.
+  keys corresponding to the repositories. Note that normally only the file
+  "vyatta.chroot.gpg" exists since the default package repos are handled 
+  automatically. Additional repos can be added here if a branch has special
+  requirements. However, any such additions will not be handled by the
+  automated release procedure.
 

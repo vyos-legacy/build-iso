@@ -21,35 +21,7 @@ rm -rf binary binary.iso chroot config livecd-*.iso .stage
 rm -rf cache/indices_bootstrap
 
 echo I: configuring build
-lh_config
-
-# prepare the config files for live helper
-(
-  cd config.vyatta
-  cp -alf binary_local-includes chroot_apt chroot_local-hooks \
-    chroot_local-includes chroot_sources chroot_local-packageslists \
-    chroot_local-patches \
-    ../config/
- 
-  if ! eval "$VYATTA_DEV_BUILD"; then
-    # not dev build => use testing.
-    sed -i 's/\/unstable /\/testing /' ../config/chroot_sources/vyatta.chroot
-    if ! eval "$VYATTA_COMMUNITY_BUILD" \
-       && ! eval "$VYATTA_SUPPORTED_BUILD"; then
-      # legacy autobuild. don't actually add the repo.
-      sed -i 's/vyatta-dev\/kenwood\/testing/debian-kenwood/;
-              s/ kenwood / lenny /;' \
-        ../config/chroot_sources/vyatta.chroot
-    fi
-  fi
-)
-
-# set up "vyatta-kernel" packages list according to flavor
-kplist="config/chroot_local-packageslists/vyatta-kernel.$LH_LINUX_FLAVOURS"
-if [ -f "$kplist" ]; then
-  # list exists. set it up.
-  mv -f $kplist config/chroot_local-packageslists/vyatta-kernel
-fi
+set_up_lh_config
 
 # set up version template
 if eval "$VYATTA_COMMUNITY_BUILD"; then
@@ -116,8 +88,7 @@ chroot chroot sh -c \
 rm -rf chroot/root/{.rnd,.gnupg,.aptitude,.debtags}
 
 ## restore apt/preferences for binary build
-cp -f config.vyatta/chroot_apt/preferences chroot/etc/apt
-sed -i '/BEGIN SHADOW ENTRY/,/END SHADOW ENTRY/{d}' chroot/etc/apt/preferences
+cp -f config/chroot_apt/preferences chroot/etc/apt
 
 echo 'I: creating default grub config'
 create_default_grub_config
