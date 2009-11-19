@@ -203,7 +203,8 @@ fi
 LH_LINUX_PACKAGES=none
 
 if test "X$VYATTA_BUILD_BRANCH" == X; then
-  VYATTA_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
+  # this is a kenwood development branch
+  VYATTA_BUILD_BRANCH=kenwood
 fi
 
 LH_SECURITY="disabled"
