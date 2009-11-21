@@ -13,6 +13,11 @@ ntp
 ntpdate
 snmp
 snmpd
+strongswan
+libstrongswan
+strongswan-starter
+strongswan-ikev1
+strongswan-ikev2
 vyatta-base
 vyatta-bash
 vyatta-busybox
