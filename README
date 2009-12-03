@@ -7,11 +7,11 @@ Vyatta VC5 ISO Build Procedures
 Prerequisites
 
     The Vyatta ISO build uses the "live-helper" tool that is available
-    in several distributions. However, we recommend that build hosts
-    based on either Debian "lenny" or Ubuntu "hardy". The "build-iso"
-    source is maintained as a GIT super-module that references several
-    submodules that each build one or more self named Debian
-    packages. The submodule feature was added to GIT v1.5.2.
+    in several distributions. The current build system requires a Debian
+    "lenny"-based system. The "build-iso" source is maintained as a GIT
+    super-module that references several submodules that each build one or
+    more self named Debian packages. The submodule feature was added to GIT
+    v1.5.2.
 
 Getting Source
 
@@ -73,18 +73,15 @@ Getting Source
 Build Host Setup
 
     To set up a build environment (e.g., system or VM), we recommend
-    installing Debian "lenny" (i.e. "testing") with either business-card
+    installing Debian "lenny" (i.e. "5.0") with either business-card
     or net-install image.  You can also use the Vyatta livecd ISO for a
     build host. (If you do want to start from the Vyatta system, you will
     have to uninstall libsnmp15--which will uninstall most of the Vyatta
     specific features.)
 
-	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-businesscard.iso
-	http://cdimage.debian.org/cdimage/daily-builds/daily/arch-latest/i386/iso-cd/debian-testing-i386-netinst.iso
-	http://packages.vyatta.com/vyatta/iso/testing/*.iso
-
-    The respective installation prompts for distribution mirror. Any debian "lenny"
-    mirror will do.  To include Vyatta's Debian mirror, add this to /etc/apt/sources.list:
+    The Debian installation process prompts for distribution mirror. Any
+    Debian "lenny" mirror will do.  To include Vyatta's Debian mirror, add
+    this to /etc/apt/sources.list:
 
 	deb http://packages.vyatta.com/debian/ lenny main
 	deb http://packages.vyatta.com/debian-security/ lenny/updates main
