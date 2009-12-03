@@ -7,11 +7,11 @@ Vyatta VC5 ISO Build Procedures
 Prerequisites
 
     The Vyatta ISO build uses the "live-helper" tool that is available
-    in several distributions. However, we recommend that build hosts
-    based on either Debian "lenny" or Ubuntu "hardy". The "build-iso"
-    source is maintained as a GIT super-module that references several
-    submodules that each build one or more self named Debian
-    packages. The submodule feature was added to GIT v1.5.2.
+    in several distributions. The current build system requires a Debian
+    "lenny"-based system. The "build-iso" source is maintained as a GIT
+    super-module that references several submodules that each build one or
+    more self named Debian packages. The submodule feature was added to GIT
+    v1.5.2.
 
 Getting Source
 
