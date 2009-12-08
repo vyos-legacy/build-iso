@@ -1,6 +1,11 @@
 system {
     ntp-server "0.vyatta.pool.ntp.org"
     login {
+        user root {
+            authentication {
+                encrypted-password: "$1$$Ht7gBYnxI1xCdO/JOnodh."
+            }
+        }
         user vyatta {
             authentication {
                 encrypted-password: "$1$$Ht7gBYnxI1xCdO/JOnodh."
