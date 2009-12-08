@@ -3,12 +3,12 @@ system {
     login {
         user root {
             authentication {
-                encrypted-password: "$1$$Ht7gBYnxI1xCdO/JOnodh."
+                encrypted-password "!"
             }
         }
         user vyatta {
             authentication {
-                encrypted-password: "$1$$Ht7gBYnxI1xCdO/JOnodh."
+                encrypted-password "$1$$Ht7gBYnxI1xCdO/JOnodh."
             }
         }
     }
