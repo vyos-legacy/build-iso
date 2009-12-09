@@ -18,7 +18,7 @@ get_rel_version () {
 
 get_dev_version () {
   local cur_time=$(date +%m%d%H%M)
-  local branch=$(git-branch | awk '/^\*/ {print $2}')
+  local branch=$(git branch | awk '/^\*/ {print $2}')
   # note: this is used as the debian package version string, so
   # avoid problematic chars.
   # use a string starting with a numeric character for
@@ -68,7 +68,7 @@ EOF
     chroot "$savedir"/chroot /opt/vyatta/bin/save-package-report
     mv $etcdir/deb-versions.txt $vf/.
 
-    ( cd "$savedir"/.. ; git-submodule status 2>/dev/null ) \
+    ( cd "$savedir"/.. ; git submodule status 2>/dev/null ) \
          > $vf/iso-submodules.txt
     [ -s $vf/iso-submodules.txt ] || cp "$savedir"/iso-submodules.txt $vf/. 2>/dev/null
 
