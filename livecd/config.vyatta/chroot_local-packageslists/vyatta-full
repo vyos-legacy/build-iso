@@ -63,3 +63,4 @@ vyatta-wirelessmodem
 vyatta-netflow
 pmacct
 squidguard
+vyatta-biosdevname
