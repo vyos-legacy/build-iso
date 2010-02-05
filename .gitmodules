@@ -154,3 +154,6 @@
 [submodule "pkgs/vyatta-strongswan"]
 	path = pkgs/vyatta-strongswan
 	url = http://git.vyatta.com/vyatta-strongswan.git
+[submodule "pkgs/vyatta-biosdevname"]
+	path = pkgs/vyatta-biosdevname
+	url = http://git.vyatta.com/vyatta-biosdevname.git
