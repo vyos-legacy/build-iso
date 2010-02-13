@@ -7,6 +7,7 @@ iptables
 libsnmp-base
 libsnmp-perl
 libsnmp15
+linux-firmware
 live-initramfs
 netplug
 ntp
