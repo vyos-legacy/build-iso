@@ -167,7 +167,7 @@ AC_ARG_WITH(xensourcevm,
 
 if test X$with_xensourcevm = Xyes ; then
   # use vyatta-virt flavor for xensourcevm build
-  LH_LINUX_FLAVOURS=vyatta-virt
+  LH_LINUX_FLAVOURS=586-vyatta-virt
   create_xensourcevm=true
 else
   create_xensourcevm=false
