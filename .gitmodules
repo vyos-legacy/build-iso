@@ -157,3 +157,6 @@
 [submodule "pkgs/vyatta-biosdevname"]
 	path = pkgs/vyatta-biosdevname
 	url = http://git.vyatta.com/vyatta-biosdevname.git
+[submodule "pkgs/linux-firmware"]
+	path = pkgs/linux-firmware
+	url = http://git.vyatta.com/linux-firmware.git
