@@ -74,8 +74,9 @@ EOF
 
     echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
 
+    YEAR=$(date +%Y)
     echo "Version  :    ${VVERSION}">$vf/version
-    echo "Copyright:    2006-2009 Vyatta, Inc.">>$vf/version
+    echo "Copyright:    2006-${YEAR} Vyatta, Inc.">>$vf/version
 
     (
         echo "Package: vyatta-version"
