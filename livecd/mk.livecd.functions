@@ -11,6 +11,23 @@ clean_mounts()
 }
 
 get_rel_version () {
+  local full=$1
+  full=${full//Vyatta Core /VC}
+  full=${full//Vyatta Subscription Edition /VSE}
+  local -a arr=($full)
+  local mod=''
+  local date="${arr[1]}"
+  if (( ${#arr[@]} == 3 )); then
+    mod=".${arr[1]}"
+    date="${arr[2]}"
+  fi
+  if ! (echo -n "$date" | egrep -q '^[0-9]{4}\.[0-9]{2}\.[0-9]{2}$'); then
+    return
+  fi
+  echo -n "${arr[0]}-${date}${mod}"
+}
+
+get_full_rel_version () {
   if [ -f version ]; then
     cat version
   fi
@@ -35,16 +52,19 @@ mk_version_package ()
     local vf=$tmpdir/opt/vyatta/etc
     local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
-    VVERSION=$(get_rel_version)
-    case "$VVERSION" in
-    [0-9]*)
-                config_src=supported
-                ;;
-    "" )
-                VVERSION=$VYATTA_DEV_VERSION
-                ;;
-    esac
-
+    FULLVERSION=$(get_full_rel_version)
+    if [ -z "$FULLVERSION" ]; then
+      FULLVERSION=$VYATTA_DEV_VERSION
+      VVERSION=$VYATTA_DEV_VERSION
+    else
+      FULLVERSION="${FULLVERSION} ${VERTIME}"
+      VVERSION=$(get_rel_version "$FULLVERSION")
+      if [ -z "$VVERSION" ]; then
+        VVERSION=$VYATTA_DEV_VERSION
+      else
+        config_src=supported
+      fi
+    fi
 
     mkdir -p $vf/config
 
@@ -74,9 +94,8 @@ EOF
 
     echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
 
-    YEAR=$(date +%Y)
-    echo "Version  :    ${VVERSION}">$vf/version
-    echo "Copyright:    2006-${YEAR} Vyatta, Inc.">>$vf/version
+    echo "Version  :    ${FULLVERSION}">$vf/version
+    echo "Copyright:    2006-${CURYEAR} Vyatta, Inc.">>$vf/version
 
     (
         echo "Package: vyatta-version"

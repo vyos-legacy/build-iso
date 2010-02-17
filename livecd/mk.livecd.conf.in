@@ -62,6 +62,8 @@ if [[ "$PATH" != */sbin* ]] ; then
 fi
 
 : ${HUMANTIME:=$(date -u)}
+: ${CURYEAR:=$(date +'%Y')}
+: ${VERTIME:=$(date +'%Y.%m.%d')}
 : ${ORGANIZATION:=vyatta.com}
 : ${LANGUAGE:=${LH_LANGUAGE:-en}}
 : ${LC_ALL:=C}
