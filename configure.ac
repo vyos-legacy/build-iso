@@ -173,6 +173,13 @@ else
   create_xensourcevm=false
 fi
 
+BUILD_TIME=''
+AC_ARG_WITH(with-build-time,
+[AS_HELP_STRING([--with-build-time], [use specified build time])])
+if test X$with_build_time != X; then
+  BUILD_TIME=$with_build_time
+fi
+
 KERN_SUBMOD_DIR=$(pwd)/pkgs/linux-image
 KERN_DEB_ARCHDEF_DIR=$KERN_SUBMOD_DIR/debian/arch
 KERN_DEB_ARCH_DIR=$KERN_DEB_ARCHDEF_DIR/$BARCH
@@ -255,5 +262,6 @@ AC_SUBST(VYATTA_DEV_BUILD)
 AC_SUBST(VYATTA_COMMUNITY_BUILD)
 AC_SUBST(VYATTA_SUPPORTED_BUILD)
 AC_SUBST(VYATTA_BUILD_BRANCH)
+AC_SUBST(BUILD_TIME)
 
 AC_OUTPUT

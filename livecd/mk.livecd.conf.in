@@ -38,6 +38,7 @@ declare -x VYATTA_DEV_BUILD="@VYATTA_DEV_BUILD@"
 declare -x VYATTA_COMMUNITY_BUILD="@VYATTA_COMMUNITY_BUILD@"
 declare -x VYATTA_SUPPORTED_BUILD="@VYATTA_SUPPORTED_BUILD@"
 declare -x VYATTA_BUILD_BRANCH="@VYATTA_BUILD_BRANCH@"
+declare -x BUILD_TIME="@BUILD_TIME@"
 
 ## packages needed for the chroot step
 LH_BOOTSTRAP_INCLUDE="locales"
@@ -59,6 +60,12 @@ declare -x DEBIAN_FRONTEND="noninteractive"
 if [[ "$PATH" != */sbin* ]] ; then
   PATH+=:/usr/local/sbin:/usr/sbin:/sbin
   export PATH
+fi
+
+if [ -n "$BUILD_TIME" ]; then
+  HUMANTIME=$(date -d "$BUILD_TIME" -u)
+  CURYEAR=$(date -d "$BUILD_TIME" -u +'%Y')
+  VERTIME=$(date -d "$BUILD_TIME" -u +'%Y.%m.%d')
 fi
 
 : ${HUMANTIME:=$(date -u)}
