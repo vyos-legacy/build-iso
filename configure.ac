@@ -150,8 +150,10 @@ BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
 # default flavor for i386 and amd64
 LH_LINUX_FLAVOURS="586-vyatta"
+VIRT_FLAVOUR="586-vyatta-virt"
 if test X$BARCH = Xamd64; then
   LH_LINUX_FLAVOURS="amd64-vyatta"
+  VIRT_FLAVOUR="amd64-vyatta-virt"
 fi
 
 # user-specified flavor
@@ -166,8 +168,8 @@ AC_ARG_WITH(xensourcevm,
 [AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
 
 if test X$with_xensourcevm = Xyes ; then
-  # use vyatta-virt flavor for xensourcevm build
-  LH_LINUX_FLAVOURS=586-vyatta-virt
+  # use virt flavor for xensourcevm build
+  LH_LINUX_FLAVOURS=$VIRT_FLAVOUR
   create_xensourcevm=true
 else
   create_xensourcevm=false
