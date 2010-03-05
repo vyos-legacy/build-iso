@@ -75,9 +75,9 @@ mk_version_package ()
 
     echo I: generating build record
     cat <<-EOF > $vf/iso-build.txt
-Built by :    $BUILTBY
-Built on :    $HUMANTIME
-Build ID :    $BUILDID
+Built by:     $BUILTBY
+Built on:     $HUMANTIME
+Build ID:     $BUILDID
 EOF
 
     # backwards compatible symlink
@@ -94,7 +94,7 @@ EOF
 
     echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
 
-    echo "Version  :    ${VVERSION}">$vf/version
+    echo "Version:      ${VVERSION}">$vf/version
     echo "Description:  ${FULLVERSION}">>$vf/version
     echo "Copyright:    2006-${CURYEAR} Vyatta, Inc.">>$vf/version
 
