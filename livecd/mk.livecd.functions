@@ -120,23 +120,11 @@ EOF
 
     rm -rf $tmpdir
     cd $savedir
+    cp /tmp/$$-deb/$vpkgname chroot/
     mv /tmp/$$-deb/$vpkgname config/chroot_local-packages/.
-
-    (
-        # The radvd package puts an entry into the dpkg statoverride
-        # file listing its own user name.  If that username doesn't
-        # exist on the build machine, all subsequent dpkg executions
-        # in the chroot directory will fail.  So, we just delete that
-        # statoverride entry here.
-	match=`grep -s '^radvd' chroot/var/lib/dpkg/statoverride` 
-
-	if [ ! -z "$match" ]; then
-            echo I: Fixing radvd statoverride entry
-	    sed -i -e '/^radvd/d' chroot/var/lib/dpkg/statoverride
-	fi
-    )
-
-    dpkg -i --root=chroot config/chroot_local-packages/$vpkgname
+    # dpkg should be done inside chroot
+    chroot chroot dpkg -i /$vpkgname
+    rm chroot/$vpkgname
     rm -rf /tmp/$$-deb
 }
 
