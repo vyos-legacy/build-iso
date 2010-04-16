@@ -12,7 +12,7 @@ system {
         repository supported {
 	    distribution: "stable"
             components: "main"
-            url: "http://packages.vyatta.com/vyatta-supported"
+            url: "https://packages.vyatta.com/vyatta-supported"
         }
     }
     syslog {
