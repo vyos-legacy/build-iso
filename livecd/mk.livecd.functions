@@ -61,7 +61,7 @@ mk_version_package ()
       VVERSION=$(get_rel_version "$FULLVERSION")
       if [ -z "$VVERSION" ]; then
         VVERSION=$VYATTA_DEV_VERSION
-      else
+      elif [[ "$VVERSION" == VSE* ]]; then
         config_src=supported
       fi
     fi
