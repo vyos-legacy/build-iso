@@ -160,3 +160,9 @@
 [submodule "pkgs/linux-firmware"]
 	path = pkgs/linux-firmware
 	url = http://git.vyatta.com/linux-firmware.git
+[submodule "pkgs/vyatta-lldp"]
+	path = pkgs/vyatta-lldp
+	url = http://git.vyatta.com/vyatta-lldp.git
+[submodule "pkgs/lldpd"]
+	path = pkgs/lldpd
+	url = http://git.vyatta.com/lldpd.git
