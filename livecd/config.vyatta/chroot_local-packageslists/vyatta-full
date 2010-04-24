@@ -65,3 +65,5 @@ vyatta-netflow
 pmacct
 squidguard
 vyatta-biosdevname
+lldpd
+vyatta-lldp
