@@ -166,3 +166,6 @@
 [submodule "pkgs/lldpd"]
 	path = pkgs/lldpd
 	url = http://git.vyatta.com/lldpd.git
+[submodule "pkgs/libcap"]
+	path = pkgs/libcap
+	url = http://git.vyatta.com/libcap.git
