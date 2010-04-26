@@ -4,6 +4,8 @@ initramfs-tools
 iproute
 ipset
 iptables
+libcap2
+libcap2-bin
 libsnmp-base
 libsnmp-perl
 libsnmp15
