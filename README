@@ -100,8 +100,8 @@ Build Host Setup
 
     You will also need to download and install the squashfs-tools package:
 
-        wget http://packages.vyatta.com/vyatta-dev/jenner/unstable/pool/main/squashfs-tools_4.0+vyatta-2_i386.deb
-        dpkg -i squashfs-tools_4.0+vyatta-2_i386.deb
+        wget http://packages.vyatta.com/vyatta-dev/larkspur/unstable/pool/main/squashfs-tools_4.0+vyatta-3_i386.deb
+        dpkg -i squashfs-tools_4.0+vyatta-3_i386.deb
 
     and put the following in /etc/apt/preferences to "pin" its version:
 
