@@ -1,0 +1,84 @@
+#!/bin/bash
+
+get_files ()
+{
+  git ls-tree -r HEAD \
+    | sed -n 's/^[0-7]\+ blob [0-9a-f]\+[[:space:]]\+\([^[:space:]]\+\)$/\1/p'
+}
+
+get_file_type ()
+{
+  local file=$1
+  [ -f "$file" ] || return
+  case "$(basename $file)" in
+    node.def)
+      echo -n 'vyatta-template'
+      return
+      ;;
+    Makefile|Makefile.in|Makefile.am|configure|configure.ac)
+      echo -n 'autoconf'
+      return
+      ;;
+    .gitignore|.merge-branch-exclude)
+      echo -n 'git'
+      return
+      ;;
+    *.c|*.h)
+      echo -n 'C'
+      return
+      ;;
+  esac
+  local fout=$(file "$file")
+  case $fout in
+    *" script text executable"*)
+      echo -n 'script'
+      return
+      ;;
+    *" Perl5 module source text"*)
+      echo -n 'script'
+      return
+      ;;
+    *" C program text"*|*" C++ program text"*)
+      echo -n 'C'
+      return
+      ;;
+    *)
+      echo -n 'UNKNOWN'
+      return
+      ;;
+  esac
+}
+
+check_file ()
+{
+  local file=$1
+  local pattern=$2
+  if ! grep -q "$pattern" "$file"; then
+    echo "No copyright [$file]"
+  fi
+}
+
+COMMON_PATTERN='^#.* Copyright .* Vyatta'
+C_PATTERN=' Copyright .* Vyatta'
+get_files \
+  | while read sfile; do
+      ftype=$(get_file_type "$sfile")
+      case $ftype in
+        vyatta-template)
+          check_file $sfile "$COMMON_PATTERN"
+          ;;
+        script)
+          check_file $sfile "$COMMON_PATTERN"
+          ;;
+        autoconf)
+          check_file $sfile "$COMMON_PATTERN"
+          ;;
+        C)
+          check_file $sfile "$C_PATTERN"
+          ;;
+        UNKNOWN)
+          echo "Unknown type [$sfile]"
+          ;;
+      esac
+    done
+
