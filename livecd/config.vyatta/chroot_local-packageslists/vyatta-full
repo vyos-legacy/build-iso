@@ -24,6 +24,7 @@ strongswan-ikev2
 vyatta-base
 vyatta-bash
 vyatta-busybox
+vyatta-conntrack-sync
 vyatta-cfg
 vyatta-cfg-dhcp-relay
 vyatta-cfg-dhcp-server
