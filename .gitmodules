@@ -172,3 +172,6 @@
 [submodule "pkgs/vyatta-conntrack-sync"]
 	path = pkgs/vyatta-conntrack-sync
 	url = http://git.vyatta.com/vyatta-conntrack-sync.git
+[submodule "pkgs/squashfs"]
+	path = pkgs/squashfs
+	url = http://git.vyatta.com/squashfs.git
