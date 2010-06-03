@@ -175,6 +175,18 @@ else
   create_xensourcevm=false
 fi
 
+# Expansion to allow definition of VYATTA_BUILD_BRANCH
+# on configure invocation
+AC_ARG_WITH(vyatta_build_branch,
+  [AS_HELP_STRING([--with-vyatta-build-branch=<branch>],
+  [Target branch (e.g., "larkspur"), default to the supermodule branch])],
+  [])
+
+if test "X$with_vyatta_build_branch" != X ; then
+  echo BRANCH is $with_vyatta_build_branch
+  VYATTA_BUILD_BRANCH="$with_vyatta_build_branch"
+fi
+
 BUILD_TIME=''
 AC_ARG_WITH(with-build-time,
 [AS_HELP_STRING([--with-build-time], [use specified build time])])
