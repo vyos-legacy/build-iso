@@ -1,8 +1,8 @@
-Vyatta VC5 ISO Build Procedures
+Vyatta VC ISO Build Procedures
 
-    This document describes how to build a Vyatta VC5 ISO image.
+    This document describes how to build a Vyatta VC ISO image.
     The most recent version of this document is the top-level README file of
-    the "jenner" branch of the "build-IMO" source tree.
+    the "latest" branch of the "build-ISO" source tree.
 
 Prerequisites
 
@@ -115,6 +115,15 @@ Build Host Setup
     save some iteration, run this script to download and install these packages:
 
 	setup-pkg-build
+
+    In addition, build dependencies for each package can be found in the 
+    debian/control file of that package. If build dependencies for a package
+    weren't installed by running the above mentioned setup-pkg-build script 
+    then you would need to install these yourself. For example, to build 
+    vyatta-cfg package; you must have the following packages installed as 
+    noted in vyatta-cfg's debian/control file :
+
+        Build-Depends: debhelper (>= 5), autotools-dev, libglib2.0-dev
 
     If you want to build the iproute package, you will also need to install the
     iptables packages from the kenwood branch, which uses a newer iptables than
