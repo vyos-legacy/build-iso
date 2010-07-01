@@ -98,10 +98,10 @@ Build Host Setup
 
 	setup-build-env
 
-    You will also need to download and install the squashfs-tools package:
+    You will also need to download and install an updated squashfs-tools package:
 
-        wget http://packages.vyatta.com/vyatta-dev/larkspur/unstable/pool/main/squashfs-tools_4.0+vyatta-3_i386.deb
-        dpkg -i squashfs-tools_4.0+vyatta-3_i386.deb
+        wget http://packages.vyatta.com/vyatta-dev/larkspur/unstable/pool/main/squashfs-tools_4.1+vyatta-1_i386.deb
+        dpkg -i squashfs-tools_4.1+vyatta-1_i386.deb
 
     and put the following in /etc/apt/preferences to "pin" its version:
 

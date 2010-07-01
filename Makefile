@@ -18,6 +18,9 @@ FAKECHROOT = fakechroot
 endif
 
 define mk_iso
+@v=$$(mksquashfs -version | awk '/^mksquashfs/ { print $$3 }' ) ; \
+if dpkg --compare-versions $$v '<' "4.1" ; \
+then echo "Need squashfs tools 4.1 (or later)"; exit 1; fi
 @rm -rf livecd/.lock livecd/.permissions
 cd livecd && $(FAKEROOT) $(FAKECHROOT) ./mk.livecd
 endef
