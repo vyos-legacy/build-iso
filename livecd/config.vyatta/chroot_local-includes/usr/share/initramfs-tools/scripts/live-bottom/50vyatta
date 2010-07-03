@@ -25,16 +25,12 @@ esac
 # live-initramfs script
 
 # try floppy
-# if we donot discover an fd device, try loading the floppy module
+# if we do not discover an fd device, try loading the floppy module
 grep -q fd /proc/devices || modprobe -q floppy 2>/dev/null
-grep -q ext2 /proc/filesystems || modprobe -q ext2 2>/dev/null
-grep -q vfat /proc/filesystems || modprobe -q vfat 2>/dev/null
 if grep -q fd /proc/devices
 then
     mkdir -p /root/media/floppy
-    mount /dev/fd0 /root/media/floppy -o sync ||
-      mount -t ext2 /dev/fd0 /root/media/floppy -o sync ||
-      mount -t vfat /dev/fd0 /root/media/floppy
+    mount /dev/fd0 /root/media/floppy -o sync,noatime,noexec,nosuid,nodev
 fi 2>/dev/null
 
 # bind the vyatta config directory with the following precedence
