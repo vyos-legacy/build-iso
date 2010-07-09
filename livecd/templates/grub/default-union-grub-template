@@ -1,11 +1,11 @@
-menuentry "Vyatta $RVER$ linux-$KVER$ (KVM console)" {
-        linux /boot/$RVER$/vmlinuz-$KVER$ boot=live quiet vyatta-union=/boot/$RVER$ console=ttyS0,9600 console=tty0
-        initrd /boot/$RVER$/initrd.img-$KVER$
+menuentry "Vyatta $RVER$ (KVM console)" {
+        linux /boot/$RVER$/vmlinuz boot=live quiet vyatta-union=/boot/$RVER$ console=ttyS0,9600 console=tty0
+        initrd /boot/$RVER$/initrd.img
 }
 
-menuentry "Vyatta $RVER$ linux-$KVER$ (Serial console)" {
-        linux /boot/$RVER$/vmlinuz-$KVER$ boot=live quiet vyatta-union=/boot/$RVER$ console=tty0 console=ttyS0,9600
-        initrd /boot/$RVER$/initrd.img-$KVER$
+menuentry "Vyatta $RVER$ (Serial console)" {
+        linux /boot/$RVER$/vmlinuz boot=live quiet vyatta-union=/boot/$RVER$ console=tty0 console=ttyS0,9600
+        initrd /boot/$RVER$/initrd.img
 }
 
 menuentry "Lost password change $RVER$ (KVM console)" {
