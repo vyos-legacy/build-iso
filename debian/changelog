@@ -1,3 +1,1069 @@
+build-iso (0.17) unstable; urgency=low
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Update index
+  * update kernel index
+  * update quagga index
+
+  [ rbalocca ]
+  * "Un-peg" jenner
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Kernel for Jenner is 2.6.27
+  * update index
+  * update index
+  * update kernel index
+  * update kernel index
+  * reset wanpipe index
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update index
+  * Update index
+
+  [ Stephen Hemminger ]
+  * update wanpipe index
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+  * Add initramfs-tools package
+
+  [ Rick Balocca ]
+  * We don't care if local packages don't exist
+  * Update indices
+
+  [ Robert Bays ]
+  * update index for open-vm-tools
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Add some non-PHONY targets for parallel build ordering
+
+  [ Robert Bays ]
+  * update submodule vyatta-wirelessmodem to point to jenner branch
+
+  [ Rick Balocca ]
+  * Add stamp to a target path
+  * Build net-snmp after kernel
+  * Update indices
+  * Update indices
+  * Update indices
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update snmp index
+  * index update to match my build
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update indices
+
+  [ rbalocca ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Update indices
+  * Add netplug submodule
+
+  [ Robert Bays ]
+  * add module pam-tacplus
+  * update submod vyatta-cfg-system: add basic tacacs+ support
+
+  [ An-Cheng Huang ]
+  * update vyatta-op
+  * build system simplification/cleanup
+
+  [ Stephen Hemminger ]
+  * update index
+  * update index
+
+  [ Robert Bays ]
+  * update submodule pam-tacacsplus
+  * update submod linux-image: add pv_ops support to amd64
+  * update xensourcevm function to work across archs
+
+  [ An-Cheng Huang ]
+  * * filter local packages using package lists.
+  * add new packages to the package list
+
+  [ Stephen Hemminger ]
+  * update kernel index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+
+  [ Rick Balocca ]
+  * Formatting changes plus removing deprecated git-* commands
+  * Add pull-all sub-command (to update all branches, not just the
+    currently checked out branch)
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module netplug
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-op
+
+  [ Rick Balocca ]
+  * Update the list of packages needed for a build
+  * Add missing dependency
+  * Update indices
+  * Update index
+  * Do not fail on optional file copy
+
+  [ An-Cheng Huang ]
+  * add support for development build
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg
+
+  [ An-Cheng Huang ]
+  * workaround no longer needed (fixed in upstream)
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * Update index
+
+  [ Rick Balocca ]
+  * Update index
+
+  [ Stephen Hemminger ]
+  * Make sure indices are updated.
+  * Update index
+
+  [ Rick Balocca ]
+  * Update and simplify the README; add scripts to do some tedious work
+  * Update indices
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-serial
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-nat
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update index
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ Rick Balocca ]
+  * Update index
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3962
+
+  [ Stephen Hemminger ]
+  * update index
+
+  [ An-Cheng Huang ]
+  * * make dev build the default.
+  * update linux-image
+  * disable index caching to avoid live-helper issue
+  * clean should remove the "files" file
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-firewall
+  * update vyatta-cfg-firewall
+
+  [ Stephen Hemminger ]
+  * Update index of linux-image
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+  * update net-snmp
+
+  [ Rick Balocca ]
+  * Merge from islavista
+
+  [ An-Cheng Huang ]
+  * update pam-tacplus
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * Update index
+  * update index
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ Stephen Hemminger ]
+  * Fix typos and script names
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ rbalocca ]
+  * Update indices
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-openvpn
+
+  [ rbalocca ]
+  * Update indices
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * update vyatta-webgui
+  * update vyatta-ravpn
+  * update vyatta-bash
+  * update iptables
+  * add developer tool pkg-release
+  * update vyatta-webgui
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg
+
+  [ Rick Balocca ]
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * update vyatta-webgui
+  * remove unnecessary dependency
+  * update wanpipe
+
+  [ Stephen Hemminger ]
+  * Add missing package to setup
+  * change to libnet0-dev
+  * Need squashfs-tools to build iso
+  * Update index
+  * Syslinux is needed
+  * update index
+
+  [ An-Cheng Huang ]
+  * ensure kernel packages and modules packages have matching version
+    string.
+  * update clean targets
+  * update open-vm-tools
+  * update submodules
+
+  [ Rick Balocca ]
+  * Update indices
+  * Check the status of all branches, not just the one checked out
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * * change pkg repo handling for dev vs. non-dev builds.
+  * add options for community/supported build
+  * update linux-image
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op
+  * update sub-module vyatta-wirelessmodem
+
+  [ An-Cheng Huang ]
+  * freeze debian packages for jenner
+  * pkg-release changes
+
+  [ Stephen Hemminger ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * update submodules
+  * update submodules
+  * update submodules
+  * use unstable for vyatta packages
+  * remove unneeded optimization
+  * add make target to show unreleased submodules
+  * removing vyatta-antivirus from build
+  * really remove vyatta-antivirus
+  * update vyatta-webgui
+  * update vyatta-webgui
+  * add pkg-release option for "no confirmation"
+  * update vyatta-snort
+  * remove vyatta-antivirus from package list
+
+  [ Rick Balocca ]
+  * Merge from islavista
+  * Update indices
+
+  [ An-Cheng Huang ]
+  * fix merge problem
+  * push tag first when releasing package
+  * update vyatta-base
+  * handle "http://" origin repo when pushing
+  * update submodules
+  * update submodules
+
+  [ Justin Fletcher ]
+  * update submodule vyatta-op
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * * simplify/add make targets for submodules.
+
+  [ rbalocca ]
+  * Update index
+  * Update index
+
+  [ Rick Balocca ]
+  * Increment copyright year to 2009
+
+  [ An-Cheng Huang ]
+  * release builds use testing repo
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * fix for bug 4048: add live-helper hook to update initrd one more
+    time.
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-nat
+
+  [ An-Cheng Huang ]
+  * * parameterize kernel flavor with package list.
+  * * add more heuristics to get origin repo URL.
+  * * eliminate xen image build dependency on kernel build.
+  * move show-unreleased to tools script
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-nat
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * handle git url containing user name
+
+  [ Mohit Mehta ]
+  * update sub-module iptables
+
+  [ An-Cheng Huang ]
+  * only display non-merges when showing unreleased changes.
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+
+  [ Stephen Hemminger ]
+  * Update index op and qos
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ Rick Balocca ]
+  * Update indices
+  * Update index
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg-firewall
+
+  [ Stephen Hemminger ]
+  * update index for quagga stuff
+  * update index
+  * update qos
+  * update quagga
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+
+  [ An-Cheng Huang ]
+  * add validation on version string
+  * change version package to architecture-specific
+  * update submodules
+  * make show-unreleased output more specific
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg-system
+  * update sub-module iptables
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op-firewall
+
+  [ Stephen Hemminger ]
+  * update some indices
+
+  [ An-Cheng Huang ]
+  * add more version check
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op
+  * update sub-module vyatta-cfg
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Stephen Hemminger ]
+  * Add acpid
+
+  [ An-Cheng Huang ]
+  * change default flavor and add packagelist for amd64.
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg-firewall
+
+  [ Stephen Hemminger ]
+  * Update build to 2.6.28
+
+  [ An-Cheng Huang ]
+  * update kernel version to 2.6.28
+
+  [ Stephen Hemminger ]
+  * update index
+  * update index
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * adjust version templates
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * update kernel version to 2.6.28
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * simpify chroot_sources
+  * add support for building shadow branch
+  * update submodules
+  * adjust repo pin-priority
+
+  [ Stephen Hemminger ]
+  * Update index
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * don't build iso if creating xen image
+  * clean up after xensource build
+  * update submodules
+  * change development build version string for full-upgrade
+    compatibility.
+
+  [ Mohit Mehta ]
+  * update sub-module open-vm-tools
+  * update sub-module vyatta-base
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Stephen Hemminger ]
+  * Add NTP package
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * update submodule
+  * add vyatta ntp packages to the package list
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Go back to 486 for default CPU
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+  * update sub-module vyatta-base
+
+  [ An-Cheng Huang ]
+  * use renamed tacplus package
+
+  [ Stephen Hemminger ]
+  * add needed file for ntp
+  * update to 2.6.29
+  * update to 2.6.29 config
+  * Changes to pkg-release
+  * Fix message about edit or not editing
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ Stephen Hemminger ]
+  * Update index for 2.6.29
+  * Make sure current package index up to date.
+  * Remove old 486 package list
+
+  [ An-Cheng Huang ]
+  * update build README
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-dhcp3-client
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-firewall
+
+  [ Justin Fletcher ]
+  * update submodule vyatta-cfg-system
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-firewall
+
+  [ Arthur Xiong ]
+  * Fixed a typo and an URL
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-base
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Stephen Hemminger ]
+  * Remove tacplus module
+  * Remove pkgs/tacplus
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Make syslog values visible
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-op-firewall
+  * update sub-module vyatta-cfg-dhcp-server
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg-firewall
+
+  [ Bob Gilligan ]
+  * Update name of wanpipe modules package.
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg-system
+
+  [ Bob Gilligan ]
+  * Add wanpipe and serial packages to amd64 ISO.
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Use ntp provided vyatta pool for nameserver
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * remove installer submodule
+  * remove linux-kernel-di-i386-2.6 submodule
+  * clean up removed submodules
+  * git-tag doesn't have quiet flag
+  * handle local filesystem git url
+  * update submodules
+
+  [ root ]
+  * update sub-module vyatta-nat
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+
+  [ An-Cheng Huang ]
+  * remove tacplus from build
+  * point build to kenwood package archives
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-firewall
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * add script for merging from another branch
+  * no need to cherry-pick "merge commits"
+  * modify package lists for 2.6.30 kernel
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+  * update sub-module vyatta-cfg
+  * update sub-module vyatta-cfg-system
+
+  [ Stig Thormodsrud ]
+  * Add ssmtp to chroot_local-packageslists
+
+  [ Mohit Mehta ]
+  * update sub-module vyatta-cfg-dhcp-server
+  * update submodule vyatta-dhcp3-client
+  * update sub-module vyatta-cfg-dhcp-server
+  * update submodule vyatta-dhcp3-client
+
+  [ An-Cheng Huang ]
+  * add more documentation for package lists
+  * allow specific commits to be excluded from merge-branch.
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-dhcp-server
+
+  [ An-Cheng Huang ]
+  * add open-vm-tools package to amd64 build
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-nat
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg-firewall
+  * update submodule vyatta-nat
+  * update submodule vyatta-cfg-firewall
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg-firewall
+  * update submodule vyatta-op-firewall
+  * update submodule vyatta-op-firewall
+  * vyatta-cfg-quagga
+  * update submodule vyatta-ravpn
+  * update submodule vyatta-ravpn
+  * update vyatta-cfg-firewall
+  * update submodule vyatta-cfg-dhcp-relay
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg-system
+
+  [ Robert Bays ]
+  * update submodule vyatta-cfg-system to allow install-system on old
+    compaq smart array
+  * update submodule vyatta-cfg-system for release
+
+  [ Stig Thormodsrud ]
+  * Add ipset submodule to toplevel build
+  * update index
+  * add ipset to top-level build
+  * update index
+  * update index
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-webproxy
+  * update submodule vyatta-idp-snort
+
+  [ Bob Gilligan ]
+  * Added new package:  vyatta-ipv6-rtradv
+
+  [ Stig Thormodsrud ]
+  * Add vyatta-netflow submodule to kenwood build-iso.
+  * Include vyatta-netflow to kenwood iso.
+  * Add pmacct submodule
+  * add pmacct submodule to iso build
+
+  [ Bob Gilligan ]
+  * Update vyatta-ipv6-rtradv package
+  * update sub-module vyatta-ipv6-rtradv
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-dhcp-relay
+
+  [ Stephen Hemminger ]
+  * add vyatta-wireless package
+  * Update vyatta-wireless to kenwood branch
+
+  [ Bob Gilligan ]
+  * Add vyatta-ipv6-rtradv package to the build.
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Update to 2.6.31 kernel
+
+  [ An-Cheng Huang ]
+  * update vyatta-cfg-system
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-cfg-vpn
+
+  [ An-Cheng Huang ]
+  * add support for exclude file
+  * update submodules
+  * update submodules
+  * add timestamp to dev build version string
+
+  [ Stig Thormodsrud ]
+  * Add submodule for squidguard
+  * Add squidguard to livecd
+  * update index
+
+  [ An-Cheng Huang ]
+  * create union grub config during build
+  * remove grub entries incompatible with live boot
+  * update README
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-cfg-vpn
+
+  [ An-Cheng Huang ]
+  * update submodules
+  * use new vyatta-union arg in grub template and add reset entries.
+  * update README (lenny is no longer testing)
+  * remove non-core modules
+  * remove submodule directories
+  * remove dummy files
+  * remove packages from build
+  * update version string
+
+  [ Robert Bays ]
+  * add locally built openswan to kenwood
+
+  [ An-Cheng Huang ]
+  * actually include vyatta-wireless in image
+  * update submodules
+  * update submodules
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-op
+
+  [ An-Cheng Huang ]
+  * rework branch/repo setup
+  * enable non-dev build using testing
+  * update package lists for open-vm-tools reorg
+
+  [ Robert Bays ]
+  * remove root account from config.boot.default templates
+
+  [ An-Cheng Huang ]
+  * version string for testing
+  * restore version string
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-vpn
+
+  [ An-Cheng Huang ]
+  * remove Ubuntu from README
+
+  [ Stephen Hemminger ]
+  * Revert "remove root account from config.boot.default templates"
+  * Remove root account from default config
+
+  [ An-Cheng Huang ]
+  * replace deprecated git commands
+
+  [ Stig Thormodsrud ]
+  * update index
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-cfg-firewall
+  * update submodule vyatta-ravpn
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-cfg-vpn
+  * remove openswan package from kenwood-strongswan branch
+  * add vyatta-strongswan submodule
+  * add strongswan packages to local package list
+  * update submodule vyatta-strongswan
+  * add strongswan build dependency
+  * update submodule vyatta-config-migrate
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-cfg-dhcp-server
+  * update submodule vyatta-strongswan
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-strongswan
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-config-migrate
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-nat
+  * update submodule vyatta-wanloadbalance
+  * update submodule vyatta-op
+
+  [ Bob Gilligan ]
+  * Added new repository vyatta-biosdevname.
+  * Added new package vyatta-biosdevname to the build.
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-netflow
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-base
+  * update submodule squidguard
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * add linux-firmware submodule
+  * include linux-firmware in build
+
+  [ Robert Bays ]
+  * change build to add vm-tools package to virt kernel.
+
+  [ Stephen Hemminger ]
+  * Automatically update year in version file
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-base
+
+  [ An-Cheng Huang ]
+  * implement new version scheme
+  * update submodules
+  * update submodule
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-wireless
+
+  [ An-Cheng Huang ]
+  * allow build time override
+
+  [ Bob Gilligan ]
+  * Update "Version" field format.
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-base
+  * update submodule vyatta-base
+
+  [ An-Cheng Huang ]
+  * make flavoring consistent between amd64 and i386
+
+  [ Bob Gilligan ]
+  * Bugfix 5394: Put colon characters in proper location.
+
+  [ An-Cheng Huang ]
+  * run dpkg inside chroot
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-base
+  * update submodule vyatta-base
+  * update submodule vyatta-cfg-system
+
+  [ Stephen Hemminger ]
+  * Remove old git-config
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-base
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-cfg-system
+
+  [ An-Cheng Huang ]
+  * tweak release templates
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-ravpn
+
+  [ Stig Thormodsrud ]
+  * Add lldpd and vyatta-lldp to submodule index.
+  * Add lldpd & vyatta-lldp to iso build.
+
+  [ Stephen Hemminger ]
+  * Add libcap to build
+  * Update submodule libcap
+  * Force local libcap2 onto ISO
+
+  [ An-Cheng Huang ]
+  * update README
+  * add source checking tool
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-firewall
+  * add vyatta-conntrack-sync
+  * remove erroneous path
+
+  [ root ]
+  * update submodule vyatta-cfg
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-op-vpn
+  * update submodule vyatta-strongswan
+  * update submodule vyatta-cluster
+  * update submodule vyatta-conntrack-sync
+
+  [ An-Cheng Huang ]
+  * add squashfs submodule
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-conntrack-sync
+
+  [ Jon Andersson ]
+  * add configure option for build branch specification.
+
+  [ Mohit Mehta ]
+  * update submodule vyatta-conntrack-sync
+  * update submodule vyatta-cluster
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-cfg-vpn
+  * update submodule vyatta-conntrack-sync
+  * update submodule vyatta-cfg
+  * update submodule vyatta-cfg-system
+  * update submodule vyatta-nat
+  * update submodule vyatta-nat
+  * update submodule vyatta-cluster
+  * update submodule vyatta-cfg
+  * update submodule vyatta-conntrack-sync
+  * add submodule conntrack-tools
+  * update README
+
+  [ Stephen Hemminger ]
+  * Add check for squashfs-tools version
+  * Modify floppy mount options
+
+  [ Bob Gilligan ]
+  * Bugfix 5512: Don't include kernel version in grub config file
+    entries.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 09 Jul 2010 16:23:41 -0700
+
 build-iso (0.16) unstable; urgency=low
 
 	  3.2.0
