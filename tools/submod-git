@@ -114,14 +114,14 @@ git_pull-all()
 {
 	local mybranch=`get_branch`
 
-	git-pull
+	git pull
 	for i in `git branch -a -v|sed -e '/^  origin/d' -e 's/..//'|awk '{print $1}'`
 	do
 		[ "$mybranch" = "$i" ] && continue
-		git-checkout $i
-		git-pull
+		git checkout $i
+		git pull
 	done
-	git-checkout "$mybranch"
+	git checkout "$mybranch"
 }
 
 
@@ -204,7 +204,7 @@ git_status()
 }
 
 pwd
-(cd ..;eval $trace git-submodule init)
+(cd ..;eval $trace git submodule init)
 SUPERBRANCH=`get_branch`
 eval $info ========= . =========
 eval $trace $git

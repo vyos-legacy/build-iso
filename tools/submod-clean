@@ -82,7 +82,7 @@ for (( i=0; i<${#submodule[@]}; i++)) ; do
 	eval $do_debclean && \
 	    ( cd ${submodule[i]} ; eval $trace debclean )
 	eval $do_gitclean && \
-	    ( cd ${submodule[i]} ; git-clean $git_clean_flag -d )
+	    ( cd ${submodule[i]} ; git clean $git_clean_flag -d )
     fi
     if [[ ${#targets[@]} -gt 0 ]] ; then
 	eval $trace rm -rf ${targets[@]} ${submodule[i]}/debian/files

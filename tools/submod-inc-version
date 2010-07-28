@@ -49,10 +49,10 @@ EOF
 	-b | --binary )
 	    shift ;;		# default
 	-s | --source )
-	    build="git-buildpackage -uc -us"
+	    build="git buildpackage -uc -us"
 	    shift;;
 	-S | --signed-source )
-	    build="git-buildpackage"
+	    build="git buildpackage"
 	    shift;;
 	-i )
 	    INCVNUM=yes
@@ -92,7 +92,7 @@ get_tag()
 
 get_branch()
 {
-	git-branch|awk '/^\*/ {print $2}'
+	git branch|awk '/^\*/ {print $2}'
 }
 
 mod_changelog()
@@ -102,9 +102,9 @@ mod_changelog()
 
 	branch=`get_branch`
 	[ ! -f debian/control ] && echo "Maintainer: eng@vyatta.com">debian/control
-	if ! EDITOR=true git-dch $rel --debian-branch "$branch"
+	if ! EDITOR=true git dch $rel --debian-branch "$branch"
 	then
-		true		# actually cannot use this yet because the git-dch changelog parser has bugs
+		true		# actually cannot use this yet because the git dch changelog parser has bugs
 		# return 0	# ignore because branch does not exist
 	fi
 
@@ -130,17 +130,17 @@ do_inc_version()
 	if [ "$INCVNUM" ]
 	then
 		echo "$RELEASENAME for $branch">STATUS
-		git-add STATUS
-		git-commit -m `cat STATUS`
+		git add STATUS
+		git commit -m `cat STATUS`
 	fi
 
 	tag_sha=`get_tag`
-	tag_sha=`git-cat-file -p debian/"$tag_sha"|head -1|sed 's,.* ,,'`
+	tag_sha=`git cat-file -p debian/"$tag_sha"|head -1|sed 's,.* ,,'`
 	head_sha=`cat .git/refs/heads/"$branch"`
-	diffs=`[ "$tag_sha" -a "$tag_sha" != "$head_sha" ] && git-diff "$tag_sha" "$head_sha"|head -1`
+	diffs=`[ "$tag_sha" -a "$tag_sha" != "$head_sha" ] && git diff "$tag_sha" "$head_sha"|head -1`
 	if [ ! "$diffs" ]
 	then
-		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
+		git tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
 		return
 	fi
 
@@ -156,12 +156,12 @@ do_inc_version()
 
 	if [ "$RELEASENAME" = UNRELEASED ]
 	then
-		#git-commit -a -m "Setting changelog to UNRELEASED" >/dev/null
+		#git commit -a -m "Setting changelog to UNRELEASED" >/dev/null
 		true
 	else
-		git-commit -a -m "$RELEASENAME" >/dev/null
-		git-tag -a -m "$RELEASENAME" debian/`get_tag` 2>/dev/null
-		git-tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
+		git commit -a -m "$RELEASENAME" >/dev/null
+		git tag -a -m "$RELEASENAME" debian/`get_tag` 2>/dev/null
+		git tag -a -m "$RELEASENAME" vyatta/"$RELEASENAME" 2>/dev/null
 	fi
 )
 }

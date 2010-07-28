@@ -49,10 +49,10 @@ EOF
 	-b | --binary )
 	    shift ;;		# default
 	-s | --source )
-	    build="git-buildpackage -uc -us"
+	    build="git buildpackage -uc -us"
 	    shift;;
 	-S | --signed-source )
-	    build="git-buildpackage"
+	    build="git buildpackage"
 	    shift;;
 	* )
 	    submodule=( $@ )
