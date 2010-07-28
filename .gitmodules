@@ -178,3 +178,6 @@
 [submodule "pkgs/conntrack-tools"]
 	path = pkgs/conntrack-tools
 	url = http://git.vyatta.com/conntrack-tools.git
+[submodule "pkgs/barnyard2"]
+	path = pkgs/barnyard2
+	url = http://git.vyatta.com/barnyard2.git
