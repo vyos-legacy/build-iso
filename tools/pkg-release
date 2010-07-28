@@ -10,7 +10,7 @@ Usage: pkg-release [-i] [-n] [-p] [-h] [<version>]
   new changelog and tag to the origin.
   
   Note that all arguments are optional. If "<version>" is not specified, the
-  version will be automatically incremented by git-dch using its versioning
+  version will be automatically incremented by git dch using its versioning
   heuristics.
 
   The following options are available:
@@ -53,7 +53,7 @@ if [[ $url == *@* ]]; then
 fi
 if [ -z "$user" ] || [[ $url == http://* ]]; then
   cat <<EOF
-URL "$url" cannot be used for git-push.
+URL "$url" cannot be used for git push.
 Please push manually using the following commands after this script finishes:
   git push <url>
   git push --tags <url>
@@ -118,28 +118,28 @@ fi
 
 # pull before doing anything
 if ! git pull $quiet ; then
-  echo git-pull failed
+  echo git pull failed
   exit 1
 fi
 branch=$(git branch | sed -n '/^\* /s/^\* //p')
 
-# turn off editor called from git-dch
+# turn off editor called from git dch
 if ! eval $edit; then 
     export VISUAL=
     export EDITOR=true
 fi
 
 if [ -z "$ver" ]; then
-  # no version specified. use git-dch directly.
+  # no version specified. use git dch directly.
   if ! git dch --debian-branch="$branch" --release; then
-    echo git-dch failed
+    echo git dch failed
     exit 1
   fi
   ver=$(dpkg-parsechangelog | sed -n 's/^Version: //p')
 else
   # use specified version.
   if ! git dch --debian-branch="$branch" --release --new-version="$ver"; then
-    echo git-dch failed
+    echo git dch failed
     exit 1
   fi
 fi

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -W
 
-print "This script will run a git-status on all the submodules in 'pkgs'.\n";
+print "This script will run a git status on all the submodules in 'pkgs'.\n";
 print "This script expects to be run from the root of the build where 'pkgs' is a subdir.\n";
 
 if (! -d 'pkgs') {
@@ -15,7 +15,7 @@ foreach $pkg (@pkgs) {
 
 	if ($pkg ne '.' && $pkg ne '..' && -d "pkgs/$pkg/.git") {
 		print "-- $pkg --\n";
-		system "cd pkgs/$pkg; git-status";
+		system "cd pkgs/$pkg; git status";
 		print "\n";
 	}
 }
