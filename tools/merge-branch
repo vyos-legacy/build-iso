@@ -67,7 +67,7 @@ if [ -r .merge-branch-exclude ]; then
   FILE_EXCLUDE=$(cat .merge-branch-exclude)
 fi
 
-changes=($(git-rev-list --no-merges --reverse --left-right --cherry-pick \
+changes=($(git rev-list --no-merges --reverse --left-right --cherry-pick \
               $SBRANCH...$CBRANCH | grep '^<'))
 for change in "${changes[@]}"; do
   sha1=${change##<}
@@ -99,7 +99,7 @@ EOF
   else
     count=$(git whatchanged --max-count=1 --pretty=oneline $sha1 \
             | grep '^:' | wc -l)
-    ssha1=$(git-rev-parse --short $sha1)
+    ssha1=$(git rev-parse --short $sha1)
     if (( count == 1 )); then
       echo "    skip $ssha1 (only debian/changelog)"
     else

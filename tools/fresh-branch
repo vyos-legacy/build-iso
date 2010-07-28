@@ -38,15 +38,15 @@ then
 	exit 1
 fi
 
-git-clone -q "$VYATTA_URL/$repo".git "$targetdir"
+git clone -q "$VYATTA_URL/$repo".git "$targetdir"
 
 cd "$targetdir"
 
 if [ "$bname" != master ]
 then
-	git-checkout -b "$bname" "remotes/origin/$bname"
-	git-config "branch.$bname.remote" origin
-	git-config "branch.$bname.merge" "refs/heads/$bname"
+	git checkout -b "$bname" "remotes/origin/$bname"
+	git config "branch.$bname.remote" origin
+	git config "branch.$bname.merge" "refs/heads/$bname"
 fi
 
 autoreconf -i && ./configure $*>/dev/null
