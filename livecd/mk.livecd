@@ -76,6 +76,9 @@ rm -f chroot/etc/*.vyatta-save chroot/etc/*/*.vyatta-save
 ## Clean up ssh keys.  System should regen keys locally
 rm -f chroot/etc/ssh/ssh_host*
 
+## Disable root account
+chroot chroot usermod -p ! root
+
 # make version package (twice to get itself into the pkg list)
 echo I: making version package
 mk_version_package ; mk_version_package
