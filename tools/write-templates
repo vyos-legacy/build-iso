@@ -1,0 +1,42 @@
+#!/bin/bash
+
+usage () {
+  echo "usage: $0 <input_file>"
+  exit 1
+}
+
+infile=$1
+if [ -z "$infile" ] || [ ! -f "$infile" ]; then
+  usage
+fi
+
+outfile=''
+sep=''
+empty_line=''
+IFS=""
+cat $infile \
+  | while read -r line; do
+      if [ -z "$outfile" ]; then
+        outfile=$line
+        if [ -f "$outfile" ]; then
+          >$outfile
+        fi
+      elif [ -z "$sep" ]; then
+        sep=$line
+      elif [ "$sep" == "$line" ]; then
+        outfile=''
+        sep=''
+        empty_line=''
+      elif [ -f "$outfile" ]; then
+        if [ -n "$empty_line" ]; then
+          echo >>$outfile
+          empty_line=''
+        fi
+        if [ -z "$line" ]; then
+          empty_line=yes
+        else
+          echo "$line" >>$outfile
+        fi
+      fi
+    done
+
