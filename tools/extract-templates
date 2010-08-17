@@ -1,0 +1,24 @@
+#!/bin/bash
+
+usage () {
+  echo "usage: $0 <template_dir>"
+  exit 1
+}
+
+tmpl_dir=$1
+if [ -z "$tmpl_dir" ] || [ ! -d "$tmpl_dir" ]; then
+  usage
+fi
+
+sep=$(dd if=/dev/urandom bs=4 count=4 2>/dev/null | base64)
+find $tmpl_dir -name node.def \
+  | while read tfile; do
+      [ -f "$tfile" ] || continue
+      while grep -q "^$sep\$" $tfile; do
+        sep=$(dd if=/dev/urandom bs=4 count=4 2>/dev/null | base64)
+      done
+      echo -e "$tfile\n$sep"
+      cat $tfile
+      echo -e "\n$sep"
+    done
+
