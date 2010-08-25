@@ -4,5 +4,5 @@
 # replaced the default one, which happens during the chroot_local-includes
 # step.
 
-update-initramfs -u
+update-initramfs -u -k all
 
