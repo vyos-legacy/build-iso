@@ -82,6 +82,7 @@ for change in "${changes[@]}"; do
       echo "    skip $sha1 (.merge-branch-exclude)"
       continue
     fi
+    git-log -1 --pretty=format:'%cn: %s' $sha1
     echo -n "cherry-pick $sha1"
     if [ "$dryrun" == "yes" ]; then
       echo " (dry-run)"
