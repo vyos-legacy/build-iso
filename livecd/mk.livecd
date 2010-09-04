@@ -113,6 +113,8 @@ if ! lh binary ; then
   exit 1
 fi
 
+# new image name (hybrid image)
+mv binary-hybrid.iso binary.iso
 ln -nsf binary.iso livecd-"$BUILDID".iso
 
 echo I: Done
