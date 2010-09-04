@@ -3,16 +3,16 @@
 # create busybox alternatives
 
 bb=`which busybox`
-applets=" "`busybox | sed '1,/^Currently defined functions:/d; s/[\[,]//g'`" "
+applets=$(busybox | sed '1,/^Currently defined functions:/d; s/[\[,]//g; s/	/ /g; s/$/ /g')
 
 bb_alternative ()
 {
     full=$1
     full_bb=${full}.bb
     app=${full##*/}
-    if [[ ! -x $full && $applets == *[[:space:]]${app}[[:space:]]* ]] ; then
-	ln -s $bb $full_bb
-	update-alternatives --install $full $app $full_bb 10
+    if [ ! -x $full ] && (echo -n "$applets" | grep -q " $app "); then
+      ln -s $bb $full_bb
+      update-alternatives --install $full $app $full_bb 10
     fi
 }
 

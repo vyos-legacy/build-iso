@@ -41,8 +41,8 @@ for p in ../pkgs/*.deb; do
   found=false
   pp=${p%%_*}
   pkg=${pp#../pkgs/}
-  for l in $LH_PACKAGES_LISTS; do
-    if egrep -q -e "^$pkg$" config/chroot_local-packageslists/$l; then
+  for l in config/chroot_local-packageslists/*.list; do
+    if egrep -q -e "^$pkg$" $l; then
       found=true
       break
     fi
@@ -53,7 +53,7 @@ for p in ../pkgs/*.deb; do
 done
 
 echo I: building bootstrap
-if ! lh_bootstrap; then
+if ! lh bootstrap; then
   echo E: bootstrap build failed
   exit 1
 fi
@@ -62,10 +62,15 @@ fi
 (rm -f chroot/dev/random && mknod -m 666 chroot/dev/random c 1 9) || true
 
 echo I: building chroot
-if ! lh_chroot; then
+if ! lh chroot; then
   echo E: chroot build failed
   exit 1
 fi
+
+# squeeze's dash preinst diverts /bin/sh
+chroot chroot dpkg-divert --package dash --remove /bin/sh
+chroot chroot dpkg-divert --add /bin/sh
+chroot chroot ln -sf bash /bin/sh
 
 # restore /dev/random
 (rm -f chroot/dev/random && mknod -m 666 chroot/dev/random c 1 8) || true
@@ -103,7 +108,7 @@ if eval "$create_xensourcevm"; then
 fi
 
 echo I: building binary
-if ! lh_binary ; then
+if ! lh binary ; then
   echo E: binary build failed
   exit 1
 fi

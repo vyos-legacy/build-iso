@@ -55,27 +55,17 @@ AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta])
 test "X$LH_LANGUANGE" = "X" && LH_LANGUAGE=en
 AC_ARG_VAR(LH_LANGUAGE, [default: en])
 
-test "X$LH_MEMTEST" = "X" && LH_MEMTEST=disabled
-AC_ARG_VAR(LH_MEMTEST, [default: disabled])
+test "X$LH_MEMTEST" = "X" && LH_MEMTEST=none
+AC_ARG_VAR(LH_MEMTEST, [default: none])
 
 test "X$LH_PACKAGES" = "X" && LH_PACKAGES=none
 AC_ARG_VAR(LH_PACKAGES, [default: none])
 
-test "X$LH_QUIET" = "X" && LH_QUIET=enabled
-AC_ARG_VAR(LH_QUIET, [default: enabled])
-
-test "X$LH_VERBOSE" = "X" && LH_VERBOSE=disabled
-AC_ARG_VAR(LH_VERBOSE, [default: disabled])
-
 test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=templates/isolinux.cfg
-AC_ARG_VAR(LH_SYSLINUX_CFG, [default: isolinux.cfg])
+AC_ARG_VAR(LH_SYSLINUX_CFG, [default: templates/isolinux.cfg])
 
-test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=disabled
-AC_ARG_VAR(LH_SYSLINUX_MENU, [default: disabled])
-
-test "X$LH_SYSLINUX_SPLASH" = "X" && LH_SYSLINUX_SPLASH=none
-AC_ARG_VAR(LH_SYSLINUX_SPALSH, \
-	[default: none, overridden with binary_local-includes])
+test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=false
+AC_ARG_VAR(LH_SYSLINUX_MENU, [default: false])
 
 test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
 AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
@@ -83,12 +73,12 @@ AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
 # process --with[out] arguments
 AC_ARG_WITH(target-dist,
 	[AS_HELP_STRING([--with-target-dist=<dist>],
-	  [Target distribution (e.g., "lenny"), default to the host distribution])],
+	  [Target distribution (e.g., "squeeze"), default to the host distribution])],
 	[],
 	[with_target_dist=$(lsb_release -c -s)])
 
 if test "$with_target_dist" = "n/a"; then
-  LH_DISTRIBUTION=lenny
+  LH_DISTRIBUTION=squeeze
 else
   LH_DISTRIBUTION="$with_target_dist"
 fi
@@ -227,7 +217,7 @@ if test "X$VYATTA_BUILD_BRANCH" == X; then
   VYATTA_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
 fi
 
-LH_SECURITY="disabled"
+LH_SECURITY="false"
 LH_SECTIONS="main"
 
 AC_CONFIG_FILES([livecd/mk.livecd.conf])
@@ -260,15 +250,12 @@ AC_SUBST(LH_LINUX_PACKAGES)
 AC_SUBST(LH_LINUX_FLAVOURS)
 AC_SUBST(LH_MEMTEST)
 AC_SUBST(LH_PACKAGES)
-AC_SUBST(LH_QUIET)
 AC_SUBST(LH_SECTIONS)
 AC_SUBST(LH_SECURITY)
 AC_SUBST(LH_SYSLINUX_CFG)
 AC_SUBST(LH_SYSLINUX_MENU)
-AC_SUBST(LH_SYSLINUX_SPLASH)
 AC_SUBST(LH_SYSLINUX_TIMEOUT)
 AC_SUBST(LH_UNION_FILESYSTEM)
-AC_SUBST(LH_VERBOSE)
 
 AC_SUBST(create_xensourcevm)
 

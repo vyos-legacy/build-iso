@@ -300,7 +300,7 @@ set_up_lh_config ()
   fi
 
   # prepare the config files for live helper
-  lh_config
+  lh config
   (
     cd config.vyatta
     cp -af binary_local-includes chroot_apt chroot_local-hooks \
@@ -368,7 +368,7 @@ EOF
   kplist="config/chroot_local-packageslists/vyatta-kernel.$LH_LINUX_FLAVOURS"
   if [ -f "$kplist" ]; then
     # list exists. set it up.
-    mv -f $kplist config/chroot_local-packageslists/vyatta-kernel
+    mv -f $kplist config/chroot_local-packageslists/vyatta-kernel.list
   fi
 }
 

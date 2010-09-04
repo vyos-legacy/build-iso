@@ -39,7 +39,7 @@ mostlyclean :
 	 done
 	@rm -rf livecd/{.permissions,.stage,binary,*.iso,chroot,config,.lock}
 	@ipcs -q | awk '{print $$2}' | egrep [0-9] \
-	 	| xargs -L 1 ipcrm -q >& /dev/null || /bin/true
+		| xargs -L 1 ipcrm -q >/dev/null 2>&1 || /bin/true
 
 .PHONY : clean
 clean :

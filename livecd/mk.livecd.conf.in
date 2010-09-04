@@ -24,15 +24,12 @@ declare -x LH_MIRROR_BINARY_SECURITY=''
 declare -x LH_MIRROR_BOOTSTRAP_SECURITY=''
 declare -x LH_MIRROR_CHROOT_SECURITY=''
 declare -x LH_PACKAGES="@LH_PACKAGES@"
-declare -x LH_QUIET="@LH_QUIET@"
 declare -x LH_SECTIONS="@LH_SECTIONS@"
 declare -x LH_SECURITY="@LH_SECURITY@"
 declare -x LH_SYSLINUX_CFG="@LH_SYSLINUX_CFG@"
 declare -x LH_SYSLINUX_MENU="@LH_SYSLINUX_MENU@"
-declare -x LH_SYSLINUX_SPLASH="@LH_SYSLINUX_SPLASH@"
 declare -x LH_SYSLINUX_TIMEOUT="@LH_SYSLINUX_TIMEOUT@"
 declare -x LH_UNION_FILESYSTEM="@LH_UNION_FILESYSTEM@"
-declare -x LH_VERBOSE="@LH_VERBOSE@"
 declare -x create_xensourcevm="@create_xensourcevm@"
 declare -x VYATTA_DEV_BUILD="@VYATTA_DEV_BUILD@"
 declare -x VYATTA_COMMUNITY_BUILD="@VYATTA_COMMUNITY_BUILD@"
@@ -49,12 +46,12 @@ export LH_BOOTSTRAP_INCLUDE
 ## packages not needed in bootstrap
 declare -x LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 
-# package lists to include
-declare -x LH_PACKAGES_LISTS="vyatta-full vyatta-extra vyatta-kernel"
-
-declare -x LH_APT_RECOMMENDS="disabled"
-declare -x LH_CHROOT_BUILD="disabled"
-declare -x LH_CACHE_INDICES="disabled"
+declare -x LH_VOLATILE="false"
+declare -x LH_DEBIAN_INSTALLER="false"
+declare -x LH_APT_RECOMMENDS="false"
+declare -x LH_BUILD_WITH_CHROOT="false"
+declare -x LH_CACHE_INDICES="false"
+declare -x LH_SYSLINUX_SPLASH="none"
 declare -x DEBIAN_FRONTEND="noninteractive"
 
 if [[ "$PATH" != */sbin* ]] ; then
@@ -104,6 +101,3 @@ fi
 LH_ISO_VOLUME+="$BUILDID"
 export LH_ISO_VOLUME
 
-if [[ $LD_PRELOAD == *libfakeroot-sysv.so* ]]; then
-  export LH_USE_FAKEROOT=enabled 
-fi

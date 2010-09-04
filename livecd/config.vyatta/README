@@ -25,20 +25,19 @@ chroot_local-includes:
 
 chroot_local-packageslists:
   This sub-directory contains package lists that specify what packages should
-  be installed. The lists that should be used are specified using the
-  LH_PACKAGES_LISTS variable in "mk.livecd.conf".
+  be installed. Any files named "*.list" will be used during the ISO build.
 
-  The "vyatta-full" list contains the names of all packages that are built by
-  Vyatta AND should be installed in the build. Every package is listed
-  regardless of dependency, e.g., "vyatta-op" is listed in vyatta-full even
-  though some other packages in the list depend on it.
+  The "vyatta-full.list" list contains the names of all packages that are
+  built by Vyatta AND should be installed in the build. Every package is
+  listed regardless of dependency, e.g., "vyatta-op" is listed in vyatta-full
+  even though some other packages in the list depend on it.
 
-  The "vyatta-extra" list contains the names of Debian packages that should
-  be installed in the build. Normally this can be achieved by adding the
-  Debian package to the dependency of a Vyatta package, in which case it does
-  not need to be added to vyatta-extra. However, in some cases it may not be
-  desirable to add a package as a dependency, but we still want it in the
-  build, in which case it can be added to vyatta-extra.
+  The "vyatta-extra.list" list contains the names of Debian packages that
+  should be installed in the build. Normally this can be achieved by adding
+  the Debian package to the dependency of a Vyatta package, in which case it
+  does not need to be added to vyatta-extra. However, in some cases it may
+  not be desirable to add a package as a dependency, but we still want it in
+  the build, in which case it can be added to vyatta-extra.
 
   Note that the "vyatta-kernel.*" lists correspond to the various kernel
   flavors. For example, the packages in "vyatta-kernel.586-vyatta" will be
@@ -48,7 +47,9 @@ chroot_local-packageslists:
   flavor-specific list and *not* in one of the generic lists. For example,
   "wanpipe" depends on the 586-vyatta wanpipe-modules package, which depends
   on the 586-vyatta kernel, and therefore "wanpipe" is listed in
-  "vyatta-kernel.586-vyatta" and not in "vyatta-full".
+  "vyatta-kernel.586-vyatta" and not in "vyatta-full.list". During the ISO
+  build, the flavor-specific list will be copied to "vyatta-kernel.list"
+  and used by live-helper.
 
 chroot_local-patches:
   This sub-directory contains patches that are applied during the chroot
