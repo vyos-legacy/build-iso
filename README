@@ -27,7 +27,7 @@ Build Host Setup
       ssh build-essential sudo bzip2 curl autoconf git devscripts \
       debhelper autotools-dev automake libtool bison flex lintian \
       libglib2.0-dev libapt-pkg-dev libboost-filesystem1.42-dev \
-      libncurses5-dev libdb-dev libssl-dev cdbs libsablot0-dev \
+      libncurses5-dev libdb-dev libssl-dev cdbs libmozjs-dev \
       libreadline5-dev libpam0g-dev libcap-dev libsnmp-dev gawk unzip \
       kernel-package libatm1-dev git-buildpackage libnfnetlink-dev \
       libnetfilter-conntrack-dev libattr1-dev rsync libxml2-dev \
@@ -36,7 +36,7 @@ Build Host Setup
       libcurl4-openssl-dev libopensc2-dev libldap2-dev libkrb5-dev \
       hardening-wrapper libgcrypt11-dev libpcre3-dev libprelude-dev \
       libgnutls-dev libperl-dev python-all-dev python-setuptools \
-      live-helper syslinux libsort-versions-perl
+      live-helper syslinux libsort-versions-perl libexpat1-dev
 
     If you are installing an "amd64" system, you also need the following
     packages.
@@ -120,7 +120,7 @@ Build Host Setup for Building Submodules
     Vyatta-specific packages on the build host.
 
       From "Debian lenny":
-        libnet0 libnet0-dev
+        libnet0 libnet0-dev libsablot0 libsablot0-dev
 
       From Vyatta "unstable" package repository:
         iptables iptables-dev linux-vyatta-kbuild
