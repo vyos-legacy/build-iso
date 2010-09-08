@@ -1,178 +1,185 @@
 Vyatta VC ISO Build Procedures
 
-    This document describes how to build a Vyatta VC ISO image.
-    The most recent version of this document is the top-level README file of
-    the "latest" branch of the "build-ISO" source tree.
+    This document describes how to build a Vyatta VC ISO image. The most
+    recent version of this document is the top-level README file from 
+    the "latest" branch of the "build-iso" git source repository.
 
-Prerequisites
 
-    The Vyatta ISO build uses the "live-helper" tool that is available
-    in several distributions. The current build system requires a Debian
-    "lenny"-based system. The "build-iso" source is maintained as a GIT
-    super-module that references several submodules that each build one or
-    more self named Debian packages. The submodule feature was added to GIT
-    v1.5.2.
+Build Host Setup
 
-Getting Source
+    The current Vyatta ISO build requires a Debian "squeeze"-based system.
+    As of now, "squeeze" is the Debian "testing" release. Therefore, to
+    install a minimal squeeze system, download a squeeze installer "netinst"
+    or "businesscard" ISO image from the following Debian page:
+
+      http://www.debian.org/devel/debian-installer/
+
+    The supported architectures currently include "i386" and "amd64".
+    During the installation, choose "Standard system utilities" when
+    selecting the software to be installed (note that this is the minimal
+    requirements and one can certainly install more packages).
+
+    After the installation and reboot, your "apt" sources.list file should
+    be configured to use the Debian mirror that you selected during the
+    installation. In order to build the Vyatta packages and the ISO,
+    install the following packages using "apt-get" or "aptitude".
+
+      ssh build-essential sudo bzip2 curl autoconf git devscripts \
+      debhelper autotools-dev automake libtool bison flex lintian \
+      libglib2.0-dev libapt-pkg-dev libboost-filesystem1.42-dev \
+      libncurses5-dev libdb-dev libssl-dev cdbs libsablot0-dev \
+      libreadline5-dev libpam0g-dev libcap-dev libsnmp-dev gawk unzip \
+      kernel-package libatm1-dev git-buildpackage libnfnetlink-dev \
+      libnetfilter-conntrack-dev libattr1-dev rsync libxml2-dev \
+      libedit-dev libpcap0.8-dev libpci-dev lsb-release quilt ruby \
+      genisoimage liblzo2-dev unifont libpopt-dev libgmp3-dev \
+      libcurl4-openssl-dev libopensc2-dev libldap2-dev libkrb5-dev \
+      hardening-wrapper libgcrypt11-dev libpcre3-dev libprelude-dev \
+      libgnutls-dev libperl-dev python-all-dev python-setuptools \
+      live-helper syslinux libsort-versions-perl
+
+    If you are installing an "amd64" system, you also need the following
+    packages.
+
+      libc6-dev-i386 gcc-multilib
+
+    Now install the Vyatta packaget repository GPG key.
+
+      wget -O vyatta-pubkey.gpg \
+        http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
+      sudo apt-key add vyatta-pubkey.gpg
+
+    You will also need to download and install the latest "squashfs-tools"
+    package from the Vyatta "unstable" package repository. For example, for
+    the "mendocino" branch and "i386" architecture, the package can be
+    installed as follows (note that the version of the package may be
+    different since the "unstable" package repository contains the latest
+    development packages).
+
+      wget http://packages.vyatta.com/vyatta-dev/mendocino/unstable/pool/main/squashfs-tools_4.1+vyatta-5_i386.deb
+      dpkg -i squashfs-tools_4.1+vyatta-5_i386.deb
+
+    Then put the following in "/etc/apt/preferences" to "pin" the version of
+    the squashfs-tools package (which ensures that the Vyatta package will be
+    used instead of the one from Debian).
+
+        Package: squashfs-tools
+        Pin: version 4.*
+        Pin-Priority: 1001
+
+
+Getting "build-iso" Source
 
     The Vyatta ISO builder consists of scripts and config files
-    maintained as a GIT super-module named, "build-iso" that
-    references several submodules within its "pkgs/" sub-directory.
-    Note that the super-module and submodules each have multiple
-    branches available.  To build successfully, all modules must
-    have the same branch checked out.
-    To clone the super-module, if you haven't do so, install git:
-
-	apt-get install git-core
-
-    Then:
+    maintained as a git repository named "build-iso". First, clone
+    the build-iso git repository.
 
 	git clone http://git.vyatta.com/build-iso.git
 
-    This will create a tree in the directory ./build-iso .
+    This will create the source tree in the directory "build-iso".
     (At this point, you might want to switch to reading
     ./build-iso/README, which is the most recent version
     of the file which you are reading now:-)
 
-    Our git repositories have branches, the most stable of which
-    is the default git branch ("master"). If you are
-    interested in another branch (let's call it BRANCH), then:
+    Our git repositories have branches, which usually correspond to
+    different releases. To switch to a particular branch (let's call
+    it BRANCH), do the following.
 
 	cd build-iso
 	git checkout --track -b BRANCH origin/BRANCH
 
-    If you don't want to build any submodules and just want to build an
-    ISO with all pre-built packages, you can skip the following submodule
-    instructions and go to the next section "Configuration".
 
-    To register the submodules in the cloned repository config,
+Build ISO
 
-	git submodule init
+    To build a Vyatta ISO, do the following in the "build-iso" directory
+    (which has been set up as described in the previous section).
 
-    It's most efficient to selectively clone only the submodules
-    needing for review or modification. The ISO build downloads the
-    Vyatta pre-built, binary packages of any non-cloned sub-module. To
-    clone a specific sub-module,
+	export PATH=/sbin:/usr/sbin:$PATH
+	autoreconf -i
+	./configure
+        sudo make iso
 
-	git submodule update pkgs/SUBMODULE
+    The end results is the following livecd ISO image.
 
-    This command clones the SUBMODULE repository in the "pkgs/SUBMODULE"
-    directory and checks out the master branch.  If you wish to checkout a
-    different branch, use:
+	livecd/binary.iso
 
-	cd pkgs/SUBMODULE
-	git checkout --track -b BRANCHNAME origin/BRANCHNAME
+    Note that the above build process uses the pre-built binary packages
+    from the Vyatta "unstable" package repository, which contains the
+    latest development packages updated in real time (i.e., they are the
+    exact same packages used in Vyatta internal development build).
 
-    To clone all sub-modules for full verification build,
+    If you want to make modifications to one or more packages, you will
+    need to get the source of the submodule(s) that you want to change,
+    make the changes, build the submodules, and then build a new ISO to
+    include the new packages. This is discussed in the next section.
 
-	git submodule update
+
+Build Host Setup for Building Submodules
+
+    Before building any submodules, you will need to install the following
+    Vyatta-specific packages on the build host.
+
+      From "Debian lenny":
+        libnet0 libnet0-dev
+
+      From Vyatta "unstable" package repository:
+        iptables iptables-dev linux-vyatta-kbuild
+        libsnmp15 libsnmp-dev libsnmp-perl libsnmp-base
+        libcap-dev libcap2 libvyatta-cfg-dev libvyatta-cfg1
+     
+    The two Debian lenny packages are available from any Debian mirrors. For
+    example, the i386 "libnet0" package can be found at the following URL.
+
+      http://packages.vyatta.com/debian/pool/main/libn/libnet0/libnet0_1.0.2a-7_i386.deb
+
+    The location of the Vyatta "unstable" package repository depends on the
+    source branch. For example, for the "mendocino" branch, the i386
+    "iptables" package in the "unstable" package repository can be downloaded
+    from the following URL (note that the unstable package repository is
+    updated in real time, so latest version may be different from the version
+    below).
+
+      http://packages.vyatta.com/vyatta-dev/mendocino/unstable/pool/main/iptables_1.4.9+vyatta+2_i386.deb
+      
+    After downloading the packages listed above, they can be installed
+    using "dpkg".
+
+
+Getting Submodules Source and Building
+
+    Note that the "build-iso" git repository contains a number of
+    submodules in the "pkgs/" subdirectory. To get the source for a
+    submodule, do the following in the "build-iso" directory (replace
+    "SUBMODULE" with the name of the module, e.g., "vyatta-cfg-quagga").
+
+      git submodule init
+      git submodule update pkgs/SUBMODULE
+
+    The above will clone the source of the submodule into the
+    "pkgs/SUBMODULE" directory. Note that the submodule needs to be on
+    the same branch as "build-iso", so do the following (replace
+    "BRANCH" with the branch name you used for build-iso).
+
+      cd pkgs/SUBMODULE
+      git checkout --track -b BRANCH origin/BRANCH
+
+    In most cases, you will only update (i.e., clone) the submodule(s)
+    that you are going to change. If you want to clone all submodules,
+    do the following.
+
+      git submodule update
 
     Remember to create and checkout the same working branch for all
     submodules.
 
-Build Host Setup
-
-    To set up a build environment (e.g., system or VM), we recommend
-    installing Debian "lenny" (i.e., "5.0") with either business-card
-    or net-install image.  You can also use the Vyatta livecd ISO for a
-    build host. (If you do want to start from the Vyatta system, you will
-    have to uninstall libsnmp15--which will uninstall most of the Vyatta
-    specific features.)
-
-    The Debian installation process prompts for a distribution mirror. Any
-    debian "lenny" mirror will do.  To include Vyatta's Debian mirror, add
-    this to /etc/apt/sources.list:
-
-	deb http://packages.vyatta.com/debian/ lenny main
-	deb http://packages.vyatta.com/debian-security/ lenny/updates main
-
-    To install the Vyatta repository GPG key,
-
-	wget -O vyatta-pubkey.gpg http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
-	sudo apt-key add vyatta-pubkey.gpg
-
-    To build an ISO with all pre-built binary, packages, you need to install
-    certain tools on the build host.
-
-    This script will setup the build environment for an ISO build:
-
-	setup-build-env
-
-    You will also need to download and install an updated squashfs-tools package:
-
-        wget http://packages.vyatta.com/vyatta-dev/larkspur/unstable/pool/main/squashfs-tools_4.1+vyatta-1_i386.deb
-        dpkg -i squashfs-tools_4.1+vyatta-1_i386.deb
-
-    and put the following in /etc/apt/preferences to "pin" its version:
-
-        Package: squashfs-tools
-        Pin: version 4.*
-        Pin-Priority: 1001 
-
-    In order to build the individual vyatta packages, you need to install additional
-    debian packages.  Note that each vyatta package build will check if the required
-    debian packages are installed.  It will "complain" if they are not.  In order to
-    save some iteration, run this script to download and install these packages:
-
-	setup-pkg-build
-
-    In addition, build dependencies for each package can be found in the 
-    debian/control file of that package. If build dependencies for a package
-    weren't installed by running the above mentioned setup-pkg-build script 
-    then you would need to install these yourself. For example, to build 
-    vyatta-cfg package; you must have the following packages installed as 
-    noted in vyatta-cfg's debian/control file :
-
-        Build-Depends: debhelper (>= 5), autotools-dev, libglib2.0-dev
-
-    If you want to build the iproute package, you will also need to install the
-    iptables packages from the kenwood branch, which uses a newer iptables than
-    what is available from Debian lenny:
-    
-        wget http://packages.vyatta.com/vyatta-dev/kenwood/unstable/pool/main/iptables-dev_1.4.4-2+vyatta+3_i386.deb
-        wget http://packages.vyatta.com/vyatta-dev/kenwood/unstable/pool/main/iptables_1.4.4-2+vyatta+3_i386.deb
-        dpkg -i iptables-dev_1.4.4-2+vyatta+3_i386.deb iptables_1.4.4-2+vyatta+3_i386.deb
-
-Configuration
-
-    The Vyatta ISO builder has GNU autotool configuration,
-
-	autoreconf -i
-	./configure --with-target-dist=lenny
-
-    To see all configure options,
-
-	./configure --help
-
-Build ISO
-
-    To build an ISO:
-
-	PATH=/sbin:/usr/sbin:$PATH
-	sudo make
-
-    The end results is the following livecd,
-
-	livecd/binary.iso
-
-Clean
-
-    The Vyatta ISO builder has these standard automake targets to
-    clean files generated:
-
-	make mostlyclean 	# during ISO build (excludes package built files)
-	make clean 		# during package builds along with ISO files
-	make distclean 		# by autoreconf and configure plus all of the above
-
-    For example, to clean the ISO build files,
-
-	make mostlyclean
 
 Build submodules
 
     When you do a "make", the build system will build the binary packages
-    for all cloned submodules and include them in the ISO. If you want to
-    work with specific submodules, you can use the commands listed below.
+    for all cloned submodules and include them in the ISO (pre-built
+    packages from the Vyatta "unstable" package repository will be used
+    for the submodules that are not cloned). If you want to work with
+    specific submodules, you can use the commands listed below.
 
     Using make targets
 
