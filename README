@@ -37,12 +37,7 @@ Build Host Setup
       hardening-wrapper libgcrypt11-dev libpcre3-dev libprelude-dev \
       libgnutls-dev libperl-dev python-all-dev python-setuptools \
       live-helper syslinux libsort-versions-perl libexpat1-dev \
-      libfile-sync-perl
-
-    If you are installing an "amd64" system, you also need the following
-    packages.
-
-      libc6-dev-i386 gcc-multilib
+      libfile-sync-perl gcc-multilib
 
     Now install the Vyatta package repository GPG key.
 
