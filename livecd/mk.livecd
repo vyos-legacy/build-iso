@@ -67,11 +67,6 @@ if ! lh chroot; then
   exit 1
 fi
 
-# squeeze's dash preinst diverts /bin/sh
-chroot chroot dpkg-divert --package dash --remove /bin/sh
-chroot chroot dpkg-divert --add /bin/sh
-chroot chroot ln -sf bash /bin/sh
-
 # restore /dev/random
 (rm -f chroot/dev/random && mknod -m 666 chroot/dev/random c 1 8) || true
 
