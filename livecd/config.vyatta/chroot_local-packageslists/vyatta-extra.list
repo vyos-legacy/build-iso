@@ -5,4 +5,5 @@ nano
 less
 rsync
 acpid
+acpi-support-base
 ssmtp
