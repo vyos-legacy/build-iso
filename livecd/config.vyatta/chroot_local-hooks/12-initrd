@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# this is needed because initrd must be regenerated after our live.conf has
-# replaced the default one, which happens during the chroot_local-includes
-# step.
-
-update-initramfs -u -k all
-
