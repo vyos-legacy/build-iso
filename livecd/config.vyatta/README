@@ -8,6 +8,9 @@ binary_local-includes:
   Files in this sub-directory are copied into the binary directory during the
   binary step (before the image is built).
 
+binary_local-hooks:
+  The scripts in this sub-directory are executed during the binary step.
+
 chroot_apt:
   The "preferences" file is used by apt during the chroot step. Note that
   normally this file is empty as the content is generated automatically

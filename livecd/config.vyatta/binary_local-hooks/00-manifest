@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# generate old-style package manifest (needed by image install)
+
+dpkg -l --root=chroot >binary/live/packages.txt
+

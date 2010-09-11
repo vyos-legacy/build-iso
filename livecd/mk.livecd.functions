@@ -305,6 +305,7 @@ set_up_lh_config ()
     cd config.vyatta
     cp -af binary_local-includes chroot_apt chroot_local-hooks \
       chroot_local-includes chroot_sources chroot_local-packageslists \
+      binary_local-hooks \
       ../config/
 
     # set up chroot_sources
