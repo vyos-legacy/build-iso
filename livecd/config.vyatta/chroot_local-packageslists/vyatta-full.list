@@ -61,7 +61,6 @@ vyatta-ravpn
 vyatta-snort
 vyatta-snort-common
 vyatta-snort-common-libraries
-vyatta-snort-rules-default
 vyatta-wanloadbalance
 vyatta-webgui
 vyatta-webproxy
