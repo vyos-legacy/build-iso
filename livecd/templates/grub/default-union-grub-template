@@ -14,7 +14,7 @@ menuentry "Lost password change $RVER$ (KVM console)" {
 }
 
 menuentry "Lost password change $RVER$ (Serial console)" {
-        linux /boot/$RVER$/vmlinuz boot=live quiet vyatta-union=/boot/$RVER$ console=ttyS0,9600 console=tty0 init=/opt/vyatta/sbin/standalone_root_pw_reset
+        linux /boot/$RVER$/vmlinuz boot=live quiet vyatta-union=/boot/$RVER$ console=tty0 console=ttyS0,9600 init=/opt/vyatta/sbin/standalone_root_pw_reset
         initrd /boot/$RVER$/initrd.img
 }
 
