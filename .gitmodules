@@ -181,3 +181,6 @@
 [submodule "pkgs/barnyard2"]
 	path = pkgs/barnyard2
 	url = http://git.vyatta.com/barnyard2.git
+[submodule "pkgs/vyatta-zone"]
+	path = pkgs/vyatta-zone
+	url = http://git.vyatta.com/vyatta-zone.git
