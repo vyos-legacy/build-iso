@@ -144,8 +144,10 @@ else
   fi
 fi
 
+# remove debian epoch from version
+tag="debian/${ver#*:}"
 if ! (git commit $quiet -m "$ver" debian/changelog \
-      && git tag -a -m "$ver" "debian/$ver"); then
+      && git tag -a -m "$ver" "$tag"); then
   usage
 fi
 
