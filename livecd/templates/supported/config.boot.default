@@ -29,6 +29,11 @@ system {
         server "1.vyatta.pool.ntp.org"
         server "2.vyatta.pool.ntp.org"
     }
+    console {
+        device ttyS0 {
+            speed 9600
+        }
+    }
 }
 
 interfaces {
