@@ -1,5 +1,4 @@
 system {
-    ntp-server "0.vyatta.pool.ntp.org"
     login {
         user vyatta {
             authentication {
@@ -24,6 +23,11 @@ system {
                 level debug
             }
         }
+    }
+    ntp {
+        server "0.vyatta.pool.ntp.org"
+        server "1.vyatta.pool.ntp.org"
+        server "2.vyatta.pool.ntp.org"
     }
 }
 
