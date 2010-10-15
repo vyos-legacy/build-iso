@@ -56,13 +56,13 @@ Build Host Setup
       wget http://packages.vyatta.com/vyatta-dev/mendocino/unstable/pool/main/squashfs-tools_4.1+vyatta-5_i386.deb
       dpkg -i squashfs-tools_4.1+vyatta-5_i386.deb
 
-    Then put the following in "/etc/apt/preferences" to "pin" the version of
-    the squashfs-tools package (which ensures that the Vyatta package will be
-    used instead of the one from Debian).
+    Then put the following in "/etc/apt/preferences.d/squashfs-tools"
+    to "pin" the version of the squashfs-tools package (which ensures
+    that the Vyatta package will be used instead of the one from Debian).
 
-        Package: squashfs-tools
-        Pin: version 4.*
-        Pin-Priority: 1001
+Package: squashfs-tools
+Pin: version 4.*
+Pin-Priority: 1001
 
 
 Getting "build-iso" Source
