@@ -2,34 +2,34 @@
 
 # environment variables for mk.livecd/live-helper scripts
 
-declare -x LH_APT="@LH_APT@"
-declare -x LH_ARCHITECTURE="@LH_ARCHITECTURE@"
-declare -x LH_BOOTAPPEND_LIVE="@LH_BOOTAPPEND_LIVE@"
-declare -x LH_BOOTAPPEND_INSTALL="@LH_BOOTAPPEND_INSTALL@"
-declare -x LH_BOOTLOADER="@LH_BOOTLOADER@"
-declare -x LH_BOOTSTRAP="@LH_BOOTSTRAP@"
-declare -x LH_BOOTSTRAP_FLAVOUR="@LH_BOOTSTRAP_FLAVOUR@"
-declare -x LH_CHROOT_FILESYSTEM="@LH_CHROOT_FILESYSTEM@"
-declare -x LH_DISTRIBUTION="@LH_DISTRIBUTION@"
-declare -x LH_HOSTNAME="@LH_HOSTNAME@"
-declare -x LH_INITRAMFS="@LH_INITRAMFS@"
-declare -x LH_ISO_APPLICATION="@LH_ISO_APPLICATION@"
-declare -x LH_ISO_PUBLISHER="@LH_ISO_PUBLISHER@"
-declare -x LH_ISO_VOLUME="@LH_ISO_VOLUME@"
-declare -x LH_LANGUAGE="@LH_LANGUAGE@"
-declare -x LH_LINUX_PACKAGES="@LH_LINUX_PACKAGES@"
-declare -x LH_LINUX_FLAVOURS="@LH_LINUX_FLAVOURS@"
-declare -x LH_MEMTEST="@LH_MEMTEST@"
-declare -x LH_MIRROR_BINARY_SECURITY=''
-declare -x LH_MIRROR_BOOTSTRAP_SECURITY=''
-declare -x LH_MIRROR_CHROOT_SECURITY=''
-declare -x LH_PACKAGES="@LH_PACKAGES@"
-declare -x LH_SECTIONS="@LH_SECTIONS@"
-declare -x LH_SECURITY="@LH_SECURITY@"
-declare -x LH_SYSLINUX_CFG="@LH_SYSLINUX_CFG@"
-declare -x LH_SYSLINUX_MENU="@LH_SYSLINUX_MENU@"
-declare -x LH_SYSLINUX_TIMEOUT="@LH_SYSLINUX_TIMEOUT@"
-declare -x LH_UNION_FILESYSTEM="@LH_UNION_FILESYSTEM@"
+declare -x LB_APT="@LB_APT@"
+declare -x LB_ARCHITECTURE="@LB_ARCHITECTURE@"
+declare -x LB_BOOTAPPEND_LIVE="@LB_BOOTAPPEND_LIVE@"
+declare -x LB_BOOTAPPEND_INSTALL="@LB_BOOTAPPEND_INSTALL@"
+declare -x LB_BOOTLOADER="@LB_BOOTLOADER@"
+declare -x LB_BOOTSTRAP="@LB_BOOTSTRAP@"
+declare -x LB_BOOTSTRAP_FLAVOUR="@LB_BOOTSTRAP_FLAVOUR@"
+declare -x LB_CHROOT_FILESYSTEM="@LB_CHROOT_FILESYSTEM@"
+declare -x LB_DISTRIBUTION="@LB_DISTRIBUTION@"
+declare -x LB_HOSTNAME="@LB_HOSTNAME@"
+declare -x LB_INITRAMFS="@LB_INITRAMFS@"
+declare -x LB_ISO_APPLICATION="@LB_ISO_APPLICATION@"
+declare -x LB_ISO_PUBLISHER="@LB_ISO_PUBLISHER@"
+declare -x LB_ISO_VOLUME="@LB_ISO_VOLUME@"
+declare -x LB_LANGUAGE="@LB_LANGUAGE@"
+declare -x LB_LINUX_PACKAGES="@LB_LINUX_PACKAGES@"
+declare -x LB_LINUX_FLAVOURS="@LB_LINUX_FLAVOURS@"
+declare -x LB_MEMTEST="@LB_MEMTEST@"
+declare -x LB_MIRROR_BINARY_SECURITY=''
+declare -x LB_MIRROR_BOOTSTRAP_SECURITY=''
+declare -x LB_MIRROR_CHROOT_SECURITY=''
+declare -x LB_PACKAGES="@LB_PACKAGES@"
+declare -x LB_SECTIONS="@LB_SECTIONS@"
+declare -x LB_SECURITY="@LB_SECURITY@"
+declare -x LB_SYSLINUX_CFG="@LB_SYSLINUX_CFG@"
+declare -x LB_SYSLINUX_MENU="@LB_SYSLINUX_MENU@"
+declare -x LB_SYSLINUX_TIMEOUT="@LB_SYSLINUX_TIMEOUT@"
+declare -x LB_UNION_FILESYSTEM="@LB_UNION_FILESYSTEM@"
 declare -x create_xensourcevm="@create_xensourcevm@"
 declare -x VYATTA_DEV_BUILD="@VYATTA_DEV_BUILD@"
 declare -x VYATTA_COMMUNITY_BUILD="@VYATTA_COMMUNITY_BUILD@"
@@ -38,20 +38,20 @@ declare -x VYATTA_BUILD_BRANCH="@VYATTA_BUILD_BRANCH@"
 declare -x BUILD_TIME="@BUILD_TIME@"
 
 ## packages needed for the chroot step
-LH_BOOTSTRAP_INCLUDE="locales"
-LH_BOOTSTRAP_INCLUDE+=",apt-utils,aptitude" # apt
-LH_BOOTSTRAP_INCLUDE+=",patch"              # for chroot_local-patches
-export LH_BOOTSTRAP_INCLUDE
+LB_BOOTSTRAP_INCLUDE="locales"
+LB_BOOTSTRAP_INCLUDE+=",apt-utils,aptitude" # apt
+LB_BOOTSTRAP_INCLUDE+=",patch"              # for chroot_local-patches
+export LB_BOOTSTRAP_INCLUDE
 
 ## packages not needed in bootstrap
-declare -x LH_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
+declare -x LB_BOOTSTRAP_EXCLUDE="dhcp3-common,dhcp3-client"
 
-declare -x LH_VOLATILE="false"
-declare -x LH_DEBIAN_INSTALLER="false"
-declare -x LH_APT_RECOMMENDS="false"
-declare -x LH_BUILD_WITH_CHROOT="false"
-declare -x LH_CACHE_INDICES="false"
-declare -x LH_SYSLINUX_SPLASH="none"
+declare -x LB_VOLATILE="false"
+declare -x LB_DEBIAN_INSTALLER="false"
+declare -x LB_APT_RECOMMENDS="false"
+declare -x LB_BUILD_WITH_CHROOT="false"
+declare -x LB_CACHE_INDICES="false"
+declare -x LB_SYSLINUX_SPLASH="none"
 declare -x DEBIAN_FRONTEND="noninteractive"
 
 if [[ "$PATH" != */sbin* ]] ; then
@@ -69,7 +69,7 @@ fi
 : ${CURYEAR:=$(date +'%Y')}
 : ${VERTIME:=$(date +'%Y.%m.%d')}
 : ${ORGANIZATION:=vyatta.com}
-: ${LANGUAGE:=${LH_LANGUAGE:-en}}
+: ${LANGUAGE:=${LB_LANGUAGE:-en}}
 : ${LC_ALL:=C}
 export LANGUAGE
 export LC_ALL
@@ -98,6 +98,6 @@ if [ -z "$BUILTBY" ]; then
   fi
 fi
 
-LH_ISO_VOLUME+="$BUILDID"
-export LH_ISO_VOLUME
+LB_ISO_VOLUME+="$BUILDID"
+export LB_ISO_VOLUME
 

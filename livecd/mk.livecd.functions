@@ -288,9 +288,9 @@ set_up_lh_config ()
   fi
 
   # set up the debian repo
-  LH_MIRROR_BINARY="http://packages.vyatta.com/debian-$branch"
-  LH_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-$branch"
-  export LH_MIRROR_BINARY LH_MIRROR_BOOTSTRAP
+  LB_MIRROR_BINARY="http://packages.vyatta.com/debian-$branch"
+  LB_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-$branch"
+  export LB_MIRROR_BINARY LB_MIRROR_BOOTSTRAP
 
   local dev_repo_root=http://packages.vyatta.com/vyatta-dev
   local repo_dir=unstable
@@ -365,7 +365,7 @@ EOF
   fi
 
   # set up "vyatta-kernel" packages list according to flavor
-  kplist="config/chroot_local-packageslists/vyatta-kernel.$LH_LINUX_FLAVOURS"
+  kplist="config/chroot_local-packageslists/vyatta-kernel.$LB_LINUX_FLAVOURS"
   if [ -f "$kplist" ]; then
     # list exists. set it up.
     mv -f $kplist config/chroot_local-packageslists/vyatta-kernel.list

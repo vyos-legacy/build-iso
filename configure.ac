@@ -11,64 +11,64 @@ AC_PROG_LN_S
 # Checks for typedefs, structures, and compiler characteristics.
 
 # process argument variables
-test "X$LH_ARCHITECTURE" = "X" && LH_ARCHITECTURE=`dpkg --print-architecture`
-AC_ARG_VAR(LH_ARCHITECTURE, [default: dpkg --print-architecture])
+test "X$LB_ARCHITECTURE" = "X" && LB_ARCHITECTURE=`dpkg --print-architecture`
+AC_ARG_VAR(LB_ARCHITECTURE, [default: dpkg --print-architecture])
 
-test "X$LH_APT" = "X" && LH_APT=aptitude
-AC_ARG_VAR(LH_APT, [default: aptitude])
+test "X$LB_APT" = "X" && LB_APT=aptitude
+AC_ARG_VAR(LB_APT, [default: aptitude])
 
-test ! "$LH_BOOTAPPEND_LIVE" && LH_BOOTAPPEND_LIVE=""
-AC_ARG_VAR(LH_BOOTAPPEND_LIVE,
+test ! "$LB_BOOTAPPEND_LIVE" && LB_BOOTAPPEND_LIVE=""
+AC_ARG_VAR(LB_BOOTAPPEND_LIVE,
 	[empty by default since bypassed with custom config file])
 
-test ! "$LH_BOOTAPPEND_INSTALL" && LH_BOOTAPPEND_INSTALL=""
-AC_ARG_VAR(LH_BOOTAPPEND_INSTALL,
+test ! "$LB_BOOTAPPEND_INSTALL" && LB_BOOTAPPEND_INSTALL=""
+AC_ARG_VAR(LB_BOOTAPPEND_INSTALL,
 	[empty by default since bypassed with custom config file])
 
-test ! "$LH_BOOTLOADER" && LH_BOOTLOADER=syslinux
-AC_ARG_VAR(LH_BOOTLOADER, [default: syslinux])
+test ! "$LB_BOOTLOADER" && LB_BOOTLOADER=syslinux
+AC_ARG_VAR(LB_BOOTLOADER, [default: syslinux])
 
-test "X$LH_BOOTSTRAP" = "X" && LH_BOOTSTRAP=debootstrap
-AC_ARG_VAR(LH_BOOTSTRAP, [default: debootstrap])
+test "X$LB_BOOTSTRAP" = "X" && LB_BOOTSTRAP=debootstrap
+AC_ARG_VAR(LB_BOOTSTRAP, [default: debootstrap])
 
-test "X$LH_BOOTSTRAP_FLAVOUR" = "X" && LH_BOOTSTRAP_FLAVOUR="minimal"
-AC_ARG_VAR(LH_BOOTSTRAP_FLAVOUR, [default: minimal])
+test "X$LB_BOOTSTRAP_FLAVOUR" = "X" && LB_BOOTSTRAP_FLAVOUR="minimal"
+AC_ARG_VAR(LB_BOOTSTRAP_FLAVOUR, [default: minimal])
 
-test "X$LH_CHROOT_FILESYSTEM" = "X" && LH_CHROOT_FILESYSTEM=squashfs
-AC_ARG_VAR(LH_CHROOT_FILESYSTEM, [default: squashfs])
+test "X$LB_CHROOT_FILESYSTEM" = "X" && LB_CHROOT_FILESYSTEM=squashfs
+AC_ARG_VAR(LB_CHROOT_FILESYSTEM, [default: squashfs])
 
-test "X$LH_HOSTNAME" = "X" && LH_HOSTNAME=vyatta
-AC_ARG_VAR(LH_HOSTNAME, [default: vyatta])
+test "X$LB_HOSTNAME" = "X" && LB_HOSTNAME=vyatta
+AC_ARG_VAR(LB_HOSTNAME, [default: vyatta])
 
-test "X$LH_INITRAMFS" = "X" && LH_INITRAMFS=live-initramfs
-AC_ARG_VAR(LH_INITRAMFS, [default: live-initramfs])
+test "X$LB_INITRAMFS" = "X" && LB_INITRAMFS=live-initramfs
+AC_ARG_VAR(LB_INITRAMFS, [default: live-initramfs])
 
-test "X$LH_ISO_APPLICATION" = "X" && LH_ISO_APPLICATION="Vyatta"
-AC_ARG_VAR(LH_ISO_APPLICATION, [default: Vyatta])
+test "X$LB_ISO_APPLICATION" = "X" && LB_ISO_APPLICATION="Vyatta"
+AC_ARG_VAR(LB_ISO_APPLICATION, [default: Vyatta])
 
-test "X$LH_ISO_PUBLISHER" = "X" && LH_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
-AC_ARG_VAR(LH_ISO_PUBLISHER, [default: Vyatta, Inc.])
+test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
+AC_ARG_VAR(LB_ISO_PUBLISHER, [default: Vyatta, Inc.])
 
-test "X$LH_ISO_VOLUME" = "X" && LH_ISO_VOLUME='Vyatta '
-AC_ARG_VAR(LH_ISO_VOLUME, [default: Vyatta])
+test "X$LB_ISO_VOLUME" = "X" && LB_ISO_VOLUME='Vyatta '
+AC_ARG_VAR(LB_ISO_VOLUME, [default: Vyatta])
 
-test "X$LH_LANGUANGE" = "X" && LH_LANGUAGE=en
-AC_ARG_VAR(LH_LANGUAGE, [default: en])
+test "X$LB_LANGUANGE" = "X" && LB_LANGUAGE=en
+AC_ARG_VAR(LB_LANGUAGE, [default: en])
 
-test "X$LH_MEMTEST" = "X" && LH_MEMTEST=none
-AC_ARG_VAR(LH_MEMTEST, [default: none])
+test "X$LB_MEMTEST" = "X" && LB_MEMTEST=none
+AC_ARG_VAR(LB_MEMTEST, [default: none])
 
-test "X$LH_PACKAGES" = "X" && LH_PACKAGES=none
-AC_ARG_VAR(LH_PACKAGES, [default: none])
+test "X$LB_PACKAGES" = "X" && LB_PACKAGES=none
+AC_ARG_VAR(LB_PACKAGES, [default: none])
 
-test "X$LH_SYSLINUX_CFG" = "X" && LH_SYSLINUX_CFG=templates/isolinux.cfg
-AC_ARG_VAR(LH_SYSLINUX_CFG, [default: templates/isolinux.cfg])
+test "X$LB_SYSLINUX_CFG" = "X" && LB_SYSLINUX_CFG=templates/isolinux.cfg
+AC_ARG_VAR(LB_SYSLINUX_CFG, [default: templates/isolinux.cfg])
 
-test "X$LH_SYSLINUX_MENU" = "X" && LH_SYSLINUX_MENU=false
-AC_ARG_VAR(LH_SYSLINUX_MENU, [default: false])
+test "X$LB_SYSLINUX_MENU" = "X" && LB_SYSLINUX_MENU=false
+AC_ARG_VAR(LB_SYSLINUX_MENU, [default: false])
 
-test "X$LH_SYSLINUX_TIMEOUT" = "X" && LH_SYSLINUX_TIMEOUT=50
-AC_ARG_VAR(LH_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
+test "X$LB_SYSLINUX_TIMEOUT" = "X" && LB_SYSLINUX_TIMEOUT=50
+AC_ARG_VAR(LB_SYSLINUX_TIMEOUT, [default: 50, 1/10 seconds])
 
 # process --with[out] arguments
 AC_ARG_WITH(target-dist,
@@ -78,9 +78,9 @@ AC_ARG_WITH(target-dist,
 	[with_target_dist=$(lsb_release -c -s)])
 
 if test "$with_target_dist" = "n/a"; then
-  LH_DISTRIBUTION=squeeze
+  LB_DISTRIBUTION=squeeze
 else
-  LH_DISTRIBUTION="$with_target_dist"
+  LB_DISTRIBUTION="$with_target_dist"
 fi
 
 AC_ARG_WITH(aufs,
@@ -88,9 +88,9 @@ AC_ARG_WITH(aufs,
   [use aufs instead of unionfs])])
 
 if test "X$with_aufs" = Xyes ; then
-	LH_UNION_FILESYSTEM=aufs
+	LB_UNION_FILESYSTEM=aufs
 else
-	LH_UNION_FILESYSTEM=unionfs
+	LB_UNION_FILESYSTEM=unionfs
 fi
 
 AC_ARG_WITH(devbuild,
@@ -139,10 +139,10 @@ fi
 BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
 # default flavor for i386 and amd64
-LH_LINUX_FLAVOURS="586-vyatta"
+LB_LINUX_FLAVOURS="586-vyatta"
 VIRT_FLAVOUR="586-vyatta-virt"
 if test X$BARCH = Xamd64; then
-  LH_LINUX_FLAVOURS="amd64-vyatta"
+  LB_LINUX_FLAVOURS="amd64-vyatta"
   VIRT_FLAVOUR="amd64-vyatta-virt"
 fi
 
@@ -151,7 +151,7 @@ AC_ARG_WITH(with-kernel-flavor,
 [AS_HELP_STRING([--with-kernel-flavor], [Build specified kernel flavor])])
 
 if test X$with_kernel_flavor != X ; then
-  LH_LINUX_FLAVOURS=$with_kernel_flavor
+  LB_LINUX_FLAVOURS=$with_kernel_flavor
 fi
 
 AC_ARG_WITH(xensourcevm,
@@ -159,7 +159,7 @@ AC_ARG_WITH(xensourcevm,
 
 if test X$with_xensourcevm = Xyes ; then
   # use virt flavor for xensourcevm build
-  LH_LINUX_FLAVOURS=$VIRT_FLAVOUR
+  LB_LINUX_FLAVOURS=$VIRT_FLAVOUR
   create_xensourcevm=true
 else
   create_xensourcevm=false
@@ -195,11 +195,11 @@ if test -d $KERN_SUBMOD_DIR/debian; then
     exit 1
   fi
 
-  if test ! -f $KERN_DEB_ARCH_DIR/defines.$LH_LINUX_FLAVOURS; then
-    echo "Cannot build $BARCH-$LH_LINUX_FLAVOURS kernel."
+  if test ! -f $KERN_DEB_ARCH_DIR/defines.$LB_LINUX_FLAVOURS; then
+    echo "Cannot build $BARCH-$LB_LINUX_FLAVOURS kernel."
     exit 1
   else
-    cp -f $KERN_DEB_ARCH_DIR/defines.$LH_LINUX_FLAVOURS \
+    cp -f $KERN_DEB_ARCH_DIR/defines.$LB_LINUX_FLAVOURS \
       $KERN_DEB_ARCH_DIR/defines
   fi
 
@@ -211,14 +211,14 @@ if test -d $KERN_SUBMOD_DIR/debian; then
   )>&/dev/null
 fi
 
-LH_LINUX_PACKAGES=none
+LB_LINUX_PACKAGES=none
 
 if test "X$VYATTA_BUILD_BRANCH" == X; then
   VYATTA_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
 fi
 
-LH_SECURITY="false"
-LH_SECTIONS="main"
+LB_SECURITY="false"
+LB_SECTIONS="main"
 
 AC_CONFIG_FILES([livecd/mk.livecd.conf])
 
@@ -230,32 +230,32 @@ AC_SUBST(MACHINE_CFLAG)
 AC_SUBST(MACHINE_PREFIX)
 AC_SUBST(NOSTRIP)
 
-AC_SUBST(LH_APT)
-AC_SUBST(LH_ARCHITECTURE)
-AC_SUBST(LH_BOOTAPPEND_LIVE)
-AC_SUBST(LH_BOOTAPPEND_INSTALL)
-AC_SUBST(LH_BOOTLOADER)
-AC_SUBST(LH_BOOTSTRAP)
-AC_SUBST(LH_BOOTSTRAP_FLAVOUR)
-AC_SUBST(LH_CHROOT_FILESYSTEM)
-AC_SUBST(LH_DISTRIBUTION)
-AC_SUBST(LH_EXPOSED_ROOT)
-AC_SUBST(LH_HOSTNAME)
-AC_SUBST(LH_INITRAMFS)
-AC_SUBST(LH_ISO_APPLICATION)
-AC_SUBST(LH_ISO_PUBLISHER)
-AC_SUBST(LH_ISO_VOLUME)
-AC_SUBST(LH_LANGUAGE)
-AC_SUBST(LH_LINUX_PACKAGES)
-AC_SUBST(LH_LINUX_FLAVOURS)
-AC_SUBST(LH_MEMTEST)
-AC_SUBST(LH_PACKAGES)
-AC_SUBST(LH_SECTIONS)
-AC_SUBST(LH_SECURITY)
-AC_SUBST(LH_SYSLINUX_CFG)
-AC_SUBST(LH_SYSLINUX_MENU)
-AC_SUBST(LH_SYSLINUX_TIMEOUT)
-AC_SUBST(LH_UNION_FILESYSTEM)
+AC_SUBST(LB_APT)
+AC_SUBST(LB_ARCHITECTURE)
+AC_SUBST(LB_BOOTAPPEND_LIVE)
+AC_SUBST(LB_BOOTAPPEND_INSTALL)
+AC_SUBST(LB_BOOTLOADER)
+AC_SUBST(LB_BOOTSTRAP)
+AC_SUBST(LB_BOOTSTRAP_FLAVOUR)
+AC_SUBST(LB_CHROOT_FILESYSTEM)
+AC_SUBST(LB_DISTRIBUTION)
+AC_SUBST(LB_EXPOSED_ROOT)
+AC_SUBST(LB_HOSTNAME)
+AC_SUBST(LB_INITRAMFS)
+AC_SUBST(LB_ISO_APPLICATION)
+AC_SUBST(LB_ISO_PUBLISHER)
+AC_SUBST(LB_ISO_VOLUME)
+AC_SUBST(LB_LANGUAGE)
+AC_SUBST(LB_LINUX_PACKAGES)
+AC_SUBST(LB_LINUX_FLAVOURS)
+AC_SUBST(LB_MEMTEST)
+AC_SUBST(LB_PACKAGES)
+AC_SUBST(LB_SECTIONS)
+AC_SUBST(LB_SECURITY)
+AC_SUBST(LB_SYSLINUX_CFG)
+AC_SUBST(LB_SYSLINUX_MENU)
+AC_SUBST(LB_SYSLINUX_TIMEOUT)
+AC_SUBST(LB_UNION_FILESYSTEM)
 
 AC_SUBST(create_xensourcevm)
 
