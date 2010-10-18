@@ -1,7 +1,7 @@
-apt-get update
-apt-get -y -f install automake autoconf bzip2 curl debhelper devscripts \
+sudo apt-get update
+sudo apt-get -y -f install automake autoconf bzip2 curl debhelper devscripts \
 	dpatch fakeroot fakechroot genisoimage git-core sysv-rc-conf \
 	live-helper lsb-release rsync sudo aptitude squashfs-tools \
-	syslinux-common
+	syslinux syslinux-common
 autoreconf -i
 ./configure
