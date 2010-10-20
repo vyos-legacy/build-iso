@@ -129,16 +129,27 @@ if ! eval $edit; then
     export EDITOR=true
 fi
 
+since_tag=$(git describe --tags --abbrev=0 --match 'debian/*')
+if head_tag=$(git describe --tags --abbrev=0 --match 'debian/*' \
+                --exact-match 2>/dev/null); then
+  if [ "$since_tag" == "$head_tag" ]; then
+    echo 'Cannot make a new release without any new commits.'
+    echo '(This is a new requirement in the squeeze version of git-dch.)'
+    exit 1
+  fi
+fi
+since_sha=$(git rev-parse "$since_tag")
 if [ -z "$ver" ]; then
   # no version specified. use git dch directly.
-  if ! git dch --debian-branch="$branch" --release; then
+  if ! git dch --since=$since_sha --debian-branch="$branch" --release; then
     echo git dch failed
     exit 1
   fi
   ver=$(dpkg-parsechangelog | sed -n 's/^Version: //p')
 else
   # use specified version.
-  if ! git dch --debian-branch="$branch" --release --new-version="$ver"; then
+  if ! git dch --since=$since_sha --debian-branch="$branch" --release \
+        --new-version="$ver"; then
     echo git dch failed
     exit 1
   fi
