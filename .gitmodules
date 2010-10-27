@@ -184,3 +184,6 @@
 [submodule "pkgs/vyatta-zone"]
 	path = pkgs/vyatta-zone
 	url = http://git.vyatta.com/vyatta-zone.git
+[submodule "pkgs/vyatta-config-mgmt"]
+	path = pkgs/vyatta-config-mgmt
+	url = http://git.vyatta.com/vyatta-config-mgmt.git
