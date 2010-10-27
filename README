@@ -38,7 +38,7 @@ Build Host Setup
       libgnutls-dev libperl-dev python-all-dev python-setuptools \
       live-helper syslinux libsort-versions-perl libexpat1-dev \
       libfile-sync-perl gcc-multilib libfreetype6-dev libusb-dev \
-      libdevmapper-dev libmysqclient-dev
+      libdevmapper-dev libmysqclient-dev autogen
 
     Now install the Vyatta package repository GPG key.
 
