@@ -73,4 +73,4 @@ vyatta-biosdevname
 lldpd
 vyatta-lldp
 vyatta-zone
-vyatta-conf-mgmt
+vyatta-config-mgmt
