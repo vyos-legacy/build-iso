@@ -13,4 +13,5 @@ aptitude -f -y install asciidoc build-essential \
 	libmysqlclient15-dev libmysqlclient15off libnet1 libnet0-dev \
 	libpq-dev libpq5 mysql-common git2cl hardening-wrapper \
 	libwrap0-dev libnetfilter-queue-dev libglib2.0-dev libedit-dev \
-        libnfnetlink-dev libnetfilter-conntrack-dev po4a autogen
+        libnfnetlink-dev libnetfilter-conntrack-dev po4a autogen \
+	libsensors4-dev libpci-dev
