@@ -2,7 +2,7 @@
 
 usage () {
   cat<<EOF
-Usage: pkg-release [-i] [-n] [-p] [-h] [<version>]
+Usage: pkg-release [-i] [-n] [-p] [-q] [-r <rebuild_message>] [-h] [<version>]
 
   This script is run inside a debianized git source repository to make a new
   "release". It adds and commits an entry for <version> in debian/changelong
@@ -18,7 +18,8 @@ Usage: pkg-release [-i] [-n] [-p] [-h] [<version>]
     -i: Edit the changelog interactively.
     -n: Do not push the changes.
     -p: Push the changes without confirmation.
-    -q: Quiet don't show actions
+    -q: Quiet don't show actions.
+    -r: Release (with specified message) even though there was no code chage.
     -h: Show this help text.
 
 EOF
@@ -70,13 +71,15 @@ fi
 edit=false
 confirm=true
 quiet=
-while getopts inphq opt
+rebuild_msg=
+while getopts inphqr: opt
 do
   case $opt in
     i) edit=true    ;;
     n) dopush=false ;;
     p) confirm=false;;
     q) quiet="-q"   ;;
+    r) rebuild_msg="$OPTARG" ;;
     *) usage        ;;
   esac
 done
@@ -133,9 +136,20 @@ since_tag=$(git describe --tags --abbrev=0 --match 'debian/*')
 if head_tag=$(git describe --tags --abbrev=0 --match 'debian/*' \
                 --exact-match 2>/dev/null); then
   if [ "$since_tag" == "$head_tag" ]; then
-    echo 'Cannot make a new release without any new commits.'
-    echo '(This is a new requirement in the squeeze version of git-dch.)'
-    exit 1
+    if [ -z "$rebuild_msg" ]; then
+      cat <<EOF
+Cannot make a new release without any new commits. This is a new requirement
+in the squeeze version of git-dch. To force a release (e.g., to rebuild with
+new libraries), use the "-r" option.
+EOF
+      exit 1
+    fi
+
+    # force a release without change (usually for rebuilding)
+    frlog=.frlog
+    echo "$(date): [$rebuild_msg] at [$head_tag]" >>$frlog
+    git add $frlog
+    git commit $quiet -m "$rebuild_msg" $frlog
   fi
 fi
 since_sha=$(git rev-parse "$since_tag")
