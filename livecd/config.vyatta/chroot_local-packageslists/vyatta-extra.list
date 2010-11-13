@@ -7,3 +7,4 @@ rsync
 acpid
 acpi-support-base
 ssmtp
+atmel-firmware
