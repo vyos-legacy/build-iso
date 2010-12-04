@@ -34,6 +34,9 @@ system {
             speed 9600
         }
     }
+    config-management {
+        commit-revisions 20
+    }
 }
 
 interfaces {
