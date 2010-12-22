@@ -93,6 +93,12 @@ rm -rf chroot/root/{.rnd,.gnupg,.aptitude,.debtags}
 ## restore apt/preferences for binary build
 cp -f config/chroot_apt/preferences chroot/etc/apt
 
+# fix for bug 5333. add kernel-img.conf to be included in image.
+# note: can't add file during local_includes and local_hooks since it will
+# be truncated at the end of chroot stage. we could add the ".old" file
+# but that's even uglier.
+echo 'do_initrd = Yes' >chroot/etc/kernel-img.conf
+
 echo 'I: creating default grub config'
 create_default_grub_config
 
