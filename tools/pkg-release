@@ -137,12 +137,14 @@ if head_tag=$(git describe --tags --abbrev=0 --match 'debian/*' \
                 --exact-match 2>/dev/null); then
   if [ "$since_tag" == "$head_tag" ]; then
     if [ -z "$rebuild_msg" ]; then
-      cat <<EOF
+      if [ -z "$quiet" ]; then
+        cat <<EOF
 Cannot make a new release without any new commits. This is a new requirement
 in the squeeze version of git-dch. To force a release (e.g., to rebuild with
 new libraries), use the "-r" option.
 EOF
-      exit 1
+      fi
+      exit 2
     fi
 
     # force a release without change (usually for rebuilding)
