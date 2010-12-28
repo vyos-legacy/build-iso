@@ -150,7 +150,7 @@ EOF
     # force a release without change (usually for rebuilding)
     frlog=.frlog
     echo "$(date): [$rebuild_msg] at [$head_tag]" >>$frlog
-    git add $frlog
+    git add -f $frlog
     git commit $quiet -m "$rebuild_msg" $frlog
   fi
 fi
