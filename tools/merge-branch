@@ -67,44 +67,56 @@ if [ -r .merge-branch-exclude ]; then
   FILE_EXCLUDE=$(cat .merge-branch-exclude)
 fi
 
+# commits involving these files are skipped
+SKIP_FILES=( 'debian/changelog' \
+             '.frlog' )
+
 changes=($(git rev-list --no-merges --reverse --left-right --cherry-pick \
               $SBRANCH...$CBRANCH | grep '^<'))
 for change in "${changes[@]}"; do
   sha1=${change##<}
-  if ! (git whatchanged --max-count=1 --pretty=oneline $sha1 \
-        | grep -q '^:.*debian/changelog$'); then
-    # real change
-    if [[ $MERGE_BRANCH_EXCLUDE == *$sha1* ]]; then
-      echo "    skip $sha1 (MERGE_BRANCH_EXCLUDE)"
-      continue
+  skipped=
+  for sfile in "${SKIP_FILES[@]}"; do
+    if (git whatchanged --max-count=1 --pretty=oneline $sha1 \
+        | grep -q "^:.*$sfile\$"); then
+      count=$(git whatchanged --max-count=1 --pretty=oneline $sha1 \
+              | grep '^:' | wc -l)
+      ssha1=$(git rev-parse --short $sha1)
+      if (( count == 1 )); then
+        echo "    skip $ssha1 (only $sfile)"
+      else
+        echo "WARNING: skip $ssha1 ($sfile)"
+      fi
+      skipped=yes
+      break
     fi
-    if [[ $FILE_EXCLUDE == *$sha1* ]]; then
-      echo "    skip $sha1 (.merge-branch-exclude)"
-      continue
-    fi
-    git log -1 --pretty=format:'%cn: %s' $sha1
-    echo -n "cherry-pick $sha1"
-    if [ "$dryrun" == "yes" ]; then
-      echo " (dry-run)"
-    else
-      echo
-      if ! git cherry-pick -x $sha1; then
-        cat <<EOF
+  done
+  if [ -n "$skipped" ]; then
+    continue
+  fi
+
+  # real change
+  if [[ $MERGE_BRANCH_EXCLUDE == *$sha1* ]]; then
+    echo "    skip $sha1 (MERGE_BRANCH_EXCLUDE)"
+    continue
+  fi
+  if [[ $FILE_EXCLUDE == *$sha1* ]]; then
+    echo "    skip $sha1 (.merge-branch-exclude)"
+    continue
+  fi
+  git log -1 --pretty=format:'%cn: %s' $sha1
+  echo -n "cherry-pick $sha1"
+  if [ "$dryrun" == "yes" ]; then
+    echo " (dry-run)"
+  else
+    echo
+    if ! git cherry-pick -x $sha1; then
+      cat <<EOF
 
 git cherry-pick failed.
 Fix the conflicts and commit before continuing the merge.
 EOF
-        exit 1
-      fi
-    fi
-  else
-    count=$(git whatchanged --max-count=1 --pretty=oneline $sha1 \
-            | grep '^:' | wc -l)
-    ssha1=$(git rev-parse --short $sha1)
-    if (( count == 1 )); then
-      echo "    skip $ssha1 (only debian/changelog)"
-    else
-      echo "WARNING: skip $ssha1 (debian/changelog)"
+      exit 1
     fi
   fi
 done
