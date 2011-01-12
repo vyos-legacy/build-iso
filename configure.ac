@@ -147,7 +147,7 @@ if test X$BARCH = Xamd64; then
 fi
 
 # user-specified flavor
-AC_ARG_WITH(with-kernel-flavor,
+AC_ARG_WITH(kernel-flavor,
 [AS_HELP_STRING([--with-kernel-flavor], [Build specified kernel flavor])])
 
 if test X$with_kernel_flavor != X ; then
@@ -178,7 +178,7 @@ if test "X$with_vyatta_build_branch" != X ; then
 fi
 
 BUILD_TIME=''
-AC_ARG_WITH(with-build-time,
+AC_ARG_WITH(build-time,
 [AS_HELP_STRING([--with-build-time], [use specified build time])])
 if test X$with_build_time != X; then
   BUILD_TIME=$with_build_time
