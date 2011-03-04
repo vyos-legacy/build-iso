@@ -8,11 +8,11 @@ Vyatta VC ISO Build Procedures
 Build Host Setup
 
     The current Vyatta ISO build requires a Debian "squeeze"-based system.
-    As of now, "squeeze" is the Debian "testing" release. Therefore, to
+    As of now, "squeeze" is the Debian "stable" release. Therefore, to
     install a minimal squeeze system, download a squeeze installer "netinst"
     or "businesscard" ISO image from the following Debian page:
 
-      http://www.debian.org/devel/debian-installer/
+      http://www.debian.org/releases/squeeze/debian-installer/
 
     The supported architectures currently include "i386" and "amd64".
     During the installation, choose "Standard system utilities" when
@@ -123,6 +123,10 @@ Build Host Setup for Building Submodules
     example, the i386 "libnet0" package can be found at the following URL:
 
       http://packages.vyatta.com/debian/pool/main/libn/libnet0/libnet0_1.0.2a-7_i386.deb
+
+    From "Debian wheezy" install the following packages (similarly, they are
+    available from Debian mirrors):
+      libmnl0 libmnl-dev
 
     From Vyatta "unstable" package repository install the following packages:
       iptables iptables-dev linux-vyatta-kbuild
