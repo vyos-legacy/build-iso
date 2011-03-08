@@ -136,3 +136,6 @@
 [submodule "pkgs/open-vm-tools"]
 	path = pkgs/open-vm-tools
 	url = http://suva.vyatta.com/open-vm-tools.git
+[submodule "pkgs/daq"]
+	path = pkgs/daq
+	url = http://suva.vyatta.com/daq.git
