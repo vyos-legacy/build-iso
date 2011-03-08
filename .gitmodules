@@ -187,3 +187,6 @@
 [submodule "pkgs/vyatta-config-mgmt"]
 	path = pkgs/vyatta-config-mgmt
 	url = http://git.vyatta.com/vyatta-config-mgmt.git
+[submodule "pkgs/daq"]
+	path = pkgs/daq
+	url = http://suva.vyatta.com/daq.git
