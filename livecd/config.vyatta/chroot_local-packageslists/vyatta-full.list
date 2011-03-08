@@ -6,6 +6,7 @@ initramfs-tools
 iproute
 ipset
 iptables
+libdaq0
 libcap2
 libcap2-bin
 libsnmp-base
