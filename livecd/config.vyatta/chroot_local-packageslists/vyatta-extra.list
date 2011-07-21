@@ -8,3 +8,8 @@ acpid
 acpi-support-base
 ssmtp
 atmel-firmware
+iperf
+iptraf
+jnettop
+netcat-traditional
+mtr-tiny
