@@ -190,3 +190,6 @@
 [submodule "pkgs/daq"]
 	path = pkgs/daq
 	url = http://git.vyatta.com/daq.git
+[submodule "pkgs/ec2-ami-tools"]
+	path = pkgs/ec2-ami-tools
+	url = http://git.vyatta.com/ec2-ami-tools.git
