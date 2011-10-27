@@ -196,3 +196,6 @@
 [submodule "pkgs/ec2-api-tools"]
 	path = pkgs/ec2-api-tools
 	url = http://git.vyatta.com/ec2-api-tools.git
+[submodule "userspace-rcu"]
+	path = userspace-rcu
+	url = http://git.vyatta.com/userspace-rcu.git
