@@ -199,3 +199,6 @@
 [submodule "pkgs/userspace-rcu"]
 	path = pkgs/userspace-rcu
 	url = http://git.vyatta.com/userspace-rcu.git
+[submodule "pkgs/vyatta-conntrack"]
+	path = pkgs/vyatta-conntrack
+	url = http://git.vyatta.com/vyatta-conntrack.git
