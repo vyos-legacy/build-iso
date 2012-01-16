@@ -204,4 +204,4 @@
 	url = http://git.vyatta.com/vyatta-conntrack.git
 [submodule "pkgs/libnetfilter-conntrack"]
 	path = pkgs/libnetfilter-conntrack
-	url = http://git.vyatta.com/libnetfilter-conntrack.git
+	url = http://git.vyatta.com/git/libnetfilter-conntrack.git
