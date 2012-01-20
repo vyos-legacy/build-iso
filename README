@@ -64,6 +64,13 @@ Package: squashfs-tools
 Pin: version 4.*
 Pin-Priority: 1001
 
+    You will also need to download and install libnetfilter-conntrack3_1.0.0-1+vyatta7_i386.deb and 
+    libnetfilter-conntrack-dev_1.0.0-1+vyatta6_i386.deb using:
+    1.  wget http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/libnetfilter-conntrack3_1.0.0-1+vyatta7_i386.deb
+        dpkg -i libnetfilter-conntrack3_1.0.0-1+vyatta7_i386.deb 
+    2.  wget http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/libnetfilter-conntrack-dev_1.0.0-1+vyatta7_i386.deb
+        dpkg -i libnetfilter-conntrack-dev_1.0.0-1+vyatta7_i386.deb
+ 
 
 Getting "build-iso" Source
 
