@@ -211,3 +211,6 @@
 [submodule "pkgs/nfct"]
 	path = pkgs/nfct
 	url = http://git.vyatta.com/nfct.git
+[submodule "pkgs/libmnl"]
+	path = pkgs/libmnl
+	url = http://git.vyatta.com/libmnl.git
