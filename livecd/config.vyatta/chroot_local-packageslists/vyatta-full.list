@@ -9,6 +9,7 @@ iptables
 libdaq0
 libcap2
 libcap2-bin
+libmnl
 libnetfilter-conntrack3
 libnetfilter-cttimeout
 libsnmp-base
@@ -18,6 +19,7 @@ libvyatta-cfg1
 linux-firmware
 live-initramfs
 netplug
+nfct
 ntp
 ntpdate
 snmp
