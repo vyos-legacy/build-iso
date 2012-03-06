@@ -9,7 +9,6 @@ iptables
 libdaq0
 libcap2
 libcap2-bin
-libmnl
 libnetfilter-conntrack3
 libnetfilter-cttimeout
 libsnmp-base
