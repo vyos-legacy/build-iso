@@ -48,29 +48,32 @@ Build Host Setup
 
     You will also need to download and install the latest "squashfs-tools"
     package from the Vyatta "unstable" package repository. For example, for
-    the "mendocino" branch and "i386" architecture, the package can be
+    the "oxnard" branch and "i386" architecture, the package can be
     installed as follows (note that the version of the package may be
     different since the "unstable" package repository contains the latest
     development packages).
 
-      wget http://packages.vyatta.com/vyatta-dev/mendocino/unstable/pool/main/squashfs-tools_4.1+vyatta-5_i386.deb
-      dpkg -i squashfs-tools_4.1+vyatta-5_i386.deb
+      wget http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/squashfs-tools_4.1+vyatta-7_i386.deb
+      dpkg -i squashfs-tools_4.1+vyatta-7_i386.deb
 
     Then put the following in "/etc/apt/preferences.d/squashfs-tools"
     to "pin" the version of the squashfs-tools package (which ensures
     that the Vyatta package will be used instead of the one from Debian).
 
+      cat >| /etc/apt/preferences.d/squashfs-tools <<EOF
 Package: squashfs-tools
 Pin: version 4.*
 Pin-Priority: 1001
+EOF
 
-    You will also need to download and install libnetfilter-conntrack3_1.0.0-1+vyatta7_i386.deb and 
-    libnetfilter-conntrack-dev_1.0.0-1+vyatta6_i386.deb using:
-    1.  wget http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/libnetfilter-conntrack3_1.0.0-1+vyatta7_i386.deb
-        dpkg -i libnetfilter-conntrack3_1.0.0-1+vyatta7_i386.deb 
-    2.  wget http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/libnetfilter-conntrack-dev_1.0.0-1+vyatta7_i386.deb
-        dpkg -i libnetfilter-conntrack-dev_1.0.0-1+vyatta7_i386.deb
- 
+    You will also need to download and install libnetfilter-conntrack3_1.0.0 and
+    libnetfilter-conntrack-dev_1.0.0 packages:
+
+        PKGS="libnetfilter-conntrack3_1.0.0-1+vyatta9_i386.deb libnetfilter-conntrack-dev_1.0.0-1+vyatta9_i386.deb"
+        for p in $PKGS; do
+          wget http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/$p
+        done
+        dpkg -i $PKGS
 
 Getting "build-iso" Source
 
@@ -142,13 +145,13 @@ Build Host Setup for Building Submodules
       libdaq0 libdaq-dev
      
     The location of the Vyatta "unstable" package repository depends on the
-    source branch. For example, for the "mendocino" branch, the i386
+    source branch. For example, for the "oxnard" branch, the i386
     "iptables" package in the "unstable" package repository can be downloaded
     from the following URL (note that the unstable package repository is
     updated in real time, so latest version may be different from the version
     below):
 
-      http://packages.vyatta.com/vyatta-dev/mendocino/unstable/pool/main/iptables_1.4.9+vyatta+2_i386.deb
+      http://packages.vyatta.com/vyatta-dev/oxnard/unstable/pool/main/iptables_1.4.9+vyatta+2_i386.deb
 
     After downloading the packages listed above, they can be installed
     using "dpkg".
@@ -157,13 +160,17 @@ Build Host Setup for Building Submodules
     the libcap-dev and libcap2 package (which ensures that the Vyatta package
     will be used instead of the one from Debian).
 
-      Package: libcap-dev
-      Pin: version 2.*
-      Pin-Priority: 1001
+      cat >| /etc/apt/preferences.d/libcap-dev <<EOF
+Package: libcap-dev
+Pin: version 2.*
+Pin-Priority: 1001
+EOF
 
-      Package: libcap2
-      Pin: version 2.*
-      Pin-Priority: 1001
+      cat >| /etc/apt/preferences.d/libcap2 <<EOF
+Package: libcap2
+Pin: version 2.*
+Pin-Priority: 1001
+EOF
     
 
 Getting Submodules Source and Building
