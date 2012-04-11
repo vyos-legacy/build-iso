@@ -88,12 +88,6 @@ for conf in motd.tail syslog.conf; do
     fi
 done
 
-if [ -e ${target}opt/vyatta/etc/logrotate_messages ] ; then
-    info Rewrite /etc/logrotate.d/messages
-    cp -f ${target}opt/vyatta/etc/logrotate_messages \
-	${target}etc/logrotate.d/messages
-fi
-
 if [ -e ${target}opt/vyatta/etc/default_ssh ] ; then
     info Rewrite /etc/default/ssh
     cp -f ${target}opt/vyatta/etc/default_ssh ${target}etc/default/ssh
