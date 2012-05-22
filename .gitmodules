@@ -214,3 +214,6 @@
 [submodule "pkgs/vyatta-vrrp"]
 	path = pkgs/vyatta-vrrp
 	url = http://git.vyatta.com/vyatta-vrrp.git
+[submodule "pkgs/libmnl"]
+	path = pkgs/libmnl
+	url = http://git.vyatta.com/libmnl.git
