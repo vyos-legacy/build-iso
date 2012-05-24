@@ -220,3 +220,6 @@
 [submodule "pkgs/libnetfilter-queue"]
 	path = pkgs/libnetfilter-queue
 	url = http://git.vyatta.com/libnetfilter-queue.git
+[submodule "pkgs/libnetfilter-cthelper"]
+	path = pkgs/libnetfilter-cthelper
+	url = http://git.vyatta.com/libnetfilter-cthelper.git
