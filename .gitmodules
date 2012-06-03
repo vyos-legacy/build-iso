@@ -223,3 +223,6 @@
 [submodule "pkgs/libnetfilter-cthelper"]
 	path = pkgs/libnetfilter-cthelper
 	url = http://git.vyatta.com/libnetfilter-cthelper.git
+[submodule "pkgs/vyatta-util"]
+	path = pkgs/vyatta-util
+	url = http://git.vyatta.com/vyatta-util.git
