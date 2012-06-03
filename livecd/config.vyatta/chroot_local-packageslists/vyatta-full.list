@@ -17,6 +17,7 @@ libsnmp-base
 libsnmp-perl
 libsnmp15
 libvyatta-cfg1
+libvyatta-util1
 linux-firmware
 live-initramfs
 netplug
