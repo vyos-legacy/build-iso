@@ -1,5 +1,6 @@
 conntrack
 conntrackd
+conntrack-helpers
 grub-common
 grub-pc
 initramfs-tools
