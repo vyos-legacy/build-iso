@@ -47,12 +47,12 @@ chroot_local-packageslists:
   included if the "586-vyatta" kernel flavor is specified for the build
   (through top-level configure). For now, all packages that directly *or*
   indirectly depend on the specific kernel flavor must be included in the
-  flavor-specific list and *not* in one of the generic lists. For example,
-  "wanpipe" depends on the 586-vyatta wanpipe-modules package, which depends
-  on the 586-vyatta kernel, and therefore "wanpipe" is listed in
-  "vyatta-kernel.586-vyatta" and not in "vyatta-full.list". During the ISO
-  build, the flavor-specific list will be copied to "vyatta-kernel.list"
-  and used by live-helper.
+  flavor-specific list and *not* in one of the generic lists.  For example,
+  "open-vm-tools" depends on the 586-vyatta-virt open-vm-tools-modules
+  package, which depends on the 586-vyatta-virt kernel, and therefore
+  "open-vm-tools" is listed in "vyatta-kernel.586-vyatta-virt" and not
+  in "vyatta-full.list". During the ISO build, the flavor-specific
+  list will be copied to "vyatta-kernel.list" and used by live-helper. 
 
 chroot_local-patches:
   This sub-directory contains patches that are applied during the chroot
