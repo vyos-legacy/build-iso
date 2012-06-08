@@ -211,3 +211,6 @@
 [submodule "pkgs/nfct"]
 	path = pkgs/nfct
 	url = http://git.vyatta.com/nfct.git
+[submodule "pkgs/vyatta-util"]
+	path = pkgs/vyatta-util
+	url = http://git.vyatta.com/vyatta-util.git

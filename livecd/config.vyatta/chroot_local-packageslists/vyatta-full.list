@@ -15,6 +15,7 @@ libsnmp-base
 libsnmp-perl
 libsnmp15
 libvyatta-cfg1
+libvyatta-util1
 linux-firmware
 live-initramfs
 netplug
@@ -66,6 +67,7 @@ vyatta-ravpn
 vyatta-snort
 vyatta-snort-common
 vyatta-snort-common-libraries
+vyatta-util
 vyatta-wanloadbalance
 vyatta-webgui
 vyatta-webproxy
