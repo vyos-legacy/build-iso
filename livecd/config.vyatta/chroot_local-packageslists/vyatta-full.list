@@ -1,5 +1,6 @@
 conntrack
 conntrackd
+conntrack-helpers
 grub-common
 grub-pc
 initramfs-tools
@@ -12,6 +13,7 @@ libcap2-bin
 libnetfilter-conntrack3
 libnetfilter-cttimeout
 libnetfilter-cthelper
+libnetfilter-queue
 libmnl0
 libsnmp-base
 libsnmp-perl
