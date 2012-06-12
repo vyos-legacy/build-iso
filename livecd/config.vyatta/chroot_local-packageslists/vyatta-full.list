@@ -13,7 +13,7 @@ libcap2-bin
 libnetfilter-conntrack3
 libnetfilter-cttimeout
 libnetfilter-cthelper
-libnetfilter-queue
+libnetfilter-queue1
 libmnl0
 libsnmp-base
 libsnmp-perl
