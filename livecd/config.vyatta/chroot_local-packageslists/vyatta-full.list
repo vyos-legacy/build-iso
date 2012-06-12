@@ -14,7 +14,7 @@ libmnl0
 libnetfilter-conntrack3
 libnetfilter-cttimeout
 libnetfilter-cthelper
-libnetfilter-queue
+libnetfilter-queue1
 libsnmp-base
 libsnmp-perl
 libsnmp15
