@@ -7,7 +7,6 @@ initramfs-tools
 iproute
 ipset
 iptables
-libdaq0
 libcap2
 libcap2-bin
 libnetfilter-conntrack3
@@ -53,7 +52,6 @@ vyatta-dhcp3-client
 vyatta-dhcp3-common
 vyatta-dhcp3-relay
 vyatta-dhcp3-server
-vyatta-idp-snort
 vyatta-ipv6-rtradv
 vyatta-keepalived
 vyatta-nat
@@ -68,9 +66,6 @@ vyatta-openvpn
 vyatta-ppp
 vyatta-quagga
 vyatta-ravpn
-vyatta-snort
-vyatta-snort-common
-vyatta-snort-common-libraries
 vyatta-util
 vyatta-vrrp
 vyatta-wanloadbalance
@@ -86,4 +81,3 @@ lldpd
 vyatta-lldp
 vyatta-zone
 vyatta-config-mgmt
-barnyard2
