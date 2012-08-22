@@ -143,7 +143,7 @@ LB_LINUX_FLAVOURS="586-vyatta"
 VIRT_FLAVOUR="586-vyatta-virt"
 if test X$BARCH = Xamd64; then
   LB_LINUX_FLAVOURS="amd64-vyatta"
-  VIRT_FLAVOUR="amd64-vyatta-virt"
+  VIRT_FLAVOUR="amd64-vyatta"
 fi
 
 # user-specified flavor
