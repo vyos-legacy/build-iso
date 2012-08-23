@@ -226,3 +226,6 @@
 [submodule "pkgs/vyatta-util"]
 	path = pkgs/vyatta-util
 	url = http://git.vyatta.com/vyatta-util.git
+[submodule "pkgs/libczmq"]
+	path = pkgs/libczmq
+	url = http://git.vyatta.com/libczmq.git
