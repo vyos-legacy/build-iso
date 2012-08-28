@@ -73,18 +73,9 @@
 [submodule "pkgs/vyatta-wanloadbalance"]
 	path = pkgs/vyatta-wanloadbalance
 	url = http://git.vyatta.com/vyatta-wanloadbalance.git
-[submodule "pkgs/vyatta-snort"]
-	path = pkgs/vyatta-snort
-	url = http://git.vyatta.com/vyatta-snort.git
 [submodule "pkgs/vyatta-base"]
 	path = pkgs/vyatta-base
 	url = http://git.vyatta.com/vyatta-base.git
-[submodule "pkgs/vyatta-idp-snort"]
-	path = pkgs/vyatta-idp-snort
-	url = http://git.vyatta.com/vyatta-idp-snort.git
-[submodule "pkgs/vyatta-antivirus"]
-	path = pkgs/vyatta-antivirus
-	url = http://git.vyatta.com/vyatta-antivirus.git
 [submodule "pkgs/vyatta-keepalived"]
 	path = pkgs/vyatta-keepalived
 	url = http://git.vyatta.com/vyatta-keepalived.git
@@ -178,18 +169,12 @@
 [submodule "pkgs/conntrack-tools"]
 	path = pkgs/conntrack-tools
 	url = http://git.vyatta.com/conntrack-tools.git
-[submodule "pkgs/barnyard2"]
-	path = pkgs/barnyard2
-	url = http://git.vyatta.com/barnyard2.git
 [submodule "pkgs/vyatta-zone"]
 	path = pkgs/vyatta-zone
 	url = http://git.vyatta.com/vyatta-zone.git
 [submodule "pkgs/vyatta-config-mgmt"]
 	path = pkgs/vyatta-config-mgmt
 	url = http://git.vyatta.com/vyatta-config-mgmt.git
-[submodule "pkgs/daq"]
-	path = pkgs/daq
-	url = http://git.vyatta.com/daq.git
 [submodule "pkgs/ec2-ami-tools"]
 	path = pkgs/ec2-ami-tools
 	url = http://git.vyatta.com/ec2-ami-tools.git
