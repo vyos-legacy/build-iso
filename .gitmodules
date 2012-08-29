@@ -193,9 +193,6 @@
 [submodule "pkgs/libnetfilter-cttimeout"]
 	path = pkgs/libnetfilter-cttimeout
 	url = http://git.vyatta.com/libnetfilter-cttimeout.git
-[submodule "pkgs/nfct"]
-	path = pkgs/nfct
-	url = http://git.vyatta.com/nfct.git
 [submodule "pkgs/vyatta-vrrp"]
 	path = pkgs/vyatta-vrrp
 	url = http://git.vyatta.com/vyatta-vrrp.git
