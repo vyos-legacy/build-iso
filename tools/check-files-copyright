@@ -1,84 +1,213 @@
 #!/bin/bash
+#
+# Copyright 2013 Vyatta, Inc.
+#
+# Useful for finding the types of files the 'file' utility detects:
+#  find -type f | xargs -n 1 file | cut -d: -f2 | sort | uniq
 
-get_files ()
-{
-  git ls-tree -r HEAD \
-    | sed -n 's/^[0-7]\+ blob [0-9a-f]\+[[:space:]]\+\([^[:space:]]\+\)$/\1/p'
+usage () {
+    cat<<EOF
+Usage: check-files-copyright [-g] [-h] [-i]
+
+  This script when run inside a git source repository will check files
+  for a valid Vyatta copyright claim.
+
+  If the -g option is not specified, the files to check are read from
+  stdin.
+
+  Files cam be excluded from the copyright check by adding glob
+  patterns to the .copyright file in the top level directory of the
+  git repo (e.g., the same location as the .git directory).
+
+  The following options are available:
+
+    -g: Check entire git repo.
+    -h: Show this help text.
+    -i: Ignore filtering by patterns in .copyright file.
+
+EOF
+    exit 1
 }
 
-get_file_type ()
-{
-  local file=$1
-  [ -f "$file" ] || return
-  case "$(basename $file)" in
-    node.def)
-      echo -n 'vyatta-template'
-      return
-      ;;
-    Makefile|Makefile.in|Makefile.am|configure|configure.ac)
-      echo -n 'autoconf'
-      return
-      ;;
-    .gitignore|.merge-branch-exclude)
-      echo -n 'git'
-      return
-      ;;
-    *.c|*.h)
-      echo -n 'C'
-      return
-      ;;
-  esac
-  local fout=$(file "$file")
-  case $fout in
-    *" script text executable"*)
-      echo -n 'script'
-      return
-      ;;
-    *" Perl5 module source text"*)
-      echo -n 'script'
-      return
-      ;;
-    *" C program text"*|*" C++ program text"*)
-      echo -n 'C'
-      return
-      ;;
-    *)
-      echo -n 'UNKNOWN'
-      return
-      ;;
-  esac
+
+# Check the specified copyright string for the correct year
+#
+# Correct year is determined by the file's author date from git.
+#
+# $1 - File name being checked
+# $2 - Copyright string to check
+check_copyright_year() {
+    local ayear=$(git log -n1 --pretty=format:%ai -- "$1" | cut -d- -f1)
+    if ! grep -q "$ayear" <<<$2; then
+        echo "[POLICY] $1 missing Vyatta copyright for year of last modification"
+        return 1
+    fi
+    :
 }
 
-check_file ()
-{
-  local file=$1
-  local pattern=$2
-  if ! grep -q "$pattern" "$file"; then
-    echo "No copyright [$file]"
-  fi
+# Search the specified file for a Vyatta copyright claim
+#
+# Expected format of copyright is one of the following:
+#   Copyright 2007 Vyatta, Inc.
+#   Copyright 2007-2010 Vyatta, Inc.
+#   Copyright 2007,2009,2012 Vyatta, Inc.
+#
+# Note: Only returns the first match in the file.
+#
+# $1 - File name to search
+find_copyright() {
+    local match=$(grep -m 1 "Copyright.*Vyatta" "$1")
+    if [[ -n "$match" ]]; then
+        echo "$match"
+        return $?
+    fi
+    return 1;
 }
 
-COMMON_PATTERN='^#.* Copyright .* Vyatta'
-C_PATTERN=' Copyright .* Vyatta'
-get_files \
-  | while read sfile; do
-      ftype=$(get_file_type "$sfile")
-      case $ftype in
-        vyatta-template)
-          check_file $sfile "$COMMON_PATTERN"
-          ;;
-        script)
-          check_file $sfile "$COMMON_PATTERN"
-          ;;
-        autoconf)
-          check_file $sfile "$COMMON_PATTERN"
-          ;;
-        C)
-          check_file $sfile "$C_PATTERN"
-          ;;
-        UNKNOWN)
-          echo "Unknown type [$sfile]"
-          ;;
-      esac
+# Check the specified file for a Vyatta copyright claim
+#
+# $1 - File name being checked
+check_copyright() {
+    local match=$(find_copyright "$1")
+    if [[ -n "$match" ]]; then
+        check_copyright_year "$1" "$match"
+        return $?
+    fi
+    echo "[POLICY] $1 missing Vyatta copyright claim"
+    return 1;
+}
+
+# Determine if the specified file is source code
+#
+# Currently recognized as source code is:
+# - Shell script
+# - Bash scirpt
+# - perl script
+# - perl module
+# - C/C++ source code
+# - make file
+#
+# $1 - File name being checked
+is_source_file() {
+    local file_type
+    local t
+    local result=1
+    local src_types=( \
+        "POSIX shell script" \
+        "Bourne-Again shell script" \
+        "/usr/bin/perl" \
+        "Perl5 module source" \
+        "ASCII C program" \
+        "/usr/bin/make " \
+        )
+
+    file_type=$(file "$1")
+    for t in ${!src_types[@]}; do
+        if [[ $file_type =~ "${src_types[$t]}" ]]; then
+            result=0
+            break
+        fi
+    done
+    return $result
+}
+
+# Check the specified file for a Vyatta copyright claim
+#
+# $1 - File name being checked
+#
+check_file() {
+    local result=0
+    if [[ ! -f "$1" ]]; then
+        # Skip anything that is not a file
+        return 0
+    fi
+
+    if is_source_file "$1"; then
+        check_copyright "$1"
+        result=$?
+    else
+        local f
+        local EXTRA_FILES="COPYING debian/copyright"
+        for f in $EXTRA_FILES; do
+            if [[ "$1" == "$f" ]]; then
+                check_copyright "$f"
+                result=$?
+                break
+            fi
+        done
+    fi
+    return $result
+}
+
+# Filter file name based on patterns in .copyright
+#
+# $1 - File name being checked
+filter_file() {
+    local REPLY
+
+    cat .copyright | while read; do
+        if [[ $1 == $REPLY ]]; then
+            return 1
+        fi
     done
 
+    if [[ $? -eq 0 ]]; then
+        echo $1
+    fi
+}
+
+# Reads file names from stdin and filters based on patterns in .copyright
+filter_files() {
+    local REPLY
+    while read; do
+        filter_file "$REPLY"
+    done
+}
+
+# Check the files on stdin for a Vyatta copyright claim
+check_files() {
+    local REPLY
+    local result=0
+    while read; do
+        check_file "$REPLY"
+        (( result |= $? ))
+    done
+    return $result
+}
+
+if [[ ! -f .git/config ]]; then
+    echo "Unable to detect git repo in current directory"
+    exit 1
+fi
+
+process_repo=0
+ignore_filter=0
+
+while getopts ":ghi" opt $@; do
+    case $opt in
+        g) process_repo=1
+            ;;
+        h) usage
+            exit
+            ;;
+        i) ignore_filter=1
+            ;;
+        :)  # Missing argument
+            echo "Missing argument for option $OPTARG"
+            ;;
+        \?) # Unrecognized option
+            echo "Unrecognized option $OPTARG"
+            ;;
+    esac
+done
+
+cmd=""
+if [[ $process_repo -eq 1 ]]; then
+    cmd="git ls-files |"
+fi
+
+if [[ $ignore_filter -ne 1 && -r .copyright ]]; then
+    cmd="$cmd filter_files |"
+fi
+
+eval "$cmd check_files"
