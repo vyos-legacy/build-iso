@@ -19,6 +19,13 @@ Build Host Setup
     selecting the software to be installed (note that this is the minimal
     requirements and one can certainly install more packages).
 
+    The Vyatta ISO build requires a file system with at least 10GB free
+    space.  
+    Allocate a file system of appropriate size, when installing, especially
+    if installing a virtual machine based environment.
+
+    For development the build file system should have at least 20G free.
+
     After the installation and reboot, your "apt" sources.list file should
     be configured to use the Debian mirror that you selected during the
     installation. In order to build the Vyatta packages and the ISO,
