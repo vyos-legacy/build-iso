@@ -142,10 +142,19 @@ check_file() {
 # Filter file name based on patterns in .copyright
 #
 # $1 - File name being checked
+#
+# Lines begining with '#' or a whitespace character are ignored. Empty
+# lines are also ignored.
+#
+# Note: only a filter file in the top level directory is supported
+# (i.e., any .copyright files in subdirectories are ignored).
 filter_file() {
     local REPLY
 
     cat .copyright | while read; do
+        if [[ -z "$REPLY" || $REPLY =~ ^[#[:space:]].* ]]; then
+            continue
+        fi
         if [[ $1 == $REPLY ]]; then
             return 1
         fi
