@@ -1,4 +1,6 @@
 # functions for mk.livecd
+#
+# Copyright 2013 Vyatta, Inc
 
 clean_mounts() 
 {               
@@ -94,6 +96,7 @@ EOF
     echo "Version:      ${VVERSION}">$vf/version
     echo "Description:  ${FULLVERSION}">>$vf/version
     echo "Copyright:    2006-${CURYEAR} Vyatta, Inc.">>$vf/version
+    ln -nsf version $vf/version-virt
 
     (
         echo "Package: vyatta-version"
