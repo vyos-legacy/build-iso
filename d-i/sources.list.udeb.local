@@ -1,3 +1,0 @@
-deb http://phuket.vyatta.com/~tgrennan/	unstable	main/debian-installer
-deb http://packages.vyatta.com/debian/	testing		main
-deb http://packages.vyatta.com/debian/	unstable	main/debian-installer
