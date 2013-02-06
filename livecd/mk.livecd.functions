@@ -10,12 +10,18 @@ clean_mounts()
   done
 }
 
+# Extract release version form full release version
+#
+# Grab last 2 strings and prefix with either VC or VSE
+# based on build type (i.e., community or supported)
 get_rel_version () {
-  local full=$1
-  full=${full//Vyatta Core /VC}
-  full=${full//Vyatta Subscription Edition /VSE}
-  local -a arr=($full)
-  echo -n "${arr[0]}${arr[1]}"
+  local -a arr=($1)
+  local len=${#arr[@]}
+  local pfx="VC"
+  if eval "$VYATTA_SUPPORTED_BUILD"; then
+      pfx="VSE"
+  fi
+  echo -n "${pfx}${arr[$((len-2))]}${arr[$((len-1))]}"
 }
 
 get_full_rel_version () {
