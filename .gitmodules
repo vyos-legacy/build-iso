@@ -211,6 +211,3 @@
 [submodule "pkgs/libczmq"]
 	path = pkgs/libczmq
 	url = http://git.vyatta.com/libczmq.git
-[submodule "pkgs/vyatta-opennhrp-debian"]
-	path = pkgs/vyatta-opennhrp-debian
-	url = http://git.vyatta.com/vyatta-opennhrp-debian.git
