@@ -242,15 +242,15 @@ Build submodules
       The submod-mk script in tools/ can also be used to work with submodules.
       To build binary packages for cloned submodule(s),
 
-        tools/submod-mk { --all | SUBMODULE... }
+        tools/submod-mk { SUBMODULE... }
 
       To build binary and source packages for submodule(s),
 
-        tools/submod-mk --source { --all | SUBMODULE... }
+        tools/submod-mk --source { SUBMODULE... }
 
       To build signed binary and source packages for submodule(s),
 
-        tools/submod-mk --signed-source { --all | SUBMODULE... }
+        tools/submod-mk --signed-source { SUBMODULE... }
 
       To clean files generated during submodule build,
 
