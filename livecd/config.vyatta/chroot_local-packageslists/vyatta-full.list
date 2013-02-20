@@ -44,6 +44,7 @@ vyatta-cfg-firewall
 vyatta-cfg-op-pppoe
 vyatta-cfg-qos
 vyatta-cfg-quagga
+vyatta-cfg-quagga-wireless
 vyatta-cfg-system
 vyatta-cfg-vpn
 vyatta-cluster
