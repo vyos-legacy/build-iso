@@ -41,8 +41,10 @@ vyatta-cfg
 vyatta-cfg-dhcp-relay
 vyatta-cfg-dhcp-server
 vyatta-cfg-firewall
+vyatta-cfg-firewall-wireless
 vyatta-cfg-op-pppoe
 vyatta-cfg-qos
+vyatta-cfg-qos-wireless
 vyatta-cfg-quagga
 vyatta-cfg-quagga-wireless
 vyatta-cfg-system
