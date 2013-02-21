@@ -51,6 +51,7 @@ vyatta-cfg-quagga
 vyatta-cfg-quagga-wireless
 vyatta-cfg-quagga-extra
 vyatta-cfg-system
+vyatta-cfg-system-extra
 vyatta-cfg-vpn
 vyatta-cluster
 vyatta-config-migrate
