@@ -275,9 +275,9 @@ Changes
     After making, testing, and committing your changes to your local
     repositories, publish them to the shared repository with,
 
-	git push suva.vyatta.com:/git/SUBMODULE.git
+	git push git.vyatta.com:/git/SUBMODULE.git
 
-    This will, of course, require an account on suva.vyatta.com, which
+    This will, of course, require an account on git.vyatta.com, which
     is only available to authorized vyatta developers.
     Then update and publish the super-module index to include the
     submodule changes,
@@ -285,7 +285,7 @@ Changes
 	cd ../..
 	git update-index pkgs/SUBMODULE
 	git commit -m 'update sub-module SUBMODULE'
-	git push suva.vyatta.com:/git/build-iso.git
+	git push git.vyatta.com:/git/build-iso.git
 
 Updates using git
 
