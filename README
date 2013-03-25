@@ -53,26 +53,22 @@ Build Host Setup
         http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
       sudo apt-key add vyatta-pubkey.gpg
 
-    You will also need to download and install the latest "squashfs-tools"
-    package from the Vyatta "unstable" package repository. For example, for
-    the "pacifica" branch and "amd64" architecture, the package can be
-    installed as follows (note that the version of the package may be
-    different since the "unstable" package repository contains the latest
-    development packages).
+Tools update:
+    You will also need to download and install a newer "squashfs-tools"
+    package from the squeeze-backports repository. Vyatta uses extended
+    file attributes, and older (pre 4.2) versions do not handle attributes.
 
-      wget http://packages.vyatta.com/vyatta-dev/pacifica/unstable/pool/main/squashfs-tools_4.1+vyatta-8_amd64.deb
-      dpkg -i squashfs-tools_4.1+vyatta-8_amd64.deb
+    Debian instructions on how to setup squeeze-backports.
+    Add backports to your sources.list
+    1. Add this line
+       deb http://backports.debian.org/debian-backports squeeze-backports main
+    to your sources.list (or add a new file with the ".list" extension to /etc/apt/sources.list.d/)
+    2. Run apt-get update
 
-    Then put the following in "/etc/apt/preferences.d/squashfs-tools"
-    to "pin" the version of the squashfs-tools package (which ensures
-    that the Vyatta package will be used instead of the one from Debian).
+    After that do:
+      sudo apt-get -t squeeze-backports install squashfs-tools
 
-      cat >| /etc/apt/preferences.d/squashfs-tools <<EOF
-Package: squashfs-tools
-Pin: version 4.*
-Pin-Priority: 1001
-EOF
-
+Additional libraries:
     You will also need to download and install libnetfilter-conntrack3_1.0.0 and
     libnetfilter-conntrack-dev_1.0.0 packages:
 
