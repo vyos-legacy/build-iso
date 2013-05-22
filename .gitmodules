@@ -211,3 +211,9 @@
 [submodule "pkgs/libczmq"]
 	path = pkgs/libczmq
 	url = git://git.vyatta.com/libczmq
+[submodule "pkgs/libzmq-constants-perl"]
+	path = pkgs/libzmq-constants-perl
+	url = git://git.vyatta.com/libzmq-constants-perl
+[submodule "pkgs/libzmq-libzmq2-perl"]
+	path = pkgs/libzmq-libzmq2-perl
+	url = git://git.vyatta.com/libzmq-libzmq2-perl
