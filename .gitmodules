@@ -181,6 +181,9 @@
 [submodule "pkgs/ec2-api-tools"]
 	path = pkgs/ec2-api-tools
 	url = git://git.vyatta.com/ec2-api-tools
+[submodule "pkgs/userspace-rcu"]
+	path = pkgs/userspace-rcu
+	url = git://git.vyatta.com/userspace-rcu
 [submodule "pkgs/vyatta-conntrack"]
 	path = pkgs/vyatta-conntrack
 	url = git://git.vyatta.com/vyatta-conntrack
@@ -205,3 +208,12 @@
 [submodule "pkgs/vyatta-util"]
 	path = pkgs/vyatta-util
 	url = git://git.vyatta.com/vyatta-util
+[submodule "pkgs/libczmq"]
+	path = pkgs/libczmq
+	url = git://git.vyatta.com/libczmq
+[submodule "pkgs/libzmq-constants-perl"]
+	path = pkgs/libzmq-constants-perl
+	url = git://git.vyatta.com/libzmq-constants-perl
+[submodule "pkgs/libzmq-libzmq2-perl"]
+	path = pkgs/libzmq-libzmq2-perl
+	url = git://git.vyatta.com/libzmq-libzmq2-perl
