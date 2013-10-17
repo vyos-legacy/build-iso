@@ -1,213 +1,220 @@
 [submodule "pkgs/vyatta-op"]
 	path = pkgs/vyatta-op
-	url = http://git.vyatta.com/vyatta-op.git
+	url = https://github.com/vyos/vyatta-op.git
 [submodule "pkgs/vyatta-cfg"]
 	path = pkgs/vyatta-cfg
-	url = http://git.vyatta.com/vyatta-cfg.git
+	url = https://github.com/vyos/vyatta-cfg.git
 [submodule "pkgs/vyatta-op-xml"]
 	path = pkgs/vyatta-op-xml
-	url = http://git.vyatta.com/vyatta-op-xml.git
+	url = https://github.com/vyos/vyatta-op-xml.git
 [submodule "pkgs/vyatta-op-firewall"]
 	path = pkgs/vyatta-op-firewall
-	url = http://git.vyatta.com/vyatta-op-firewall.git
+	url = https://github.com/vyos/vyatta-op-firewall.git
 [submodule "pkgs/vyatta-cfg-firewall"]
 	path = pkgs/vyatta-cfg-firewall
-	url = http://git.vyatta.com/vyatta-cfg-firewall.git
+	url = https://github.com/vyos/vyatta-cfg-firewall.git
 [submodule "pkgs/vyatta-op-quagga"]
 	path = pkgs/vyatta-op-quagga
-	url = http://git.vyatta.com/vyatta-op-quagga.git
+	url = https://github.com/vyos/vyatta-op-quagga.git
 [submodule "pkgs/vyatta-cfg-quagga"]
 	path = pkgs/vyatta-cfg-quagga
-	url = http://git.vyatta.com/vyatta-cfg-quagga.git
+	url = https://github.com/vyos/vyatta-cfg-quagga.git
 [submodule "pkgs/vyatta-cfg-system"]
 	path = pkgs/vyatta-cfg-system
-	url = http://git.vyatta.com/vyatta-cfg-system.git
+	url = https://github.com/vyos/vyatta-cfg-system.git
 [submodule "pkgs/vyatta-config-migrate"]
 	path = pkgs/vyatta-config-migrate
-	url = http://git.vyatta.com/vyatta-config-migrate.git
+	url = https://github.com/vyos/vyatta-config-migrate.git
 [submodule "pkgs/vyatta-nat"]
 	path = pkgs/vyatta-nat
-	url = http://git.vyatta.com/vyatta-nat.git
+	url = https://github.com/vyos/vyatta-nat.git
 [submodule "pkgs/vyatta-cluster"]
 	path = pkgs/vyatta-cluster
-	url = http://git.vyatta.com/vyatta-cluster.git
+	url = https://github.com/vyos/vyatta-cluster.git
 [submodule "pkgs/vyatta-ravpn"]
 	path = pkgs/vyatta-ravpn
-	url = http://git.vyatta.com/vyatta-ravpn.git
+	url = https://github.com/vyos/vyatta-ravpn.git
 [submodule "pkgs/vyatta-cfg-vpn"]
 	path = pkgs/vyatta-cfg-vpn
-	url = http://git.vyatta.com/vyatta-cfg-vpn.git
+	url = https://github.com/vyos/vyatta-cfg-vpn.git
 [submodule "pkgs/vyatta-bash"]
 	path = pkgs/vyatta-bash
-	url = http://git.vyatta.com/vyatta-bash.git
+	url = https://github.com/vyos/vyatta-bash.git
 [submodule "pkgs/vyatta-op-vpn"]
 	path = pkgs/vyatta-op-vpn
-	url = http://git.vyatta.com/vyatta-op-vpn.git
+	url = https://github.com/vyos/vyatta-op-vpn.git
 [submodule "pkgs/vyatta-op-dhcp-server"]
 	path = pkgs/vyatta-op-dhcp-server
-	url = http://git.vyatta.com/vyatta-op-dhcp-server.git
+	url = https://github.com/vyos/vyatta-op-dhcp-server.git
 [submodule "pkgs/vyatta-cfg-dhcp-server"]
 	path = pkgs/vyatta-cfg-dhcp-server
-	url = http://git.vyatta.com/vyatta-cfg-dhcp-server.git
+	url = https://github.com/vyos/vyatta-cfg-dhcp-server.git
 [submodule "pkgs/vyatta-dhcp3-client"]
 	path = pkgs/vyatta-dhcp3-client
-	url = http://git.vyatta.com/vyatta-dhcp3.git
+	url = https://github.com/vyos/vyatta-dhcp3.git
 [submodule "pkgs/vyatta-cfg-dhcp-relay"]
 	path = pkgs/vyatta-cfg-dhcp-relay
-	url = http://git.vyatta.com/vyatta-cfg-dhcp-relay.git
+	url = https://github.com/vyos/vyatta-cfg-dhcp-relay.git
 [submodule "pkgs/ppp"]
 	path = pkgs/ppp
-	url = http://git.vyatta.com/ppp.git
+	url = https://github.com/vyos/ppp.git
 [submodule "pkgs/vyatta-cfg-op-pppoe"]
 	path = pkgs/vyatta-cfg-op-pppoe
-	url = http://git.vyatta.com/vyatta-cfg-op-pppoe.git
+	url = https://github.com/vyos/vyatta-cfg-op-pppoe.git
 [submodule "pkgs/iproute"]
 	path = pkgs/iproute
-	url = http://git.vyatta.com/vyatta-iproute.git
+	url = https://github.com/vyos/vyatta-iproute.git
 [submodule "pkgs/vyatta-cfg-qos"]
 	path = pkgs/vyatta-cfg-qos
-	url = http://git.vyatta.com/vyatta-cfg-qos.git
+	url = https://github.com/vyos/vyatta-cfg-qos.git
 [submodule "pkgs/vyatta-op-qos"]
 	path = pkgs/vyatta-op-qos
-	url = http://git.vyatta.com/vyatta-op-qos.git
+	url = https://github.com/vyos/vyatta-op-qos.git
 [submodule "pkgs/vyatta-wanloadbalance"]
 	path = pkgs/vyatta-wanloadbalance
-	url = http://git.vyatta.com/vyatta-wanloadbalance.git
+	url = https://github.com/vyos/vyatta-wanloadbalance.git
 [submodule "pkgs/vyatta-base"]
 	path = pkgs/vyatta-base
-	url = http://git.vyatta.com/vyatta-base.git
+	url = https://github.com/vyos/vyatta-base.git
 [submodule "pkgs/vyatta-keepalived"]
 	path = pkgs/vyatta-keepalived
-	url = http://git.vyatta.com/vyatta-keepalived.git
+	url = https://github.com/vyos/vyatta-keepalived.git
 [submodule "pkgs/vyatta-busybox"]
 	path = pkgs/vyatta-busybox
-	url = http://git.vyatta.com/vyatta-busybox.git
+	url = https://github.com/vyos/vyatta-busybox.git
 [submodule "pkgs/net-snmp"]
 	path = pkgs/net-snmp
-	url = http://git.vyatta.com/net-snmp.git
+	url = https://github.com/vyos/net-snmp.git
 [submodule "pkgs/vyatta-webgui"]
 	path = pkgs/vyatta-webgui
-	url = http://git.vyatta.com/vyatta-webgui.git
+	url = https://github.com/vyos/vyatta-webgui.git
 [submodule "pkgs/vyatta-openvpn"]
 	path = pkgs/vyatta-openvpn
-	url = http://git.vyatta.com/vyatta-openvpn.git
+	url = https://github.com/vyos/vyatta-openvpn.git
 [submodule "pkgs/vyatta-quagga"]
 	path = pkgs/vyatta-quagga
-	url = http://git.vyatta.com/vyatta-quagga.git
+	url = https://github.com/vyos/vyatta-quagga.git
 [submodule "pkgs/vyatta-grub"]
 	path = pkgs/vyatta-grub
-	url = http://git.vyatta.com/vyatta-grub.git
+	url = https://github.com/vyos/vyatta-grub.git
 [submodule "pkgs/linux-image"]
 	path = pkgs/linux-image
-	url = http://git.vyatta.com/linux-vyatta.git
+	url = https://github.com/vyos/linux-vyatta.git
 [submodule "pkgs/vyatta-webproxy"]
 	path = pkgs/vyatta-webproxy
-	url = http://git.vyatta.com/vyatta-webproxy.git
+	url = https://github.com/vyos/vyatta-webproxy.git
 [submodule "pkgs/iptables"]
 	path = pkgs/iptables
-	url = http://git.vyatta.com/iptables.git
+	url = https://github.com/vyos/iptables.git
 [submodule "pkgs/live-initramfs"]
 	path = pkgs/live-initramfs
-	url = http://git.vyatta.com/live-initramfs.git
+	url = https://github.com/vyos/live-initramfs.git
 [submodule "pkgs/vyatta-wirelessmodem"]
 	path = pkgs/vyatta-wirelessmodem
-	url = http://git.vyatta.com/vyatta-wirelessmodem.git
+	url = https://github.com/vyos/vyatta-wirelessmodem.git
 [submodule "pkgs/open-vm-tools"]
 	path = pkgs/open-vm-tools
-	url = http://git.vyatta.com/open-vm-tools.git
+	url = https://github.com/vyos/open-vm-tools.git
 [submodule "pkgs/initramfs-tools"]
 	path = pkgs/initramfs-tools
-	url = http://git.vyatta.com/initramfs-tools.git
+	url = https://github.com/vyos/initramfs-tools.git
 [submodule "pkgs/netplug"]
 	path = pkgs/netplug
-	url = http://git.vyatta.com/netplug.git
+	url = https://github.com/vyos/netplug.git
 [submodule "pkgs/ntp"]
 	path = pkgs/ntp
-	url = http://git.vyatta.com/ntp.git
+	url = https://github.com/vyos/ntp.git
 [submodule "pkgs/ipset"]
 	path = pkgs/ipset
-	url = http://git.vyatta.com/ipset.git
+	url = https://github.com/vyos/ipset.git
 [submodule "pkgs/vyatta-ipv6-rtradv"]
 	path = pkgs/vyatta-ipv6-rtradv
-	url = http://git.vyatta.com/vyatta-ipv6-rtradv.git
+	url = https://github.com/vyos/vyatta-ipv6-rtradv.git
 [submodule "pkgs/vyatta-netflow"]
 	path = pkgs/vyatta-netflow
-	url = http://git.vyatta.com/vyatta-netflow.git
+	url = https://github.com/vyos/vyatta-netflow.git
 [submodule "pkgs/pmacct"]
 	path = pkgs/pmacct
-	url = http://git.vyatta.com/pmacct.git
+	url = https://github.com/vyos/pmacct.git
 [submodule "pkgs/vyatta-wireless"]
 	path = pkgs/vyatta-wireless
-	url = http://git.vyatta.com/vyatta-wireless.git
+	url = https://github.com/vyos/vyatta-wireless.git
 [submodule "pkgs/squidguard"]
 	path = pkgs/squidguard
-	url = http://git.vyatta.com/squidguard.git
+	url = https://github.com/vyos/squidguard.git
 [submodule "pkgs/vyatta-strongswan"]
 	path = pkgs/vyatta-strongswan
-	url = http://git.vyatta.com/vyatta-strongswan.git
+	url = https://github.com/vyos/vyatta-strongswan.git
 [submodule "pkgs/vyatta-biosdevname"]
 	path = pkgs/vyatta-biosdevname
-	url = http://git.vyatta.com/vyatta-biosdevname.git
+	url = https://github.com/vyos/vyatta-biosdevname.git
 [submodule "pkgs/linux-firmware"]
 	path = pkgs/linux-firmware
-	url = http://git.vyatta.com/linux-firmware.git
+	url = https://github.com/vyos/linux-firmware.git
 [submodule "pkgs/vyatta-lldp"]
 	path = pkgs/vyatta-lldp
-	url = http://git.vyatta.com/vyatta-lldp.git
+	url = https://github.com/vyos/vyatta-lldp.git
 [submodule "pkgs/lldpd"]
 	path = pkgs/lldpd
-	url = http://git.vyatta.com/lldpd.git
+	url = https://github.com/vyos/lldpd.git
 [submodule "pkgs/libcap"]
 	path = pkgs/libcap
-	url = http://git.vyatta.com/libcap.git
+	url = https://github.com/vyos/libcap.git
 [submodule "pkgs/vyatta-conntrack-sync"]
 	path = pkgs/vyatta-conntrack-sync
-	url = http://git.vyatta.com/vyatta-conntrack-sync.git
+	url = https://github.com/vyos/vyatta-conntrack-sync.git
 [submodule "pkgs/squashfs"]
 	path = pkgs/squashfs
-	url = http://git.vyatta.com/squashfs.git
+	url = https://github.com/vyos/squashfs.git
 [submodule "pkgs/conntrack-tools"]
 	path = pkgs/conntrack-tools
-	url = http://git.vyatta.com/conntrack-tools.git
+	url = https://github.com/vyos/conntrack-tools.git
 [submodule "pkgs/vyatta-zone"]
 	path = pkgs/vyatta-zone
-	url = http://git.vyatta.com/vyatta-zone.git
+	url = https://github.com/vyos/vyatta-zone.git
 [submodule "pkgs/vyatta-config-mgmt"]
 	path = pkgs/vyatta-config-mgmt
-	url = http://git.vyatta.com/vyatta-config-mgmt.git
+	url = https://github.com/vyos/vyatta-config-mgmt.git
 [submodule "pkgs/ec2-ami-tools"]
 	path = pkgs/ec2-ami-tools
-	url = http://git.vyatta.com/ec2-ami-tools.git
+	url = https://github.com/vyos/ec2-ami-tools.git
 [submodule "pkgs/ec2-api-tools"]
 	path = pkgs/ec2-api-tools
-	url = http://git.vyatta.com/ec2-api-tools.git
+	url = https://github.com/vyos/ec2-api-tools.git
 [submodule "pkgs/userspace-rcu"]
 	path = pkgs/userspace-rcu
-	url = http://git.vyatta.com/userspace-rcu.git
+	url = https://github.com/vyos/userspace-rcu.git
 [submodule "pkgs/vyatta-conntrack"]
 	path = pkgs/vyatta-conntrack
-	url = http://git.vyatta.com/vyatta-conntrack.git
+	url = https://github.com/vyos/vyatta-conntrack.git
 [submodule "pkgs/libnetfilter-conntrack"]
 	path = pkgs/libnetfilter-conntrack
-	url = http://git.vyatta.com/libnetfilter-conntrack.git
+	url = https://github.com/vyos/libnetfilter-conntrack.git
 [submodule "pkgs/libnetfilter-cttimeout"]
 	path = pkgs/libnetfilter-cttimeout
-	url = http://git.vyatta.com/libnetfilter-cttimeout.git
+	url = https://github.com/vyos/libnetfilter-cttimeout.git
 [submodule "pkgs/vyatta-vrrp"]
 	path = pkgs/vyatta-vrrp
-	url = http://git.vyatta.com/vyatta-vrrp.git
+	url = https://github.com/vyos/vyatta-vrrp.git
 [submodule "pkgs/libmnl"]
 	path = pkgs/libmnl
-	url = http://git.vyatta.com/libmnl.git
+	url = https://github.com/vyos/libmnl.git
 [submodule "pkgs/libnetfilter-queue"]
 	path = pkgs/libnetfilter-queue
-	url = http://git.vyatta.com/libnetfilter-queue.git
+	url = https://github.com/vyos/libnetfilter-queue.git
 [submodule "pkgs/libnetfilter-cthelper"]
 	path = pkgs/libnetfilter-cthelper
-	url = http://git.vyatta.com/libnetfilter-cthelper.git
+	url = https://github.com/vyos/libnetfilter-cthelper.git
 [submodule "pkgs/vyatta-util"]
 	path = pkgs/vyatta-util
-	url = http://git.vyatta.com/vyatta-util.git
+	url = https://github.com/vyos/vyatta-util.git
 [submodule "pkgs/libczmq"]
 	path = pkgs/libczmq
-	url = http://git.vyatta.com/libczmq.git
+	url = https://github.com/vyos/libczmq.git
+[submodule "pkgs/libzmq-constants-perl"]
+	path = pkgs/libzmq-constants-perl
+	url = https://github.com/vyos/libzmq-constants-perl.git
+[submodule "pkgs/libzmq-libzmq2-perl"]
+	path = pkgs/libzmq-libzmq2-perl
+	url = https://github.com/vyos/libzmq-libzmq2-perl.git
+
