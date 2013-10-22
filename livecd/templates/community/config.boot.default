@@ -1,17 +1,17 @@
 system {
     login {
-        user vyatta {
+        user vyos {
             authentication {
-                encrypted-password "$1$4XHPj9eT$G3ww9B/pYDLSXC8YVvazP0"
+                encrypted-password "$1$5HsQse2v$VQLh5eeEp4ZzGmCG/PRBA1"
             }
             level admin
         }
     }
     package {
         repository community {
-	    distribution: "stable"
-            components: "main"
-            url: "http://packages.vyatta.com/vyatta"
+	    distribution "stable"
+            components "main"
+            url "http://packages.vyos.net/vyos"
         }
     }
     syslog {
@@ -25,9 +25,9 @@ system {
         }
     }
     ntp {
-        server "0.vyatta.pool.ntp.org"
-        server "1.vyatta.pool.ntp.org"
-        server "2.vyatta.pool.ntp.org"
+        server "0.pool.ntp.org"
+        server "1.pool.ntp.org"
+        server "2.pool.ntp.org"
     }
     console {
         device ttyS0 {
