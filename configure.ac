@@ -1,7 +1,8 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
 
-AC_INIT([ofr], [2.4], [vyatta-support@vyatta.com])
+AC_INIT([vyos], [0.1.0], [maintainers@so3group.net], [vyos], [http://vyos.net])
+AC_COPYRIGHT([Copyright (c) 2013 SO3Group.])
 
 # Checks for programs.
 AC_PROG_LN_S
@@ -37,20 +38,20 @@ AC_ARG_VAR(LB_BOOTSTRAP_FLAVOUR, [default: minimal])
 test "X$LB_CHROOT_FILESYSTEM" = "X" && LB_CHROOT_FILESYSTEM=squashfs
 AC_ARG_VAR(LB_CHROOT_FILESYSTEM, [default: squashfs])
 
-test "X$LB_HOSTNAME" = "X" && LB_HOSTNAME=vyatta
-AC_ARG_VAR(LB_HOSTNAME, [default: vyatta])
+test "X$LB_HOSTNAME" = "X" && LB_HOSTNAME=vyos
+AC_ARG_VAR(LB_HOSTNAME, [default: vyos])
 
 test "X$LB_INITRAMFS" = "X" && LB_INITRAMFS=live-initramfs
 AC_ARG_VAR(LB_INITRAMFS, [default: live-initramfs])
 
-test "X$LB_ISO_APPLICATION" = "X" && LB_ISO_APPLICATION="Vyatta"
-AC_ARG_VAR(LB_ISO_APPLICATION, [default: Vyatta])
+test "X$LB_ISO_APPLICATION" = "X" && LB_ISO_APPLICATION="VyOS"
+AC_ARG_VAR(LB_ISO_APPLICATION, [default: VyOS])
 
-test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="Vyatta Inc.; http://www.vyatta.com/;"
-AC_ARG_VAR(LB_ISO_PUBLISHER, [default: Vyatta, Inc.])
+test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="SO3 Group and contributors; http://vyos.net/;"
+AC_ARG_VAR(LB_ISO_PUBLISHER, [default: SO3 Group and contributors])
 
-test "X$LB_ISO_VOLUME" = "X" && LB_ISO_VOLUME='Vyatta '
-AC_ARG_VAR(LB_ISO_VOLUME, [default: Vyatta])
+test "X$LB_ISO_VOLUME" = "X" && LB_ISO_VOLUME='VyOS '
+AC_ARG_VAR(LB_ISO_VOLUME, [default: VyOS])
 
 test "X$LB_LANGUANGE" = "X" && LB_LANGUAGE=en
 AC_ARG_VAR(LB_LANGUAGE, [default: en])
