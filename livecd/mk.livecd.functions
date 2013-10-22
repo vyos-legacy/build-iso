@@ -95,14 +95,14 @@ EOF
 
     echo "Version:      ${VVERSION}">$vf/version
     echo "Description:  ${FULLVERSION}">>$vf/version
-    echo "Copyright:    2006-${CURYEAR} Vyatta, Inc.">>$vf/version
+    echo "Copyright:    ${CURYEAR} SO3 Group">>$vf/version
     ln -nsf version $vf/version-virt
 
     (
         echo "Package: vyatta-version"
         echo "Version: ${VVERSION}"
         echo "Architecture: ${arch}"
-        echo "Maintainer: Vyatta <debs@vyatta.com>"
+        echo "Maintainer: SO3 Group <maintainers@so3group.net>"
         echo "Essential: no"
         echo "Section: base"
         echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
@@ -288,11 +288,11 @@ set_up_lh_config ()
   fi
 
   # set up the debian repo
-  LB_MIRROR_BINARY="http://packages.vyatta.com/debian-$branch"
-  LB_MIRROR_BOOTSTRAP="http://packages.vyatta.com/debian-$branch"
+  LB_MIRROR_BINARY="http://packages.vyos.net/debian/$branch"
+  LB_MIRROR_BOOTSTRAP="http://packages.vyos.net/debian/$branch"
   export LB_MIRROR_BINARY LB_MIRROR_BOOTSTRAP
 
-  local dev_repo_root=http://packages.vyatta.com/vyatta-dev
+  local dev_repo_root=http://packages.vyos.net/vyos-dev
   local repo_dir=unstable
   if ! eval "$VYATTA_DEV_BUILD"; then
     # not dev build => use testing.
@@ -312,15 +312,14 @@ set_up_lh_config ()
     cd ../config/chroot_sources
     ## "this" branch
     if [ ! -f vyatta.chroot ]; then
-      echo "deb $dev_repo_root/$branch/$repo_dir $branch main" >vyatta.chroot
+      echo "deb $dev_repo_root/$branch $repo_dir main" > vyatta.chroot
     fi
     ## "base" and "extra" branches for overlay
     for branch in "$VBUILD_BASE_BRANCH" "${VBUILD_EXTRA_BRANCHES[@]}"; do
       if [ -z "$branch" ] || [ -f "vyatta-$branch.chroot" ]; then
         continue
       fi
-      echo "deb $dev_repo_root/$branch/$repo_dir $branch main" \
-        >"vyatta-$branch.chroot"
+      echo "deb $dev_repo_root/$branch $repo_dir main" > "vyatta-$branch.chroot"
       cp vyatta.chroot.gpg "vyatta-$branch.chroot.gpg"
     done
 
