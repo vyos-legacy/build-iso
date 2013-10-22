@@ -12,8 +12,6 @@ Don't start PCMCIA                      0fhw-detect/start_pcmcia=false07
 Force static network config             0fnetcfg/disable_dhcp=true07
 Set keyboard map                        0fbootkbd=es07
 Use Braille tty                         0fbrltty=driver,device,texttable07
-Use high contrast accessibility theme   0ftheme=dark07
-Select the kde or xfce desktops         0fdesktop=kde07
 
 
 
