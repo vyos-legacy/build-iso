@@ -2,9 +2,9 @@
 
 echo I: Rewriting /etc/issue and /etc/issue.net
 cat <<EOF > etc/issue
-Welcome to Vyatta - \n \l
+Welcome to VyOS - \n \l
 
 EOF
 cat <<EOF > etc/issue.net
-Welcome to Vyatta
+Welcome to VyOS
 EOF
