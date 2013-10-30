@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Clones the full source and switches to specified branch
+
+PKGS_DIR=pkgs
+
+if [ ! -d $PKGS_DIR ]; then
+    echo "Can not find pkgs/ directory!"
+    echo "This likely means you are running this scripts from a wrong place"
+    echo "cd to your build-iso directory root and run ./tools/$(basename $0)"
+    exit 1
+fi
+
+branch=$(git branch | sed -n '/^\* /s/^\* //p')
+noswitch=0
+
+if [ "$branch" == "master" ]; then
+    noswitch=1
+fi
+
+PKGS=$(find $PKGS_DIR/* -type d -maxdepth 1)
+
+#echo $PKGS
+
+for package in $PKGS; do
+    echo "Processing $package"
+    git submodule update --init $package
+    cd $package
+    if [ $noswitch == 0 ]; then
+        echo "Swithing branch to $branch"
+        git branch $branch --track origin/$branch
+        git checkout $branch
+    fi
+    cd ../../
+done
