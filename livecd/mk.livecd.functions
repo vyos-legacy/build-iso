@@ -12,21 +12,16 @@ clean_mounts()
   done
 }
 
-# Extract release version form full release version
-#
-# Grab last 2 strings and prefix with either VC or VSE
-# based on build type (i.e., community or supported)
-get_rel_version () {
-  local -a arr=($1)
-  local len=${#arr[@]}
-  local pfx="VC"
-  if eval "$VYATTA_SUPPORTED_BUILD"; then
-      pfx="VSE"
-  fi
-  echo -n "${pfx}${arr[$((len-2))]}${arr[$((len-1))]}"
+# Returns version string used in "Description"
+# e.g. "VyOS 1.0.0 (hydrogen)"
+get_full_version () {
+    local branch=$(git branch | awk '/^\*/ {print $2}')
+    echo "VyOS $1 ($branch)"
 }
 
-get_full_rel_version () {
+# Returns numeric version from ./version files
+# e.g. "1.0.0"
+get_version () {
   if [ -f version ]; then
     cat version
   fi
@@ -51,18 +46,12 @@ mk_version_package ()
     local vf=$tmpdir/opt/vyatta/etc
     local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
-    FULLVERSION=$(get_full_rel_version)
-    if [ -z "$FULLVERSION" ]; then
+    NUEERIC_VERSION=$(get_version)
+    FULL_VERSION=$(get_full_version "$NUMERIC_VERSION")
+
+    if [ -z "$NUMERIC_VERSION" ]; then
+      NUMERIC_VERSION=$VYATTA_DEV_VERSION
       FULLVERSION=$VYATTA_DEV_VERSION
-      VVERSION=$VYATTA_DEV_VERSION
-    else
-      FULLVERSION="${FULLVERSION}"
-      VVERSION=$(get_rel_version "$FULLVERSION")
-      if [ -z "$VVERSION" ]; then
-        VVERSION=$VYATTA_DEV_VERSION
-      elif [[ "$VVERSION" == VSE* ]]; then
-        config_src=supported
-      fi
     fi
 
     mkdir -p $vf/config
@@ -91,18 +80,18 @@ EOF
          > $vf/iso-submodules.txt
     [ -s $vf/iso-submodules.txt ] || cp "$savedir"/iso-submodules.txt $vf/. 2>/dev/null
 
-    echo vyatta-version ${VVERSION} >>$vf/deb-versions.txt
+    echo vyatta-version ${NUMERIC_VERSION} >> $vf/deb-versions.txt
 
-    echo "Version:      ${VVERSION}">$vf/version
-    echo "Description:  ${FULLVERSION}">>$vf/version
-    echo "Copyright:    ${CURYEAR} SO3 Group">>$vf/version
+    echo "Version:      VyOS ${NUMERIC_VERSION}" > $vf/version
+    echo "Description:  ${FULL_VERSION}" >> $vf/version
+    echo "Copyright:    ${CURYEAR} SO3 Group" >> $vf/version
     ln -nsf version $vf/version-virt
 
     (
         echo "Package: vyatta-version"
-        echo "Version: ${VVERSION}"
+        echo "Version: ${NUMERIC_VERSION}"
         echo "Architecture: ${arch}"
-        echo "Maintainer: SO3 Group <maintainers@so3group.net>"
+        echo "Maintainer: SO3 Group <maintainers@vyos.net>"
         echo "Essential: no"
         echo "Section: base"
         echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
@@ -114,7 +103,7 @@ EOF
         echo " the list of recommended packages (with the recommended versions)"
     ) >DEBIAN/control
 
-    vpkgname="vyatta-version_${VVERSION}_${arch}.deb"
+    vpkgname="vyatta-version_${NUMERIC_VERSION}_${arch}.deb"
     mkdir ../$$-deb
     dpkg --build . "../$$-deb/$vpkgname" >/dev/null
 
@@ -145,17 +134,19 @@ vyatta-xensource-partition-image ()
   mkdir -p xensource/pimage
 
   arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
-
-  # using VVERSION throughout though I am not sure it is the right var
+  NUMERIC_VERSION=$(get_version)
+  if [ -z "$NUMERIC_VERSION" ]; then
+    NUMERIC_VERSION=999
+  fi
 
   # preallocated image
-  # dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION-$arch.img bs=1024k count=4000
+  # dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1024k count=4000
   # sparse image
-  dd if=/dev/zero of=xensource/vyatta-xensource-$VVERSION-$arch.img bs=1k seek=4096k count=1
+  dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1k seek=4096k count=1
 
   # allocate loop device for file
   loop=$(losetup -f)
-  losetup $loop xensource/vyatta-xensource-$VVERSION-$arch.img || echo E: unable to allocate loop device
+  losetup $loop xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img || echo E: unable to allocate loop device
 
   # create filesystem
   mke2fs -j $loop
@@ -202,14 +193,14 @@ vyatta-xensource-partition-image ()
   rm -f $nimg.gz $nimg.0
 
   # create the default domU configuration file
-  cat <<-EOF > xensource/vyatta-xensource-$VVERSION.cfg
-	name='vyatta-$VVERSION'
+  cat <<-EOF > xensource/vyos-xensource-$NUMERIC_VERSION.cfg
+	name='vyos-$NUMERIC_VERSION'
 	bootloader='/usr/bin/pygrub'
 	on_reboot='restart'
 	on_shutdown='destroy'
 	on_crash='destroy'
-	image_name='vyatta-$VVERSION'
-	disk=['tap:aio:/var/xen/vyatta-xensource-$VVERSION-$arch.img,xvda1,w']
+	image_name='vyos-$NUMERIC_VERSION'
+	disk=['tap:aio:/var/xen/vyos-xensource-$NUMERIC_VERSION-$arch.img,xvda1,w']
 	vcpus=1
 	memory=512
 	EOF
@@ -249,7 +240,7 @@ vyatta-xensource-partition-image ()
   clean_up_xensource
 
   echo I: compressing XenSource partition image file
-  gzip xensource/vyatta-xensource-$VVERSION-$arch.img
+  gzip xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img
 }
 
 get_chroot_kernel_version ()
