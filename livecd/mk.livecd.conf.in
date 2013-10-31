@@ -68,7 +68,7 @@ fi
 : ${HUMANTIME:=$(date -u)}
 : ${CURYEAR:=$(date +'%Y')}
 : ${VERTIME:=$(date +'%Y.%m.%d')}
-: ${ORGANIZATION:=vyatta.com}
+: ${ORGANIZATION:=contributors.vyos.net}
 : ${LANGUAGE:=${LB_LANGUAGE:-en}}
 : ${LC_ALL:=C}
 export LANGUAGE
