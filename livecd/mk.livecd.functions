@@ -287,7 +287,8 @@ set_up_lh_config ()
   local repo_dir=unstable
   if ! eval "$VYATTA_DEV_BUILD"; then
     # not dev build => use testing.
-    repo_dir=testing
+    #repo_dir=testing
+    repo_dir=unstable
   fi
 
   # prepare the config files for live helper
