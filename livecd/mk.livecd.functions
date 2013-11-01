@@ -46,12 +46,12 @@ mk_version_package ()
     local vf=$tmpdir/opt/vyatta/etc
     local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
-    NUEERIC_VERSION=$(get_version)
+    NUMERIC_VERSION=$(get_version)
     FULL_VERSION=$(get_full_version "$NUMERIC_VERSION")
 
     if [ -z "$NUMERIC_VERSION" ]; then
       NUMERIC_VERSION=$VYATTA_DEV_VERSION
-      FULLVERSION=$VYATTA_DEV_VERSION
+      FULL_VERSION=$VYATTA_DEV_VERSION
     fi
 
     mkdir -p $vf/config
