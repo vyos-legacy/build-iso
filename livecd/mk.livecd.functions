@@ -52,6 +52,9 @@ mk_version_package ()
     if [ -z "$NUMERIC_VERSION" ]; then
       NUMERIC_VERSION=$VYATTA_DEV_VERSION
       FULL_VERSION=$VYATTA_DEV_VERSION
+      echo "I: Build type: DEVELOPMENT, version $FULL_VERSION"
+    else
+      echo "I: Build type: RELEASE, version $FULL_VERSION"
     fi
 
     mkdir -p $vf/config
