@@ -4,9 +4,6 @@
 # For packages with more than one version, it only lists
 # the file with the highest version number
 #
-# For further information, see the vyatta community wiki:
-# http://www.vyatta.com/twiki/bin/view/Community/WebHome
-#
 # **** License ****
 #
 # Copyright (C) 2013 Vyatta, Inc.
