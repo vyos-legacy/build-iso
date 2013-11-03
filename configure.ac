@@ -102,6 +102,9 @@ AC_ARG_WITH(devbuild,
 
 if test "X$with_devbuild" = Xyes ; then
   VYATTA_DEV_BUILD=true
+
+  # For the case previous build was a release build
+  rm -f livecd/version
 else
   VYATTA_DEV_BUILD=false
 fi
