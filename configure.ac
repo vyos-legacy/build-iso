@@ -121,18 +121,6 @@ else
   VYATTA_COMMUNITY_BUILD=false
 fi
 
-AC_ARG_WITH(supported-build,
-	[AS_HELP_STRING([--with-supported-build],
-	  [enable supported build])],
-	[],
-	[with_supported_build=no])
-if test "X$with_supported_build" = Xyes ; then
-  VYATTA_SUPPORTED_BUILD=true
-  VYATTA_DEV_BUILD=false
-else
-  VYATTA_SUPPORTED_BUILD=false
-fi
-
 if eval "$VYATTA_DEV_BUILD"; then
   touch pkgs/.VYATTA_DEV_BUILD
 else
@@ -265,7 +253,6 @@ AC_SUBST(create_xensourcevm)
 
 AC_SUBST(VYATTA_DEV_BUILD)
 AC_SUBST(VYATTA_COMMUNITY_BUILD)
-AC_SUBST(VYATTA_SUPPORTED_BUILD)
 AC_SUBST(VYATTA_BUILD_BRANCH)
 AC_SUBST(BUILD_TIME)
 

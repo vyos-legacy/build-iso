@@ -27,9 +27,6 @@ set_up_lh_config
 if eval "$VYATTA_COMMUNITY_BUILD"; then
   # community build
   cp -f templates/community/version .
-elif eval "$VYATTA_SUPPORTED_BUILD"; then
-  # supported build
-  cp -f templates/supported/version .
 fi
 
 # set up dev build version string
