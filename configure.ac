@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
 
-AC_INIT([vyos], [0.1.0], [maintainers@so3group.net], [vyos], [http://vyos.net])
+AC_INIT([vyos], [0.1.0], [maintainers@vyos.net], [vyos], [http://vyos.net])
 AC_COPYRIGHT([Copyright (c) 2013 SO3Group.])
 
 # Checks for programs.
