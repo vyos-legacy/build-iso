@@ -282,11 +282,13 @@ set_up_lh_config ()
   fi
 
   # set up the debian repo
-  LB_MIRROR_BINARY="http://packages.vyos.net/debian/$branch"
-  LB_MIRROR_BOOTSTRAP="http://packages.vyos.net/debian/$branch"
+  LB_MIRROR_BINARY=$VYOS_DEBIAN_MIRROR/debian/$branch
+  LB_MIRROR_BOOTSTRAP=$VYOS_DEBIAN_BOOTSTRAP_MIRROR/debian/$branch
+
   export LB_MIRROR_BINARY LB_MIRROR_BOOTSTRAP
 
-  local dev_repo_root=http://packages.vyos.net/vyos-dev
+  local dev_repo_root=$VYOS_PACKAGE_MIRROR
+  echo "Dev $dev_repo_root"
   local repo_dir=unstable
   if ! eval "$VYATTA_DEV_BUILD"; then
     # not dev build => use testing.

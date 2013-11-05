@@ -169,6 +169,45 @@ if test "X$with_vyatta_build_branch" != X ; then
   VYATTA_BUILD_BRANCH="$with_vyatta_build_branch"
 fi
 
+# Debian bootstrap package mirror
+AC_ARG_WITH(debian_bootstrap_mirror,
+  [AS_HELP_STRING([--with-debian-bootstrap-mirror],
+  [Debian bootstrap package mirror URL])],
+  [])
+
+if test X$with_debian_bootstrap_mirror != X ; then
+  echo "Using $with_debian_bootstrap_mirror as debian bootstrap mirror"
+  VYOS_DEBIAN_BOOTSTRAP_MIRROR="$with_debian_bootstrap_mirror"
+else
+  VYOS_DEBIAN_BOOTSTRAP_MIRROR="http://packages.vyos.net/debian/"
+fi
+
+# Debian package mirror
+AC_ARG_WITH(debian_mirror,
+  [AS_HELP_STRING([--with-debian-mirror],
+  [Debian package mirror URL])],
+  [])
+
+if test X$with_debian_mirror != X ; then
+  echo "Using $with_debian_mirror as debian mirror"
+  VYOS_DEBIAN_MIRROR="$with_debian_mirror"
+else
+  VYOS_DEBIAN_MIRROR="http://packages.vyos.net/debian/"
+fi
+
+# VyOS package mirror
+AC_ARG_WITH(vyos_mirror,
+  [AS_HELP_STRING([--with-vyos-mirror],
+  [VyOS package mirror URL])],
+  [])
+
+if test X$with_vyos_mirror != X ; then
+  echo "Using $with_vyos_mirror as VyOS package mirror"
+  VYOS_PACKAGE_MIRROR="$with_vyos_mirror"
+else
+  VYOS_PACKAGE_MIRROR="http://packages.vyos.net/vyos-dev"
+fi
+
 BUILD_TIME=''
 AC_ARG_WITH(build-time,
 [AS_HELP_STRING([--with-build-time], [use specified build time])])
@@ -250,6 +289,10 @@ AC_SUBST(LB_SYSLINUX_TIMEOUT)
 AC_SUBST(LB_UNION_FILESYSTEM)
 
 AC_SUBST(create_xensourcevm)
+
+AC_SUBST(VYOS_DEBIAN_BOOTSTRAP_MIRROR)
+AC_SUBST(VYOS_DEBIAN_MIRROR)
+AC_SUBST(VYOS_PACKAGE_MIRROR)
 
 AC_SUBST(VYATTA_DEV_BUILD)
 AC_SUBST(VYATTA_COMMUNITY_BUILD)
