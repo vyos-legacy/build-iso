@@ -109,9 +109,9 @@ else
   VYATTA_DEV_BUILD=false
 fi
 
-AC_ARG_WITH(community-build,
-	[AS_HELP_STRING([--with-community-build],
-	  [enable community build])],
+AC_ARG_WITH(release-build,
+	[AS_HELP_STRING([--with-release-build],
+	  [enable release build])],
 	[],
 	[with_community_build=no])
 if test "X$with_community_build" = Xyes ; then
