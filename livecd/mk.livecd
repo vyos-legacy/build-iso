@@ -58,6 +58,9 @@ if ! lh bootstrap; then
   exit 1
 fi
 
+# Don't take this seriously
+echo "I: It's not like I'm building this specially for you or anything"
+
 # fake out /dev/random to be /dev/urandom for chroot step
 (rm -f chroot/dev/random && mknod -m 666 chroot/dev/random c 1 9) || true
 
