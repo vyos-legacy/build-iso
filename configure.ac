@@ -171,7 +171,7 @@ fi
 
 # Debian bootstrap package mirror
 AC_ARG_WITH(debian_bootstrap_mirror,
-  [AS_HELP_STRING([--with-debian-bootstrap-mirror],
+  [AS_HELP_STRING([--with-debian-bootstrap-mirror=<URL>, relative to /debian directory],
   [Debian bootstrap package mirror URL])],
   [])
 
@@ -179,12 +179,12 @@ if test X$with_debian_bootstrap_mirror != X ; then
   echo "Using $with_debian_bootstrap_mirror as debian bootstrap mirror"
   VYOS_DEBIAN_BOOTSTRAP_MIRROR="$with_debian_bootstrap_mirror"
 else
-  VYOS_DEBIAN_BOOTSTRAP_MIRROR="http://packages.vyos.net/debian/"
+  VYOS_DEBIAN_BOOTSTRAP_MIRROR="http://packages.vyos.net"
 fi
 
 # Debian package mirror
 AC_ARG_WITH(debian_mirror,
-  [AS_HELP_STRING([--with-debian-mirror],
+  [AS_HELP_STRING([--with-debian-mirror=<URL>, relative to /debian directory],
   [Debian package mirror URL])],
   [])
 
@@ -192,12 +192,12 @@ if test X$with_debian_mirror != X ; then
   echo "Using $with_debian_mirror as debian mirror"
   VYOS_DEBIAN_MIRROR="$with_debian_mirror"
 else
-  VYOS_DEBIAN_MIRROR="http://packages.vyos.net/debian/"
+  VYOS_DEBIAN_MIRROR="http://packages.vyos.net"
 fi
 
 # VyOS package mirror
 AC_ARG_WITH(vyos_mirror,
-  [AS_HELP_STRING([--with-vyos-mirror],
+  [AS_HELP_STRING([--with-vyos-mirror=<URL>, relative to branch directory],
   [VyOS package mirror URL])],
   [])
 
