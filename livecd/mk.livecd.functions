@@ -281,6 +281,11 @@ set_up_lh_config ()
     source config.vyatta/vbuild.conf
   fi
 
+  # Remove trailing /'s from URLs
+  VYOS_DEBIAN_MIRROR=`echo $VYOS_DEBIAN_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
+  VYOS_DEBIAN_BOOTSTRAP_MIRROR=`echo $VYOS_DEBIAN_BOOTSTRAP_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
+  VYOS_PACKAGE_MIRROR=`echo $VYOS_PACKAGE_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
+
   # set up the debian repo
   LB_MIRROR_BINARY=$VYOS_DEBIAN_MIRROR/debian/$branch
   LB_MIRROR_BOOTSTRAP=$VYOS_DEBIAN_BOOTSTRAP_MIRROR/debian/$branch
