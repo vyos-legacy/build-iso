@@ -61,7 +61,6 @@ vyatta-op-firewall
 vyatta-op-qos
 vyatta-op-quagga
 vyatta-op-vpn
-vyatta-op-xml
 vyatta-openvpn
 vyatta-ppp
 vyatta-quagga
