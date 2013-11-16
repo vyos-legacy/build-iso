@@ -25,9 +25,10 @@ PKGS=$(find $PKGS_DIR/* -type d -maxdepth 1)
 for package in $PKGS; do
     echo "Processing $package"
     git submodule update --init $package
+    mkdir -p $package
     cd $package
     if [ $noswitch == 0 ]; then
-        echo "Swithing branch to $branch"
+        echo "Switching branch to $branch"
         git branch $branch --track origin/$branch
         git checkout $branch
     fi
