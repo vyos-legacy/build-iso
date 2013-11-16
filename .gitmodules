@@ -218,3 +218,6 @@
 	path = pkgs/libzmq-libzmq2-perl
 	url = https://github.com/vyos/libzmq-libzmq2-perl.git
 
+[submodule "pkgs/vyatta-cron"]
+	path = pkgs/vyatta-cron
+	url = https://github.com/vyos/vyatta-cron.git
