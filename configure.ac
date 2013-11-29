@@ -205,7 +205,7 @@ if test X$with_vyos_mirror != X ; then
   echo "Using $with_vyos_mirror as VyOS package mirror"
   VYOS_PACKAGE_MIRROR="$with_vyos_mirror"
 else
-  VYOS_PACKAGE_MIRROR="http://packages.vyos.net/vyos-dev"
+  VYOS_PACKAGE_MIRROR="http://packages.vyos.net/"
 fi
 
 BUILD_TIME=''
