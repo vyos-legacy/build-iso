@@ -9,7 +9,7 @@ system {
     }
     package {
         repository community {
-	    distribution "stable"
+	    distribution "hydrogen"
             components "main"
             url "http://packages.vyos.net/vyos"
         }
