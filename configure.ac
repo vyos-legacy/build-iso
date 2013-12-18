@@ -112,8 +112,8 @@ fi
 AC_ARG_WITH(release-build,
 	[AS_HELP_STRING([--with-release-build],
 	  [enable release build])],
-	[],
-	[with_community_build=no])
+	[with_community_build=yes],
+	[])
 if test "X$with_community_build" = Xyes ; then
   VYATTA_COMMUNITY_BUILD=true
   VYATTA_DEV_BUILD=false
