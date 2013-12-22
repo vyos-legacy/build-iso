@@ -3,6 +3,13 @@
 *                                                           *
 * Welcome to VyOS, an open source network operating system! *
 *                                                           *
+* Version: 1.0.0 (Hydrogen)                                 *
+*                                                           *
+* Default login:    vyos                                    *
+* Default password: vyos                                    *
+*                                                           *
+* To start installation, login and use command:             *
+*     install image                                         *
 *************************************************************
 
 07Press <0fF107>control and F then 1 for help, or ENTER to
