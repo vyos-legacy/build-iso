@@ -1,13 +1,13 @@
-Vyatta VC ISO Build Procedures
+VyOS ISO Build Procedures
 
-    This document describes how to build a Vyatta VC ISO image. The most
+    This document describes how to build a VyOS ISO image. The most
     recent version of this document is the top-level README file from 
     the "latest" branch of the "build-iso" git source repository.
 
 
 Build Host Setup
 
-    The current Vyatta ISO build requires a Debian "squeeze"-based system.
+    The current VyOS ISO build requires a Debian "squeeze"-based system.
     As of now, "squeeze" is the Debian "stable" release. Therefore, to
     install a minimal squeeze system, download a squeeze installer "netinst"
     or "businesscard" ISO image from the following Debian page:
@@ -24,37 +24,28 @@ Build Host Setup
     installation. In order to build the Vyatta packages and the ISO,
     install the following packages using "apt-get" or "aptitude".
 
-      ssh build-essential sudo bzip2 curl autoconf git devscripts \
-      debhelper autotools-dev automake libtool bison flex lintian \
-      libglib2.0-dev libapt-pkg-dev libboost-filesystem1.42-dev \
-      libncurses5-dev libdb-dev libssl-dev cdbs libmozjs-dev \
-      libreadline5-dev libpam0g-dev libcap-dev libsnmp-dev gawk unzip \
-      kernel-package libatm1-dev git-buildpackage libnfnetlink-dev \
-      libnetfilter-conntrack-dev libattr1-dev rsync libxml2-dev \
-      libedit-dev libpcap0.8-dev libpci-dev lsb-release quilt ruby \
-      genisoimage liblzo2-dev unifont libpopt-dev libgmp3-dev \
-      libcurl4-openssl-dev libopensc2-dev libldap2-dev libkrb5-dev \
-      hardening-wrapper libgcrypt11-dev libpcre3-dev libprelude-dev \
-      libgnutls-dev libperl-dev python-all-dev python-setuptools \
-      live-helper syslinux libsort-versions-perl libexpat1-dev \
-      libfile-sync-perl gcc-multilib libfreetype6-dev libusb-dev \
-      libdevmapper-dev libmysqlclient-dev autogen libdumbnet-dev
+      git            # Required, for cloning the source
+      autoconf       # Required, for generating build scripts
+      dpkg-dev       # Required, used in build scripts
+      live-helper    # Required, for ISO build
+      syslinux       # Required, for ISO build
+      genisoimage    # Required, for ISO build
+      ssh            # Optional, for cloning over SSH
+      sudo           # Optional, ISO build requires root privileges
 
-    Now install the Vyatta package repository GPG key.
+    Now install the VyOS package repository GPG key.
 
-      wget -O vyatta-pubkey.gpg \
-        http://packages.vyatta.com/vyatta-dev/vyatta-pubkey.gpg
-      sudo apt-key add vyatta-pubkey.gpg
+      wget -O - http://packages.vyos.net/vyos-pubkey.gpg  | sudo apt-key add -
 
     You will also need to download and install the latest "squashfs-tools"
-    package from the Vyatta "unstable" package repository. For example, for
-    the "pacifica" branch and "amd64" architecture, the package can be
+    package from the VyOS package repository. For example, for
+    the "hydrogen" branch and "amd64" architecture, the package can be
     installed as follows (note that the version of the package may be
     different since the "unstable" package repository contains the latest
     development packages).
 
-      wget http://packages.vyatta.com/vyatta-dev/pacifica/unstable/pool/main/squashfs-tools_4.1+vyatta-8_amd64.deb
-      dpkg -i squashfs-tools_4.1+vyatta-8_amd64.deb
+      wget http://packages.vyos.net/vyos/pool/main/s/squashfs/squashfs-tools_4.1+vyatta-9+hydrogen1_amd64.deb
+      sudo dpkg -i squashfs-tools_4.1+vyatta-9+hydrogen1_amd64.deb
 
     Then put the following in "/etc/apt/preferences.d/squashfs-tools"
     to "pin" the version of the squashfs-tools package (which ensures
@@ -66,22 +57,13 @@ Pin: version 4.*
 Pin-Priority: 1001
 EOF
 
-    You will also need to download and install libnetfilter-conntrack3_1.0.0 and
-    libnetfilter-conntrack-dev_1.0.0 packages:
-
-        PKGS="libmnl0_1.0.3-5_amd64.deb libnetfilter-conntrack3_1.0.0-1+vyatta15_amd64.deb libnetfilter-conntrack-dev_1.0.0-1+vyatta15_amd64.deb"
-        for p in $PKGS; do
-          wget http://packages.vyatta.com/vyatta-dev/pacifica/unstable/pool/main/$p
-        done
-        dpkg -i $PKGS
-
 Getting "build-iso" Source
 
-    The Vyatta ISO builder consists of scripts and config files
+    The VyOS ISO builder consists of scripts and config files
     maintained as a git repository named "build-iso". First, clone
     the build-iso git repository.
 
-	git clone http://git.vyatta.com/build-iso.git
+	git clone https://github.com/vyos/build-iso.git
 
     This will create the source tree in the directory "build-iso".
     (At this point, you might want to switch to reading
@@ -98,7 +80,7 @@ Getting "build-iso" Source
 
 Build ISO
 
-    To build a Vyatta ISO, do the following in the "build-iso" directory
+    To build a VyOS ISO, do the following in the "build-iso" directory
     (which has been set up as described in the previous section).
 
 	export PATH=/sbin:/usr/sbin:$PATH
@@ -111,7 +93,7 @@ Build ISO
 	livecd/binary.iso
 
     Note that the above build process uses the pre-built binary packages
-    from the Vyatta "unstable" package repository, which contains the
+    from the VyOS package repository, which contains the
     latest development packages updated in real time (i.e., they are the
     exact same packages used in Vyatta internal development build).
 
@@ -126,25 +108,17 @@ Build Host Setup for Building Submodules
     Before building any submodules, you will need to install the following
     Vyatta-specific packages on the build host.
 
-    From "Debian lenny" install the following packages:
-      libnet0 libnet0-dev libsablot0 libsablot0-dev
-
-    The Debian lenny packages are available from any Debian mirrors. For
-    example, the amd64 "libnet0" package can be found at the following URL:
-
-      http://packages.vyatta.com/debian/pool/main/libn/libnet0/libnet0_1.0.2a-7_amd64.deb
-
     From "Debian wheezy" install the following packages (similarly, they are
     available from Debian mirrors):
       libmnl0 libmnl-dev
 
-    From Vyatta "unstable" package repository install the following packages:
+    From VyOS package repository install the following packages:
       iptables iptables-dev linux-vyatta-kbuild
       libsnmp15 libsnmp-dev libsnmp-perl libsnmp-base
       libcap-dev libcap2 libvyatta-cfg-dev libvyatta-cfg1
       libdaq0 libdaq-dev
      
-    The location of the Vyatta "unstable" package repository depends on the
+    The location of the VyOS package repository depends on the
     source branch. For example, for the "pacifica" branch, the amd64
     "iptables" package in the "unstable" package repository can be downloaded
     from the following URL (note that the unstable package repository is
@@ -265,20 +239,15 @@ Build submodules
 
 Changes
 
-    After making, testing, and committing your changes to your local
-    repositories, publish them to the shared repository with,
+    If you want to share your changes, there are two options:
 
-	git push suva.vyatta.com:/git/SUBMODULE.git
+    1. Email patches
+        Use "git format-patch -${number of commits}" command. It will produce
+        one or more patch files in your repo directory. Email these patches to
+        maintainers@vyos.net or (better) add them to the corresponding bug on
+        http://bugzilla.vyos.net as attachments.
 
-    This will, of course, require an account on suva.vyatta.com, which
-    is only available to authorized vyatta developers.
-    Then update and publish the super-module index to include the
-    submodule changes,
-
-	cd ../..
-	git update-index pkgs/SUBMODULE
-	git commit -m 'update sub-module SUBMODULE'
-	git push suva.vyatta.com:/git/build-iso.git
+    2. Fork the submodule on github and make pull request.
 
 Updates using git
 
