@@ -100,75 +100,58 @@ Build ISO
 
 Build Host Setup for Building Submodules
 
+    VyOS code is organized in multiple submodules instead of a huge
+    single repo. For more information about submodules see
+    http://git-scm.com/book/en/Git-Tools-Submodules
+
+    Before you start building submodules, install the following packages:
+        devscripts # Provides debuild
+
+    To fetch submodule source, use:
+        cd build-iso
+        git submodule update --init pkgs/$submoduleName
+
+    e.g.
+        git submodule update --init pkgs/vyatta-cfg-system
+
+    After that you need to switch to the target branch:
+        cd pkgs/$submoduleName
+        git branch $branch --track origin/$branch
+        git checkout $branch
+
+    You can lookup the current development branch at http://vyos.net
+
+    Submodules may have build dependencies not present in the system by default.
+    You can quickly find out what build dependencies are by running the following
+    command inside a submodule:
+        dpkg-checkbuilddeps
+
+    Some submodules require packages not available from Debian Squeeze
+    repositories. Known cases at this point include:
+
+    * vyatta-quagga
+        Requires libsnmp newer than available in Debian Squeeze. To build it,
+        you need to build pkgs/net-snmp submodule and install generated
+        packages first.
+    * libnetfilter-conntrack
+        Requires libmnl, which is not in Debian Squeeze. Build pkgs/libmnl and
+        install generated packages first.
+    * conntrack-tools
+        Requires libnetfilter-conntrack, libnetfilter-cttimeout, libnetfilter-cthelper,
+        libnetfilter-queue. Build and install these first.
+
+    The alternative to building those dependencies from source is to install them from
+    the VyOS repository, http://packages.vyos.net/vyos/ (set distribution to the current
+    development branch).
+
+   [There may be more cases of unusual dependencies. Also, there may be packages with
+    redundant or missing build dependencies, as clean up of the code inherited from
+    Vyatta is still work in progress, so if you spot anything like that, please
+    let maintainers know]
+
+
     Before building any submodules, you will need to install the following
     Vyatta-specific packages on the build host.
-
-    From "Debian wheezy" install the following packages (similarly, they are
-    available from Debian mirrors):
-      libmnl0 libmnl-dev
-
-    From VyOS package repository install the following packages:
-      iptables iptables-dev linux-vyatta-kbuild
-      libsnmp15 libsnmp-dev libsnmp-perl libsnmp-base
-      libcap-dev libcap2 libvyatta-cfg-dev libvyatta-cfg1
-      libdaq0 libdaq-dev
-     
-    The location of the VyOS package repository depends on the
-    source branch. For example, for the "pacifica" branch, the amd64
-    "iptables" package in the "unstable" package repository can be downloaded
-    from the following URL (note that the unstable package repository is
-    updated in real time, so latest version may be different from the version
-    below):
-
-      http://packages.vyatta.com/vyatta-dev/pacifica/unstable/pool/main/iptables_1.4.10+vyatta+5_amd64.deb
-
-    After downloading the packages listed above, they can be installed
-    using "dpkg".
-
-    Then put the following in "/etc/apt/preferences" to "pin" the version of
-    the libcap-dev and libcap2 package (which ensures that the Vyatta package
-    will be used instead of the one from Debian).
-
-      cat >| /etc/apt/preferences.d/libcap-dev <<EOF
-Package: libcap-dev
-Pin: version 2.*
-Pin-Priority: 1001
-EOF
-
-      cat >| /etc/apt/preferences.d/libcap2 <<EOF
-Package: libcap2
-Pin: version 2.*
-Pin-Priority: 1001
-EOF
-    
-
-Getting Submodules Source and Building
-
-    Note that the "build-iso" git repository contains a number of
-    submodules in the "pkgs/" subdirectory. To get the source for a
-    submodule, do the following in the "build-iso" directory (replace
-    "SUBMODULE" with the name of the module, e.g., "vyatta-cfg-quagga").
-
-      git submodule init
-      git submodule update pkgs/SUBMODULE
-
-    The above will clone the source of the submodule into the
-    "pkgs/SUBMODULE" directory. Note that the submodule needs to be on
-    the same branch as "build-iso", so do the following (replace
-    "BRANCH" with the branch name you used for build-iso).
-
-      cd pkgs/SUBMODULE
-      git checkout --track -b BRANCH origin/BRANCH
-
-    In most cases, you will only update (i.e., clone) the submodule(s)
-    that you are going to change. If you want to clone all submodules,
-    do the following.
-
-      git submodule update
-
-    Remember to create and checkout the same working branch for all
-    submodules.
-
 
 Build submodules
 
