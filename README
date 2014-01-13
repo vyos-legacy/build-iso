@@ -16,3 +16,6 @@ Current development branch is: helium
 Current stable branch (1.0.0 release) is: hydrogen
 
 Actual build instructions are in those branches README.
+
+The branch issue applied to submodules too. When you fetch a submodule source,
+don't forget to switch to desired branch before doing anything.
