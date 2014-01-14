@@ -21,7 +21,7 @@ Build Host Setup
 
     After the installation and reboot, your "apt" sources.list file should
     be configured to use the Debian mirror that you selected during the
-    installation. In order to build the Vyatta packages and the ISO,
+    installation. In order to build the VyOS packages and the ISO,
     install the following packages using "apt-get" or "aptitude".
 
       git            # Required, for cloning the source
@@ -39,7 +39,7 @@ Build Host Setup
 
 Tools update:
     You will also need to download and install a newer "squashfs-tools"
-    package from the squeeze-backports repository. Vyatta uses extended
+    package from the squeeze-backports repository. VyOS uses extended
     file attributes, and older (pre 4.2) versions do not handle attributes.
 
     Debian instructions on how to setup squeeze-backports.
@@ -89,8 +89,7 @@ Build ISO
 
     Note that the above build process uses the pre-built binary packages
     from the VyOS package repository, which contains the
-    latest development packages updated in real time (i.e., they are the
-    exact same packages used in Vyatta internal development build).
+    latest development packages built by the maintainers.
 
     If you want to make modifications to one or more packages, you will
     need to get the source of the submodule(s) that you want to change,
