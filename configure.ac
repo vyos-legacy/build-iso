@@ -131,11 +131,11 @@ fi
 BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
 # default flavor for i386 and amd64
-LB_LINUX_FLAVOURS="586-vyatta"
-VIRT_FLAVOUR="586-vyatta-virt"
+LB_LINUX_FLAVOURS="586-vyos"
+VIRT_FLAVOUR="586-vyos"
 if test X$BARCH = Xamd64; then
-  LB_LINUX_FLAVOURS="amd64-vyatta"
-  VIRT_FLAVOUR="amd64-vyatta"
+  LB_LINUX_FLAVOURS="amd64-vyos"
+  VIRT_FLAVOUR="amd64-vyos"
 fi
 
 # user-specified flavor
