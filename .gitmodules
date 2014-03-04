@@ -4,9 +4,6 @@
 [submodule "pkgs/vyatta-cfg"]
 	path = pkgs/vyatta-cfg
 	url = https://github.com/vyos/vyatta-cfg.git
-[submodule "pkgs/vyatta-op-xml"]
-	path = pkgs/vyatta-op-xml
-	url = https://github.com/vyos/vyatta-op-xml.git
 [submodule "pkgs/vyatta-op-firewall"]
 	path = pkgs/vyatta-op-firewall
 	url = https://github.com/vyos/vyatta-op-firewall.git
