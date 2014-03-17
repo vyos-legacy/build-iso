@@ -149,9 +149,6 @@ Build Host Setup for Building Submodules
     let maintainers know]
 
 
-    Before building any submodules, you will need to install the following
-    Vyatta-specific packages on the build host.
-
 Build submodules
 
     When you do a "make", the build system will build the binary packages
