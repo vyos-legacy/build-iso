@@ -1,0 +1,19 @@
+#!/bin/bash
+
+VYOS_PUBKEY_URL="http://packages.vyos.net/vyos-pubkey.gpg"
+DEBIAN_BP_URL="http://backports.debian.org/debian-backports"
+
+if [ ${UID} -ne 0 ] ; then 
+  echo "This command needs to be run as root."
+  exit 1
+fi
+
+apt-get install -y git autoconf dpkg-dev live-helper syslinux genisoimage \
+                   ssh sudo
+wget -O - $VYOS_PUBKEY_URL  | apt-key add -
+echo "deb $DEBIAN_BP_URL squeeze-backports main" \
+      > /etc/apt/sources.list.d/squeeze-backports.list
+ 
+apt-get update
+apt-get -t squeeze-backports install -y squashfs-tools
+
