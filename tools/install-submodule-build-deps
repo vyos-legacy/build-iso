@@ -1,0 +1,9 @@
+#!/bin/sh
+
+DEPS=`dpkg-checkbuilddeps 2>&1| perl -ne '$_ =~ /Unmet build dependencies:(.*)/; print $1;'`
+
+if [ -n "$DEPS" ]; then
+    echo "Note: some build dependencies may not be available from defaults repositories."
+    sudo apt-get install $DEPS
+fi
+
