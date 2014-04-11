@@ -9,7 +9,7 @@ if [ ${UID} -ne 0 ] ; then
 fi
 
 apt-get install -y git autoconf dpkg-dev live-helper syslinux genisoimage \
-                   ssh sudo devscripts
+                   ssh sudo
 wget -O - $VYOS_PUBKEY_URL  | apt-key add -
 echo "deb $DEBIAN_BP_URL squeeze-backports main" \
       > /etc/apt/sources.list.d/squeeze-backports.list
