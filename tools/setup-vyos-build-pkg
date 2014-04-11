@@ -1,0 +1,79 @@
+#!/bin/bash
+
+VYOS_PUBKEY_URL="http://packages.vyos.net/vyos-pubkey.gpg"
+DEBIAN_BP_URL="http://backports.debian.org/debian-backports"
+
+if [ ${UID} -ne 0 ] ; then
+  echo "This command needs to be run as root."
+  exit 1
+fi
+
+wget -O - $VYOS_PUBKEY_URL  | apt-key add -
+echo "deb $DEBIAN_BP_URL squeeze-backports main" \
+      > /etc/apt/sources.list.d/squeeze-backports.list
+
+apt-get update
+apt-get -t squeeze-backports install -y squashfs-tools
+
+apt-get install -y \
+  autoconf \
+  autogen \
+  bison \
+  cdbs \
+  devscripts \
+  dpkg-dev \
+  flex \
+  gawk \
+  gcc-multilib \
+  genisoimage \
+  git \
+  hardening-wrapper \
+  iptables-dev \
+  kernel-package \
+  libapt-pkg-dev \
+  libatm1-dev \
+  libattr1-dev \
+  libboost-filesystem1.42-dev \
+  libc6-dev-i386 \
+  libcap-dev \
+  libcap2-dev \
+  libcurl4-openssl-dev \
+  libdb-dev \
+  libdb4.8-dev \
+  libdumbnet-dev \
+  libedit-dev \
+  libexpat1-dev \
+  libgcrypt11-dev \
+  libglib2.0-dev \
+  libgmp3-dev \
+  libkrb5-dev \
+  libldap2-dev \
+  liblzo2-dev \
+  libncurses5-dev \
+  libnetfilter-conntrack-dev \
+  libnfnetlink-dev \
+  libopensc2-dev \
+  libpam0g-dev \
+  libpcap0.8-dev \
+  libpci-dev \
+  libperl-dev \
+  libpopt-dev \
+  libproc-dev \
+  libreadline5-dev \
+  libsensors4-dev \
+  libsnmp-dev \
+  libssl-dev \
+  libtool \
+  libwrap0-dev \
+  libxml2-dev \
+  live-helper \
+  python-all-dev \
+  python-setuptools \
+  quilt \
+  ruby \
+  ssh \
+  sudo \
+  syslinux \
+  unifont \
+  zlib1g-dev \
+
