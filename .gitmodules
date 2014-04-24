@@ -172,12 +172,6 @@
 [submodule "pkgs/vyatta-config-mgmt"]
 	path = pkgs/vyatta-config-mgmt
 	url = https://github.com/vyos/vyatta-config-mgmt.git
-[submodule "pkgs/ec2-ami-tools"]
-	path = pkgs/ec2-ami-tools
-	url = https://github.com/vyos/ec2-ami-tools.git
-[submodule "pkgs/ec2-api-tools"]
-	path = pkgs/ec2-api-tools
-	url = https://github.com/vyos/ec2-api-tools.git
 [submodule "pkgs/userspace-rcu"]
 	path = pkgs/userspace-rcu
 	url = https://github.com/vyos/userspace-rcu.git
