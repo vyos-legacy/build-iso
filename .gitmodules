@@ -212,3 +212,9 @@
 [submodule "pkgs/vyatta-cron"]
 	path = pkgs/vyatta-cron
 	url = https://github.com/vyos/vyatta-cron.git
+[submodule "pkgs/ubnt-igmpproxy"]
+	path = pkgs/ubnt-igmpproxy
+	url = https://github.com/TriJetScud/vyos-igmpproxy.git
+[submodule "pkgs/igmpproxy"]
+	path = pkgs/igmpproxy
+	url = https://github.com/TriJetScud/igmpproxy.git
