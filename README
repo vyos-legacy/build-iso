@@ -30,6 +30,7 @@ Build Host Setup
       live-helper    # Required, for ISO build
       syslinux       # Required, for ISO build
       genisoimage    # Required, for ISO build
+      lsb-release    # Required, Used by the configure script
       ssh            # Optional, for cloning over SSH
       sudo           # Optional, ISO build requires root privileges
 
