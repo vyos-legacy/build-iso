@@ -2,7 +2,7 @@ VyOS ISO Build Procedures
 
     This document describes how to build a VyOS ISO image. The most
     recent version of this document is the top-level README file from 
-    the "latest" branch of the "build-iso" git source repository.
+    the default branch of the "build-iso" git source repository.
 
 
 Build Host Setup
@@ -31,6 +31,7 @@ Build Host Setup
       syslinux       # Required, for ISO build
       genisoimage    # Required, for ISO build
       make           # Required, for ISO build
+      lsb-release    # Required, used by configure script
       ssh            # Optional, for cloning over SSH
       sudo           # Optional, ISO build requires root privileges
 
