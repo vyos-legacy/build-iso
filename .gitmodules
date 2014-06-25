@@ -102,7 +102,7 @@
 	url = https://github.com/vyos/vyatta-webproxy.git
 [submodule "pkgs/iptables"]
 	path = pkgs/iptables
-	url = https://github.com/vyos/iptables.git
+	url = https://github.com/vyos/vyos-iptables.git
 [submodule "pkgs/live-initramfs"]
 	path = pkgs/live-initramfs
 	url = https://github.com/vyos/live-initramfs.git
