@@ -215,3 +215,6 @@
 [submodule "pkgs/iptables"]
 	path = pkgs/iptables
 	url = https://github.com/vyos/vyos-iptables.git
+[submodule "pkgs/linux-image"]
+	path = pkgs/linux-image
+	url = https://github.com/vyos/vyos-kernel.git
