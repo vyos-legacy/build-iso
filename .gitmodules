@@ -215,3 +215,6 @@
 [submodule "pkgs/igmpproxy"]
 	path = pkgs/igmpproxy
 	url = https://github.com/vyos/igmpproxy.git
+[submodule "pkgs/iptables"]
+	path = pkgs/iptables
+	url = https://github.com/vyos/vyos-iptables.git
