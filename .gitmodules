@@ -94,9 +94,6 @@
 [submodule "pkgs/vyatta-grub"]
 	path = pkgs/vyatta-grub
 	url = https://github.com/vyos/vyatta-grub.git
-[submodule "pkgs/linux-image"]
-	path = pkgs/linux-image
-	url = https://github.com/vyos/vyos-kernel.git
 [submodule "pkgs/vyatta-webproxy"]
 	path = pkgs/vyatta-webproxy
 	url = https://github.com/vyos/vyatta-webproxy.git
