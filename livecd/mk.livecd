@@ -116,7 +116,7 @@ fi
 
 # new image name (hybrid image)
 mv binary-hybrid.iso binary.iso
-ln -nsf binary.iso livecd-"$BUILDID".iso
+ln -nsf binary.iso VyOS-livecd-"$BUILDID-$(dpkg --print-architecture)".iso
 
 echo I: Done
 
