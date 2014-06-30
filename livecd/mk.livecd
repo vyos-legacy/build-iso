@@ -114,9 +114,15 @@ if ! lh binary ; then
   exit 1
 fi
 
+VIRT=`cat binary.packages | grep -virt`
+
 # new image name (hybrid image)
 mv binary-hybrid.iso binary.iso
-ln -nsf binary.iso VyOS-livecd-"$BUILDID-$(dpkg --print-architecture)".iso
+if [ -n "$VIRT" ]; then
+  ln -nsf binary.iso VyOS-virt-livecd-"$BUILDID-$(dpkg --print-architecture)".iso
+else
+  ln -nsf binary.iso VyOS-livecd-"$BUILDID-$(dpkg --print-architecture)".iso
+fi
 
 echo I: Done
 
