@@ -83,6 +83,15 @@ Build ISO
 	export PATH=/sbin:/usr/sbin:$PATH
 	autoreconf -i
 	./configure
+
+    Replace gpg key (*development branch only*)
+
+    rm -f livecd/config.vyatta/chroot_sources/vyatta.chroot.gpg
+    wget -qO livecd/config.vyatta/chroot_sources/vyatta.chroot.gpg \
+         http://dev.packages.vyos.net/vyos-root-gpg
+
+    Execute make
+
         sudo make iso
 
     The end results is the following livecd ISO image.
