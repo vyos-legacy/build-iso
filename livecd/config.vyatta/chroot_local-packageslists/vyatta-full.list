@@ -83,3 +83,4 @@ vyatta-lldp
 vyatta-zone
 vyatta-config-mgmt
 vyatta-cron
+eventwatchd
