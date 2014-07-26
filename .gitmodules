@@ -221,3 +221,6 @@
 [submodule "pkgs/vyatta-watchdog"]
 	path = pkgs/vyatta-watchdog
 	url = https://github.com/vyos/vyatta-watchdog.git
+[submodule "pkgs/vyatta-eventwatch"]
+	path = pkgs/vyatta-eventwatch
+	url = https://github.com/vyos/vyatta-eventwatch.git
