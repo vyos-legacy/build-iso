@@ -31,16 +31,31 @@ esac
 
 if [ -d /root/opt/vyatta/etc/config ]
 then
-    if [ -d /root/live/cow/config ]
+    if [ -d /root/live/cow/cow ]
     then
-	log_begin_msg "Using /live/cow/config..."
-	mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
-	log_end_msg
+        if [ -d /root/live/cow/cow/config ]
+        then
+            log_begin_msg "Using /live/cow/cow/config..."
+            mount -o bind /root/live/cow/cow/config /root/opt/vyatta/etc/config
+            log_end_msg
+        else
+            log_begin_msg "Creating /live/cow/cow/config..."
+            cp -a /root/opt/vyatta/etc/config /root/live/cow/cow
+            mount -o bind /root/live/cow/cow/config /root/opt/vyatta/etc/config
+            log_end_msg
+        fi
     else
-	log_begin_msg "Creating /live/cow/config..."
-	cp -a /root/opt/vyatta/etc/config /root/live/cow
-	mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
-	log_end_msg
+        if [ -d /root/live/cow/config ]
+        then
+	    log_begin_msg "Using /live/cow/config..."
+	    mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
+	    log_end_msg
+        else
+	    log_begin_msg "Creating /live/cow/config..."
+	    cp -a /root/opt/vyatta/etc/config /root/live/cow
+	    mount -o bind /root/live/cow/config /root/opt/vyatta/etc/config
+	    log_end_msg
+        fi
     fi
 fi
 
