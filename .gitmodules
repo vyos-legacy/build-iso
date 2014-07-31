@@ -224,3 +224,7 @@
 [submodule "pkgs/vyatta-eventwatch"]
 	path = pkgs/vyatta-eventwatch
 	url = https://github.com/vyos/vyatta-eventwatch.git
+[submodule "pkgs/radvd"]
+        path = pkgs/radvd
+        url = https://github.com/vyos/radvd.git
+
