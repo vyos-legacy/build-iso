@@ -85,3 +85,4 @@ vyatta-config-mgmt
 vyatta-cron
 eventwatchd
 vyatta-eventwatch
+lsb-release
