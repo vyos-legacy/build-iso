@@ -87,14 +87,14 @@ EOF
 
     echo "Version:      VyOS ${NUMERIC_VERSION}" > $vf/version
     echo "Description:  ${FULL_VERSION}" >> $vf/version
-    echo "Copyright:    ${CURYEAR} SO3 Group" >> $vf/version
+    echo "Copyright:    ${CURYEAR} VyOS maintainers and contributors" >> $vf/version
     ln -nsf version $vf/version-virt
 
     (
         echo "Package: vyatta-version"
         echo "Version: ${NUMERIC_VERSION}"
         echo "Architecture: ${arch}"
-        echo "Maintainer: SO3 Group <maintainers@vyos.net>"
+        echo "Maintainer: VyOS Package Maintainers <maintainers@vyos.net>"
         echo "Essential: no"
         echo "Section: base"
         echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
