@@ -225,3 +225,6 @@
         path = pkgs/radvd
         url = https://github.com/vyos/radvd.git
 
+[submodule "pkgs/open-vm-tools"]
+	path = pkgs/open-vm-tools
+	url = https://github.com/vyos/vyos-open-vm-tools.git
