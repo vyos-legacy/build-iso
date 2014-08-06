@@ -24,16 +24,19 @@ Build Host Setup
     installation. In order to build the VyOS packages and the ISO,
     install the following packages using "apt-get" or "aptitude".
 
-      git            # Required, for cloning the source
-      autoconf       # Required, for generating build scripts
-      dpkg-dev       # Required, used in build scripts
-      live-helper    # Required, for ISO build
-      syslinux       # Required, for ISO build
-      genisoimage    # Required, for ISO build
-      make           # Required, for ISO build
-      lsb-release    # Required, used by configure script
-      ssh            # Optional, for cloning over SSH
-      sudo           # Optional, ISO build requires root privileges
+      git             # Required, for cloning the source
+      autoconf        # Required, for generating build scripts
+      dpkg-dev        # Required, used in build scripts
+      live-helper     # Required, for ISO build
+      syslinux        # Required, for ISO build
+      genisoimage     # Required, for ISO build
+      make            # Required, for ISO build
+      lsb-release     # Required, used by configure script
+      ssh             # Optional, for cloning over SSH
+      sudo            # Optional, ISO build requires root privileges
+      fakechroot      # Required, for ISO build
+      devscripts      # Optional, for building submodules (kernel etc)
+      kernel-package  # Optional, for building the kernel
 
     Now install the VyOS package repository GPG key.
 
@@ -80,9 +83,18 @@ Build ISO
     To build a VyOS ISO, do the following in the "build-iso" directory
     (which has been set up as described in the previous section).
 
+    Select the kernel type to include in the finished iso image by
+    setting flavor to one of the available types (this also applies if
+    you are building your own kernel package as well):
+
+      586-vyos (defaults to this if not set)
+      586-vyos-virt
+      amd64-vyos 
+
+        flavor=586-vyos
 	export PATH=/sbin:/usr/sbin:$PATH
 	autoreconf -i
-	./configure
+	./configure --with-kernel-flavor=$flavor
 
     Replace gpg key (*development branch only*)
 
