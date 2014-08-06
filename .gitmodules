@@ -103,9 +103,6 @@
 [submodule "pkgs/vyatta-wirelessmodem"]
 	path = pkgs/vyatta-wirelessmodem
 	url = https://github.com/vyos/vyatta-wirelessmodem.git
-[submodule "pkgs/open-vm-tools"]
-	path = pkgs/open-vm-tools
-	url = https://github.com/vyos/open-vm-tools.git
 [submodule "pkgs/initramfs-tools"]
 	path = pkgs/initramfs-tools
 	url = https://github.com/vyos/initramfs-tools.git
