@@ -37,6 +37,7 @@ Build Host Setup
       fakechroot      # Required, for ISO build
       devscripts      # Optional, for building submodules (kernel etc)
       kernel-package  # Optional, for building the kernel
+      libtool         # Optional, for building certain packages (eg vyatta-op-vpn)
 
     Now install the VyOS package repository GPG key.
 
