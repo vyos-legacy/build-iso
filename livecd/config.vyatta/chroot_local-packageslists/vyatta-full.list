@@ -86,3 +86,5 @@ vyatta-cron
 eventwatchd
 vyatta-eventwatch
 lsb-release
+vyos-opennhrp
+vyos-nhrp
