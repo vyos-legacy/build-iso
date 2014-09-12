@@ -228,3 +228,9 @@
 [submodule "pkgs/open-vm-tools"]
 	path = pkgs/open-vm-tools
 	url = https://github.com/vyos/vyos-open-vm-tools.git
+[submodule "pkgs/vyos-nhrp"]
+	path = pkgs/vyos-nhrp
+	url = https://github.com/vyos/vyos-nhrp.git
+[submodule "pkgs/vyos-opennhrp"]
+	path = pkgs/vyos-opennhrp
+	url = https://github.com/vyos/vyos-opennhrp.git
