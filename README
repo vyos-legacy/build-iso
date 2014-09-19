@@ -24,20 +24,27 @@ Build Host Setup
     installation. In order to build the VyOS packages and the ISO,
     install the following packages using "apt-get" or "aptitude".
 
-      git             # Required, for cloning the source
-      autoconf        # Required, for generating build scripts
-      dpkg-dev        # Required, used in build scripts
-      live-helper     # Required, for ISO build
-      syslinux        # Required, for ISO build
-      genisoimage     # Required, for ISO build
-      make            # Required, for ISO build
-      lsb-release     # Required, used by configure script
-      ssh             # Optional, for cloning over SSH
-      sudo            # Optional, ISO build requires root privileges
-      fakechroot      # Required, for ISO build
-      devscripts      # Optional, for building submodules (kernel etc)
-      kernel-package  # Optional, for building the kernel
-      libtool         # Optional, for building certain packages (eg vyatta-op-vpn)
+      git                      # Required, for cloning the source
+      autoconf                 # Required, for generating build scripts
+      dpkg-dev                 # Required, used in build scripts
+      live-helper              # Required, for ISO build
+      syslinux                 # Required, for ISO build
+      genisoimage              # Required, for ISO build
+      make                     # Required, for ISO build
+      lsb-release              # Required, used by configure script
+      ssh                      # Optional, for cloning over SSH
+      sudo                     # Optional, ISO build requires root privileges
+      fakechroot               # Required, for ISO build
+      devscripts               # Optional, for building submodules (kernel etc)
+      kernel-package           # Optional, for building the kernel
+      libtool                  # Optional, for building certain packages (eg vyatta-op-vpn)
+      libglib2.0-dev           # Optional, for building vyatta-cfg 
+      libboost-filesystem-dev  # Optional, for building vyatta-cfg
+      libapt-pkg-dev           # Optional, for building vyatta-cfg
+      flex                     # Optional, for building vyatta-cfg
+      bison                    # Optional, for building vyatta-cfg
+      libperl-dev              # Optional, for building vyatta-cfg
+      libnfnetlink-dev         # Optional, for building vyatta-cfg-vpn
 
     Now install the VyOS package repository GPG key.
 
