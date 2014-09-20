@@ -36,6 +36,10 @@ Build Host Setup
       sudo                     # Optional, ISO build requires root privileges
       fakechroot               # Required, for ISO build
       devscripts               # Optional, for building submodules (kernel etc)
+
+     If you want to build individual packages rather than an ISO from precompiled
+     packages, you may need some of the following:
+
       kernel-package           # Optional, for building the kernel
       libtool                  # Optional, for building certain packages (eg vyatta-op-vpn)
       libglib2.0-dev           # Optional, for building vyatta-cfg 
@@ -45,6 +49,10 @@ Build Host Setup
       bison                    # Optional, for building vyatta-cfg
       libperl-dev              # Optional, for building vyatta-cfg
       libnfnetlink-dev         # Optional, for building vyatta-cfg-vpn
+
+    The list of submodule build dependencies is not limited to these though,
+    follow the procedures from the Build Host Setup for Building Submodules
+    section.
 
     Now install the VyOS package repository GPG key.
 
@@ -152,9 +160,13 @@ Build Host Setup for Building Submodules
     You can lookup the current development branch at http://vyos.net
 
     Submodules may have build dependencies not present in the system by default.
-    You can quickly find out what build dependencies are by running the following
+    You can install build dependencies by running the following
     command inside a submodule:
-        dpkg-checkbuilddeps
+        ../../tools/install-submodule-build-deps
+
+    If you just want to see what the dependencies are, run "dpkg-checkbuilddeps"
+    inside the submodule. This is the command the install-submodule-build-deps
+    script is using.
 
     Some submodules require packages not available from Debian Squeeze
     repositories. Known cases at this point include:
