@@ -320,6 +320,12 @@ set_up_lh_config ()
     if [ ! -f vyatta.chroot ]; then
       echo "deb $dev_repo_root $branch main" > vyatta.chroot
     fi
+    ## switch between development or release keys depending on build type
+    if eval "$VYATTA_DEV_BUILD"; then
+      cp development.vyatta.chroot.gpg vyatta.chroot.gpg
+    else
+      cp release.vyatta.chroot.gpg vyatta.chroot.gpg
+    fi
     ## "base" and "extra" branches for overlay
     for branch in "$VBUILD_BASE_BRANCH" "${VBUILD_EXTRA_BRANCHES[@]}"; do
       if [ -z "$branch" ] || [ -f "vyatta-$branch.chroot" ]; then

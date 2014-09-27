@@ -103,20 +103,14 @@ Build ISO
     setting flavor to one of the available types (this also applies if
     you are building your own kernel package as well):
 
-      586-vyos (defaults to this if not set)
-      586-vyos-virt
-      amd64-vyos 
+    586-vyos (defaults to this if not set)
+    586-vyos-virt
+    amd64-vyos 
 
         flavor=586-vyos
-	export PATH=/sbin:/usr/sbin:$PATH
-	autoreconf -i
-	./configure --with-kernel-flavor=$flavor
-
-    Replace gpg key (*development branch only*)
-
-    rm -f livecd/config.vyatta/chroot_sources/vyatta.chroot.gpg
-    wget -qO livecd/config.vyatta/chroot_sources/vyatta.chroot.gpg \
-         http://dev.packages.vyos.net/vyos-root-gpg
+        export PATH=/sbin:/usr/sbin:$PATH
+        autoreconf -i
+        ./configure --with-kernel-flavor=$flavor
 
     Execute make
 
@@ -124,7 +118,7 @@ Build ISO
 
     The end results is the following livecd ISO image.
 
-	livecd/binary.iso
+        livecd/binary.iso
 
     Note that the above build process uses the pre-built binary packages
     from the VyOS package repository, which contains the
