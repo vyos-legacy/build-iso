@@ -151,7 +151,9 @@ Build Host Setup for Building Submodules
         git branch $branch --track origin/$branch
         git checkout $branch
 
-    You can lookup the current development branch at http://vyos.net
+    At this moment, the current development branch is "lithium" and the
+    stable branch is "helium".
+    You can lookup release to branch mapping at http://vyos.net
 
     Submodules may have build dependencies not present in the system by default.
     You can install build dependencies by running the following
