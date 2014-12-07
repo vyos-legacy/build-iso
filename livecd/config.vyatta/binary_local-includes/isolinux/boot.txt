@@ -3,7 +3,7 @@
 *                                                           *
 * Welcome to VyOS, an open source network operating system! *
 *                                                           *
-* Version: 1.1.0 (Helium)                                   *
+* Version: 1.1.1 (Helium)                                   *
 *                                                           *
 * Default login:    vyos                                    *
 * Default password: vyos                                    *
