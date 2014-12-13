@@ -231,3 +231,6 @@
 [submodule "pkgs/vyos-opennhrp"]
 	path = pkgs/vyos-opennhrp
 	url = https://github.com/vyos/vyos-opennhrp.git
+[submodule "pkgs/vyos-iptables"]
+	path = pkgs/vyos-iptables
+	url = https://github.com/vyos/vyos-iptables.git
