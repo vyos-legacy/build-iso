@@ -231,3 +231,6 @@
 [submodule "pkgs/vyos-iptables"]
 	path = pkgs/vyos-iptables
 	url = https://github.com/vyos/vyos-iptables.git
+[submodule "pkgs/vyos-open-vm-tools"]
+	path = pkgs/vyos-open-vm-tools
+	url = https://github.com/vyos/vyos-open-vm-tools.git
