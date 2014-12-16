@@ -234,3 +234,6 @@
 [submodule "pkgs/vyos-open-vm-tools"]
 	path = pkgs/vyos-open-vm-tools
 	url = https://github.com/vyos/vyos-open-vm-tools.git
+[submodule "pkgs/eventwatchd"]
+	path = pkgs/eventwatchd
+	url = https://github.com/vyos/eventwatchd.git
