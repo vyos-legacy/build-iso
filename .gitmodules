@@ -234,3 +234,6 @@
 [submodule "pkgs/eventwatchd"]
 	path = pkgs/eventwatchd
 	url = https://github.com/vyos/eventwatchd.git
+[submodule "pkgs/vyos-igmpproxy"]
+	path = pkgs/vyos-igmpproxy
+	url = https://github.com/vyos/vyos-igmpproxy.git
