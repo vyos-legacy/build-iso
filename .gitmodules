@@ -237,3 +237,6 @@
 [submodule "pkgs/vyos-igmpproxy"]
 	path = pkgs/vyos-igmpproxy
 	url = https://github.com/vyos/vyos-igmpproxy.git
+[submodule "pkgs/openssl"]
+	path = pkgs/openssl
+	url = https://github.com/vyos/openssl.git
