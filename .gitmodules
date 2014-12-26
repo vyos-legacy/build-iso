@@ -240,3 +240,6 @@
 [submodule "pkgs/openssl"]
 	path = pkgs/openssl
 	url = https://github.com/vyos/openssl.git
+[submodule "pkgs/libnl3"]
+	path = pkgs/libnl3
+	url = https://github.com/vyos/libnl3.git
