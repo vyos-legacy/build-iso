@@ -1,0 +1,31 @@
+Description: When buildng packages in the VyOS build system that make use of udebs, this patch
+is needed to enable dh_gencontrol to run correctly and produce a development version (999.dev)
+version of the package.  Run this patch either from / or with the appropriate -p level.
+
+Original Author: Goswin von Brederlow <brederlo@q-leap.de>
+Last-Update: 2012-06-13
+
+---
+diff -Nru /usr/share/perl5/Debian/Debhelper/Dh_Lib.pm /usr/share/perl5/Debian/Debhelper/Dh_Lib.pm
+--- /usr/share/perl5/Debian/Debhelper/Dh_Lib.pm	2010-06-24 02:35:34.000000000 +0200
++++ /usr/share/perl5/Debian/Debhelper/Dh_Lib.pm	2012-06-13 12:35:51.000000000 +0200
+@@ -437,11 +437,16 @@
+ 			$isnative_changelog="debian/changelog";
+ 		}
+ 		# Get the package version.
+-		my $version=`dpkg-parsechangelog -l$isnative_changelog`;
++		my $version=`grep 2>/dev/null "^Version:" "debian/$package/DEBIAN/control"`;
+ 		($dh{VERSION})=$version=~m/Version:\s*(.*)/m;
+-		# Did the changelog parse fail?
++		# Did the DEBIAN/control parse fail?
+ 		if (! defined $dh{VERSION}) {
+-			error("changelog parse failure");
++			$version=`dpkg-parsechangelog -l$isnative_changelog`;
++			($dh{VERSION})=$version=~m/Version:\s*(.*)/m;
++			# Did the changelog parse fail?
++			if (! defined $dh{VERSION}) {
++				error("changelog parse failure");
++			}
+ 		}
+ 
+ 		# Is this a native Debian package?
