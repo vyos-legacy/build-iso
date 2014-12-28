@@ -88,3 +88,5 @@ vyatta-eventwatch
 lsb-release
 vyos-opennhrp
 vyos-nhrp
+openssl
+libssl0.9.8
