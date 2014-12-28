@@ -181,6 +181,12 @@ Build Host Setup for Building Submodules
     The alternative to building those dependencies from source is to install them from
     the VyOS repository, http://packages.vyos.net/vyos/ (set distribution to the current
     development branch).
+    
+    Some submodules make use of udebs during their build process, however due to a
+    limitation in debhelper, these aren't built with the correct version, and so the
+    build fails.  This applies to building the openssl submodule at least, but could
+    apply to others.  To correct this issue, apply debhelper_udeb_gencontrol.patch
+    found in build-iso/tools.
 
    [There may be more cases of unusual dependencies. Also, there may be packages with
     redundant or missing build dependencies, as clean up of the code inherited from
