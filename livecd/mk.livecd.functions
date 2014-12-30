@@ -203,9 +203,9 @@ vyatta-xensource-partition-image ()
 	on_shutdown='destroy'
 	on_crash='destroy'
 	image_name='vyos-$NUMERIC_VERSION'
-	disk=['tap:aio:/var/xen/vyos-xensource-$NUMERIC_VERSION-$arch.img,xvda1,w']
+	disk=['tap:aio:/var/xen/vyos-xensource-$NUMERIC_VERSION-$arch.img,xvda,w']
 	vcpus=1
-	memory=512
+	memory=1024
 	EOF
 
   xen_kernel_version=$(ls xensource/pimage/boot/vmlinu[xz]-* | sed 's:xensource/pimage/boot/::g' | sort )
