@@ -145,7 +145,7 @@ vyatta-xensource-partition-image ()
   # preallocated image
   # dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1024k count=4000
   # sparse image
-  dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1k seek=4096k count=1
+  dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1k seek=4000k count=1
 
   # allocate loop device for file
   loop=$(losetup -f)
