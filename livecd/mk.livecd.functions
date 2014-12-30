@@ -210,19 +210,21 @@ vyatta-xensource-partition-image ()
 
   xen_kernel_version=$(ls xensource/pimage/boot/vmlinu[xz]-* | sed 's:xensource/pimage/boot/::g' | sort )
 
+  mkdir -p xensource/pimage/boot/grub
+  
   (
       # stage the grub menu.lst for pygrub.
       echo -e "timeout\t5"
       echo
       for version in $xen_kernel_version; do
           echo -e "title\t$version"
-          echo -e "root\t(hd0,0)"
-          echo -e "kernel\t/boot/$version root=/dev/xvda1 ro console=hvc0"
+          echo -e "root\t(hd0)"
+          echo -e "kernel\t/boot/$version root=/dev/xvda ro console=hvc0"
           iversion=$(echo $version | sed 's/vmlinu[xz]-//g')
           echo -e "initrd\t/boot/initrd.img-$iversion"
           echo
       done
-  ) >"xensource/pimage/boot/grub/menu.lst"
+  ) > "xensource/pimage/boot/grub/menu.lst"
 
   # clean up the inittab
   # remove T0 so it doesn't respawn needlessly
@@ -238,7 +240,7 @@ vyatta-xensource-partition-image ()
   echo 127.0.0.1 localhost vyatta > xensource/pimage/etc/hosts
   # set /etc/fstab
   rm -f xensource/pimage/etc/fstab
-  echo -e "/dev/xvda1\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
+  echo -e "/dev/xvda\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
 
   clean_up_xensource
 
