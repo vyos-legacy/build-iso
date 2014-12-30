@@ -167,9 +167,9 @@ vyatta-xensource-partition-image ()
   # we need an "unwrapped" verison of the kernel image for pygrub 
   echo I: fixing partition image kernel
   oimg=$(find xensource/pimage/boot/ -maxdepth 1 \
-          -name 'vmlinuz-*-vyatta-virt' | head -1)
+          -name 'vmlinuz-*-amd64-vyos' | head -1)
   if [ -z "$oimg" ]; then
-    echo E: Cannot find vyatta-virt kernel in chroot
+    echo E: Cannot find vyos kernel in chroot
     clean_up_xensource
     return 1
   fi
