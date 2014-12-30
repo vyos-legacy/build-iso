@@ -375,6 +375,8 @@ EOF
 
   if ! eval "$create_xendomzero"; then
     rm -f config/chroot_local-hooks/*xen*
+  else
+    rm -f config/chroot_local-hooks/05-event_tty
   fi
 
   # set up "vyatta-kernel" packages list according to flavor
