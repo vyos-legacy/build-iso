@@ -377,6 +377,7 @@ EOF
     rm -f config/chroot_local-hooks/*xen*
   else
     rm -f config/chroot_local-hooks/05-event_tty
+    rm -f config/chroot_local-packageslists/vyos-non-xen.list
   fi
 
   # set up "vyatta-kernel" packages list according to flavor

@@ -4,8 +4,6 @@ man-db
 nano
 less
 rsync
-acpid
-acpi-support-base
 ssmtp
 atmel-firmware
 iperf
