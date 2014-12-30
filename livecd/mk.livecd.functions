@@ -234,10 +234,10 @@ vyatta-xensource-partition-image ()
 
   # set /etc/hostname
   rm -f xensource/pimage/etc/hostname
-  echo vyatta > xensource/pimage/etc/hostname
+  echo vyos > xensource/pimage/etc/hostname
   # set /etc/hosts
   rm -f xensource/pimage/etc/hosts
-  echo 127.0.0.1 localhost vyatta > xensource/pimage/etc/hosts
+  echo 127.0.0.1 localhost vyos > xensource/pimage/etc/hosts
   # set /etc/fstab
   rm -f xensource/pimage/etc/fstab
   echo -e "/dev/xvda\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
