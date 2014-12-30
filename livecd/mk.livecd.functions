@@ -373,7 +373,7 @@ EOF
     done
   )
 
-  if ! eval "$create_xendomzero"; then
+  if ! eval "$create_xensourcevm"; then
     rm -f config/chroot_local-hooks/*xen*
   else
     rm -f config/chroot_local-hooks/05-event_tty
