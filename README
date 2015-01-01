@@ -128,7 +128,82 @@ Build ISO
     need to get the source of the submodule(s) that you want to change,
     make the changes, build the submodules, and then build a new ISO to
     include the new packages. This is discussed in the next section.
+    
+    
+Build Xen Image (pygrub / pv-grub)
 
+    In the same manner as the above process on building an ISO, to build
+    a VyOS Xen image, do the following in the "build-iso" directory 
+    (which has been set up as described in the previous section).
+
+    Select the kernel type to include in the finished Xen image by
+    setting flavor to one of the available types (this also applies if
+    you are building your own kernel package as well).  At the moment
+    only the amd64 (64-bit) version is supported:
+
+    586-vyos-virt (unavailable at the moment)
+    amd64-vyos 
+
+        flavor=amd64-vyos
+        export PATH=/sbin:/usr/sbin:$PATH
+        autoreconf -i
+        ./configure --with-kernel-flavor=$flavor --with-xensourcevm
+
+    Execute make
+
+        sudo make iso
+
+    The end results is the following XenSource image.
+
+        livecd/xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img,gz
+        
+        for example
+        
+        livecd/xensource/vyos-xensource-999-amd64.img.gz
+        
+    The image produced by the build process is currently set to 4GB in
+    size, so will fit into a 4096MB disk image, but the final image is 
+    compressed to be significantly smaller than this, to aid both
+    storage and transfer times.
+    
+    The image produced relies on your system meeting the following
+    requirements, set during image creation.  Your Xen VPS is,
+    
+    1) set to boot using a pv-grub 64-bit (AMD64) kernel.
+    2) uses xvda as the disk containing the transferred image (below)
+    3) has Xenify distro (or similar options disabled)
+
+    To transfer the image to a Xen instance, you can use something along
+    the lines of the procedure below, obviously depending on the current
+    setup you are transferring to.
+    
+    1) Start the remote Xen VPS in rescue mode, so you can get access to
+    the raw disk.
+    
+    2) Set a password on the remote system and start SSH.
+    
+    3) From the system holding the Xen image produced above, run the
+    following command.  WARNING, this overwrites EVERYTHING on the 
+    destination disk.
+    
+    dd if=livecd/xensource/vyos-xensource-999-amd64.img.gz | \
+      ssh username@remotevpshost "gzip -d | dd of=/dev/xvda"
+
+    This copies your local compressed image to the remote host via dd, 
+    uncompresses it, and then uses dd to copy the image to the destination
+    disk.
+    
+    4) Reboot your system into VyOS.
+    
+    Note that the above build process uses the pre-built binary packages
+    from the VyOS package repository, which contains the latest 
+    development packages built by the maintainers.
+
+    If you want to make modifications to one or more packages, you will
+    need to get the source of the submodule(s) that you want to change,
+    make the changes, build the submodules, and then build a new XenSource
+    image to include the new packages. This is discussed in the next section.
+    
 
 Build Host Setup for Building Submodules
 
