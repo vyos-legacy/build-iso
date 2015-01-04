@@ -9,7 +9,7 @@ system {
     }
     package {
         repository community {
-	    distribution "helium"
+	    distribution "lithium"
             components "main"
             url "http://packages.vyos.net/vyos"
         }
