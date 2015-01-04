@@ -243,3 +243,6 @@
 [submodule "pkgs/libnl3"]
 	path = pkgs/libnl3
 	url = https://github.com/vyos/libnl3.git
+[submodule "pkgs/ddclient"]
+	path = pkgs/ddclient
+	url = https://github.com/vyos/ddclient.git
