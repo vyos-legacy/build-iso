@@ -157,16 +157,16 @@ else
   create_xensourcevm=false
 fi
 
-# Expansion to allow definition of VYATTA_BUILD_BRANCH
+# Expansion to allow definition of VYOS_BUILD_BRANCH
 # on configure invocation
-AC_ARG_WITH(vyatta_build_branch,
-  [AS_HELP_STRING([--with-vyatta-build-branch=<branch>],
-  [Target branch (e.g., "larkspur"), default to the supermodule branch])],
+AC_ARG_WITH(vyos_build_branch,
+  [AS_HELP_STRING([--with-vyos-build-branch=<branch>],
+  [Target branch (e.g., "lithium"), default to the supermodule branch])],
   [])
 
-if test "X$with_vyatta_build_branch" != X ; then
-  echo BRANCH is $with_vyatta_build_branch
-  VYATTA_BUILD_BRANCH="$with_vyatta_build_branch"
+if test "X$with_vyos_build_branch" != X ; then
+  echo BRANCH is $with_vyos_build_branch
+  VYOS_BUILD_BRANCH="$with_vyos_build_branch"
 fi
 
 # Debian bootstrap package mirror
@@ -244,8 +244,8 @@ fi
 
 LB_LINUX_PACKAGES=none
 
-if test "X$VYATTA_BUILD_BRANCH" == X; then
-  VYATTA_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
+if test "X$VYOS_BUILD_BRANCH" == X; then
+  VYOS_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
 fi
 
 LB_SECURITY="false"
@@ -296,7 +296,7 @@ AC_SUBST(VYOS_PACKAGE_MIRROR)
 
 AC_SUBST(VYOS_DEV_BUILD)
 AC_SUBST(VYOS_RELEASE_BUILD)
-AC_SUBST(VYATTA_BUILD_BRANCH)
+AC_SUBST(VYOS_BUILD_BRANCH)
 AC_SUBST(BUILD_TIME)
 
 AC_OUTPUT

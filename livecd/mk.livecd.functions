@@ -272,11 +272,11 @@ create_default_grub_config ()
 
 set_up_lh_config ()
 {
-  if [ -z "$VYATTA_BUILD_BRANCH" ]; then
+  if [ -z "$VYOS_BUILD_BRANCH" ]; then
     echo E: Build branch is not set
     exit 1
   fi
-  local branch=$VYATTA_BUILD_BRANCH
+  local branch=$VYOS_BUILD_BRANCH
 
   # get the branch/repo related parameters if any
   if [ -f config.vyatta/vbuild.conf ]; then
@@ -339,7 +339,7 @@ set_up_lh_config ()
 
     # set up apt preferences
     cd ../chroot_apt
-    for val in "$VYATTA_BUILD_BRANCH" "$VBUILD_BASE_BRANCH" \
+    for val in "$VYOS_BUILD_BRANCH" "$VBUILD_BASE_BRANCH" \
                   "${VBUILD_EXTRA_PKGS[@]}"; do
       if [ -z "$val" ]; then
         continue
@@ -347,7 +347,7 @@ set_up_lh_config ()
       local label=EXTRA
       local prio=999
       local pkg='*'
-      if [ "$val" == "$VYATTA_BUILD_BRANCH" ]; then
+      if [ "$val" == "$VYOS_BUILD_BRANCH" ]; then
         # "this" branch
         label=OVERLAY
         prio=1000
