@@ -24,7 +24,7 @@ echo I: configuring build
 set_up_lh_config
 
 # set up version template
-if eval "$VYATTA_COMMUNITY_BUILD"; then
+if eval "$VYOS_RELEASE_BUILD"; then
   # community build
   cp -f templates/community/version .
 fi

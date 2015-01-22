@@ -101,12 +101,12 @@ AC_ARG_WITH(devbuild,
 	[with_devbuild=yes])
 
 if test "X$with_devbuild" = Xyes ; then
-  VYATTA_DEV_BUILD=true
+  VYOS_DEV_BUILD=true
 
   # For the case previous build was a release build
   rm -f livecd/version
 else
-  VYATTA_DEV_BUILD=false
+  VYOS_DEV_BUILD=false
 fi
 
 AC_ARG_WITH(release-build,
@@ -115,16 +115,16 @@ AC_ARG_WITH(release-build,
 	[with_community_build=yes],
 	[])
 if test "X$with_community_build" = Xyes ; then
-  VYATTA_COMMUNITY_BUILD=true
-  VYATTA_DEV_BUILD=false
+  VYOS_RELEASE_BUILD=true
+  VYOS_DEV_BUILD=false
 else
-  VYATTA_COMMUNITY_BUILD=false
+  VYOS_RELEASE_BUILD=false
 fi
 
-if eval "$VYATTA_DEV_BUILD"; then
-  touch pkgs/.VYATTA_DEV_BUILD
+if eval "$VYOS_DEV_BUILD"; then
+  touch pkgs/.VYOS_DEV_BUILD
 else
-  rm -f pkgs/.VYATTA_DEV_BUILD
+  rm -f pkgs/.VYOS_DEV_BUILD
 fi
 
 # build arch
@@ -294,8 +294,8 @@ AC_SUBST(VYOS_DEBIAN_BOOTSTRAP_MIRROR)
 AC_SUBST(VYOS_DEBIAN_MIRROR)
 AC_SUBST(VYOS_PACKAGE_MIRROR)
 
-AC_SUBST(VYATTA_DEV_BUILD)
-AC_SUBST(VYATTA_COMMUNITY_BUILD)
+AC_SUBST(VYOS_DEV_BUILD)
+AC_SUBST(VYOS_RELEASE_BUILD)
 AC_SUBST(VYATTA_BUILD_BRANCH)
 AC_SUBST(BUILD_TIME)
 

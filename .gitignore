@@ -39,7 +39,7 @@
 /pkgs/*.udeb
 /pkgs/Packages
 /pkgs/Packages.gz
-/pkgs/.VYATTA_DEV_BUILD
+/pkgs/.VYOS_DEV_BUILD
 
 /autobuild-vm
 
