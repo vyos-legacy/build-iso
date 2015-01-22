@@ -30,7 +30,7 @@ if eval "$VYOS_RELEASE_BUILD"; then
 fi
 
 # set up dev build version string
-export VYATTA_DEV_VERSION=$(get_dev_version)
+export VYOS_DEV_VERSION=$(get_dev_version)
 
 # copy the locally-built packages for installation
 # (but only those on one of the lists)
@@ -79,9 +79,17 @@ rm -f chroot/etc/ssh/ssh_host*
 ## Disable root account
 chroot chroot usermod -p ! root
 
+# Determine target version
+get_actual_version
+
 # make version package (twice to get itself into the pkg list)
 echo I: making version package
 mk_version_package ; mk_version_package
+
+# Update the boot splash
+cat templates/community/boot.txt.template \
+    | sed -e "s/__VERSION__/$FULL_VERSION/" > \
+  config/binary_local-includes/isolinux/boot.txt
 
 # add config version string to default config file
 chroot chroot sh -c \

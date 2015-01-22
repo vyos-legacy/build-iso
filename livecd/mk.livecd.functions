@@ -37,6 +37,24 @@ get_dev_version () {
   echo -n "999.$branch.$cur_time" | tr -d '_+-'
 }
 
+get_actual_version () {
+    echo "I: Determining build type and release version"
+
+    NUMERIC_VERSION=$(get_version)
+    FULL_VERSION=$(get_full_version "$NUMERIC_VERSION")
+
+    if [ -z "$NUMERIC_VERSION" ]; then
+      NUMERIC_VERSION=$VYOS_DEV_VERSION
+      FULL_VERSION=$VYOS_DEV_VERSION
+      echo "I: Build type: DEVELOPMENT, version $FULL_VERSION"
+    else
+      echo "I: Build type: RELEASE, version $FULL_VERSION"
+    fi
+
+    export NUMERIC_VERSION=$NUMERIC_VERSION
+    export FULL_VERSION=$FULL_VERSION
+}
+
 mk_version_package ()
 {
     local savedir="$PWD"
@@ -45,17 +63,6 @@ mk_version_package ()
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
     local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
-
-    NUMERIC_VERSION=$(get_version)
-    FULL_VERSION=$(get_full_version "$NUMERIC_VERSION")
-
-    if [ -z "$NUMERIC_VERSION" ]; then
-      NUMERIC_VERSION=$VYATTA_DEV_VERSION
-      FULL_VERSION=$VYATTA_DEV_VERSION
-      echo "I: Build type: DEVELOPMENT, version $FULL_VERSION"
-    else
-      echo "I: Build type: RELEASE, version $FULL_VERSION"
-    fi
 
     mkdir -p $vf/config
 
