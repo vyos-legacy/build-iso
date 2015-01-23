@@ -84,16 +84,6 @@ else
   LB_DISTRIBUTION="$with_target_dist"
 fi
 
-AC_ARG_WITH(aufs,
-[AS_HELP_STRING([--with-aufs],
-  [use aufs instead of unionfs])])
-
-if test "X$with_aufs" = Xyes ; then
-	LB_UNION_FILESYSTEM=aufs
-else
-	LB_UNION_FILESYSTEM=unionfs
-fi
-
 AC_ARG_WITH(devbuild,
 	[AS_HELP_STRING([--without-devbuild],
 	  [disable development build])],
