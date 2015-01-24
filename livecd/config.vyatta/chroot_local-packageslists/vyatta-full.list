@@ -92,3 +92,4 @@ openssl
 libssl0.9.8
 ddclient
 libnl-3-200
+libnl-genl-3-200
