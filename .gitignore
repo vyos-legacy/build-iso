@@ -40,6 +40,7 @@
 /pkgs/Packages
 /pkgs/Packages.gz
 /pkgs/.VYOS_DEV_BUILD
+/pkgs/.VYATTA_DEV_BUILD
 
 /autobuild-vm
 

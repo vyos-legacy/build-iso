@@ -168,7 +168,6 @@ vyatta-xensource-partition-image ()
   cp -aR chroot/* xensource/pimage/
 
   # stage the chroot
-  # need to edit the inittab get rid of t0 and add h0
   # setup config.boot if neccessary
   
   # we need an "unwrapped" verison of the kernel image for pygrub 
@@ -233,12 +232,9 @@ vyatta-xensource-partition-image ()
       done
   ) > "xensource/pimage/boot/grub/menu.lst"
 
-  # clean up the inittab
-  # remove T0 so it doesn't respawn needlessly
-  sed -i -e 's/T0/#T0/' xensource/pimage/etc/inittab
-  # add the xen pv console
-  echo -e "# xen console \nh0:12345:respawn:/sbin/getty 38400 hvc0" >> xensource/pimage/etc/inittab
-
+  # update config.boot.default for Xen console access
+  sed -i -e 's/device ttyS0/device hvc0/' xensource/pimage/opt/vyatta/etc/config.boot.default
+  sed -i -e 's/speed 9600/speed 38400/' xensource/pimage/opt/vyatta/etc/config.boot.default
   # set /etc/hostname
   rm -f xensource/pimage/etc/hostname
   echo vyos > xensource/pimage/etc/hostname
