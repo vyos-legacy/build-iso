@@ -138,15 +138,15 @@ if test X$with_kernel_flavor != X ; then
   LB_LINUX_FLAVOURS=$with_kernel_flavor
 fi
 
-AC_ARG_WITH(xensourcevm,
-[AS_HELP_STRING([--with-xensourcevm], [Create pv VM for XenSource])])
+AC_ARG_WITH(xen_pv_image,
+[AS_HELP_STRING([--with-xen-pv-image], [Create a Xen PV partition image])])
 
-if test X$with_xensourcevm = Xyes ; then
+if test X$with_xen_pv_image = Xyes ; then
   # use virt flavor for xensourcevm build
   LB_LINUX_FLAVOURS=$VIRT_FLAVOUR
-  create_xensourcevm=true
+  create_xen_pv_image=true
 else
-  create_xensourcevm=false
+  create_xen_pv_image=false
 fi
 
 # Expansion to allow definition of VYOS_BUILD_BRANCH
@@ -280,7 +280,7 @@ AC_SUBST(LB_SYSLINUX_MENU)
 AC_SUBST(LB_SYSLINUX_TIMEOUT)
 AC_SUBST(LB_UNION_FILESYSTEM)
 
-AC_SUBST(create_xensourcevm)
+AC_SUBST(create_xen_pv_image)
 
 AC_SUBST(VYOS_DEBIAN_BOOTSTRAP_MIRROR)
 AC_SUBST(VYOS_DEBIAN_MIRROR)

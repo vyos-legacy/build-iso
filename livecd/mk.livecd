@@ -111,7 +111,7 @@ echo 'I: creating default grub config'
 create_default_grub_config
 
 # build the XenSource partition image
-if eval "$create_xensourcevm"; then
+if eval "$create_xen_pv_image"; then
   vyatta-xensource-partition-image || exit 1
   exit 0
 fi

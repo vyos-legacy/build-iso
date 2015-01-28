@@ -129,19 +129,23 @@ EOF
 
 clean_up_xensource ()
 {
+  XEN_IMAGE_DIR=xen-pv-image
   # clean up the mounts
   echo I: unmounting the image file
-  umount xensource/pimage
+  umount $XEN_IMAGE_DIR/pimage
   echo I: releasing loop device $loop
   losetup -d $loop
 }
 
-# Create the Vyatta domU partition image
+# Create the VyOS domU partition image
 vyatta-xensource-partition-image ()
 {
-  echo I: creating XenSource partition image
-  rm -rf xensource
-  mkdir -p xensource/pimage
+  echo I: creating Xen PV partition image
+
+  XEN_IMAGE_DIR=xen-pv-image
+
+  rm -rf $XEN_IMAGE_DIR
+  mkdir -p $XEN_IMAGE_DIR/pimage
 
   arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
   NUMERIC_VERSION=$(get_version)
@@ -150,32 +154,32 @@ vyatta-xensource-partition-image ()
   fi
 
   # preallocated image
-  # dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1024k count=4000
+  # dd if=/dev/zero of=$XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img bs=1024k count=4000
   # sparse image
-  dd if=/dev/zero of=xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img bs=1k seek=4000k count=1
+  dd if=/dev/zero of=$XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img bs=1k seek=4000k count=1
 
   # allocate loop device for file
   loop=$(losetup -f)
-  losetup $loop xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img || echo E: unable to allocate loop device
+  losetup $loop $XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img || echo E: unable to allocate loop device
 
   # create filesystem
   mke2fs -j $loop
 
   # mount loop device and copy root image
   echo I: mounting image file
-  mount $loop xensource/pimage
+  mount $loop $XEN_IMAGE_DIR/pimage
   echo I: copying root to image partition
-  cp -aR chroot/* xensource/pimage/
+  cp -aR chroot/* $XEN_IMAGE_DIR/pimage/
 
   # stage the chroot
   # setup config.boot if neccessary
   
   # we need an "unwrapped" verison of the kernel image for pygrub 
   echo I: fixing partition image kernel
-  oimg=$(find xensource/pimage/boot/ -maxdepth 1 \
-          -name 'vmlinuz-*-amd64-vyos' | head -1)
+  oimg=$(find $XEN_IMAGE_DIR/pimage/boot/ -maxdepth 1 \
+          -name 'vmlinuz-*-vyos*' | head -1)
   if [ -z "$oimg" ]; then
-    echo E: Cannot find vyos kernel in chroot
+    echo E: Cannot find VyOS kernel in chroot
     clean_up_xensource
     return 1
   fi
@@ -202,21 +206,21 @@ vyatta-xensource-partition-image ()
   rm -f $nimg.gz $nimg.0
 
   # create the default domU configuration file
-  cat <<-EOF > xensource/vyos-xensource-$NUMERIC_VERSION.cfg
+  cat <<-EOF > $XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION.cfg
 	name='vyos-$NUMERIC_VERSION'
 	bootloader='/usr/bin/pygrub'
 	on_reboot='restart'
 	on_shutdown='destroy'
 	on_crash='destroy'
 	image_name='vyos-$NUMERIC_VERSION'
-	disk=['tap:aio:/var/xen/vyos-xensource-$NUMERIC_VERSION-$arch.img,xvda,w']
+	disk=['tap:aio:/var/xen/vyos-xen-pv-$NUMERIC_VERSION-$arch.img,xvda,w']
 	vcpus=1
 	memory=1024
 	EOF
 
-  xen_kernel_version=$(ls xensource/pimage/boot/vmlinu[xz]-* | sed 's:xensource/pimage/boot/::g' | sort )
+  xen_kernel_version=$(ls $XEN_IMAGE_DIR/pimage/boot/vmlinu[xz]-* | sed "s:$XEN_IMAGE_DIR/pimage/boot/::g" | sort )
 
-  mkdir -p xensource/pimage/boot/grub
+  mkdir -p $XEN_IMAGE_DIR/pimage/boot/grub
   
   (
       # stage the grub menu.lst for pygrub.
@@ -230,25 +234,25 @@ vyatta-xensource-partition-image ()
           echo -e "initrd\t/boot/initrd.img-$iversion"
           echo
       done
-  ) > "xensource/pimage/boot/grub/menu.lst"
+  ) > "$XEN_IMAGE_DIR/pimage/boot/grub/menu.lst"
 
   # update config.boot.default for Xen console access
-  sed -i -e 's/device ttyS0/device hvc0/' xensource/pimage/opt/vyatta/etc/config.boot.default
-  sed -i -e 's/speed 9600/speed 38400/' xensource/pimage/opt/vyatta/etc/config.boot.default
+  sed -i -e 's/device ttyS0/device hvc0/' $XEN_IMAGE_DIR/pimage/opt/vyatta/etc/config.boot.default
+  sed -i -e 's/speed 9600/speed 38400/' $XEN_IMAGE_DIR/pimage/opt/vyatta/etc/config.boot.default
   # set /etc/hostname
-  rm -f xensource/pimage/etc/hostname
-  echo vyos > xensource/pimage/etc/hostname
+  rm -f $XEN_IMAGE_DIR/pimage/etc/hostname
+  echo vyos > $XEN_IMAGE_DIR/pimage/etc/hostname
   # set /etc/hosts
-  rm -f xensource/pimage/etc/hosts
-  echo 127.0.0.1 localhost vyos > xensource/pimage/etc/hosts
+  rm -f $XEN_IMAGE_DIR/pimage/etc/hosts
+  echo 127.0.0.1 localhost vyos > $XEN_IMAGE_DIR/pimage/etc/hosts
   # set /etc/fstab
-  rm -f xensource/pimage/etc/fstab
-  echo -e "/dev/xvda\t/\text3\tdefaults\t0 1" > xensource/pimage/etc/fstab
+  rm -f $XEN_IMAGE_DIR/pimage/etc/fstab
+  echo -e "/dev/xvda\t/\text3\tdefaults\t0 1" > $XEN_IMAGE_DIR/pimage/etc/fstab
 
   clean_up_xensource
 
-  echo I: compressing XenSource partition image file
-  gzip xensource/vyos-xensource-$NUMERIC_VERSION-$arch.img
+  echo I: compressing Xen PV partition image file
+  gzip $XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img
 }
 
 get_chroot_kernel_version ()
