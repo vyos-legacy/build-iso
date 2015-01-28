@@ -213,7 +213,7 @@ vyatta-xensource-partition-image ()
 	on_shutdown='destroy'
 	on_crash='destroy'
 	image_name='vyos-$NUMERIC_VERSION'
-	disk=['tap:aio:/var/xen/vyos-xen-pv-$NUMERIC_VERSION-$arch.img,xvda,w']
+	disk=['file:/var/xen/vyos-xen-pv-$NUMERIC_VERSION-$arch.img,xvda,w']
 	vcpus=1
 	memory=1024
 	EOF
