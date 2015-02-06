@@ -28,7 +28,7 @@ system {
         }
     }
     config-management {
-        commit-revisions 20
+        commit-revisions 100
     }
 }
 
