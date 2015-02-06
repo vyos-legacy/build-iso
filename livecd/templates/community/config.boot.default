@@ -7,13 +7,6 @@ system {
             level admin
         }
     }
-    package {
-        repository community {
-	    distribution "lithium"
-            components "main"
-            url "http://packages.vyos.net/vyos"
-        }
-    }
     syslog {
         global {
             facility all {
