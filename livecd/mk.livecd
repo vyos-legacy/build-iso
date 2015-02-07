@@ -26,7 +26,7 @@ set_up_lh_config
 # set up version template
 if eval "$VYOS_RELEASE_BUILD"; then
   # community build
-  cp -f templates/community/version .
+  cp -f templates/version .
 fi
 
 # set up dev build version string
@@ -87,7 +87,7 @@ echo I: making version package
 mk_version_package ; mk_version_package
 
 # Update the boot splash
-cat templates/community/boot.txt.template \
+cat templates/boot.txt.template \
     | sed -e "s/__VERSION__/$FULL_VERSION/" > \
   config/binary_local-includes/isolinux/boot.txt
 
