@@ -127,7 +127,7 @@ EOF
     rm -rf /tmp/$$-deb
 }
 
-clean_up_xensource ()
+clean_up_xen_pv_image ()
 {
   XEN_IMAGE_DIR=xen-pv-image
   # clean up the mounts
@@ -137,10 +137,10 @@ clean_up_xensource ()
   losetup -d $loop
 }
 
-# Create the VyOS domU partition image
-vyatta-xensource-partition-image ()
+# Create the VyOS domU image
+vyos-xen-pv-image ()
 {
-  echo I: creating Xen PV partition image
+  echo I: creating Xen PV image
 
   XEN_IMAGE_DIR=xen-pv-image
 
@@ -153,10 +153,8 @@ vyatta-xensource-partition-image ()
     NUMERIC_VERSION=999
   fi
 
-  # preallocated image
-  # dd if=/dev/zero of=$XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img bs=1024k count=4000
   # sparse image
-  dd if=/dev/zero of=$XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img bs=1k seek=4000k count=1
+  dd if=/dev/zero of=$XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img bs=1 count=0 seek=$PV_IMAGE_SIZE
 
   # allocate loop device for file
   loop=$(losetup -f)
@@ -166,40 +164,40 @@ vyatta-xensource-partition-image ()
   mke2fs -j $loop
 
   # mount loop device and copy root image
-  echo I: mounting image file
+  echo I: mounting PV image file
   mount $loop $XEN_IMAGE_DIR/pimage
-  echo I: copying root to image partition
+  echo I: copying root to PV image
   cp -aR chroot/* $XEN_IMAGE_DIR/pimage/
 
   # stage the chroot
   # setup config.boot if neccessary
   
   # we need an "unwrapped" verison of the kernel image for pygrub 
-  echo I: fixing partition image kernel
+  echo I: fixing PV image kernel
   oimg=$(find $XEN_IMAGE_DIR/pimage/boot/ -maxdepth 1 \
           -name 'vmlinuz-*-vyos*' | head -1)
   if [ -z "$oimg" ]; then
     echo E: Cannot find VyOS kernel in chroot
-    clean_up_xensource
+    clean_up_xen_pv_image
     return 1
   fi
   nimg=${oimg/vmlinuz/vmlinux}
   gzoff=$(../tools/find-string-index.pl '\x1f\x8b\x08\x00' $oimg)
   if [ -z "$gzoff" ]; then
     echo E: Cannot unwrap $oimg
-    clean_up_xensource
+    clean_up_xen_pv_image
     return 1
   fi
   dd if=$oimg of=$nimg.gz bs=1 skip=$gzoff
   if ! file $nimg.gz | grep -q 'gzip compressed data'; then
     echo E: Cannot unwrap $oimg
-    clean_up_xensource
+    clean_up_xen_pv_image
     return 1
   fi
   zcat $nimg.gz > $nimg.0
   if ! file $nimg.0 | grep -q 'ELF ..-bit LSB.*, stripped'; then
     echo E: Cannot unwrap $oimg
-    clean_up_xensource
+    clean_up_xen_pv_image
     return 1
   fi
   gzip -c $nimg.0 > $nimg
@@ -213,13 +211,19 @@ vyatta-xensource-partition-image ()
 	on_shutdown='destroy'
 	on_crash='destroy'
 	image_name='vyos-$NUMERIC_VERSION'
-	disk=['file:/var/xen/vyos-xen-pv-$NUMERIC_VERSION-$arch.img,xvda,w']
+	disk=['file:/var/xen/vyos-xen-pv-$NUMERIC_VERSION-$arch.img,$PV_BOOT_DEVICE,w']
 	vcpus=1
 	memory=1024
 	EOF
 
   xen_kernel_version=$(ls $XEN_IMAGE_DIR/pimage/boot/vmlinu[xz]-* | sed "s:$XEN_IMAGE_DIR/pimage/boot/::g" | sort )
 
+  if [[$PV_BOOT_DEVICE == *[:digit:]]]; then
+    GRUB_ROOT="(hd0,0)"
+  else
+    GRUB_ROOT="(hd0)"
+  fi
+  
   mkdir -p $XEN_IMAGE_DIR/pimage/boot/grub
   
   (
@@ -228,8 +232,8 @@ vyatta-xensource-partition-image ()
       echo
       for version in $xen_kernel_version; do
           echo -e "title\t$version"
-          echo -e "root\t(hd0)"
-          echo -e "kernel\t/boot/$version root=/dev/xvda ro console=hvc0"
+          echo -e "root\t$GRUB_ROOT"
+          echo -e "kernel\t/boot/$version root=/dev/$PV_BOOT_DEVICE ro console=hvc0"
           iversion=$(echo $version | sed 's/vmlinu[xz]-//g')
           echo -e "initrd\t/boot/initrd.img-$iversion"
           echo
@@ -247,11 +251,11 @@ vyatta-xensource-partition-image ()
   echo 127.0.0.1 localhost vyos > $XEN_IMAGE_DIR/pimage/etc/hosts
   # set /etc/fstab
   rm -f $XEN_IMAGE_DIR/pimage/etc/fstab
-  echo -e "/dev/xvda\t/\text3\tdefaults\t0 1" > $XEN_IMAGE_DIR/pimage/etc/fstab
+  echo -e "/dev/$PV_BOOT_DEVICE\t/\text3\tdefaults\t0 1" > $XEN_IMAGE_DIR/pimage/etc/fstab
 
-  clean_up_xensource
+  clean_up_xen_pv_image
 
-  echo I: compressing Xen PV partition image file
+  echo I: compressing Xen PV image file
   gzip $XEN_IMAGE_DIR/vyos-xen-pv-$NUMERIC_VERSION-$arch.img
 }
 
@@ -380,7 +384,7 @@ EOF
     done
   )
 
-  if ! eval "$create_xensourcevm"; then
+  if ! eval "$create_xen_pv_image"; then
     rm -f config/chroot_local-hooks/*xen*
   else
     rm -f config/chroot_local-hooks/05-event_tty
