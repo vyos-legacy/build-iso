@@ -152,19 +152,19 @@ fi
 # user specified PV boot device and image size
 
 AC_ARG_WITH(xen_pv_boot_device,
-[AS_HELP_STRING([--xen-pv-boot-device], [Set the Xen PV image boot device (default xvda)])])
+[AS_HELP_STRING([--with-xen-pv-boot-device], [Set the Xen PV image boot device (default xvda)])])
 
-if test X$xen_pv_boot_device != X ; then
-  PV_BOOT_DEVICE=$xen_pv_boot_device
+if test X$with_xen_pv_boot_device != X ; then
+  PV_BOOT_DEVICE=$with_xen_pv_boot_device
 else
   PV_BOOT_DEVICE="xvda"
 fi
 
 AC_ARG_WITH(xen_pv_image_size,
-[AS_HELP_STRING([--xen-pv-image-size], [Set the size of the Xen PV image (default 4G)])])
+[AS_HELP_STRING([--with-xen-pv-image-size], [Set the size of the Xen PV image (default 4G)])])
 
-if test X$xen_pv_image_size != X ; then
-  PV_IMAGE_SIZE=$xen_pv_image_size
+if test X$with_xen_pv_image_size != X ; then
+  PV_IMAGE_SIZE=$with_xen_pv_image_size
 else
   PV_IMAGE_SIZE="4G"
 fi
