@@ -217,7 +217,7 @@ vyos-xen-pv-image ()
 
   xen_kernel_version=$(ls $XEN_IMAGE_DIR/pimage/boot/vmlinu[xz]-* | sed "s:$XEN_IMAGE_DIR/pimage/boot/::g" | sort )
 
-  if [[$PV_BOOT_DEVICE == *[:digit:]]]; then
+  if [[ $PV_BOOT_DEVICE = *[[:digit:]] ]]; then
     GRUB_ROOT="(hd0,0)"
   else
     GRUB_ROOT="(hd0)"
