@@ -59,7 +59,6 @@ mk_version_package ()
 {
     local savedir="$PWD"
     local etcdir="$savedir"/chroot/opt/vyatta/etc
-    local config_src=community
     local tmpdir=/tmp/$$-version
     local vf=$tmpdir/opt/vyatta/etc
     local arch=$(dpkg-architecture -qDEB_BUILD_ARCH)
