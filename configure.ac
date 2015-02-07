@@ -139,14 +139,34 @@ if test X$with_kernel_flavor != X ; then
 fi
 
 AC_ARG_WITH(xen_pv_image,
-[AS_HELP_STRING([--with-xen-pv-image], [Create a Xen PV partition image])])
+[AS_HELP_STRING([--with-xen-pv-image], [Create a Xen PV image])])
 
 if test X$with_xen_pv_image = Xyes ; then
-  # use virt flavor for xensourcevm build
+  # use virt flavor for xen-pv-image build
   LB_LINUX_FLAVOURS=$VIRT_FLAVOUR
   create_xen_pv_image=true
 else
   create_xen_pv_image=false
+fi
+
+# user specified PV boot device and image size
+
+AC_ARG_WITH(xen_pv_boot_device,
+[AS_HELP_STRING([--xen-pv-boot-device], [Set the Xen PV image boot device (default xvda)])])
+
+if test X$xen_pv_boot_device != X ; then
+  PV_BOOT_DEVICE=$xen_pv_boot_device
+else
+  PV_BOOT_DEVICE="xvda"
+fi
+
+AC_ARG_WITH(xen_pv_image_size,
+[AS_HELP_STRING([--xen-pv-image-size], [Set the size of the Xen PV image (default 4G)])])
+
+if test X$xen_pv_image_size != X ; then
+  PV_IMAGE_SIZE=$xen_pv_image_size
+else
+  PV_IMAGE_SIZE="4G"
 fi
 
 # Expansion to allow definition of VYOS_BUILD_BRANCH
