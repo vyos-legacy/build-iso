@@ -24,7 +24,7 @@
 /livecd/mk.livecd.conf
 /livecd/version
 /livecd/branch
-/livecd/xensource
+/livecd/xen-pv-image
 /livecd/buildid
 /livecd/builtby
 /livecd/iso-submodules.txt
