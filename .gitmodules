@@ -246,3 +246,6 @@
 [submodule "pkgs/ddclient"]
 	path = pkgs/ddclient
 	url = https://github.com/vyos/ddclient.git
+[submodule "pkgs/heartbeat"]
+	path = pkgs/heartbeat
+	url = https://github.com/vyos/heartbeat.git
