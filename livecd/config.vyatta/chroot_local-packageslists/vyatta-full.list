@@ -95,3 +95,5 @@ libnl-3-200
 libnl-genl-3-200
 nmap
 dnsutils
+heartbeat
+libheartbeat2
