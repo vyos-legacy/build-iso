@@ -252,3 +252,6 @@
 [submodule "pkgs/vyos-pppoe-server"]
 	path = pkgs/vyos-pppoe-server
 	url = https://github.com/vyos/vyos-pppoe-server.git
+[submodule "pkgs/rp-pppoe"]
+	path = pkgs/rp-pppoe
+	url = https://github.com/vyos/rp-pppoe.git
