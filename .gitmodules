@@ -249,3 +249,6 @@
 [submodule "pkgs/heartbeat"]
 	path = pkgs/heartbeat
 	url = https://github.com/vyos/heartbeat.git
+[submodule "pkgs/vyos-pppoe-server"]
+	path = pkgs/vyos-pppoe-server
+	url = https://github.com/vyos/vyos-pppoe-server.git
