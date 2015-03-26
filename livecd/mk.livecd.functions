@@ -2,6 +2,22 @@
 #
 # Copyright 2013 Vyatta, Inc
 
+export VYOS_REQUIRED_PACKAGES="vyatta-bash, vyatta-biosdevname, vyatta-busybox, \
+    vyatta-cfg, vyatta-cfg-dhcp-relay, \
+    vyatta-cfg-dhcp-server, vyatta-cfg-firewall, vyatta-cfg-op-pppoe, \
+    vyatta-cfg-qos, vyatta-cfg-quagga, vyatta-cfg-system, vyatta-cfg-vpn, \
+    vyatta-cluster, vyatta-config-mgmt, vyatta-config-migrate, \
+    vyatta-conntrack, vyatta-conntrack-sync, vyatta-cron, \
+    vyatta-dhcp3-client, vyatta-dhcp3-common, vyatta-dhcp3-relay, \
+    vyatta-dhcp3-server, vyatta-eventwatch, vyatta-ipv6-rtradv, \
+    vyatta-keepalived, vyatta-lldp, vyatta-nat, vyatta-netflow, \
+    vyatta-op, vyatta-op-dhcp-server, vyatta-op-firewall, \
+    vyatta-op-qos, vyatta-op-quagga, vyatta-op-vpn, vyatta-openvpn, \
+    vyatta-ppp, vyatta-quagga, vyatta-ravpn, vyatta-util, vyatta-vrrp, \
+    vyatta-wanloadbalance, vyatta-webgui, vyatta-webproxy, vyatta-wireless, \
+    vyatta-wirelessmodem, vyatta-zone, vyos-nhrp, vyos-opennhrp"
+
+
 clean_mounts() 
 {               
   for m in proc-live sysfs-live devpts-live ; do
@@ -107,6 +123,7 @@ EOF
         echo "Essential: no"
         echo "Section: base"
         echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
+        echo "Depends: $VYOS_REQUIRED_PACKAGES" 
         echo -n Suggests: 
         <$vf/deb-versions.txt sed -e 's/ *\([^ ]*\)$/(>=\1),/' -e 's/^/ /'
         echo " nano"
