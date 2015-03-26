@@ -82,7 +82,10 @@ EOF
     #echo "$BUILDID">$savedir/iso-label # is this needed?
 
     echo I: generating package list
-    chroot "$savedir"/chroot /opt/vyatta/bin/save-package-report
+    chroot "$savedir"/chroot sh -c "dpkg-query -W -f '${Status} ${Package} ${Version}\n' \
+                                      | sed -n 's/^install ok installed //p' \
+                                        > /opt/vyatta/etc/deb-versions.txt"
+
     mv $etcdir/deb-versions.txt $vf/.
 
     ( cd "$savedir"/.. ; git submodule status 2>/dev/null ) \

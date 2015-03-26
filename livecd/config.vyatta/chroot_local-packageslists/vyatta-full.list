@@ -34,7 +34,6 @@ strongswan-starter
 strongswan-ikev1
 strongswan-ikev2
 ubnt-igmpproxy
-vyatta-base
 vyatta-bash
 vyatta-busybox
 vyatta-conntrack
