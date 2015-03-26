@@ -70,9 +70,6 @@
 [submodule "pkgs/vyatta-wanloadbalance"]
 	path = pkgs/vyatta-wanloadbalance
 	url = https://github.com/vyos/vyatta-wanloadbalance.git
-[submodule "pkgs/vyatta-base"]
-	path = pkgs/vyatta-base
-	url = https://github.com/vyos/vyatta-base.git
 [submodule "pkgs/vyatta-keepalived"]
 	path = pkgs/vyatta-keepalived
 	url = https://github.com/vyos/vyatta-keepalived.git
