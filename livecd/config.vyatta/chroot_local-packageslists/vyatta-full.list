@@ -87,6 +87,7 @@ vyatta-eventwatch
 lsb-release
 vyos-opennhrp
 vyos-nhrp
+vyos-pppoe-server
 openssl
 libssl0.9.8
 ddclient
