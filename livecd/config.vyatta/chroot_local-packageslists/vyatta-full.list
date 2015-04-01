@@ -99,3 +99,4 @@ dnsutils
 heartbeat
 libheartbeat2
 wget
+openvpn
