@@ -88,6 +88,7 @@ lsb-release
 vyos-opennhrp
 vyos-nhrp
 vyos-pppoe-server
+rp-pppoe
 openssl
 libssl0.9.8
 ddclient
