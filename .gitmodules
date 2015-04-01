@@ -252,3 +252,6 @@
 [submodule "pkgs/rp-pppoe"]
 	path = pkgs/rp-pppoe
 	url = https://github.com/vyos/rp-pppoe.git
+[submodule "pkgs/openvpn"]
+	path = pkgs/openvpn
+	url = https://github.com/vyos/openvpn.git
