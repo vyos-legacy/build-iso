@@ -89,3 +89,4 @@ dnsutils
 heartbeat
 libheartbeat2
 wget
+lm-sensors
