@@ -63,3 +63,8 @@ libssl0.9.8
 nmap
 wget
 lm-sensors
+python-lxml
+python-netifaces
+python-mako
+python-setuptools
+python-pip
