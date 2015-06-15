@@ -42,12 +42,12 @@ ntpdate
 openssl
 openvpn
 pmacct
+pppoe
 python-lxml
 python-netifaces
 python-mako
 python-setuptools
 python-pip
-rp-pppoe
 snmp
 snmpd
 squidguard
