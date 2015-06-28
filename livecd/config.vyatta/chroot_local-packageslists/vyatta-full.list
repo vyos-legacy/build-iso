@@ -7,6 +7,7 @@ eventwatchd
 grub-common
 grub-pc
 heartbeat
+hostapd
 igmpproxy
 initramfs-tools
 iproute
@@ -105,3 +106,4 @@ vyos-nhrp
 vyos-opennhrp
 vyos-pppoe-server
 wget
+wpasupplicant
