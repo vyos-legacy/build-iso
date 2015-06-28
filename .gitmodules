@@ -255,3 +255,6 @@
 [submodule "pkgs/openvpn"]
 	path = pkgs/openvpn
 	url = https://github.com/vyos/openvpn.git
+[submodule "pkgs/wpa"]
+	path = pkgs/wpa
+	url = https://github.com/vyos/wpa.git
