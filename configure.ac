@@ -113,10 +113,8 @@ fi
 
 if eval "$VYOS_DEV_BUILD"; then
   touch pkgs/.VYOS_DEV_BUILD
-  touch pkgs/.VYATTA_DEV_BUILD
 else
   rm -f pkgs/.VYOS_DEV_BUILD
-  rm -f pkgs/.VYATTA_DEV_BUILD
 fi
 
 # build arch
