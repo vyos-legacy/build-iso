@@ -4,7 +4,7 @@ if [ -r etc/event.d/tty1 ] ; then
     echo I: Delay getty until rcX completes
     sed -i 's/start on runlevel /start on stopped rc/' \
 	etc/event.d/tty[1-6]
-    if [ ! -r etc/event.d/ttyS0 ] ; then
+    if [ ! -r etc/event.d/ttyS0 ] && [ -c dev/ttyS0 ] ; then
 	echo I: Enable serial console login
 	cat <<-EOF > etc/event.d/ttyS0
 	# ttyS0 - getty
@@ -28,7 +28,7 @@ if [ -r etc/event.d/tty1 ] ; then
     fi
 fi
 
-if [ -r etc/inittab ] && grep -q '^#T0:.*getty.*ttyS0' etc/inittab ; then
+if [ -r etc/inittab ] && [ -c dev/ttyS0 ] && grep -q '^#T0:.*getty.*ttyS0' etc/inittab ; then
     echo I: Enable serial console login
     sed -i '/^#T0:/s|^#.*$|T0:23:respawn:/sbin/getty -L ttyS0 9600 vt100|' etc/inittab
 fi
