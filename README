@@ -160,13 +160,13 @@ Build Xen Image (pygrub / pv-grub)
 
         sudo make iso
 
-    The end results is the following Xen image.
-
-        livecd/xen-pv-image/vyos-xen-pv-$NUMERIC_VERSION-$arch.img.gz
+    The end result is the following Xen image.
+    
+        livecd/VyOS-xen-pv-image-$BUILDID-$arch.img.gz
         
         for example
         
-        livecd/xensource/vyos-xen-pv-999-amd64.img.gz
+        livecd/VyOS-xen-pv-1507122026-74cc365-amd64.img.gz
         
     The image produced by the build process is currently set to 4GB in
     size, so will fit into a 4096MB disk image, but the final image is 
@@ -193,7 +193,7 @@ Build Xen Image (pygrub / pv-grub)
     following command.  WARNING, this overwrites EVERYTHING on the 
     destination disk.
     
-    dd if=livecd/xen-pv-image/vyos-xen-pv-999-amd64.img.gz | \
+    dd if=livecd/VyOS-xen-pv-1507122026-74cc365-amd64.img.gz | \
       ssh username@remotevpshost "gzip -d | dd of=/dev/xvda"
 
     This copies your local compressed image to the remote host via dd, 
