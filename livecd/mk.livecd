@@ -113,6 +113,8 @@ create_default_grub_config
 # build the XenSource partition image
 if eval "$create_xen_pv_image"; then
   vyos-xen-pv-image || exit 1
+  ln -nsf xen-pv-image/vyos-xen-pv-$NUMERIC_VERSION-$(dpkg --print-architecture).img.gz VyOS-xen-pv-image-"$BUILDID-$(dpkg --print-architecture)".img.gz
+  echo I: Done
   exit 0
 fi
 
