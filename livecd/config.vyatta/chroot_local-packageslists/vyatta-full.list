@@ -55,6 +55,7 @@ strongswan
 strongswan-ikev1
 strongswan-ikev2
 strongswan-starter
+uuid
 ubnt-igmpproxy
 vyatta-bash
 vyatta-biosdevname
