@@ -43,6 +43,7 @@ ntpdate
 openssl
 openvpn
 pmacct
+pppoe
 python-lxml
 python-netifaces
 python-mako
