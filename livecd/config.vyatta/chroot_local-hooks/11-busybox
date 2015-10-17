@@ -143,7 +143,6 @@ bb_alternative /usr/bin/sort
 bb_alternative /usr/bin/strings
 bb_alternative /usr/bin/tail
 bb_alternative /usr/bin/tee
-bb_alternative /usr/bin/telnet
 bb_alternative /usr/bin/test
 bb_alternative /usr/bin/tftp
 bb_alternative /usr/bin/time
