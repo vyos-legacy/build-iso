@@ -117,6 +117,17 @@ else
   rm -f pkgs/.VYOS_DEV_BUILD
 fi
 
+AC_ARG_WITH(build-by,
+  [AS_HELP_STRING([--with-build-by=<builder id>],
+    [Specify builder id, normally your email (e.g. maintainers@vyos.net)])],
+  [], [])
+
+if test X$with_build_by != X ; then
+  echo $with_build_by > livecd/buildby
+else
+  rm -f livecd/buildby
+fi
+
 # build arch
 BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
