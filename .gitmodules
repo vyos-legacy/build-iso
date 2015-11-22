@@ -258,3 +258,6 @@
 [submodule "pkgs/wpa"]
 	path = pkgs/wpa
 	url = https://github.com/vyos/wpa.git
+[submodule "pkgs/libnfnetlink"]
+	path = pkgs/libnfnetlink
+	url = https://github.com/vyos/libnfnetlink.git
