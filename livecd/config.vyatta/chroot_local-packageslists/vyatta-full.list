@@ -19,8 +19,8 @@ libheartbeat2
 libssl0.9.8
 libsnmp-perl
 libnetfilter-conntrack3
-libnetfilter-cttimeout
-libnetfilter-cthelper
+libnetfilter-cttimeout1
+libnetfilter-cthelper0
 libnetfilter-queue1
 libnl-3-200
 libnl-genl-3-200
