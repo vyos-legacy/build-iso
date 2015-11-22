@@ -261,3 +261,6 @@
 [submodule "pkgs/libnfnetlink"]
 	path = pkgs/libnfnetlink
 	url = https://github.com/vyos/libnfnetlink.git
+[submodule "pkgs/iputils"]
+	path = pkgs/iputils
+	url = https://github.com/vyos/iputils.git
