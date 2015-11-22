@@ -13,6 +13,8 @@ initramfs-tools
 iproute
 ipset
 iptables
+iputils-arping
+iputils-ping
 libcap2
 libcap2-bin
 libheartbeat2
