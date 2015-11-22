@@ -22,6 +22,7 @@ libnetfilter-conntrack3
 libnetfilter-cttimeout1
 libnetfilter-cthelper0
 libnetfilter-queue1
+libnfnetlink0
 libnl-3-200
 libnl-genl-3-200
 libmnl0
