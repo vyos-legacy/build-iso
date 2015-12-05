@@ -59,9 +59,13 @@ strongswan
 strongswan-ikev1
 strongswan-ikev2
 strongswan-starter
+tcl
+tcl8.4
 telnet
-uuid
 ubnt-igmpproxy
+usb-modeswitch
+usb-modeswitch-data
+uuid
 vyatta-bash
 vyatta-biosdevname
 vyatta-busybox
