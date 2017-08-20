@@ -1,8 +1,8 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
 
-AC_INIT([vyos], [0.1.0], [maintainers@vyos.net], [vyos], [http://vyos.net])
-AC_COPYRIGHT([Copyright (c) 2013 SO3Group.])
+AC_INIT([vyos], [0.1.0], [maintainers@vyos.net], [vyos], [http://www.vyos.io])
+AC_COPYRIGHT([Copyright (c) 2013, 2017 VyOS maintainers and contributors])
 
 # Checks for programs.
 AC_PROG_LN_S
@@ -47,8 +47,8 @@ AC_ARG_VAR(LB_INITRAMFS, [default: live-initramfs])
 test "X$LB_ISO_APPLICATION" = "X" && LB_ISO_APPLICATION="VyOS"
 AC_ARG_VAR(LB_ISO_APPLICATION, [default: VyOS])
 
-test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="SO3 Group and contributors; http://vyos.net/;"
-AC_ARG_VAR(LB_ISO_PUBLISHER, [default: SO3 Group and contributors])
+test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="VyOS maintainers and contributors; http://www.vyos.io/;"
+AC_ARG_VAR(LB_ISO_PUBLISHER, [default: VyOS maintainers and contributors])
 
 test "X$LB_ISO_VOLUME" = "X" && LB_ISO_VOLUME='VyOS '
 AC_ARG_VAR(LB_ISO_VOLUME, [default: VyOS])
@@ -161,7 +161,7 @@ fi
 # on configure invocation
 AC_ARG_WITH(vyatta_build_branch,
   [AS_HELP_STRING([--with-vyatta-build-branch=<branch>],
-  [Target branch (e.g., "larkspur"), default to the supermodule branch])],
+  [Target branch (e.g., "helium"), default to the supermodule branch])],
   [])
 
 if test "X$with_vyatta_build_branch" != X ; then
