@@ -179,7 +179,7 @@ if test X$with_debian_bootstrap_mirror != X ; then
   echo "Using $with_debian_bootstrap_mirror as debian bootstrap mirror"
   VYOS_DEBIAN_BOOTSTRAP_MIRROR="$with_debian_bootstrap_mirror"
 else
-  VYOS_DEBIAN_BOOTSTRAP_MIRROR="http://dev.packages.vyos.net"
+  VYOS_DEBIAN_BOOTSTRAP_MIRROR="http://dev.packages.vyos.net/legacy/repos/"
 fi
 
 # Debian package mirror
@@ -192,7 +192,7 @@ if test X$with_debian_mirror != X ; then
   echo "Using $with_debian_mirror as debian mirror"
   VYOS_DEBIAN_MIRROR="$with_debian_mirror"
 else
-  VYOS_DEBIAN_MIRROR="http://dev.packages.vyos.net"
+  VYOS_DEBIAN_MIRROR="http://dev.packages.vyos.net/legacy/repos/"
 fi
 
 # VyOS package mirror
