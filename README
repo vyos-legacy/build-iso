@@ -1,3 +1,8 @@
+NOTE: This repository is only for building VyOS images up to 1.1.x release, which is now an extended support branch.
+To build the current versions, use https://github.com/vyos/vyos-build
+
+If you want to build an image of a legacy version, read on:
+
 VyOS ISO Build Procedures
 
     This document describes how to build a VyOS ISO image. The most
