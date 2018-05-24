@@ -1,3 +1,20 @@
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+=======================================================================
+
+The scripts in repository are only used for building VyOS versions prior
+to 1.2.0.
+VyOS 1.1.x is no longer actively developed and is closed for any changes
+other than critical bug fixes.
+
+If you want to build an image of a current VyOS version, the repository
+you are looking for is: https://github.com/vyos/vyos-build/
+
+If you really want to build an image of a legacy VyOS version,
+then read on.
+
+=======================================================================
+
+
 VyOS ISO Build Procedures
 
     This document describes how to build a VyOS ISO image. The most
